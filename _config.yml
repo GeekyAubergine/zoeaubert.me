@@ -1,0 +1,66 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# Site
+title: Zoe Aubert
+subtitle:
+description:
+author: Zoe Aubert
+language: en-uk
+timezone: utc
+
+# URL
+url: http://zoeaubert.me
+root: /
+permalink: :title/
+permalink_defaults:
+
+# Directory
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link: true
+filename_case: 0
+render_drafts: false
+post_asset_folder: true
+relative_link: false
+future: true
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace:
+  
+index_generator:
+  path: ''
+  per_page: 4
+  order_by: -date
+  
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+
+per_page: 0
+pagination_dir: page
+
+theme: zoe
+
+# Deployment
+## Docs: https://hexo.io/docs/deployment.html
+deploy:
+  type:
