@@ -12,9 +12,10 @@
   },
   "scripts": {
     "qa": "yarn lint",
-    "lint": "yarn lint:ejs && yarn lint:sass",
+    "lint": "yarn lint:ejs && yarn lint:sass && yarn lint:markdown",
     "lint:ejs": "ejslint themes/",
-    "lint:sass": "sass-lint themes/"
+    "lint:sass": "sass-lint themes/",
+    "lint:markdown": "markdownlint source/"
   },
   "devDependencies": {
     "ejs-lint": "^0.3.0",
@@ -28,6 +29,8 @@
     "hexo-renderer-sass": "^0.3.2",
     "hexo-renderer-stylus": "^0.3.3",
     "hexo-server": "^0.3.1",
+    "markdownlint": "^0.7.0",
+    "markdownlint-cli": "^0.7.1",
     "sass-lint": "^1.12.1"
   }
 }
