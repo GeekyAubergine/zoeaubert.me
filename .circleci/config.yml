@@ -41,4 +41,4 @@ workflows:
       - checkout_and_deps
       - qa:
           requires:
-            - checkout
+            - checkout_and_deps
