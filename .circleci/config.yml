@@ -63,7 +63,7 @@ jobs:
 
       - run:
           name: Deploy
-          command: aws s3 sync ~/public s3://stage.zoeaubert.me/ --delete
+          command: aws s3 sync public s3://stage.zoeaubert.me/ --delete
 
 workflows:
   version: 2
