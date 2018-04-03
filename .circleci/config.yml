@@ -47,6 +47,11 @@ jobs:
               - v1-dependencies-{{ checksum "package.json" }}
         - run: yarn build
 
+        - save_cache:
+              paths:
+                - public
+              key: v1-build-{{ .Environment.CIRCLE_SHA1 }}
+
   deploy_stage:
     docker:
       - image: circleci/aws
@@ -57,7 +62,7 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-build-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: Deploy
@@ -71,10 +76,13 @@ workflows:
       - qa:
           requires:
             - checkout_and_deps
-      - build
+      - build:
+          requires:
+            - checkout_and_deps
       - deploy_stage:
           requires:
             - qa
+            - build
           filters:
             branches:
               only: develop
