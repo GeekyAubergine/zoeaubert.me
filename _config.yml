@@ -46,6 +46,9 @@ index_generator:
   path: ''
   per_page: 4
   order_by: -date
+
+marked:
+  breaks: false
   
 # Category & Tag
 default_category: uncategorized

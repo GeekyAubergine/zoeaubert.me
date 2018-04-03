@@ -14,11 +14,15 @@
   .links {
     display: flex;
     flex: 100%;
+    flex-wrap: wrap;
     justify-content: center;
     margin: 0;
     padding: 2rem 1rem 1rem;
 
     li {
+      display: flex;
+      flex: 1;
+      justify-content: center;
       margin: 0 .5rem;
       list-style: none;
 
@@ -108,6 +112,22 @@
 
     .post-content {
       padding: .5rem 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: 32rem) {
+  .posts-list {
+    .post {
+      .post-header {
+        flex-wrap: wrap;
+
+        .name,
+        .date {
+          flex: 100%;
+          text-align: left;
+        }
+      }
     }
   }
 }
