@@ -1,0 +1,148 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 300;
+  font-style: normal;
+  src: url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTXZ2MAKAc2x4R1uOSeegc5U.eot');
+  src: url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTXZ2MAKAc2x4R1uOSeegc5U.eot?#iefix') format('embedded-opentype'),
+  local('Open Sans Light'),
+  local('Open-Sans-300'),
+  url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTRampu5_7CjHW5spxoeN3Vs.woff2') format('woff2'),
+  url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff') format('woff'),
+  url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTYnF5uFdDttMLvmWuJdhhgs.ttf') format('truetype'),
+  url('//fonts.gstatic.com/l/font?kit=DXI1ORHCpsQm3Vp6mXoaTVlIn5tFQcqMuf-jhyJP0ps&skey=b33cc031a589c168&v=v13#OpenSans') format('svg');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 300;
+  font-style: italic;
+  src: url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxrXcjzEax2LfQAlK8DdMzhA.eot');
+  src: url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxrXcjzEax2LfQAlK8DdMzhA.eot?#iefix') format('embedded-opentype'),
+  local('Open Sans Light Italic'),
+  local('Open-Sans-300italic'),
+  url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxtTIkQYohD4BpHvJ3NvbHoA.woff2') format('woff2'),
+  url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxvR_54zmj3SbGZQh3vCOwvY.woff') format('woff'),
+  url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxrfB31yxOzP-czbf6AAKCVo.ttf') format('truetype'),
+  url('//fonts.gstatic.com/l/font?kit=PRmiXeptR36kaC0GEAetxj4dnM32POWavC8T_whbZeI&skey=78fa527f8e87b8b8&v=v13#OpenSans') format('svg');
+}
+
+$real-white: #fff;
+$real-black: #000;
+$invisible: hsla(0, 0, 0, 0);
+$white: darken($real-white, 2%);
+$primary-colour: #ffe252;
+$primary-colour-text: #0F0F0F;
+$secondary-colour-text: #606060;
+$divider-colour:        #b6b6b6;
+$accent-colour:         #ff5252;
+$code-background-color: #fffff0;
+
+$black: lighten($real-black, 5%);
+$header-colour: $primary-colour; //hsla(295, 60%, 20%, 1);
+$nav-colour: darken($header-colour, 0%);
+$border: darken($real-white, 20%);
+$lift-off-grey: #888;
+
+$main-background: #f0f0f0;
+$body-background: #ffffff;
+
+$card-background: $real-white;
+$card-border: darken($card-background, 15%);
+$card-border-radius: .25rem;
+$card-width: calc(50% - 1rem);
+$card-width-wrap: 48rem;
+
+$max-width: 52rem;
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+html {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: $main-background;
+}
+
+body {
+  display: flex;
+  flex: 100%;
+  align-items: flex-start;
+  max-width: $max-width;
+  min-height: 100vh;
+}
+
+header,
+main,
+div {
+  display: flex;
+  flex: 100%;
+  flex-wrap: wrap;
+}
+
+a {
+  color: $primary-colour-text;
+}
+
+p {
+  flex: 100%;
+  padding-bottom: 1rem;
+  font-size: 110%;
+
+  &:last-of-type {
+    padding-bottom: 0;
+  }
+}
+
+pre, code {
+  padding: 0 .25rem;
+  color: #c7254e;
+  background-color: #f9f2f4;
+}
+
+.header {
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem;
+  background-color: $primary-colour;
+
+  nav {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  a {
+    color: $primary-colour-text;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 0 .5rem;
+
+    border-bottom: 1px solid $primary-colour;
+    transition: border-bottom 250ms;
+
+    &:hover {
+      border-bottom-color: $primary-colour-text;
+    }
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+
+  .name {
+    font-weight: bold;
+    text-align: center;
+    color: $primary-colour-text;
+  }
+}

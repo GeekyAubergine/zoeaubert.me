@@ -1,0 +1,133 @@
+@import 'core';
+
+.index-header {
+  justify-content: center;
+  padding: 2rem;
+  background-color: $primary-colour;
+
+  .name {
+    flex: 100%;
+    font-size: 300%;
+    text-align: center;
+  }
+
+  .links {
+    display: flex;
+    flex: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 2rem 1rem 1rem;
+
+    li {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      margin: 0 .5rem;
+      list-style: none;
+
+      a {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        font-size: 240%;
+        font-weight: bold;
+        color: $primary-colour-text;
+        text-decoration: none;
+      }
+
+      p {
+        flex: 100%;
+        font-size: 60%;
+        text-align: center;
+        border-bottom: 1px solid $primary-colour;
+        transition: border-bottom 250ms;
+      }
+
+      &:hover {
+        p {
+          border-bottom-color: $primary-colour-text;
+        }
+      }
+    }
+  }
+}
+
+.index-intro {
+  padding: 1rem;
+  background-color: $body-background;
+}
+
+.category-header {
+  flex: 100%;
+  margin-top: 1rem;
+  padding: .5rem;
+
+  h2 {
+    flex: 100%;
+    font-size: 150%;
+    font-weight: bold;
+    color: $primary-colour-text;
+    text-align: center;
+    text-decoration: none;
+  }
+}
+
+.posts-list {
+  .post {
+    flex: 100%;
+    margin: 1rem 0 0;
+    background-color: $body-background;
+
+    .post-header {
+      flex: 100%;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: $primary-colour;
+
+      .name {
+        a {
+          display: flex;
+          color: $primary-colour-text;
+          font-size: 125%;
+          line-height: 100%;
+          font-weight: bold;
+          text-decoration: none;
+
+          border-bottom: 1px solid $primary-colour;
+          transition: border-bottom 250ms;
+
+          &:hover {
+            border-bottom-color: $primary-colour-text;
+          }
+        }
+      }
+
+      .date {
+        flex: 1;
+        text-align: right;
+      }
+    }
+
+    .post-content {
+      padding: .5rem 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: 32rem) {
+  .posts-list {
+    .post {
+      .post-header {
+        flex-wrap: wrap;
+
+        .name,
+        .date {
+          flex: 100%;
+          text-align: left;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+<header class="index-header">
+    <h1 class="name">Zoe Aubert</h1>
+    <ul class="links">
+        <li>
+            <a href="http://twitter.com/geekyaubergine" target="_blank">
+                <i class="fab fa-twitter"></i>
+                <p>Twitter</p>
+            </a>
+        </li>
+        <li>
+            <a href="http://github.com/geekyaubergine" target="_blank">
+                <i class="fab fa-github"></i>
+                <p>GitHub</p>
+            </a>
+        </li>
+        <li>
+            <a href="mailto:hello@zoeaubert.me" target="_blank">
+                <i class="far fa-envelope"></i>
+                <p>Email</p>
+            </a>
+        </li>
+        <!--<li>-->
+            <!--<a href="/about" target="_blank">-->
+                <!--<i class="fas fa-user"></i>-->
+                <!--<p>About</p>-->
+            <!--</a>-->
+        <!--</li>-->
+        <li>
+            <a href="http://linkedin.com/in/chrisaubert" target="_blank">
+                <i class="fab fa-linkedin"></i>
+                <p>LinkedIn</p>
+            </a>
+        </li>
+    </ul>
+</header>
+<div class="index-intro">
+    <p>Developer, gamer, musician and some other things.</p>
+    <p>
+        Third year computer science student at the University of Portsmouth.
+        Developer at <a href="http://radweb.co.uk" target="_blank">RadWeb</a> working on cool things.
+    </p>
+</div>
+<div class="category-header">
+    <h2>Posts</h2>
+</div>
+<div class='posts-list'>
+    <% site.categories.findOne({ name: 'post' }).posts.sort('date', -1).limit(4).each((post) => { %>
+    <div class='post'>
+        <div class='post-header'>
+            <h4 class="name"><a  href='<%- url_for(post.path) %>'><%= post.title %></a></h4>
+            <p class="date"><%= date(post.date, config.date_format) %></p>
+        </div>
+        <div class='post-content'>
+            <% if(post.excerpt) { %>
+            <%- post.excerpt %>
+            <% } %>
+        </div>
+    </div>
+    <% }) %>
+</div>
