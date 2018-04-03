@@ -34,9 +34,22 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn qa
 
-  build_and_deploy_stage:
+  build:
+      docker:
+        - image: circleci/node:7.10
+      working_directory: ~/repo
+
+      steps:
+        - restore_cache:
+            key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+        - restore_cache:
+            keys:
+              - v1-dependencies-{{ checksum "package.json" }}
+        - run: yarn build
+
+  deploy_stage:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/aws
     working_directory: ~/repo
 
     steps:
@@ -45,15 +58,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn build
-
-      - run:
-          name: Install python3.6
-          command: sudo apt install python-pip python-dev
-
-      - run:
-          name: Install awscli
-          command: pip install awscli
 
       - run:
           name: Deploy
@@ -67,7 +71,8 @@ workflows:
       - qa:
           requires:
             - checkout_and_deps
-      - build_and_deploy_stage:
+      - build
+      - deploy_stage:
           requires:
             - qa
           filters:
