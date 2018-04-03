@@ -15,7 +15,8 @@
     "lint": "yarn lint:ejs && yarn lint:sass && yarn lint:markdown",
     "lint:ejs": "ejslint themes/",
     "lint:sass": "sass-lint themes/",
-    "lint:markdown": "markdownlint source/"
+    "lint:markdown": "markdownlint source/",
+    "build": "hexo generate"
   },
   "devDependencies": {
     "ejs-lint": "^0.3.0",
