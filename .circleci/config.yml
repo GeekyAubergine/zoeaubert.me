@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            apt install python-pip python-dev
+            sudo apt install python-pip python-dev
             pip install awscli
             aws s3 sync ~/public s3://stage.zoeaubert.me/ --delete
 
