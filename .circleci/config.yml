@@ -50,7 +50,8 @@ jobs:
       - run:
           name: Deploy
           command: |
-            apt-get install awscli
+            apt install python-pip python-dev
+            pip install awscli
             aws s3 sync ~/public s3://stage.zoeaubert.me/ --delete
 
 workflows:
