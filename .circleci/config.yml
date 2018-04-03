@@ -61,9 +61,6 @@ workflows:
       - qa:
           requires:
             - checkout_and_deps
-      - build:
-          requires:
-            - qa
       - build_and_deploy_stage:
           requires:
             - qa
