@@ -54,7 +54,7 @@ jobs:
 
   deploy_stage:
     docker:
-      - image: circleci/awscli
+      - image: wilson208/circleci-awscli
     working_directory: ~/repo
 
     steps:
