@@ -1,0 +1,23 @@
+<header class='header'>
+    <h1 class='name'><a href='/'>Zoe Aubert</a></h1>
+    <nav>
+        <a href="http://twitter.com/geekyaubergine" target="_blank">Twitter</a>
+        <a href="http://github.com/geekyaubergine" target="_blank">GitHub</a>
+        <a href='mailto:hello@zoeaubert.me'>Contact</a>
+    </nav>
+</header>
+<div class='post-article'>
+    <% site.categories.findOne({ name: 'album' }).posts.sort('date', -1).limit(4).each((album) => { %>
+    <div class='album'>
+        <div class='album-header'>
+            <h4 class="name"><a  href='<%- url_for(album.path) %>'><%= album.title %></a></h4>
+            <p class="date"><%= date(album.date, config.date_format) %></p>
+        </div>
+        <div class='post-content'>
+            <% if(album.excerpt) { %>
+            <%- album.excerpt %>
+            <% } %>
+        </div>
+    </div>
+    <% }) %>
+</div>

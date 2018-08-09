@@ -75,7 +75,6 @@ body {
   display: flex;
   flex: 100%;
   align-items: flex-start;
-  max-width: $max-width;
   min-height: 100vh;
 }
 
@@ -145,4 +144,8 @@ pre, code {
     text-align: center;
     color: $primary-colour-text;
   }
+}
+
+.widthControlled {
+  max-width: $max-width;
 }

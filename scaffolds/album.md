@@ -2,6 +2,6 @@
 title: {{ title }}
 date: {{ date }}
 tags:
-categories: blog
-layout: post
+categories: album
+layout: album
 ---
