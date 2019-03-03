@@ -11,10 +11,6 @@ jobs:
             - ~/repo
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package-lock.json" }}
-          - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:
