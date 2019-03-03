@@ -1,133 +1,156 @@
 @import 'core';
 
-.index-header {
-  justify-content: center;
-  padding: 2rem;
-  background-color: $primary-colour;
-
-  .name {
+.home {
+  .hero {
     flex: 100%;
-    font-size: 300%;
-    text-align: center;
-  }
-
-  .links {
-    display: flex;
-    flex: 100%;
-    flex-wrap: wrap;
     justify-content: center;
-    margin: 0;
-    padding: 2rem 1rem 1rem;
+    align-items: center;
+    padding: 2rem 1rem;
+    background-color: $yellow;
 
-    li {
-      display: flex;
-      flex: 1;
+    .wrapper {
+      flex: 100%;
       justify-content: center;
-      margin: 0 .5rem;
-      list-style: none;
+      align-items: flex-start;
+    }
 
-      a {
+    .name {
+      padding-bottom: 2rem;
+      text-align: center;
+      font-size: 400%;
+    }
+
+    .intro {
+      padding: 0 0 .5rem;
+      margin: 0;
+      text-align: center;
+      font-size: 125%;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+      margin: 2rem 0 0;
+
+      li {
         display: flex;
-        flex-wrap: wrap;
+        flex: 1;
         justify-content: center;
-        font-size: 240%;
-        font-weight: bold;
-        color: $primary-colour-text;
-        text-decoration: none;
-      }
+        align-items: center;
+        margin: 0 1rem;
+        list-style: none;
 
-      p {
-        flex: 100%;
-        font-size: 60%;
-        text-align: center;
-        border-bottom: 1px solid $primary-colour;
-        transition: border-bottom 250ms;
-      }
+        a {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          font-size: 175%;
+          font-weight: bold;
+          color: $primary-colour-text;
+          text-decoration: none;
+        }
 
-      &:hover {
         p {
-          border-bottom-color: $primary-colour-text;
+          flex: 100%;
+          font-size: 60%;
+          text-align: center;
+          border-bottom: 1px solid $primary-colour;
+          transition: border-bottom 250ms;
+        }
+
+        &:hover {
+          p {
+            border-bottom-color: $primary-colour-text;
+          }
+        }
+
+        &:last-of-type {
+          margin-right: 0;
         }
       }
     }
   }
-}
 
-.index-intro {
-  padding: 1rem;
-  background-color: $body-background;
-}
-
-.category-header {
-  flex: 100%;
-  margin-top: 1rem;
-  padding: .5rem;
-
-  h2 {
+  .section {
     flex: 100%;
-    font-size: 150%;
-    font-weight: bold;
-    color: $primary-colour-text;
-    text-align: center;
-    text-decoration: none;
-  }
-}
+    background-color: $soft-white;
 
-.posts-list {
-  .post {
-    flex: 100%;
-    margin: 1rem 0 0;
-    background-color: $body-background;
-
-    .post-header {
+    .header {
       flex: 100%;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem;
-      background-color: $primary-colour;
+      justify-content: flex-end;
+      margin: 0 5%;
+      padding: .5rem 1rem;
 
-      .name {
-        a {
-          display: flex;
-          color: $primary-colour-text;
-          font-size: 125%;
-          line-height: 100%;
-          font-weight: bold;
-          text-decoration: none;
+      text-align: center;
+      font-size: 155%;
+    }
+  }
 
-          border-bottom: 1px solid $primary-colour;
-          transition: border-bottom 250ms;
+  .blog {
+    .header-line {
+      height: 100%;
+      border-left: solid darken($white, 20%) 1px;
+    }
 
-          &:hover {
-            border-bottom-color: $primary-colour-text;
-          }
-        }
+    .post {
+      padding: .75rem 1rem;
+      flex: 100%;
+      border-top: 1px $card-border solid;
+
+      .wrapper {
+        flex: 100%;
+        text-decoration: none;
+
+      }
+
+      .top {
+        display: flex;
+        flex: 100%;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .title {
+        flex: 2;
+        font-size: 115%;
+        font-weight: bold;
       }
 
       .date {
         flex: 1;
         text-align: right;
+        padding: 0;
+        text-transform: none;
+        font-size: 115%;
+        color: $secondary-colour-text;
       }
-    }
 
-    .post-content {
-      padding: .5rem 1rem;
+      .excerpt {
+        flex: 100%;
+
+        p {
+          color: $secondary-colour-text;
+        }
+      }
     }
   }
 }
 
-@media screen and (max-width: 32rem) {
-  .posts-list {
+@media only screen and (max-width: 30rem) {
+  .home {
+    .section {
+      margin-top: .25rem;
+    }
     .post {
-      .post-header {
-        flex-wrap: wrap;
+      height: auto;
+      margin: .5rem 0;
+    }
 
-        .name,
-        .date {
-          flex: 100%;
-          text-align: left;
-        }
-      }
+    .date {
+      display: none;
     }
   }
 }
