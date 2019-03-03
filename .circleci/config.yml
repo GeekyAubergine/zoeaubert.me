@@ -11,11 +11,15 @@ jobs:
             - ~/repo
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
 
+      - restore_cache:
+          keys:
+          - node-v2-dependencies-{{ checksum "package-lock.json" }}
+          - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          key: node-v2-dependencies-{{ checksum "package-lock.json" }}
 
   qa:
     docker:
@@ -27,7 +31,7 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - node-v2-dependencies-{{ checksum "package-lock.json" }}
       - run: npm run lint:markdown
 
   build_and_deploy_stage:
@@ -40,7 +44,7 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - node-v2-dependencies-{{ checksum "package-lock.json" }}
       - run:
           name: Build
           command: npm run build
@@ -71,7 +75,7 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - node-v2-dependencies-{{ checksum "package-lock.json" }}
       - run:
           name: Build
           command: npm run build
