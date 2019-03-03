@@ -13,9 +13,9 @@
   "scripts": {
     "qa": "npm run lint",
     "lint": "npm run lint:ejs && npm run lint:sass && npm run lint:markdown",
-    "lint:ejs": "ejslint themes/",
-    "lint:sass": "sass-lint themes/",
-    "lint:markdown": "markdownlint source/",
+    "lint:ejs": "./node_modules/.bin/ejslint themes/",
+    "lint:sass": "./node_modules/.bin/sass-lint themes/",
+    "lint:markdown": "node_modules/.bin/markdownlint source/",
     "build": "hexo generate",
     "start": "hexo server"
   },
