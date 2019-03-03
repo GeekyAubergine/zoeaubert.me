@@ -1,15 +1,9 @@
-<header class='header'>
-    <h1 class='name'><a href='/'>Zoe Aubert</a></h1>
-    <nav>
-        <a href="http://twitter.com/geekyaubergine" target="_blank">Twitter</a>
-        <a href="http://github.com/geekyaubergine" target="_blank">GitHub</a>
-        <a href='mailto:hello@zoeaubert.me'>Contact</a>
-    </nav>
-</header>
-<div class='post-article'>
-    <h2><%- page.title %></h2>
-    <div class='date'>
-        <%= date(page.date, config.date_format) %>
+<main>
+    <div class='post-article'>
+        <h2><%- page.title %></h2>
+        <div class='date'>
+            <%= date(page.date, config.date_format) %>
+        </div>
+        <%- page.content %>
     </div>
-    <%- page.content %>
-</div>
+</main>
