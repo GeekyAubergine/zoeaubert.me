@@ -11,8 +11,8 @@
     "version": "3.8.0"
   },
   "scripts": {
-    "qa": "yarn lint",
-    "lint": "yarn lint:ejs && yarn lint:sass && yarn lint:markdown",
+    "qa": "npm run lint",
+    "lint": "npm run lint:ejs && npm run lint:sass && npm run lint:markdown",
     "lint:ejs": "ejslint themes/",
     "lint:sass": "sass-lint themes/",
     "lint:markdown": "markdownlint source/",
