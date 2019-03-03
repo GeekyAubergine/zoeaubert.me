@@ -23,7 +23,7 @@ jobs:
 
   qa:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/node:10.5
     working_directory: ~/repo
 
     steps:
