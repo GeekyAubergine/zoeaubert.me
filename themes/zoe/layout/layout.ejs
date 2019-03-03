@@ -6,7 +6,7 @@
     <meta name="author" content="Zoe Aubert" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="dns-prefetch" href="use.fontawesome.com">
-    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
 
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
@@ -14,7 +14,7 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@geekyaubergine" />
 
-    <% if (page.title) {%>
+    <% if (page.title) { %>
     <title><%= page.title %> | Zoe Aubert</title>
     <% } else { %>
     <title>Zoe Aubert</title>
@@ -25,6 +25,35 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 </head>
 <body>
-<%- body %>
+    <% if (!page.path.match(/index.html/i)) { %>
+    <nav class="nav">
+        <div class="wrapper">
+            <h2 class="name"><a href="/">Zoe Aubert</a></h2>
+            <ul class="links">
+                <li>
+                    <a href="http://twitter.com/geekyaubergine" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="http://github.com/geekyaubergine" target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="http://linkedin.com/in/zoeaubert" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="mailto:hello@zoeaubert.me" target="_blank">
+                        <i class="far fa-envelope"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <% } %>
+    <%- body %>
 </body>
 </html>

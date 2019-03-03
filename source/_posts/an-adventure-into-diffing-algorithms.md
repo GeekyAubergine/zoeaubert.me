@@ -5,7 +5,7 @@ tags:
 categories:
 - post
 ---
-A while ago at work, we decided that our current diffing algorithm was not meeting our requirements. <!--- more --->At the time we were using [FineDiff](http://www.raymondhill.net/finediff/viewdiff-ex.php), while this library is good at dealing with common situations, it was unable to handle some of our more complicated inputs. The main complications we faced were our use of `;` to separate items and the addition and removal of line breaks without the meaning of the content changing.
+A while ago at work, we decided that our current diffing algorithm was not meeting our requirements. At the time we were using<!--- more ---> [FineDiff](http://www.raymondhill.net/finediff/viewdiff-ex.php), while this library is good at dealing with common situations, it was unable to handle some of our more complicated inputs. The main complications we faced were our use of `;` to separate items and the addition and removal of line breaks without the meaning of the content changing.
 
 Input A:
 Alpha
@@ -13,7 +13,7 @@ Alpha
 Input B:
 Alpha; Beta
 
-Original output:
+Original output: 
 ~~Alpha~~*Alpha; Beta*
 
 Desired output:

@@ -1,26 +1,28 @@
+const CONTAINER_ID = 'hex-background'
+const CANVAS_CLASS = 'hex-background'
+const HIDDEN_CLASS = 'hex-background-hidden'
+
 const HEX_POINTS = 6
 const HEX_ANGLE = (Math.PI * 2) / HEX_POINTS
 const HEX_RADIUS = 64
 const HEX_PATH_WIDTH = 6
-const HEX_BORDER_COLOUR = '#ffd400'
+const HEX_BORDER_COLOUR = '#fac800'
 
+let container = null
 let canvas = null
 let canvasContext
 
-function shadeColor2(color, percent) {
-    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
-    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
-}
+const genColour = () => {
+    const h = `${100 * (Math.random() * .04 + .48)}`
+    const l = `${100 * (Math.random() * .06 + .60)}%`
 
-function shadeRGBColor(color, percent) {
-    var f=color.split(","),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=parseInt(f[0].slice(4)),G=parseInt(f[1]),B=parseInt(f[2]);
-    return "rgb("+(Math.round((t-R)*p)+R)+","+(Math.round((t-G)*p)+G)+","+(Math.round((t-B)*p)+B)+")";
+    return `hsl(${h}, 100%, ${l})`
 }
 
 const drawHex = (cx, cy) => {
     canvasContext.beginPath()
 
-    canvasContext.fillStyle = `hsl(49.9,100%,${100 * (Math.random() * .08 + .6)}%)`
+    canvasContext.fillStyle = genColour()
     canvasContext.strokeStyle = HEX_BORDER_COLOUR
     canvasContext.lineWidth = HEX_PATH_WIDTH
 
@@ -74,34 +76,36 @@ const drawGrid = (width, height) => {
 
 const render = () => {
     console.time('render')
-    const width = window.innerWidth
-    const height = window.innerHeight
+    const width = container.parentNode.offsetWidth
+    const height = container.parentNode.offsetHeight
     canvas.width  = width
     canvas.height = height
 
     drawGrid(width, height)
 
-
-    // drawRow(width / 2, height / 2, 0, width)
-    //
-    // drawRow(width / 2, height / 2 + HEX_RADIUS * 1.5, 1, width)
-
-    // drawHex(width / 2 + Math.sqrt(3) * HEX_RADIUS, height / 2 + HEX_RADIUS * .75)
     console.timeEnd('render')
 
     setTimeout(() => {
-        canvas.classList.remove('backgroundHidden')
+        canvas.classList.remove(HIDDEN_CLASS)
     }, 10)
 }
 
 const onResize = _.throttle(render, 50)
 
 const init = () => {
-    const container = document.querySelector('#background')
+    container = document.querySelector(`#${CONTAINER_ID}`)
+
+    console.log(container, container.parentNode.clientWidth)
+
+    if (container == null) {
+        return
+    }
+
+    window.onresize = onResize
 
     canvas = document.createElement('canvas')
-    canvas.classList.add('background')
-    canvas.classList.add('backgroundHidden')
+    canvas.classList.add(CANVAS_CLASS)
+    canvas.classList.add(HIDDEN_CLASS)
     container.appendChild(canvas)
 
     canvasContext = canvas.getContext('2d')
@@ -110,4 +114,3 @@ const init = () => {
 }
 
 window.onload = init
-window.onresize = onResize

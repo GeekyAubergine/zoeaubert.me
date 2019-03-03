@@ -1,135 +1,156 @@
 @import 'core';
 
 .home {
-  flex: 100%;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background-color: $primary-colour;
-
-  .container {
-    flex: 100%;
-    padding: 0 0 5rem;
-    justify-content: center;
-    z-index: 1;
-  }
-
-  .name {
-    font-size: 500%;
-    font-weight: bold;
-    text-align: center;
-    animation: fadein 1s;
-  }
-
-  .intro {
-    margin: 3rem 0 .25rem;
-    justify-content: center;
-    animation: fadein 1s;
-    font-size: 120%;
-
-    p {
-      text-align: center;
-      font-weight: bold;
-      padding-bottom: .5rem;
-    }
-
-    a {
-      font-size: 100%;
-      font-weight: bold;
-    }
-  }
-
-  .linkContainer {
+  .hero {
     flex: 100%;
     justify-content: center;
-  }
+    align-items: center;
+    padding: 2rem 1rem;
+    background-color: $yellow;
 
-  .socialLinks {
-    position: absolute;
-    bottom: 0;
-  }
-
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 1rem;
-
-
-    li {
-      display: flex;
-      flex: 1;
+    .wrapper {
+      flex: 100%;
       justify-content: center;
+      align-items: flex-start;
+    }
+
+    .name {
+      padding-bottom: 2rem;
+      text-align: center;
+      font-size: 400%;
+    }
+
+    .intro {
+      padding: 0 0 .5rem;
+      margin: 0;
+      text-align: center;
+      font-size: 125%;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
       align-items: center;
-      margin: 0 .25rem;
-      list-style: none;
-      border-radius: 3.5rem;
-      height: 6.4rem;
-      width: 6.4rem;
-      transition: .5s;
+      margin: 2rem 0 0;
 
-      a {
+      li {
         display: flex;
-        flex-wrap: wrap;
+        flex: 1;
         justify-content: center;
-        font-size: 240%;
-        font-weight: bold;
-        color: $primary-colour-text;
-        text-decoration: none;
-        transition: .5s;
-      }
+        align-items: center;
+        margin: 0 1rem;
+        list-style: none;
 
-      p {
-        flex: 100%;
-        font-size: 60%;
-        text-align: center;
-        height: 0;
-        opacity: 0;
-        transition: all .40s;
-        transition-delay: .10s;
-      }
+        a {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          font-size: 175%;
+          font-weight: bold;
+          color: $primary-colour-text;
+          text-decoration: none;
+        }
 
-      &:hover {
         p {
-          height: 2rem;
-          opacity: 1;
+          flex: 100%;
+          font-size: 60%;
+          text-align: center;
+          border-bottom: 1px solid $primary-colour;
+          transition: border-bottom 250ms;
+        }
+
+        &:hover {
+          p {
+            border-bottom-color: $primary-colour-text;
+          }
+        }
+
+        &:last-of-type {
+          margin-right: 0;
         }
       }
     }
   }
 
-  .links-with-text {
-    li {
-      p {
-        height: 2rem;
-        opacity: 1;
-      }
+  .section {
+    flex: 100%;
+    background-color: $soft-white;
+
+    .header {
+      flex: 100%;
+      justify-content: flex-end;
+      margin: 0 5%;
+      padding: .5rem 1rem;
+
+      text-align: center;
+      font-size: 155%;
     }
   }
 
-  .grid {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-
-    .background {
-      width: 100vw;
-      height: 100vh;
-      opacity: 1;
-      transition: opacity .25s;
+  .blog {
+    .header-line {
+      height: 100%;
+      border-left: solid darken($white, 20%) 1px;
     }
 
-    .backgroundHidden {
-      opacity: 0;
+    .post {
+      padding: .75rem 1rem;
+      flex: 100%;
+      border-top: 1px $card-border solid;
+
+      .wrapper {
+        flex: 100%;
+        text-decoration: none;
+
+      }
+
+      .top {
+        display: flex;
+        flex: 100%;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .title {
+        flex: 2;
+        font-size: 115%;
+        font-weight: bold;
+      }
+
+      .date {
+        flex: 1;
+        text-align: right;
+        padding: 0;
+        text-transform: none;
+        font-size: 115%;
+        color: $secondary-colour-text;
+      }
+
+      .excerpt {
+        flex: 100%;
+
+        p {
+          color: $secondary-colour-text;
+        }
+      }
     }
   }
 }
 
-@keyframes gridAnimWiggle {
-  0% { transform: translate(0, 0); }
-  100%   { transform: translate(0, -168px); }
+@media only screen and (max-width: 30rem) {
+  .home {
+    .section {
+      margin-top: .25rem;
+    }
+    .post {
+      height: auto;
+      margin: .5rem 0;
+    }
+
+    .date {
+      display: none;
+    }
+  }
 }
