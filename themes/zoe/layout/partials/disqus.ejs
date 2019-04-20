@@ -1,0 +1,20 @@
+<div id="disqus">
+	<div id="disqus_thread"></div>
+</div>
+<% if (page.permalink){ %>
+<script>
+	var disqus_config = function () {
+		<% if (page.permalink){ %>
+		this.page.url = '<%= page.permalink %>';
+		<% } %>
+	}
+	(function(){
+		var dsq = document.createElement('script');
+		dsq.type = 'text/javascript';
+		dsq.async = true;
+		dsq.src = '//zoeaubert.disqus.com/embed.js';
+		dsq.setAttribute('data-timestamp', + new Date());
+		(document.getElementById('disqus_thread')).appendChild(dsq);
+	})();
+</script>
+<% } %>

@@ -66,6 +66,10 @@ pagination_dir: page
 
 theme: zoe
 
+# Disqus
+disqus_shortname: zoeaubert
+comments: true
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:

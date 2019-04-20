@@ -1,0 +1,16 @@
+@import 'core';
+
+#disqus {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  background-color: $soft-white;
+}
+
+#disqus_thread {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 1rem;
+  background-color: $soft-white;
+}
