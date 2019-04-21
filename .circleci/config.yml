@@ -77,10 +77,6 @@ jobs:
           command: npm run build
 
       - run:
-          name: Update apt-get
-          command: sudo apt-get update
-
-      - run:
           name: Install python
           command: sudo apt-get install python-pip python-dev jq
 
