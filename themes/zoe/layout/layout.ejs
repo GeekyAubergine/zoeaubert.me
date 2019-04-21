@@ -22,38 +22,15 @@
 
     <%- css('css/app.css') %>
 
-    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js"></script>
 </head>
 <body>
-    <% if (!page.path.match(/index.html/i)) { %>
     <nav class="nav">
         <div class="wrapper">
             <h2 class="name"><a href="/">Zoe Aubert</a></h2>
-            <ul class="links">
-                <li>
-                    <a href="http://twitter.com/geekyaubergine" target="_blank">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://github.com/geekyaubergine" target="_blank">
-                        <i class="fab fa-github"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="http://linkedin.com/in/zoeaubert" target="_blank">
-                        <i class="fab fa-linkedin"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="mailto:hello@zoeaubert.me" target="_blank">
-                        <i class="far fa-envelope"></i>
-                    </a>
-                </li>
-            </ul>
+            <%- partial('partials/social-links') %>
         </div>
     </nav>
-    <% } %>
     <%- body %>
 </body>
 </html>

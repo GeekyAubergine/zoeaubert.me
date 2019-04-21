@@ -1,0 +1,115 @@
+@import 'core';
+
+$left-bar-offset: .5rem;
+$left-bar-icon-size: 2.5rem;
+$left-bar-width: $left-bar-icon-size * 2;
+
+.blog-entry {
+  flex: 100%;
+  margin: .5rem 0;
+  background-color: $body-background;
+  //border: solid 1px $border;
+
+  box-shadow: $base-box-shadow;
+  transition: box-shadow 250ms;
+
+  &:hover {
+
+    box-shadow:
+            0 3px 9px rgba(0,0,0,0.16),
+            0 2px 9px rgba(0,0,0,0.23);
+  }
+
+  .wrapper {
+    display: flex;
+    flex: 100%;
+    flex-wrap: nowrap;
+    text-decoration: none;
+  }
+
+  .left {
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: $left-bar-width;
+    max-width: $left-bar-width;
+    min-height: $left-bar-width;
+    max-height: $left-bar-width;
+
+    background-image: linear-gradient(135deg, $primary-colour 50%, $body-background 50%);
+  }
+
+  .left-icon {
+    position: absolute;
+    top: $left-bar-icon-size / 2;
+    justify-content: center;
+    align-items: center;
+    height: $left-bar-icon-size;
+    width: $left-bar-icon-size;
+    border-radius: $left-bar-icon-size / 2;
+    background-color: $icon-color;
+    color: $body-background;
+    font-size: 130%;
+    z-index: 2;
+  }
+
+  .right {
+    flex: 1;
+    padding: ($left-bar-icon-size - .75rem) 2rem 1rem 0;
+  }
+
+  .title {
+    flex: 100%;
+    font-size: 125%;
+    font-weight: bold;
+  }
+
+  .excerpt {
+    flex: 100%;
+
+    p {
+      color: $secondary-colour-text;
+    }
+  }
+
+}
+
+@media only screen and (max-width: 46rem) {
+  .blog-entry {
+    height: auto;
+    margin: 0;
+    border-top: 1px solid $border;
+
+    box-shadow: none;
+
+    .left {
+      position: relative;
+      flex-wrap: wrap;
+      justify-content: center;
+      min-width: $left-bar-width / 2;
+      max-width: $left-bar-width / 2;
+      min-height: $left-bar-width / 2;
+      max-height: $left-bar-width / 2;
+
+      background-image: linear-gradient(135deg, $primary-colour 50%, $body-background 50%);
+    }
+
+    .left-icon {
+      position: absolute;
+      top: $left-bar-icon-size / 4;
+      justify-content: center;
+      align-items: center;
+      height: $left-bar-icon-size / 2;
+      width: $left-bar-icon-size / 2;
+      border-radius: $left-bar-icon-size / 4;
+      background-color: $icon-color;
+      color: $body-background;
+      font-size: 65%;
+      z-index: 2;
+    }
+
+    .right {
+      padding: ($left-bar-icon-size / 2 - .75rem) 2rem 1rem 0;
+    }
+  }
+}

@@ -1,20 +1,8 @@
 @import 'core';
 
-body {
-  background-color: $main-background;
-  flex: 1;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-main {
-  align-items: flex-start;
-  max-width: $max-width;
-}
-
 .nav {
   display: flex;
-  flex: 100%;
+  width: 100%;
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;

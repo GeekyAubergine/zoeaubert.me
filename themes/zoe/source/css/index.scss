@@ -1,156 +1,62 @@
 @import 'core';
 
 .home {
-  .hero {
+  .intro {
     flex: 100%;
     justify-content: center;
     align-items: center;
-    padding: 2rem 1rem;
-    background-color: $yellow;
+    margin-bottom: .5rem;
+    padding: 2rem 1.5rem;
+    background-color: $body-background;
+    box-shadow: $base-box-shadow;
 
-    .wrapper {
-      flex: 100%;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .name {
-      padding-bottom: 2rem;
-      text-align: center;
-      font-size: 400%;
-    }
-
-    .intro {
-      padding: 0 0 .5rem;
-      margin: 0;
-      text-align: center;
-      font-size: 125%;
-    }
-
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      align-items: center;
-      margin: 2rem 0 0;
-
-      li {
-        display: flex;
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        margin: 0 1rem;
-        list-style: none;
-
-        a {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          font-size: 175%;
-          font-weight: bold;
-          color: $primary-colour-text;
-          text-decoration: none;
-        }
-
-        p {
-          flex: 100%;
-          font-size: 60%;
-          text-align: center;
-          border-bottom: 1px solid $primary-colour;
-          transition: border-bottom 250ms;
-        }
-
-        &:hover {
-          p {
-            border-bottom-color: $primary-colour-text;
-          }
-        }
-
-        &:last-of-type {
-          margin-right: 0;
-        }
-      }
+    p {
+      padding: 0;
     }
   }
 
-  .section {
+  .posts-header {
+    position: relative;
     flex: 100%;
-    background-color: $soft-white;
+    margin: 1rem 0;
+    padding: .5rem .5rem 0;
+    font-size: 125%;
+    line-height: 2em;
+    text-align: center;
 
-    .header {
-      flex: 100%;
-      justify-content: flex-end;
-      margin: 0 5%;
-      padding: .5rem 1rem;
-
-      text-align: center;
-      font-size: 155%;
+    &:before {
+      content: '';
+      background: $border;
+      position: absolute;
+      left: 0;
+      top: 60%;
+      width: 45%;
+      height: 2px;
     }
-  }
-
-  .blog {
-    .header-line {
-      height: 100%;
-      border-left: solid darken($white, 20%) 1px;
-    }
-
-    .post {
-      padding: .75rem 1rem;
-      flex: 100%;
-      border-top: 1px $card-border solid;
-
-      .wrapper {
-        flex: 100%;
-        text-decoration: none;
-
-      }
-
-      .top {
-        display: flex;
-        flex: 100%;
-        justify-content: space-between;
-        align-items: center;
-        text-decoration: none;
-      }
-
-      .title {
-        flex: 2;
-        font-size: 115%;
-        font-weight: bold;
-      }
-
-      .date {
-        flex: 1;
-        text-align: right;
-        padding: 0;
-        text-transform: none;
-        font-size: 115%;
-        color: $secondary-colour-text;
-      }
-
-      .excerpt {
-        flex: 100%;
-
-        p {
-          color: $secondary-colour-text;
-        }
-      }
+    &:after {
+      content: '';
+      background: $border;
+      position: absolute;
+      right: 0;
+      top: 60%;
+      width: 45%;
+      height: 2px;
     }
   }
 }
 
-@media only screen and (max-width: 30rem) {
+@media only screen and (max-width: 46rem) {
   .home {
-    .section {
-      margin-top: .25rem;
+    .intro {
+      padding: 0 .5rem 1rem;
     }
-    .post {
-      height: auto;
-      margin: .5rem 0;
-    }
+  }
+}
 
-    .date {
-      display: none;
+@media only screen and (min-width: 46rem) {
+  .home {
+    .posts-header {
+      //display: none;
     }
   }
 }

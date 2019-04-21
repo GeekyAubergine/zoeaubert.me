@@ -2,8 +2,10 @@
 title: An Adventure Into Diffing Algorithms
 date: 2016-11-01
 tags:
+- alpha
+- beta
 categories:
-- post
+- tech
 ---
 A while ago at work, we decided that our current diffing algorithm was not
 meeting our requirements. At the time we were using<!--- more --->

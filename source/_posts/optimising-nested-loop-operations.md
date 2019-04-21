@@ -1,6 +1,7 @@
 ---
 title: Optimising nested loop operations
-categories: post
+categories: 
+- tech
 layout: post
 date: 2019-02-23 13:10:18
 tags:
@@ -23,7 +24,7 @@ layers of children to access Delta.
 An important thing to consider is whether or not the Alpha objects already have
 these children loaded into memory, or they need to retrieve from the database,
 this will greatly affect the required approach. Both the [database](#database)
-nd [preloaded](#preloaded) approaches can be found below.
+and [preloaded](#preloaded) approaches can be found below.
 
 We’ll use javascript in these examples but the techniques discussed will be
 applicable to any language - I first implemented this solution in PHP.

@@ -1,49 +1,14 @@
 <main class="home">
-    <section class="hero">
-        <div class="wrapper">
-            <h1 class="name">Zoe Aubert</h1>
-            <p class="intro">Software Developer from Jersey, living and working in Portsmouth</p>
-            <p class="intro">Doing interesting things at <a href="https://radweb.co.uk" target="_blank">RadWeb</a></p>
-        </div>
-        <ul class="links">
-            <li>
-                <a href="http://twitter.com/geekyaubergine" target="_blank">
-                    <i class="fab fa-twitter"></i>
-                </a>
-            </li>
-            <li>
-                <a href="http://github.com/geekyaubergine" target="_blank">
-                    <i class="fab fa-github"></i>
-                </a>
-            </li>
-            <li>
-                <a href="http://linkedin.com/in/zoeaubert" target="_blank">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-            </li>
-            <li>
-                <a href="mailto:hello@zoeaubert.me" target="_blank">
-                    <i class="far fa-envelope"></i>
-                </a>
-            </li>
-        </ul>
+    <section class="intro">
+        <p>Hi there, I'm a Software Developer from Jersey, living and
+            working in Portsmouth after completing my Computer
+            Science degree. Experimenting with crazy ideas and
+            doing interesting things at
+            <a href="https://radweb.co.uk" target="_blank">RadWeb</a>.</p>
     </section>
-    <section class="blog section">
-        <h2 class="header">Posts</h2>
-        <% site.categories.findOne({ name: 'post' }).posts.sort('date', -1).each((post) => { %>
-        <article class="post">
-            <a class="wrapper" href='<%- url_for(post.path) %>'>
-                <div class="top">
-                    <h3 class="title"><%= post.title %></h3>
-                    <p class="date"><%= date(post.date, config.date_format) %></p>
-                </div>
-                <% if (post.excerpt) { %>
-                <div class="excerpt">
-                    <%- post.excerpt %><%- post.excerpt.endsWith('.') ? '..' : '...' %>
-                </div>
-                <% } %>
-            </a>
-        </article>
+    <section>
+    <% site.posts.sort('date', -1).forEach((post) => { %>
+        <%- partial('partials/blog-entry', { post }) %>
         <% }) %>
     </section>
 </main>
