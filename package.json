@@ -36,5 +36,8 @@
     "markdownlint": "^0.7.0",
     "markdownlint-cli": "^0.13.0",
     "sass-lint": "^1.12.1"
+  },
+  "dependencies": {
+    "react-router-dom": "^5.0.0"
   }
 }

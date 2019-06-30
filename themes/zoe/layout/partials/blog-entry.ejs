@@ -16,13 +16,6 @@
 					<%- post.excerpt %><%- post.excerpt.endsWith('.') ? '..' : '...' %>
 				</div>
 			<% } %>
-			<% post.categories.forEach((c) => { %>
-				<%- c.name %>
-				<%- c.name == 'life' %>
-			<% }) %>
-			<% post.tags.forEach((c) => { %>
-				<%- c.name %>
-			<% }) %>
 		</div>
 	</a>
 </article>
