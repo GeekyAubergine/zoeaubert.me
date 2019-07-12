@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext');
+
+$real-white: #fff;
+$real-black: #000;
+
+$white: #fefefe;
+$black: #121212;
+
+$background-offwhite: #f2f2ed;
+$border-color: #e0e0e0;
+
+$primary-blue: hsl(197, 100, 48);
+$primary-red: hsl(4, 100, 64);
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  height: 100vh;
+}
+
+body,
+#root {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: $background-offwhite;
+  width: 100%;
+  height: 100vh;
+}
+
+header,
+main,
+div,
+section,
+article {
+  display: flex;
+  flex-wrap: wrap;
+}
