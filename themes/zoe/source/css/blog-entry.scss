@@ -8,72 +8,29 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
 
 .blog-entry {
   flex: 100%;
-  background-color: $body-background;
+  flex-wrap: wrap;
 
   height: auto;
   margin: 0;
-  border-top: 1px solid $border;
+  padding: 1rem 1.5rem 1.5rem;
+
+  border-top: 1px solid $card-border;
+  background-color: $body-background;
 
   .wrapper {
-    display: flex;
-    flex: 100%;
-    flex-wrap: nowrap;
     text-decoration: none;
-  }
-
-  .left {
-    position: relative;
     flex-wrap: wrap;
-    justify-content: center;
-
-    min-width: $left-bar-mobile-width / 2;
-    max-width: $left-bar-mobile-width / 2;
-    min-height: $left-bar-mobile-width / 2;
-    max-height: $left-bar-mobile-width / 2;
-
-    background-image: linear-gradient(135deg, $primary-colour 50%, $body-background 50%);
-  }
-
-  .left-icon {
-    //position: absolute;
-    //top: $left-bar-icon-size / 2;
-    //justify-content: center;
-    //align-items: center;
-    //height: $left-bar-icon-size;
-    //width: $left-bar-icon-size;
-    //border-radius: $left-bar-icon-size / 2;
-    //background-color: $icon-color;
-    //color: $body-background;
-    //font-size: 130%;
-    //z-index: 2;
-
-    position: absolute;
-    top: $left-bar-icon-mobile-size / 4;
-    justify-content: center;
-    align-items: center;
-    height: $left-bar-icon-mobile-size / 2;
-    width: $left-bar-icon-mobile-size / 2;
-    border-radius: $left-bar-icon-mobile-size / 4;
-    background-color: $icon-color;
-    color: $body-background;
-    font-size: 65%;
-    z-index: 2;
-  }
-
-  .right {
-    flex: 1;
-    //padding: ($left-bar-icon-size - .75rem) 2rem 1rem 0;
-    padding: ($left-bar-icon-mobile-size / 2 - .75rem) 2rem 1rem 0;
   }
 
   .title {
-    flex: 100%;
+    width: 100%;
     font-size: 125%;
     font-weight: bold;
+    text-decoration: none;
   }
 
   .excerpt {
-    flex: 100%;
+    width: 100%;
 
     p {
       color: $secondary-colour-text;
@@ -81,53 +38,10 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
   }
 
   &:hover {
-    background-color: darken($body-background, 5%);
+    background-color: darken($body-background, 2.5%);
 
-    .left {
-      background-image: linear-gradient(135deg, $primary-colour 50%, darken($body-background, 5%) 50%);
-    }
-  }
-}
-
-@media only screen and (min-width: 46rem) {
-  .blog-entry {
-    flex: 100%;
-    background-color: $body-background;
-
-    height: auto;
-    margin: 0;
-    border-top: 1px solid $border;
-
-    .wrapper {
-      display: flex;
-      flex: 100%;
-      flex-wrap: nowrap;
-      text-decoration: none;
-    }
-
-    .left {
-      position: relative;
-      flex-wrap: wrap;
-      justify-content: center;
-
-      min-width: $left-bar-width;
-      max-width: $left-bar-width;
-      min-height: $left-bar-width;
-      max-height: $left-bar-width;
-
-      background-image: linear-gradient(135deg, $primary-colour 50%, $body-background 50%);
-    }
-
-    .left-icon {
-      top: $left-bar-icon-size / 2;
-      height: $left-bar-icon-size;
-      width: $left-bar-icon-size;
-      border-radius: $left-bar-icon-size / 2;
-      font-size: 100%;
-    }
-
-    .right {
-      padding: ($left-bar-icon-size - .75rem) 2rem 1rem 0;
+    .title {
+      text-decoration: underline;
     }
   }
 }
