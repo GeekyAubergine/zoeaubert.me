@@ -15,9 +15,13 @@
 
     <% if (page.title) { %>
     <title><%= page.title %> | Zoe Aubert</title>
+    <meta name="twitter:title" content="<%= page.title %>"/>
     <% } else { %>
     <title>Zoe Aubert</title>
+    <meta name="twitter:title" content="Zoe Aubert" />
     <% } %>
+
+    <%- open_graph(['twitter_card']) %>
 
     <%- css('css/app.css') %>
 

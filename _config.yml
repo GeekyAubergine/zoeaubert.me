@@ -66,6 +66,14 @@ pagination_dir: page
 
 theme: zoe
 
+# Open Graph section
+open_graph:
+  pretty_url: true
+  image: /images/apple-icon.jpg
+  twitter:
+    twitter_id: geekyaubergine
+    twitter_site: geekyaubergine
+
 browsersync:
   logLevel: "warn"
   ghostMode:
