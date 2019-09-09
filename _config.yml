@@ -52,7 +52,7 @@ index_generator:
 
 marked:
   breaks: false
-  
+
 # Category & Tag
 default_category: uncategorized
 category_map:
@@ -65,6 +65,19 @@ per_page: 0
 pagination_dir: page
 
 theme: zoe
+
+# Open Graph section
+open_graph:
+  pretty_url: true
+  image: /images/apple-icon.jpg
+  twitter:
+    twitter_id: geekyaubergine
+    twitter_site: geekyaubergine
+
+browsersync:
+  logLevel: "warn"
+  ghostMode:
+    scroll: true
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

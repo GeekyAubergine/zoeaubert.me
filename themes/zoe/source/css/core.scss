@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Manjari:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext&display=swap');
 
 $real-white: #fff;
 $real-black: #000;
@@ -20,9 +20,9 @@ $soft-white: #fdfdfd;
 $yellow: #ffe252;
 $purple: #9f00f5;
 
-$border: darken($real-white, 20%);
+$border: darken($real-white, 10%);
 
-$main-background: #f4f4f4;
+$main-background: #e8e8e8;
 $body-background: $soft-white;
 
 $card-background: $real-white;
@@ -32,7 +32,7 @@ $card-width: calc(50% - 1rem);
 $card-width-wrap: 48rem;
 
 $max-width: 48rem;
-$data-background: #f9f2f4;
+$data-background: #faf4dc;
 
 $base-box-shadow:
         0 3px 4px rgba(0,0,0,0.16),
@@ -105,7 +105,7 @@ h6 {
 }
 
 code {
-  padding: 0 .25em;
+  padding: 0 .35em 0 .25rem;
   color: #c7254e;
   background-color: $data-background;
 
