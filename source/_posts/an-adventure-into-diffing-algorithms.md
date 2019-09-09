@@ -2,8 +2,10 @@
 title: An Adventure Into Diffing Algorithms
 date: 2016-11-01
 tags:
+- alpha
+- beta
 categories:
-- post
+- tech
 ---
 A while ago at work, we decided that our current diffing algorithm was not
 meeting our requirements. At the time we were using<!--- more --->
@@ -13,16 +15,16 @@ of our more complicated inputs. The main complications we faced were our use of
 `;` to separate items and the addition and removal of line breaks without the
 meaning of the content changing.
 
-Input A:
+Input A:  
 Alpha
 
-Input B:
+Input B:  
 Alpha; Beta
 
-Original output:
+Original output:  
 ~~Alpha~~*Alpha; Beta*
 
-Desired output:
+Desired output:  
 Alpha; *Beta*
 
 In this case, the element `Beta` has been added to the input string, when doing
@@ -31,18 +33,18 @@ the original `Alpha` being compared to `Alpha;` which results in the diffing
 algorithm determining that they are different words and mark them as a complete
 replacement.
 
-Input A:
+Input A:  
 Alpha; Beta
 
-Input B:
+Input B:  
 Alpha;
 Beta
 
-Original output:
+Original output:  
 Alpha; ~~Beta~~
 *Beta*
 
-Desired output:
+Desired output:  
 Alpha;
 Beta
 
@@ -56,9 +58,14 @@ this I arrived at a solution of each input being tokenised using whitespace as
 separators, I then take these tokens and process a copy of them removed the `;`
 and `\n` characters, for example:
 
-Input: `Alpha; Bravo, Charlie; Delta`
-Raw Tokens: `Alpha;` `Bravo, Charlie;` `Delta`
-Clean Tokens: `Alpha` `Bravo, Charlie` `Delta`
+Input:  
+`Alpha; Bravo, Charlie; Delta`
+
+Raw Tokens:   
+`Alpha;` `Bravo, Charlie;` `Delta`
+
+Clean Tokens:  
+`Alpha` `Bravo, Charlie` `Delta`
 
 Upon doing this to each set of inputs the algorithm could be performed against
 the clean tokens, and the resulting diff would produce the results we wanted. It

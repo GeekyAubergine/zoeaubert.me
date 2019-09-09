@@ -1,0 +1,10 @@
+<article class="blog-entry">
+	<a class="wrapper" href='<%- url_for(post.path) %>'>
+        <h3 class="title"><%= post.title %></h3>
+        <% if (post.excerpt) { %>
+            <div class="excerpt">
+                <%- post.excerpt %><%- post.excerpt.endsWith('.') ? '..' : '...' %>
+            </div>
+        <% } %>
+	</a>
+</article>

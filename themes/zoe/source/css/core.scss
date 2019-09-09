@@ -1,32 +1,4 @@
-//@font-face {
-//  font-family: 'Open Sans';
-//  font-weight: 300;
-//  font-style: normal;
-//  src: url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTXZ2MAKAc2x4R1uOSeegc5U.eot');
-//  src: url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTXZ2MAKAc2x4R1uOSeegc5U.eot?#iefix') format('embedded-opentype'),
-//  local('Open Sans Light'),
-//  local('Open-Sans-300'),
-//  url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTRampu5_7CjHW5spxoeN3Vs.woff2') format('woff2'),
-//  url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff') format('woff'),
-//  url('//fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTYnF5uFdDttMLvmWuJdhhgs.ttf') format('truetype'),
-//  url('//fonts.gstatic.com/l/font?kit=DXI1ORHCpsQm3Vp6mXoaTVlIn5tFQcqMuf-jhyJP0ps&skey=b33cc031a589c168&v=v13#OpenSans') format('svg');
-//}
-//
-//@font-face {
-//  font-family: 'Open Sans';
-//  font-weight: 300;
-//  font-style: italic;
-//  src: url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxrXcjzEax2LfQAlK8DdMzhA.eot');
-//  src: url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxrXcjzEax2LfQAlK8DdMzhA.eot?#iefix') format('embedded-opentype'),
-//  local('Open Sans Light Italic'),
-//  local('Open-Sans-300italic'),
-//  url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxtTIkQYohD4BpHvJ3NvbHoA.woff2') format('woff2'),
-//  url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxvR_54zmj3SbGZQh3vCOwvY.woff') format('woff'),
-//  url('//fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxrfB31yxOzP-czbf6AAKCVo.ttf') format('truetype'),
-//  url('//fonts.gstatic.com/l/font?kit=PRmiXeptR36kaC0GEAetxj4dnM32POWavC8T_whbZeI&skey=78fa527f8e87b8b8&v=v13#OpenSans') format('svg');
-//}
-
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Manjari:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext&display=swap');
 
 $real-white: #fff;
 $real-black: #000;
@@ -38,24 +10,20 @@ $invisible: hsla(0, 0, 0, 0);
 $white: darken($real-white, 2%);
 $primary-colour: #ffe252;
 $primary-colour-text: $black;
-$secondary-colour-text: #606060;
+$secondary-colour-text: #404040;
 $divider-colour:        #b6b6b6;
-$accent-colour:         #ff5252;
 $code-background-color: #fffff0;
+$icon-color: #505050;
 
 $dark: #141414;
 $soft-white: #fdfdfd;
 $yellow: #ffe252;
 $purple: #9f00f5;
 
-$black: lighten($real-black, 5%);
-$header-colour: $primary-colour; //hsla(295, 60%, 20%, 1);
-$nav-colour: darken($header-colour, 0%);
-$border: darken($real-white, 20%);
-$lift-off-grey: #888;
+$border: darken($real-white, 10%);
 
-$main-background: #242424;
-$body-background: #ffffff;
+$main-background: #e8e8e8;
+$body-background: $soft-white;
 
 $card-background: $real-white;
 $card-border: darken($card-background, 15%);
@@ -64,7 +32,11 @@ $card-width: calc(50% - 1rem);
 $card-width-wrap: 48rem;
 
 $max-width: 48rem;
-$data-background: #f9f2f4;
+$data-background: #faf4dc;
+
+$base-box-shadow:
+        0 3px 4px rgba(0,0,0,0.16),
+        0 2px 2px rgba(0,0,0,0.23);
 
 * {
   margin: 0;
@@ -76,15 +48,16 @@ $data-background: #f9f2f4;
 }
 
 html {
-  display: flex;
-  flex-wrap: wrap;
   width: 100%;
 }
 
 body {
   display: flex;
-  flex: 1;
   flex-wrap: wrap;
+  background-color: $main-background;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 header,
@@ -95,6 +68,11 @@ article {
   display: flex;
   flex: 1;
   flex-wrap: wrap;
+}
+
+main {
+  align-items: flex-start;
+  max-width: $max-width;
 }
 
 a {
@@ -127,7 +105,7 @@ h6 {
 }
 
 code {
-  padding: 0 .25em;
+  padding: 0 .35em 0 .25rem;
   color: #c7254e;
   background-color: $data-background;
 

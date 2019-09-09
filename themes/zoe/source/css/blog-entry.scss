@@ -1,0 +1,47 @@
+@import 'core';
+
+$left-bar-offset: .5rem;
+$left-bar-icon-size: 2rem;
+$left-bar-icon-mobile-size: 2.5rem;
+$left-bar-width: $left-bar-icon-size * 2;
+$left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
+
+.blog-entry {
+  flex: 100%;
+  flex-wrap: wrap;
+
+  height: auto;
+  margin: 0;
+  padding: 1rem 1.5rem 1.5rem;
+
+  border-top: 1px solid $card-border;
+  background-color: $body-background;
+
+  .wrapper {
+    text-decoration: none;
+    flex-wrap: wrap;
+  }
+
+  .title {
+    width: 100%;
+    font-size: 125%;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .excerpt {
+    width: 100%;
+
+    p {
+      color: $secondary-colour-text;
+    }
+  }
+
+  &:hover {
+    background-color: darken($body-background, 2.5%);
+
+    .title {
+      text-decoration: underline;
+    }
+  }
+}
