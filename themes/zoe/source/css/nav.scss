@@ -2,19 +2,19 @@
 
 .nav {
   display: flex;
-  width: $max-width;
-  height: 6rem;
+  width: 100%;
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  padding: .75rem 1rem .5rem;
-  background-color: $primary-colour;
 
   .wrapper {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     max-width: $max-width;
+    height: 6rem;
+    padding: 1.5rem 1rem 1rem;
+    background-color: $primary-colour;
   }
 
   .name {
