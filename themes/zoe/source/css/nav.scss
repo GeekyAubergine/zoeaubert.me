@@ -6,7 +6,7 @@
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  padding: .75rem 1rem;
+  padding: .75rem 1rem .5rem;
   background-color: $primary-colour;
 
   .wrapper {
@@ -41,13 +41,13 @@
       align-items: center;
       margin: 0 .5rem;
       list-style: none;
+      border-bottom: 1px solid $primary-colour;
 
       a {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        font-size: 150%;
-        font-weight: bold;
+        font-weight: normal;
         color: $primary-colour-text;
         text-decoration: none;
       }
@@ -56,14 +56,11 @@
         flex: 100%;
         font-size: 60%;
         text-align: center;
-        border-bottom: 1px solid $primary-colour;
         transition: border-bottom 250ms;
       }
 
       &:hover {
-        p {
-          border-bottom-color: $primary-colour-text;
-        }
+        border-bottom-color: $primary-colour-text;
       }
 
       &:last-of-type {
