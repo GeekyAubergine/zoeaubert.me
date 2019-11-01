@@ -1,9 +1,9 @@
 @import 'core';
 
 .post-article {
-  padding: 1rem 1.5rem 1.5rem;
+  width: 100%;
+  padding: 0 1.5rem 1.5rem;
   height: 100%;
-  background-color: $soft-white;
 
   h2,
   h3,
@@ -37,7 +37,8 @@
   }
 
   .title {
-    padding: 0 0 .5rem;
+    padding: 0 0 1rem;
+    font-size: 200%;
   }
 
   .date {
@@ -49,7 +50,7 @@
   }
 }
 
-@media only screen and (min-width: 46rem) {
+@media only screen and (min-width: 44rem) {
   .post-article {
     .title {
       padding: 1rem 0;

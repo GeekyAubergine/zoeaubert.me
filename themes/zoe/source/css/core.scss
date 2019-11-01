@@ -10,7 +10,7 @@ $invisible: hsla(0, 0, 0, 0);
 $white: darken($real-white, 2%);
 $primary-colour: #ffe252;
 $primary-colour-text: $black;
-$secondary-colour-text: #404040;
+$secondary-colour-text: #383838;
 $divider-colour:        #b6b6b6;
 $code-background-color: #fffff0;
 $icon-color: #505050;
@@ -22,7 +22,7 @@ $purple: #9f00f5;
 
 $border: darken($real-white, 10%);
 
-$main-background: #e8e8e8;
+
 $body-background: $soft-white;
 
 $card-background: $real-white;
@@ -31,12 +31,15 @@ $card-border-radius: .25rem;
 $card-width: calc(50% - 1rem);
 $card-width-wrap: 48rem;
 
-$max-width: 48rem;
-$data-background: #faf4dc;
-
 $base-box-shadow:
         0 3px 4px rgba(0,0,0,0.16),
         0 2px 2px rgba(0,0,0,0.23);
+
+
+$main-background: #fefef8;
+$max-width: 44rem;
+$data-background: #f6f0d5;
+$data-text-color: #D10034;
 
 * {
   margin: 0;
@@ -80,6 +83,7 @@ a {
   transition: color .25s;
   font-size: inherit;
   font-weight: bold;
+  text-decoration: none;
 }
 
 p {
@@ -105,11 +109,11 @@ h6 {
 }
 
 code {
-  padding: 0 .35em 0 .25rem;
-  color: #c7254e;
+  padding: .1rem .35rem;
+  color: $data-text-color;
   background-color: $data-background;
 
-  table-layout:fixed;
+  table-layout: fixed;
   max-width: 100%;
   overflow-x: scroll;
 }
@@ -119,7 +123,7 @@ pre {
   background-color: $data-background;
   table-layout: fixed;
   max-width: calc(100vw - 4em);
-  margin: 1rem;
+  margin: 1rem 0 !important; // Overrule prism
   border: 1px $card-border solid;
 
   code {
@@ -160,10 +164,10 @@ blockquote {
   display: flex;
   flex: 100%;
   flex-wrap: wrap;
-  background: $data-background;
-  border-left: .25rem solid $card-border;
+  background: #f5f2f0;
+  border-left: .25rem solid $black;
   margin: .5rem 0;
-  padding: 0.75em 1em;
+  padding: 0.75em 1.25em;
 
   p {
     padding: 0 0 .25rem;
