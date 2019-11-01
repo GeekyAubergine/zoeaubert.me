@@ -1,45 +1,18 @@
 @import url('https://fonts.googleapis.com/css?family=Manjari:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext&display=swap');
 
-$real-white: #fff;
-$real-black: #000;
+$main-background: #fefef8;
+$max-width: 44rem;
 
 $white: #fefefe;
 $black: #121212;
-
 $invisible: hsla(0, 0, 0, 0);
-$white: darken($real-white, 2%);
-$primary-colour: #ffe252;
+
 $primary-colour-text: $black;
 $secondary-colour-text: #383838;
-$divider-colour:        #b6b6b6;
-$code-background-color: #fffff0;
-$icon-color: #505050;
 
-$dark: #141414;
-$soft-white: #fdfdfd;
-$yellow: #ffe252;
-$purple: #9f00f5;
-
-$border: darken($real-white, 10%);
-
-
-$body-background: $soft-white;
-
-$card-background: $real-white;
-$card-border: darken($card-background, 15%);
-$card-border-radius: .25rem;
-$card-width: calc(50% - 1rem);
-$card-width-wrap: 48rem;
-
-$base-box-shadow:
-        0 3px 4px rgba(0,0,0,0.16),
-        0 2px 2px rgba(0,0,0,0.23);
-
-
-$main-background: #fefef8;
-$max-width: 44rem;
 $data-background: #f6f0d5;
 $data-text-color: #D10034;
+$border: darken($white, 15%);
 
 * {
   margin: 0;
@@ -124,7 +97,7 @@ pre {
   table-layout: fixed;
   max-width: calc(100vw - 4em);
   margin: 1rem 0 !important; // Overrule prism
-  border: 1px $card-border solid;
+  border: 1px $border solid;
 
   code {
     padding: 0;
@@ -136,12 +109,12 @@ table {
   width: 100%;
   margin: .5rem auto;
   padding: 0;
-  border: 1px solid $card-border;
+  border: 1px solid $border;
   border-collapse: collapse;
 
   tr {
     background-color: $data-background;
-    border: 1px solid $card-border;
+    border: 1px solid $border;
     padding: .25em;
   }
 
