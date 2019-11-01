@@ -50,7 +50,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        color: $primary-colour-text;
+        color: $primary-colour-text-light;
         text-decoration: none;
       }
 
@@ -61,11 +61,27 @@
       }
 
       &:hover {
-        border-bottom-color: $primary-colour-text;
+        border-bottom-color: $primary-colour-text-light;
       }
 
       &:last-of-type {
         margin-right: 0;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .nav {
+    .links {
+      li {
+        a {
+          color: $primary-colour-text-dark;
+        }
+
+        &:hover {
+          border-bottom-color: $primary-colour-text-dark;
+        }
       }
     }
   }

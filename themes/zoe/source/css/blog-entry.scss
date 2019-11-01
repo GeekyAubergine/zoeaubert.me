@@ -16,7 +16,7 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
   .divider {
     margin: 0 16.6666% 1.5rem 16.6666%;
     width: 66.6666%;
-    border-top: 1px dashed $border;
+    border-top: 1px dashed $border-light;
   }
 
   .wrapper {
@@ -35,15 +35,33 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
     width: 100%;
 
     p {
-      color: $secondary-colour-text;
+      color: $secondary-colour-text-light;
     }
   }
 
   &:hover {
-    background-color: darken($main-background, 2.5%);
+    background-color: darken($main-background-light, 2.5%);
 
     .title {
       text-decoration: underline;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .blog-entry {
+    .divider {
+      border-top: 1px dashed $border-dark;
+    }
+
+    .excerpt {
+      p {
+        color: $secondary-colour-text-dark;
+      }
+    }
+
+    &:hover {
+      background-color: lighten($main-background-dark, 2.5%);
     }
   }
 }
