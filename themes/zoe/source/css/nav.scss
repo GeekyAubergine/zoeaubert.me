@@ -12,9 +12,7 @@
     justify-content: center;
     align-items: center;
     max-width: $max-width;
-    height: 6rem;
-    padding: 1.5rem 1rem 1rem;
-    background-color: $primary-colour;
+    padding: 4rem 1rem 2rem;
   }
 
   .name {
@@ -24,8 +22,8 @@
     text-align: center;
 
     a {
-      font-size: 150%;
-      font-weight: normal;
+      font-size: 350%;
+      font-weight: 300;
       text-decoration: none;
     }
   }
@@ -40,19 +38,19 @@
     li {
       display: flex;
       flex: 1;
-      width: 4rem;
+      width: 3.2rem;
       justify-content: center;
       align-items: center;
       margin: 0 1rem;
       list-style: none;
-      border-bottom: 1px solid $primary-colour;
+      border-bottom: 1px solid $invisible;
+      transition: border-bottom 250ms;
 
       a {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        font-weight: normal;
-        color: $primary-colour-text;
+        color: $primary-colour-text-light;
         text-decoration: none;
       }
 
@@ -60,15 +58,30 @@
         flex: 100%;
         font-size: 60%;
         text-align: center;
-        transition: border-bottom 250ms;
       }
 
       &:hover {
-        border-bottom-color: $primary-colour-text;
+        border-bottom-color: $primary-colour-text-light;
       }
 
       &:last-of-type {
         margin-right: 0;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .nav {
+    .links {
+      li {
+        a {
+          color: $primary-colour-text-dark;
+        }
+
+        &:hover {
+          border-bottom-color: $primary-colour-text-dark;
+        }
       }
     }
   }

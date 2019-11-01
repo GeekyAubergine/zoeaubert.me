@@ -1,14 +1,13 @@
 <main class="home">
     <section class="intro">
         <p>Hi there, I'm a Software Developer from Jersey, living and
-            working in Portsmouth after completing my Computer
-            Science degree. Experimenting with fun ideas and
+            working in Portsmouth. Experimenting with fun ideas and
             doing interesting things at
             <a href="https://radweb.co.uk" target="_blank">Radweb</a>.</p>
     </section>
     <section>
     <% site.posts.sort('date', -1).slice(0,5).forEach((post) => { %>
         <%- partial('partials/blog-entry', { post }) %>
-        <% }) %>
+    <% }) %>
     </section>
 </main>

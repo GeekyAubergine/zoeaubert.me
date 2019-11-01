@@ -1,42 +1,31 @@
 @import url('https://fonts.googleapis.com/css?family=Manjari:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext&display=swap');
 
-$real-white: #fff;
-$real-black: #000;
+$main-background-light: #fefef8;
+$max-width: 44rem;
 
 $white: #fefefe;
 $black: #121212;
-
 $invisible: hsla(0, 0, 0, 0);
-$white: darken($real-white, 2%);
-$primary-colour: #ffe252;
-$primary-colour-text: $black;
-$secondary-colour-text: #404040;
-$divider-colour:        #b6b6b6;
-$code-background-color: #fffff0;
-$icon-color: #505050;
 
-$dark: #141414;
-$soft-white: #fdfdfd;
-$yellow: #ffe252;
-$purple: #9f00f5;
+$primary-colour-text-light: $black;
+$secondary-colour-text-light: #383838;
 
-$border: darken($real-white, 10%);
+$data-background-light: #f6f0d5;
+$data-text-color-light: #D10034;
+$border-light: darken($white, 15%);
 
-$main-background: #e8e8e8;
-$body-background: $soft-white;
+// Dark mode
+$main-background-dark: #24242A;
+$max-width: 44rem;
 
-$card-background: $real-white;
-$card-border: darken($card-background, 15%);
-$card-border-radius: .25rem;
-$card-width: calc(50% - 1rem);
-$card-width-wrap: 48rem;
+$white-dark: #efefef;
 
-$max-width: 48rem;
-$data-background: #faf4dc;
+$primary-colour-text-dark: $white-dark;
+$secondary-colour-text-dark: #c8c8c8;
 
-$base-box-shadow:
-        0 3px 4px rgba(0,0,0,0.16),
-        0 2px 2px rgba(0,0,0,0.23);
+$data-background-dark: #090f17;
+$data-text-color-dark: #F5003D;
+$border-dark: darken($white, 15%);
 
 * {
   margin: 0;
@@ -54,7 +43,7 @@ html {
 body {
   display: flex;
   flex-wrap: wrap;
-  background-color: $main-background;
+  background-color: $main-background-light;
   width: 100%;
   justify-content: center;
   align-items: flex-start;
@@ -76,10 +65,15 @@ main {
 }
 
 a {
-  color: $primary-colour-text;
+  color: $primary-colour-text-light;
   transition: color .25s;
   font-size: inherit;
   font-weight: bold;
+  text-decoration: none;
+
+  &:visited {
+    color: $primary-colour-text-light;
+  }
 }
 
 p {
@@ -87,7 +81,7 @@ p {
   padding: .5em 0;
   font-size: 110%;
   line-height: 1.5em;
-  color: $primary-colour-text;
+  color: $primary-colour-text-light;
 
   &:last-of-type {
     padding-bottom: 0;
@@ -100,27 +94,27 @@ h3,
 h4,
 h5,
 h6 {
-  color: $primary-colour-text;
+  color: $primary-colour-text-light;
   line-height: 1.2em;
 }
 
 code {
-  padding: 0 .35em 0 .25rem;
-  color: #c7254e;
-  background-color: $data-background;
+  padding: .1rem .35rem;
+  color: $data-text-color-light;
+  background-color: $data-background-light;
 
-  table-layout:fixed;
+  table-layout: fixed;
   max-width: 100%;
   overflow-x: scroll;
 }
 
 pre {
   flex: 1;
-  background-color: $data-background;
+  background-color: $data-background-light;
   table-layout: fixed;
   max-width: calc(100vw - 4em);
-  margin: 1rem;
-  border: 1px $card-border solid;
+  margin: 1rem 0 !important; // Overrule prism
+  border: 1px $border-light solid;
 
   code {
     padding: 0;
@@ -132,12 +126,12 @@ table {
   width: 100%;
   margin: .5rem auto;
   padding: 0;
-  border: 1px solid $card-border;
+  border: 1px solid $border-light;
   border-collapse: collapse;
 
   tr {
-    background-color: $data-background;
-    border: 1px solid $card-border;
+    background-color: $data-background-light;
+    border: 1px solid $border-light;
     padding: .25em;
   }
 
@@ -160,10 +154,10 @@ blockquote {
   display: flex;
   flex: 100%;
   flex-wrap: wrap;
-  background: $data-background;
-  border-left: .25rem solid $card-border;
+  background: #f5f2f0;
+  border-left: .25rem solid $black;
   margin: .5rem 0;
-  padding: 0.75em 1em;
+  padding: 0.75em 1.25em;
 
   p {
     padding: 0 0 .25rem;
@@ -185,13 +179,52 @@ blockquote {
   max-width: $max-width;
 }
 
-.hex-background {
-  width: 100%;
-  height: 100%;
-  opacity: 1;
-  transition: opacity .25s;
-}
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: $main-background-dark;
+  }
 
-.hex-background-hidden {
-  opacity: 0;
+  a {
+    color: $primary-colour-text-dark;
+
+    &:visited {
+      color: $primary-colour-text-dark;
+    }
+  }
+
+  p {
+    color: $primary-colour-text-dark;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $primary-colour-text-dark;
+  }
+
+  code {
+    color: $data-text-color-dark;
+    background-color: $data-background-dark;
+  }
+
+  pre {
+    background-color: $data-background-dark;
+  }
+
+  table {
+    border: 1px solid $border-dark;
+
+    tr {
+      background-color: $data-background-dark;
+      border: 1px solid $border-dark;
+    }
+  }
+
+  blockquote {
+    background: #181e1f;
+    border-left: .25rem solid $white;
+  }
 }
