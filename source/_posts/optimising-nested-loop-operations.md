@@ -1,5 +1,5 @@
 ---
-title: Optimising nested loop operations
+title: Optimising Nested Loop Operations
 layout: post
 date: 2019-02-23 13:10:18
 categories: 
