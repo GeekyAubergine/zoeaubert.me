@@ -7,5 +7,10 @@
                 <%- post.excerpt %><%- post.excerpt.endsWith('.') ? '..' : '...' %>
             </div>
         <% } %>
+        <div class="categories">
+            <% post.categories.forEach((category) => { %>
+                <%- partial('partials/blog-category', { category }) %>
+            <% }) %>
+        </div>
 	</a>
 </article>

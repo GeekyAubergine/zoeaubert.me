@@ -1,0 +1,26 @@
+@import "core";
+
+.blog-category {
+  flex: 1;
+  flex-grow: 0;
+
+  padding: .375rem;
+
+  font-size: 80%;
+
+
+  background-color: $secondary-background-light;
+  border-radius: .125rem;
+
+  .name {
+    flex: 1;
+    padding: 0;
+    font-size: 100%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .blog-category {
+    background-color: $secondary-background-dark;
+  }
+}
