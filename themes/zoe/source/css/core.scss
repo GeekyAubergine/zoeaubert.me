@@ -1,9 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Manjari:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext&display=swap');
 
-$main-background-light: #fefef8;
 $max-width: 44rem;
 
-$white: #fefefe;
+// Light mode
+$main-background-light: #fefef8;
+$secondary-background-light: #eaeae7;
+
+$white: #efefef;
 $black: #121212;
 $invisible: hsla(0, 0, 0, 0);
 
@@ -16,11 +19,9 @@ $border-light: darken($white, 15%);
 
 // Dark mode
 $main-background-dark: #24242A;
-$max-width: 44rem;
+$secondary-background-dark: lighten($main-background-dark, 10%);
 
-$white-dark: #efefef;
-
-$primary-colour-text-dark: $white-dark;
+$primary-colour-text-dark: $white;
 $secondary-colour-text-dark: #c8c8c8;
 
 $data-background-dark: #090f17;
