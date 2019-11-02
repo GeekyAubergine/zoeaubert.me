@@ -1,9 +1,9 @@
 ---
 title: Optimising nested loop operations
-categories: 
-- tech
 layout: post
 date: 2019-02-23 13:10:18
+categories: 
+- Programming
 tags:
 ---
 Nested loops - love them or hate them - are often a necessary evil within many

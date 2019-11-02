@@ -11,7 +11,7 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
   flex-wrap: wrap;
 
   height: auto;
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 1.5rem .5rem;
 
   .divider {
     margin: 0 16.6666% 1.5rem 16.6666%;
@@ -45,6 +45,10 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
     .title {
       text-decoration: underline;
     }
+  }
+
+  .categories {
+    padding: .5rem 0;
   }
 }
 
