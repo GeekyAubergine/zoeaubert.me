@@ -3,9 +3,6 @@ title: An Adventure Into Diffing Algorithms
 date: 2016-11-01
 categories:
 - Programming
-tags:
-- alpha
-- beta
 ---
 A while ago at work, we decided that our current diffing algorithm was not
 meeting our requirements. At the time we were using<!--- more --->

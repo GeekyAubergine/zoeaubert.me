@@ -17,7 +17,8 @@
     "lint:sass": "./node_modules/.bin/sass-lint themes/",
     "lint:markdown": "node_modules/.bin/markdownlint source/",
     "build": "hexo generate",
-    "start": "hexo server"
+    "start": "hexo server",
+    "clean": "hexo clean"
   },
   "devDependencies": {
     "ejs-lint": "^0.3.0",

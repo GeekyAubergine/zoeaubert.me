@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Manjari:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Muli:300,300i,400,400i,700,700i&subset=greek-ext,latin-ext&display=swap');
 
 $max-width: 44rem;
 
@@ -31,7 +31,7 @@ $border-dark: darken($white, 15%);
 * {
   margin: 0;
   padding: 0;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Muli', sans-serif;
   font-size: 18px;
   font-weight: 400;
   box-sizing: border-box;
@@ -87,6 +87,21 @@ p {
   &:last-of-type {
     padding-bottom: 0;
   }
+}
+
+em {
+  font-size: 100%;
+}
+
+ul,
+ol {
+  padding: .5rem 2rem;
+}
+
+li {
+  padding: .375rem;
+  color: $primary-colour-text-light;
+  font-size: inherit;
 }
 
 h1,
@@ -194,6 +209,10 @@ blockquote {
   }
 
   p {
+    color: $primary-colour-text-dark;
+  }
+
+  li {
     color: $primary-colour-text-dark;
   }
 
