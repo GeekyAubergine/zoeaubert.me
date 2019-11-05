@@ -132,7 +132,7 @@ for (const alpha in alphas) {
   const bravoIds = bravos.map(b => b.id)
   const bravoIdMap = bravos.reduce((acc, b) => { ...acc, [b.id]: b }, {})
 
-  const charlies = databse.findAllCharliesByBravoIds(bravoIds)
+  const charlies = database.findAllCharliesByBravoIds(bravoIds)
   const charlieIds = charlies.map(c => c.id)
   const charlieIdMap = charlies.reduce((acc, c) => { ...acc, [c.id]: c }, {})
 
@@ -167,7 +167,7 @@ for (const alpha in alphas) {
   const bravoIds = bravos.map(b => b.id)
   const bravoIdMap = bravos.reduce((acc, b) => { ...acc, [b.id]: b }, {})
 
-  const charlies = databse.findAllCharliesByBravoIds(bravoIds)
+  const charlies = database.findAllCharliesByBravoIds(bravoIds)
   const charlieIds = charlies.map(c => c.id)
   const charlieIdMap = charlies.reduce((acc, c) => { ...acc, [c.id]: c }, {})
 
@@ -207,7 +207,7 @@ const bravos = database.findAllBravosByAlphaIds(alphas)
 const bravoIds = bravos.map(b => b.id)
 const bravoIdMap = bravos.reduce((acc, b) => { ...acc, [b.id]: b }, {})
 
-const charlies = databse.findAllCharliesByBravoIds(bravoIds)
+const charlies = database.findAllCharliesByBravoIds(bravoIds)
 const charlieIds = charlies.map(c => c.id)
 const charlieIdMap = charlies.reduce((acc, c) => { ...acc, [c.id]: c }, {})
 
