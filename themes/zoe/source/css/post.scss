@@ -36,8 +36,8 @@
   }
 
   .title {
-    padding: 0 0 1rem;
-    font-size: 200%;
+    padding: 1rem 0;
+    font-size: 150%;
   }
 
   .date {
@@ -49,10 +49,10 @@
   }
 }
 
-@media only screen and (min-width: 44rem) {
+@media only screen and (min-width: $max-width) {
   .post-article {
     .title {
-      padding: 1rem 0;
+      font-size: 200%;
     }
   }
 }

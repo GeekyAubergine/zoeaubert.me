@@ -11,12 +11,12 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
   flex-wrap: wrap;
 
   height: auto;
-  padding: 0 1.5rem .5rem;
+  padding: 0 1.5rem 1rem;
 
   .divider {
-    margin: 0 16.6666% 1.5rem 16.6666%;
-    width: 66.6666%;
-    border-top: 1px dashed $border-light;
+    margin: 0 10% 1.5rem;
+    width: 80%;
+    border-top: 1px solid $border-light;
   }
 
   .wrapper {
@@ -26,7 +26,7 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
 
   .title {
     width: 100%;
-    font-size: 140%;
+    font-size: 120%;
     font-weight: bold;
     text-decoration: none;
   }
@@ -52,10 +52,18 @@ $left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
   }
 }
 
+@media only screen and (min-width: $max-width) {
+  .blog-entry {
+    .title {
+      font-size: 140%;
+    }
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   .blog-entry {
     .divider {
-      border-top: 1px dashed $border-dark;
+      border-top: 1px solid $border-dark;
     }
 
     .excerpt {

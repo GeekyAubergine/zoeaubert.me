@@ -3,29 +3,29 @@
 $max-width: 44rem;
 
 // Light mode
-$main-background-light: #fefef8;
-$secondary-background-light: #eaeae7;
+$main-background-light: #FAF9F7;
+$secondary-background-light: #E8E6E1;
 
 $white: #efefef;
 $black: #121212;
 $invisible: hsla(0, 0, 0, 0);
 
-$primary-colour-text-light: $black;
-$secondary-colour-text-light: #383838;
+$primary-colour-text-light: #27241D;
+$secondary-colour-text-light: #423D33;
 
-$data-background-light: #f6f0d5;
-$data-text-color-light: #D10034;
+$data-background-light: #E8E6E1;
+$data-text-color-light: #E12D39;
 $border-light: darken($white, 15%);
 
 // Dark mode
-$main-background-dark: #24242A;
-$secondary-background-dark: lighten($main-background-dark, 10%);
+$main-background-dark: #1F2933;
+$secondary-background-dark: #323F4B;
 
-$primary-colour-text-dark: $white;
-$secondary-colour-text-dark: #c8c8c8;
+$primary-colour-text-dark: #F5F7FA;
+$secondary-colour-text-dark: #CBD2D9;
 
 $data-background-dark: #090f17;
-$data-text-color-dark: #F5003D;
+$data-text-color-dark: #E12D39;
 $border-dark: darken($white, 15%);
 
 * {
@@ -118,6 +118,7 @@ code {
   padding: .1rem .35rem;
   color: $data-text-color-light;
   background-color: $data-background-light;
+  font-weight: 600;
 
   table-layout: fixed;
   max-width: 100%;
@@ -179,11 +180,12 @@ blockquote {
     padding: 0 0 .25rem;
     font-style: italic;
     font-weight: bold;
+    font-size: 100%;
   }
 
   cite {
     flex: 100%;
-    padding: .75em 0 0 1em;
+    padding: .5rem 0 0 .5rem;
 
     &:before {
       content: '- '
