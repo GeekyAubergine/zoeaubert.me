@@ -34,7 +34,7 @@
     "hexo-renderer-sass": "^0.3.2",
     "hexo-renderer-stylus": "^0.3.3",
     "hexo-server": "^0.3.1",
-    "highlight.js": "^9.14.2",
+    "highlight.js": "^10.1.2",
     "markdownlint": "^0.7.0",
     "markdownlint-cli": "^0.13.0",
     "sass-lint": "^1.12.1"
