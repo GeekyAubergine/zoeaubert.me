@@ -1,0 +1,17 @@
+@import '../core';
+
+.wrapper {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 100vw;
+}
+
+.body {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: $max-width;
+}
+

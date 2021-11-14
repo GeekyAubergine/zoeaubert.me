@@ -1,0 +1,79 @@
+@import 'core';
+
+$left-bar-offset: .5rem;
+$left-bar-icon-size: 2rem;
+$left-bar-icon-mobile-size: 2.5rem;
+$left-bar-width: $left-bar-icon-size * 2;
+$left-bar-mobile-width: $left-bar-icon-mobile-size * 2;
+
+.blog-entry {
+  flex: 100%;
+  flex-wrap: wrap;
+
+  height: auto;
+  padding: 0 1.5rem 1rem;
+
+  .divider {
+    margin: 0 10% 1.5rem;
+    width: 80%;
+    border-top: 1px solid $border-light;
+  }
+
+  .wrapper {
+    text-decoration: none;
+    flex-wrap: wrap;
+  }
+
+  .title {
+    width: 100%;
+    font-size: 120%;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .excerpt {
+    width: 100%;
+
+    p {
+      color: $secondary-colour-text-light;
+    }
+  }
+
+  &:hover {
+    background-color: darken($main-background-light, 2.5%);
+
+    .title {
+      text-decoration: underline;
+    }
+  }
+
+  .categories {
+    padding: .5rem 0;
+  }
+}
+
+@media only screen and (min-width: $max-width) {
+  .blog-entry {
+    .title {
+      font-size: 140%;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .blog-entry {
+    .divider {
+      border-top: 1px solid $border-dark;
+    }
+
+    .excerpt {
+      p {
+        color: $secondary-colour-text-dark;
+      }
+    }
+
+    &:hover {
+      background-color: lighten($main-background-dark, 2.5%);
+    }
+  }
+}
