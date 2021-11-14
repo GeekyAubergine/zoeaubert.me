@@ -1,0 +1,53 @@
+@import '../core';
+
+$headerHeight: 2rem;
+
+.container {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  max-width: $max-width;
+  padding: .5rem 1rem;
+}
+
+.titleContainer {
+  align-items: center;
+}
+
+.title {
+  font-size: 140%;
+  margin: 0;
+  padding: .5rem 0;
+
+  transition: text-decoration .25s;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.links {
+  height: $headerHeight;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.link {
+  font-weight: normal;
+  margin: 0 0 0 .5rem;
+  transition: text-decoration .25s;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@media only screen and (min-width: $collapsable-width) {
+  .container {
+    padding: .5rem 0;
+  }
+}

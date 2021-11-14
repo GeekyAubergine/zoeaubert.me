@@ -2,6 +2,7 @@ import * as React from 'react';
 import {graphql, useStaticQuery} from 'gatsby'
 import Helmet from 'react-helmet'
 import * as styles from './page.module.scss'
+import Header from "../header/Header";
 
 const HTML_ATTRIBUTES = {
     lang: 'en',
@@ -69,6 +70,7 @@ const BasePage = ({title, description, children}: Props) => {
                     },
                 ]}
             />
+            <Header />
             <div className={styles.body}>
                 {children}
             </div>

@@ -5,12 +5,13 @@
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
+  padding: 0 1rem;
 }
 
 .post {
   flex: 1;
   width: 100%;
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 0;
   border-top: 1px solid var(--border-color);
   transition: background-color 0.25s;
 
@@ -24,6 +25,7 @@
 
   &:first-of-type {
     border-color: $invisible;
+    padding-top: 0;
   }
 
   .title {
@@ -64,7 +66,7 @@
     margin: 0 .25rem;
     background-color: var(--tertiary-background);
     font-size: 80%;
-
+    border-radius: .0625rem;
 
     &:last-of-type {
       margin-right: 0;
@@ -77,5 +79,11 @@
     .title {
       font-size: 120%;
     }
+  }
+}
+
+@media only screen and (min-width: $collapsable-width) {
+  .posts {
+    padding: 0;
   }
 }

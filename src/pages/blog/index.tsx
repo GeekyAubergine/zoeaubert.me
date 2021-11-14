@@ -54,7 +54,7 @@ const BlogPage = ({
 }: Props) => {
     const {allMarkdownRemark} = data
     return (
-        <BlogPostPage title="Blog" description="Blog">
+        <BlogPostPage title="Blog" description="Blog" header="Blog Posts">
             <div className={styles.posts}>
                 {allMarkdownRemark.edges.map(BlogEntry)}
             </div>
