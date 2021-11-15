@@ -8,7 +8,6 @@ categories:
 tags:
 ---
 Transferring playlists on Spotify can be a rather tedious process, there are many different approaches talked about online but I think I may have found the easiest way yet.
-<!--- more --->
 
 1. Log into your _new_ account using the Spotify app on your PC
 2. Log into your _old_ account using the Spotify web client

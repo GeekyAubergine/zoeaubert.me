@@ -1,0 +1,18 @@
+@import "../components/core";
+
+.pageTitle {
+  width: 100%;
+  font-size: 200%;
+  padding: 2rem 1rem 1rem;
+  font-weight: bold;
+}
+
+.content {
+
+}
+
+@media only screen and (min-width: $collapsable-width) {
+  .pageTitle {
+    padding: 2rem 0 1rem;
+  }
+}

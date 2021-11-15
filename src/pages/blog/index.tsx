@@ -1,24 +1,12 @@
 import * as React from "react"
 import {graphql, Link} from "gatsby"
 import * as styles from './blog.module.scss'
-import BlogPostPage from "../../components/page/BlogPostPage";
-
-type BlogEntryNode = {
-    node: {
-        frontmatter: {
-            title: string,
-            slug: string,
-            categories: string[],
-            description: string,
-            date: string,
-        },
-        time: number,
-    },
-}
+import BasePage from "../../components/page/BasePage";
+import {MarkdownRemarkNode, MarkdownRemarkResponse} from "../../types";
 
 type QueryResponse = {
     allMarkdownRemark: {
-        edges: BlogEntryNode[]
+        edges: MarkdownRemarkNode[]
     }
 }
 
@@ -27,11 +15,11 @@ type Props = {
 }
 
 const Category = (category: string) =>
-    <p className={styles.category}>{category}</p>
+    <p key={category} className={styles.category}>{category}</p>
 
 const BlogEntry = ({
    node
-}: BlogEntryNode) => {
+}: MarkdownRemarkNode) => {
     const {frontmatter} = node
     const {title, slug, categories, date, description} = frontmatter
 
@@ -54,11 +42,12 @@ const BlogPage = ({
 }: Props) => {
     const {allMarkdownRemark} = data
     return (
-        <BlogPostPage title="Blog" description="Blog" header="Blog Posts">
+        <BasePage title="Blog" description="Blog">
+            <h2 className={styles.pageTitle}>Blog Posts</h2>
             <div className={styles.posts}>
                 {allMarkdownRemark.edges.map(BlogEntry)}
             </div>
-        </BlogPostPage>
+        </BasePage>
     )
 }
 
@@ -66,7 +55,14 @@ export default BlogPage
 
 export const pageQuery = graphql`
 {
-  allMarkdownRemark(sort: {order: DESC, fields: [frontmatter___date]}, limit: 100) {
+  allMarkdownRemark(
+    sort: {order: DESC, fields: [frontmatter___date]}
+    limit: 100
+    filter: {fileAbsolutePath: {regex: "/res/blog_posts/"}}
+  ) {
+    pageInfo {
+      perPage
+    }
     edges {
       node {
         frontmatter {

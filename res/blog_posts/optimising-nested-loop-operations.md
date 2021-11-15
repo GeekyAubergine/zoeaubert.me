@@ -12,7 +12,6 @@ programming problems; whether it’s to traverse n-dimensional matrices or
 iterating over the children of objects, they provide the cleanest solutions.
 We’ll discuss the latter example and how it is sometimes possible to unravel
 some of the loops to reduce the complexity of the problem many times over.
-<!--- more --->
 
 Imagine you've been given a task; given an array of many objects of class Alpha,
 list all children Delta, along with related data from Bravo and Charlie which
