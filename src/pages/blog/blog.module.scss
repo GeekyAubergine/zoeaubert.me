@@ -4,7 +4,7 @@
   width: 100%;
   //text-align: center;
   font-size: 200%;
-  padding: 2rem 1rem 1rem;
+  padding: 2rem 0 1rem;
   font-weight: bold;
 }
 
@@ -18,12 +18,12 @@
 .post {
   flex: 1;
   width: 100%;
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 0;
   border-top: 1px solid var(--border-color);
   transition: background-color 0.25s;
 
   &:hover {
-    background-color: var(--secondary-background);
+    //background-color: var(--secondary-background);
 
     .title {
       text-decoration: underline;
@@ -36,14 +36,16 @@
 
   .title {
     width: 100%;
-    font-size: 110%;
+    font-size: 120%;
     font-weight: bold;
     text-decoration: none;
+    padding-bottom: .5rem;
 
     transition: text-decoration 0.25s;
   }
 
   .description {
+    padding-top: .25rem;
   }
 
   .dateAndCategories {
@@ -51,7 +53,7 @@
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
-    margin-top: .5rem;
+    padding-top: .5rem;
   }
 
   .date {
@@ -81,15 +83,11 @@
 }
 
 @media only screen and (min-width: $collapsable-width) {
-  .pageTitle {
-    padding: 2rem 0 1rem;
-  }
-
-  .posts {
-    padding: 0;
-  }
-
   .post {
+    //width: calc(100% + 2rem);
+    //margin: 0 -1rem;
+    //padding: 1.5rem 1rem;
+
     .title {
       font-size: 120%;
     }
