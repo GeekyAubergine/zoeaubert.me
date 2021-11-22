@@ -1,3 +1,5 @@
+import {IGatsbyImageData} from "gatsby-plugin-image/dist/src/components/gatsby-image.browser";
+
 export type MarkdownRemarkResponse = {
         frontmatter: {
             title: string,
@@ -16,17 +18,15 @@ export type MarkdownRemarkNode = {
 
 export type PhotoFile = {
     childImageSharp: {
-        gatsbyImageData: {
-            width: number,
-            height: number,
-        },
+        gatsbyImageData: IGatsbyImageData,
     }
 }
 
 export type PhotoResponse = {
     uid: string,
-    smallPhoto: PhotoFile,
-    largePhoto: PhotoFile,
+    alt: string,
+    thumb: PhotoFile,
+    full: PhotoFile,
 }
 
 export type PhotoNode = {

@@ -1,3 +1,5 @@
+@import "../components/core";
+
 .container {
   flex-direction: column;
   flex-wrap: nowrap;
@@ -6,21 +8,71 @@
 }
 
 .grid {
-  flex-direction: column;
-  flex-wrap: nowrap;
-  width: 100%;
-}
-
-.row {
   flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
+  flex-wrap: wrap;
   width: 100%;
+  max-width: 100%;
+  justify-content: space-evenly;
+  overflow-x: hidden;
 }
 
-.cell {
-  flex: 1;
-  width: 4rem;
-  height: 6rem;
-  margin: 1rem;
+.thumbContainer {
+  padding: .5rem;
+  align-items: center;
+}
+
+.thumbContainerPortrait {
+  flex: 9rem 0;
+}
+
+.thumbContainerLandscape {
+  flex: 19rem 0;
+}
+
+.thumb {
+  object-fit: cover;
+}
+
+.thumbPortrait {
+}
+
+.thumbLandscape {
+}
+
+.fullScreenModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  background-color: #080808;
+}
+
+.fullContainer {
+  padding: .5rem;
+  align-items: center;
+}
+
+.fullContainerPortrait {
+  flex: 40vw 0;
+}
+
+.fullContainerLandscape {
+  flex: 19rem 0;
+}
+
+.full {
+  object-fit: cover;
+}
+
+.fullPortrait {
+  max-width: 50vh;
+}
+
+.fullLandscape {
+  max-width: 80vh;
 }

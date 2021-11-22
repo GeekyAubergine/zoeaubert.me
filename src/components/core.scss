@@ -1,7 +1,7 @@
 // Mobile and dark by default
 
-$max-width: 40rem;
-$collapsable-width: 46rem;
+$max-width: 48rem;
+$collapsable-width: 52rem;
 
 $white: #efefef;
 $black: #121212;
@@ -66,6 +66,7 @@ $border-light: darken($white, 15%);
 
 html {
   width: 100%;
+  overflow-x: hidden;
 }
 
 body {
