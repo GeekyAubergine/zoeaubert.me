@@ -13,3 +13,22 @@ export type MarkdownRemarkResponse = {
 export type MarkdownRemarkNode = {
     node: MarkdownRemarkResponse,
 }
+
+export type PhotoFile = {
+    childImageSharp: {
+        gatsbyImageData: {
+            width: number,
+            height: number,
+        },
+    }
+}
+
+export type PhotoResponse = {
+    uid: string,
+    smallPhoto: PhotoFile,
+    largePhoto: PhotoFile,
+}
+
+export type PhotoNode = {
+    node: PhotoResponse,
+}

@@ -5508,7 +5508,7 @@
   "resolved" "https://registry.npmjs.org/fastest-levenshtein/-/fastest-levenshtein-1.0.12.tgz"
   "version" "1.0.12"
 
-"fastq@^1.11.1", "fastq@^1.13.0", "fastq@^1.6.0":
+"fastq@^1.13.0", "fastq@^1.6.0":
   "integrity" "sha512-YpkpUnK8od0o1hmeSc7UUs/eB/vIPWJYjKck2QKIzAf71Vm1AAQ3EbuZB3g2JIy+pg+ERD0vqI79KyZiB2e2Nw=="
   "resolved" "https://registry.npmjs.org/fastq/-/fastq-1.13.0.tgz"
   "version" "1.13.0"
@@ -5899,10 +5899,10 @@
     "yoga-layout-prebuilt" "^1.10.0"
     "yurnalist" "^2.1.0"
 
-"gatsby-core-utils@^3.1.2", "gatsby-core-utils@^3.1.3":
-  "integrity" "sha512-+pg2i3DYVLzmJ/67SVGM+zVxerilGCbcgVxDoN58Y+Htv5TwogUWzPymfoFrJEsWGhlVKlYq7I8jVWSXPzwMHw=="
-  "resolved" "https://registry.npmjs.org/gatsby-core-utils/-/gatsby-core-utils-3.1.3.tgz"
-  "version" "3.1.3"
+"gatsby-core-utils@^3.1.2", "gatsby-core-utils@^3.1.3", "gatsby-core-utils@^3.2.0":
+  "integrity" "sha512-gPz02QD1kOGQmu49TZL8Fdo9rX8QBsA7XID0oXyIkZqkK80Tm1Uq1pOOfPE3cWSMEkzc71M79iKISCntk/wNuw=="
+  "resolved" "https://registry.npmjs.org/gatsby-core-utils/-/gatsby-core-utils-3.2.0.tgz"
+  "version" "3.2.0"
   dependencies:
     "@babel/runtime" "^7.15.4"
     "ci-info" "2.0.0"
@@ -5910,7 +5910,7 @@
     "file-type" "^16.5.3"
     "fs-extra" "^10.0.0"
     "got" "^11.8.2"
-    "node-object-hash" "^2.3.9"
+    "node-object-hash" "^2.3.10"
     "proper-lockfile" "^4.1.2"
     "tmp" "^0.2.1"
     "xdg-basedir" "^4.0.0"
@@ -6233,24 +6233,24 @@
     "parse-numeric-range" "^1.2.0"
     "unist-util-visit" "^2.0.3"
 
-"gatsby-source-filesystem@^4.0.0-next", "gatsby-source-filesystem@^4.1.2":
-  "integrity" "sha512-f4oa3+3i3Y2IgTwHaI7EO9cQO9YW4tx3h89gnSKMeD5QjofQGivBjGsGETFMCa16kKARAdLGEITdl09A8ltcyQ=="
-  "resolved" "https://registry.npmjs.org/gatsby-source-filesystem/-/gatsby-source-filesystem-4.1.2.tgz"
-  "version" "4.1.2"
+"gatsby-source-filesystem@^4.0.0-next", "gatsby-source-filesystem@^4.2.0":
+  "integrity" "sha512-+KKyjPP2M9WaP/KsClRPdrv7wy4MtFo64WWy4A+zA7cL7Bk1b7DMJprLFYG2DHQ85ObCQdmUc257R1+otnnxQQ=="
+  "resolved" "https://registry.npmjs.org/gatsby-source-filesystem/-/gatsby-source-filesystem-4.2.0.tgz"
+  "version" "4.2.0"
   dependencies:
     "@babel/runtime" "^7.15.4"
     "chokidar" "^3.5.2"
-    "fastq" "^1.11.1"
+    "fastq" "^1.13.0"
     "file-type" "^16.5.3"
     "fs-extra" "^10.0.0"
-    "gatsby-core-utils" "^3.1.2"
+    "gatsby-core-utils" "^3.2.0"
     "got" "^9.6.0"
     "md5-file" "^5.0.0"
     "mime" "^2.5.2"
     "pretty-bytes" "^5.4.1"
     "progress" "^2.0.3"
     "valid-url" "^1.0.9"
-    "xstate" "^4.14.0"
+    "xstate" "^4.25.0"
 
 "gatsby-telemetry@^3.1.2":
   "integrity" "sha512-uz8J+cGkQ1vgIc5BCrR5Jm/cF/kKF+Ys+tqXofn4ah95ezT94U+g+m3FPPB49cut7H4OZsONCXeLyLRzdIx7EQ=="
@@ -9757,7 +9757,7 @@
   "resolved" "https://registry.npmjs.org/node-modules-regexp/-/node-modules-regexp-1.0.0.tgz"
   "version" "1.0.0"
 
-"node-object-hash@^2.3.9":
+"node-object-hash@^2.3.10":
   "integrity" "sha512-jY5dPJzw6NHd/KPSfPKJ+IHoFS81/tJ43r34ZeNMXGzCOM8jwQDCD12HYayKIB6MuznrnqIYy2e891NA2g0ibA=="
   "resolved" "https://registry.npmjs.org/node-object-hash/-/node-object-hash-2.3.10.tgz"
   "version" "2.3.10"
@@ -11161,6 +11161,13 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
+"react-keyboard-input-hook@^1.0.3":
+  "integrity" "sha512-dSm6wZzZSayaoi/ons7v+1Pu9/+KEO9UW37Wx445gZBXfTBXmt7uVNheKmI5ONsMU72A+ZqQ0hcZDg9acrm8Bg=="
+  "resolved" "https://registry.npmjs.org/react-keyboard-input-hook/-/react-keyboard-input-hook-1.0.3.tgz"
+  "version" "1.0.3"
+  dependencies:
+    "react" "^17.0.2"
+
 "react-lifecycles-compat@^3.0.4":
   "integrity" "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
   "resolved" "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz"
@@ -11176,7 +11183,7 @@
   "resolved" "https://registry.npmjs.org/react-side-effect/-/react-side-effect-2.1.1.tgz"
   "version" "2.1.1"
 
-"react@^16.13.1 || ^17.0.0", "react@^16.3.0 || ^17.0.0", "react@^16.9.0 || ^17.0.0", "react@^17.0.1", "react@>=16.3.0", "react@>=16.x", "react@15.x || 16.x || 17.x", "react@17.0.2":
+"react@^16.13.1 || ^17.0.0", "react@^16.3.0 || ^17.0.0", "react@^16.9.0 || ^17.0.0", "react@^17.0.1", "react@^17.0.2", "react@>=16.3.0", "react@>=16.x", "react@15.x || 16.x || 17.x", "react@17.0.2":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   "version" "17.0.2"
@@ -14167,7 +14174,7 @@
     "commander" "^2.20.3"
     "cssfilter" "0.0.10"
 
-"xstate@^4.14.0", "xstate@^4.25.0", "xstate@^4.9.1":
+"xstate@^4.25.0", "xstate@^4.9.1":
   "integrity" "sha512-l0tfRBhVYM17D6IWT4pVOzzN9kY/5lnPWCe4LXjJ3F9HCrJOPBn6tPRAb9mapSRBS8cOeByJFDCRSNopgaoC5w=="
   "resolved" "https://registry.npmjs.org/xstate/-/xstate-4.26.0.tgz"
   "version" "4.26.0"

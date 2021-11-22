@@ -7,6 +7,25 @@ module.exports = {
   },
   plugins: [
     "gatsby-plugin-sass",
+    {
+      resolve: `gatsby-plugin-sharp`,
+      options: {
+        defaults: {
+          formats: [`auto`, `jpg`, `webp`, `avif`],
+          placeholder: `blurred`,
+          quality: 50,
+          breakpoints: [250, 500, 750, 1080, 1366, 1920],
+          backgroundColor: `transparent`,
+          tracedSVGOptions: {},
+          blurredOptions: {},
+          jpgOptions: {},
+          pngOptions: {},
+          webpOptions: {},
+          avifOptions: {},
+        },
+      },
+    },
+    `gatsby-transformer-sharp`,
     "gatsby-plugin-image",
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sitemap",
@@ -53,6 +72,14 @@ module.exports = {
       },
       __key: "images",
     },
+    // {
+    //   resolve: "gatsby-source-filesystem",
+    //   options: {
+    //     name: "images",
+    //     path: "./res/photos/cache/",
+    //   },
+    //   __key: "photos",
+    // },
     {
       resolve: "gatsby-source-filesystem",
       options: {
@@ -61,7 +88,6 @@ module.exports = {
       },
       __key: "blog_posts",
     },
-    "gatsby-transformer-sharp",
     {
       resolve: `gatsby-transformer-remark`,
       options: {

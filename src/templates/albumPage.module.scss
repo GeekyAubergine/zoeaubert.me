@@ -1,0 +1,26 @@
+.container {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.grid {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.row {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.cell {
+  flex: 1;
+  width: 4rem;
+  height: 6rem;
+  margin: 1rem;
+}

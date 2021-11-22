@@ -1,75 +1,7 @@
-import {PHOTO_ALBUM_ALBUMS} from "../../res/photos/albums";
-import * as path from "path";
+import {createAlbumPages, createBlogPosts} from "./pageCreator";
+import {createAlbumNodes, createCustomNodeSchemas, createPhotoNodes } from "./dataCreator";
 
-const createBlogPosts = async ({ createPage, graphql }) => {
-    const PageComponent = path.resolve('src/templates/BlogPostPage.tsx')
-
-    try {
-        const { data } = await graphql(`
-          {
-            allMarkdownRemark(filter: {fileAbsolutePath: {regex: "/res/blog_posts/"}}) {
-              pageInfo {
-                perPage
-              }
-              edges {
-                node {
-                  frontmatter {
-                    slug
-                  }
-                  id
-                }
-              }
-            }
-          }
-        `)
-        const { allMarkdownRemark } = data
-
-        const { edges } = allMarkdownRemark
-
-        const pages = edges.map(({ node }) => ({
-            slug: node.frontmatter.slug,
-            id: node.id,
-        }))
-
-        pages.forEach(({ slug, id }) => {
-            createPage({
-                path: `/blog/${slug}`,
-                component: PageComponent,
-                context: {
-                    id,
-                }
-            })
-        })
-    } catch (e) {
-        console.error(e)
-    }
-}
-
-const createAlbumPages = ({ createPage }) => {
-    const PageComponent = path.resolve('src/templates/AlbumPage.tsx')
-
-    try {
-        const albums = Object.keys(PHOTO_ALBUM_ALBUMS)
-
-        albums.forEach((albumKey) => {
-            const album = PHOTO_ALBUM_ALBUMS[albumKey]
-
-            if (album != null) {
-                createPage({
-                    path: `/albums/${album.slug}`,
-                    component: PageComponent,
-                    context: {
-                        albumUid: album.uid,
-                    }
-                })
-            }
-        })
-    } catch (e) {
-        console.error(e)
-    }
-}
-
-export const createPages = async function ({actions, graphql}) {
+export const createPages = async ({actions, graphql}) => {
     const { createPage } = actions
 
     try {
@@ -81,3 +13,22 @@ export const createPages = async function ({actions, graphql}) {
         console.error(e)
     }
 }
+
+export const createSchemaCustomization = ({ actions }) => createCustomNodeSchemas({ actions })
+
+export const sourceNodes = async ({ actions, createNodeId, createContentDigest, cache, reporter, store, getNode }) => {
+    const { createNode, createNodeField } = actions
+
+    try {
+        const albumNodePromise = createAlbumNodes({ createNodeId, getNode, createContentDigest, createNode })
+        const photoNodePromise = createPhotoNodes({ createNodeId, getNode, createContentDigest, createNode, reporter, store, cache, createNodeField })
+
+        await Promise.all([
+            albumNodePromise,
+            photoNodePromise,
+        ])
+    } catch (e) {
+        console.error(e)
+    }
+}
+
