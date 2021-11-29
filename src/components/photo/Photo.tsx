@@ -16,8 +16,17 @@ type Props = {
     containerLandscapeClassName?: string,
 }
 
-const Photo = ({ photoData, onPressed, showLarge, className, portraitClassName, landscapeClassName, containerClassName
-, containerPortraitClassName, containerLandscapeClassName}: Props) => {
+const Photo = ({
+                   photoData,
+                   onPressed,
+                   showLarge,
+                   photoClassName,
+                   photoPortraitClassName,
+                   photoLandscapeClassName,
+                   containerClassName,
+                   containerPortraitClassName,
+                   containerLandscapeClassName,
+               }: Props) => {
     const { thumb, full, uid } = photoData
 
     const isLandscape = thumb.childImageSharp.gatsbyImageData.width > thumb.childImageSharp.gatsbyImageData.height
@@ -35,13 +44,13 @@ const Photo = ({ photoData, onPressed, showLarge, className, portraitClassName, 
     }
 
     return (
-        <div className={cx(containerClassName, isLandscape ? containerLandscapeClassName : containerPortraitClassName)} key={uid}>
-        <GatsbyImage
-            className={cx(className, isLandscape ? landscapeClassName : portraitClassName)}
-            image={localFile.childImageSharp.gatsbyImageData}
-            alt={photo.alt}
-            onClick={onClickCallback}
-        />
+        <div className={cx([containerClassName, isLandscape ? containerLandscapeClassName : containerPortraitClassName])} key={uid}>
+            <GatsbyImage
+                className={cx(photoClassName, isLandscape ? photoLandscapeClassName : photoPortraitClassName)}
+                image={localFile.childImageSharp.gatsbyImageData}
+                alt={photo.alt}
+                onClick={onClickCallback}
+            />
         </div>
     )
 }

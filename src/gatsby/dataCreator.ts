@@ -7,11 +7,13 @@ const NODE_TYPE_ALBUM = 'Album'
 export const createCustomNodeSchemas = ({ actions }) => {
     const { createTypes } = actions
 
-    createTypes(`
+    const typeDefs = `
         type Photo implements Node {
           localFile: File @link(from: "fields.localFile")
         }
-    `)
+    `
+
+    createTypes(typeDefs)
 }
 
 const createNodeWithId = async (type: string, id: string, nodeData: any, {createNodeId, createNode, getNode, createContentDigest}) => {
@@ -37,6 +39,10 @@ export const createAlbumNodes = async ({
     createNode,
     createContentDigest,
     getNode,
+    reporter,
+    store,
+    cache,
+    createNodeField,
 }) => {
     return Promise.all(Object.keys(PHOTO_ALBUM_ALBUMS).map(async (albumUid: string) => {
         const album = PHOTO_ALBUM_ALBUMS[albumUid]
@@ -45,7 +51,7 @@ export const createAlbumNodes = async ({
             return
         }
 
-        return createNodeWithId(
+        const albumNode = await createNodeWithId(
             NODE_TYPE_ALBUM,
             `${NODE_TYPE_ALBUM}-${album.uid}`,
             album,
@@ -56,50 +62,44 @@ export const createAlbumNodes = async ({
                 getNode,
             }
         )
-    }))
-}
 
-export const createPhotoNodes = async ({
-   createNodeId,
-   createNode,
-   createContentDigest,
-   getNode,
-   reporter,
-   store,
-   cache,
-   createNodeField,
-}) =>  {
-    return Promise.all(Object.keys(PHOTO_ALBUM_PHOTOS).map(async (photoUid: string) => {
-        const photo = PHOTO_ALBUM_PHOTOS[photoUid]
+        await Promise.all(album.photo_uids.map(async (photoUid: string) => {
+            const photo = PHOTO_ALBUM_PHOTOS[photoUid]
 
-        if (photo == null) {
-            return
-        }
-
-        const photoNode = await createNodeWithId(
-            NODE_TYPE_PHOTO,
-            `${NODE_TYPE_PHOTO}-${photo.uid}`,
-            photo,
-            {
-                createNodeId,
-                createNode,
-                createContentDigest,
-                getNode,
+            if (photo == null) {
+                return
             }
-        )
 
-        const fileNode = await createRemoteFileNode({
-            reporter,
-            store,
-            url: photo.uri,
-            parentNodeId: photoNode.id,
-            createNode,
-            createNodeId,
-            cache
-        })
+            const photoNodeData = {
+                ...photo,
+                albumUid,
+            }
 
-        if (fileNode != null) {
-            await createNodeField({node: photoNode, name: 'localFile', value: fileNode.id})
-        }
+            const photoNode = await createNodeWithId(
+                NODE_TYPE_PHOTO,
+                `${NODE_TYPE_PHOTO}-${photo.uid}`,
+                photoNodeData,
+                {
+                    createNodeId,
+                    createNode,
+                    createContentDigest,
+                    getNode,
+                }
+            )
+
+            const fileNode = await createRemoteFileNode({
+                reporter,
+                store,
+                url: photo.uri,
+                parentNodeId: photoNode.id,
+                createNode,
+                createNodeId,
+                cache
+            })
+
+            if (fileNode != null) {
+                await createNodeField({node: photoNode, name: 'localFile', value: fileNode.id})
+            }
+        }))
     }))
 }

@@ -1,5 +1,5 @@
 import {createAlbumPages, createBlogPosts} from "./pageCreator";
-import {createAlbumNodes, createCustomNodeSchemas, createPhotoNodes } from "./dataCreator";
+import {createAlbumNodes, createCustomNodeSchemas } from "./dataCreator";
 
 export const createPages = async ({actions, graphql}) => {
     const { createPage } = actions
@@ -20,12 +20,10 @@ export const sourceNodes = async ({ actions, createNodeId, createContentDigest, 
     const { createNode, createNodeField } = actions
 
     try {
-        const albumNodePromise = createAlbumNodes({ createNodeId, getNode, createContentDigest, createNode })
-        const photoNodePromise = createPhotoNodes({ createNodeId, getNode, createContentDigest, createNode, reporter, store, cache, createNodeField })
+        const albumNodePromise = createAlbumNodes({ createNodeId, getNode, createContentDigest, createNode, reporter, store, cache, createNodeField })
 
         await Promise.all([
             albumNodePromise,
-            photoNodePromise,
         ])
     } catch (e) {
         console.error(e)

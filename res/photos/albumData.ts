@@ -12,7 +12,7 @@ type AlbumPhotos = {
 
 type Album = {
     uid: string,
-    photos: string[],
+    photo_uids: string[],
     slug: string,
     description: string,
     location: string,
@@ -145,7 +145,7 @@ export const PHOTO_ALBUM_PHOTOS: AlbumPhotos = {
 export const PHOTO_ALBUM_ALBUMS: AlbumData = {
     'blvnt_the_knife_acapulco': {
         uid: 'blvnt_the_knife_acapulco',
-        photos: [
+        photo_uids: [
             'blvnt_the_knife_acapulco-1',
             'blvnt_the_knife_acapulco-2',
             'blvnt_the_knife_acapulco-3',

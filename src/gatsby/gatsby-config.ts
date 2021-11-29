@@ -76,9 +76,9 @@ module.exports = {
     //   resolve: "gatsby-source-filesystem",
     //   options: {
     //     name: "images",
-    //     path: "./res/photos/cache/",
+    //     path: "./res/photo_uids/cache/",
     //   },
-    //   __key: "photos",
+    //   __key: "photo_uids",
     // },
     {
       resolve: "gatsby-source-filesystem",

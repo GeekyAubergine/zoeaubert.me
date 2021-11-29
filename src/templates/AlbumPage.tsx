@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {graphql} from "gatsby";
 import { useKeyDown } from "react-keyboard-input-hook";
-import cx from 'classnames'
 import {PHOTO_ALBUM_ALBUMS} from "../../res/photos/albumData";
 import Photo from "../components/photo/Photo";
 import {PhotoNode} from "../types";
@@ -28,8 +27,8 @@ type PhotoData = PhotoNode & {
 const AlbumPage = ({ pageContext, data }: Props) => {
     const { albumUid } = pageContext
 
-    const [openPhotoIndex, setOpenPhotoIndex] = React.useState<number | null>(1)
-    const [photoModalOpen, setPhotoModalOpen] = React.useState<boolean>(true)
+    const [openPhotoIndex, setOpenPhotoIndex] = React.useState<number | null>(null)
+    const [photoModalOpen, setPhotoModalOpen] = React.useState<boolean>(false)
 
     const photos = data.allPhoto.edges
     const photoOrder = React.useMemo(() => photos.map(edge => edge.node.uid), [photos])
@@ -56,10 +55,9 @@ const AlbumPage = ({ pageContext, data }: Props) => {
         }
     }, [photoModalOpen, openPhotoIndex])
 
-    useKeyDown(keyDownCallback)
-
     const renderPhotoCallback = React.useCallback((photoData: PhotoData) => (
             <Photo
+                key={photoData.node.uid}
                 photoData={photoData.node}
                 onPressed={onPhotoPressedCallback}
                 photoClassName={styles.thumb}
@@ -70,6 +68,8 @@ const AlbumPage = ({ pageContext, data }: Props) => {
                 containerLandscapeClassName={styles.thumbContainerLandscape}
             />
     ), [onPhotoPressedCallback])
+
+    useKeyDown(keyDownCallback)
 
     const currentPhoto = photos[openPhotoIndex]
 
@@ -84,20 +84,31 @@ const AlbumPage = ({ pageContext, data }: Props) => {
                     {photos.map(renderPhotoCallback)}
                 </div>
             </div>
-            {photoModalOpen && (
+            {photoModalOpen && currentPhoto != null && (
                 <div className={styles.fullScreenModal}>
-                    {currentPhoto != null && (
+                    <div className={styles.exit}>
+                        X
+                    </div>
+                    <div className={styles.fullWrapper}>
                         <Photo
                             photoData={currentPhoto.node}
-                            photoClassName={styles.fullContainer}
-                            photoPortraitClassName={styles.fullContainerPortrait}
-                            photoLandscapeClassName={styles.fullContainerLandscape}
-                            containerClassName={styles.full}
-                            containerPortraitClassName={styles.fullPortrait}
-                            containerLandscapeClassName={styles.fullLandscape}
+                            photoClassName={styles.full}
+                            photoPortraitClassName={styles.fullPortrait}
+                            photoLandscapeClassName={styles.fullLandscape}
+                            containerClassName={styles.fullContainer}
+                            containerPortraitClassName={styles.fullContainerPortrait}
+                            containerLandscapeClassName={styles.fullContainerLandscape}
                             showLarge
                         />
-                    )}
+                    </div>
+                    <div className={styles.details}>
+                        <div className={styles.description}>
+                            <p>{currentPhoto.node.alt}</p>
+                        </div>
+                        <p className={styles.counter}>
+                            {`${openPhotoIndex + 1} / ${photos.length}`}
+                        </p>
+                    </div>
                 </div>
             )}
         </BasePage>
@@ -107,24 +118,24 @@ const AlbumPage = ({ pageContext, data }: Props) => {
 export default AlbumPage
 
 export const pageQuery = graphql`
-query MyQuery {
-  allPhoto {
-    edges {
-      node {
-        uid
-        alt
-        thumb: localFile {
-          childImageSharp {
-            gatsbyImageData(width: 200)
-          }
+    query AlbumPageQuery($albumUid: String = "") {
+        allPhoto(filter: {albumUid: {eq: $albumUid}}) {
+            edges {
+                node {
+                    uid
+                    alt
+                    thumb: localFile {
+                        childImageSharp {
+                            gatsbyImageData(height: 200, layout: CONSTRAINED)
+                        }
+                    }
+                    full: localFile {
+                        childImageSharp {
+                            gatsbyImageData(height: 2000, layout: CONSTRAINED)
+                        }
+                    }
+                }
+            }
         }
-        full: localFile {
-          childImageSharp {
-                gatsbyImageData(width: 2000)
-          }
-        }
-      }
     }
-  }
-}
 `

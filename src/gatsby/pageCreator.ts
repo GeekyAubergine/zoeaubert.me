@@ -59,7 +59,6 @@ export const createAlbumPages = ({ createPage }) => {
                 component: PageComponent,
                 context: {
                     albumUid: album.uid,
-                    albumPhotoUids: JSON.stringify(album.photos),
                 }
             })
         })
