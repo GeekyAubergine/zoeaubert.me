@@ -3,9 +3,7 @@ title: Transferring a Spotify Playlist
 slug: tranferring-a-spotify-playlist
 date: 2019-11-02
 description: How to easily transfer a Spotify playlist between two accounts
-categories: 
-- Tech
-tags:
+tags: ["Tech"]
 ---
 Transferring playlists on Spotify can be a rather tedious process, there are many different approaches talked about online but I think I may have found the easiest way yet.
 

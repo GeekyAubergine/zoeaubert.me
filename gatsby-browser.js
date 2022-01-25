@@ -9,4 +9,5 @@ import './src/components/core.scss'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import "prism-themes/themes/prism-atom-dark.css"
 config.autoAddCss = false

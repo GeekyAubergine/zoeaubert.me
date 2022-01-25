@@ -1,4 +1,4 @@
-@import "../components/core";
+@import "../core";
 
 $thumb-height: 200px;
 $thumb-width-portrait: 133px;
@@ -13,54 +13,77 @@ $thumb-padding: 2px;
 }
 
 .grid {
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
   width: 100%;
-  max-width: 100%;
   justify-content: space-evenly;
   overflow-x: hidden;
+  margin: 0 0 1rem;
 }
 
-.thumbContainer {
-  //flex: 1;
-  background-color: $data-background-dark;
-  margin: .5rem .25rem;
-  padding: $thumb-padding;
+.row {
+  flex-direction: row;
+  justify-content: flex-start;
+  margin: 4px 0;
+  overflow: hidden;
   align-items: center;
 }
 
-.thumbContainerPortrait {
-  flex: $thumb-width-portrait + $thumb-padding 0;
-}
+.thumbContainer {
+  position: relative;
+  padding: 0 2px;
 
-.thumbContainerLandscape {
-  flex: $thumb-width-landscape + $thumb-padding 0;
+  &:hover {
+    .thumbAltContainer {
+      opacity: .75;
+    }
+  }
 }
 
 .thumb {
-  //object-fit: cover;
-  max-height: 100%;
-  width: auto;
+  padding: 2px;
 }
 
-.thumbPortrait {
-}
-
-.thumbLandscape {
-}
-
-.fullScreenModal {
-  position: fixed;
+.thumbAltContainer {
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 100vh;
+  padding: .5rem;
+  background-color: black;
+  opacity: 0;
+
+  transition: opacity 250ms;
+}
+
+.thumbAltText {
+  margin: 0;
+  padding: 0;
+}
+
+.fullScreenModal {
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  right: 100px;
+  bottom: 100px;
+  height: calc(100vh + 200px);
+  width: calc(100vw + 200px);
   flex-direction: column;
   align-content: center;
   justify-content: space-between;
   align-items: center;
   background-color: #080808;
+}
+
+.fullScreenModalContents {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .exit {
@@ -119,7 +142,7 @@ $thumb-padding: 2px;
 }
 
 .fullContainerLandscape {
-  max-height: min(60vw, 60vh);
+  max-height: min(80vw, 80vh);
   max-width: min(90vw, 90vh);
 }
 
@@ -135,4 +158,22 @@ $thumb-padding: 2px;
 
 .fullLandscape {
   //width: 80vw;
+}
+
+@media only screen and (min-width: $collapsible-width) {
+  .fullContainer {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    max-width: min(50vw, 50vh);
+    max-height: min(75vw, 75vh);
+  }
+  
+  .fullContainerPortrait {
+  }
+  
+  .fullContainerLandscape {
+    max-height: min(60vw, 60vh);
+    max-width: min(90vw, 90vh);
+  }
 }

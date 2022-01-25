@@ -1,11 +1,9 @@
 ---
-title: Optimising Nested Loop Operations
-slug: optimising-nested-loop-operations
+title: Optimising Nested Database Operations
+slug: optimising-nested-database-operations
 date: 2019-02-23
 description: A discussion in reducing nested database calls
-categories: 
-- Programming
-tags:
+tags: ["Programming"]
 ---
 Nested loops - love them or hate them - are often a necessary evil within many
 programming problems; whether it’s to traverse n-dimensional matrices or
@@ -23,8 +21,8 @@ layers of children to access Delta.
 
 An important thing to consider is whether or not the Alpha objects already have
 these children loaded into memory, or they need to retrieve from the database,
-this will greatly affect the required approach. Both the [database](#database)
-and [preloaded](#preloaded) approaches can be found below.
+this will greatly affect the required approach. Both the [database](#using-databases)
+and [preloaded](#using-preloaded-data) approaches can be found below.
 
 We’ll use javascript in these examples but the techniques discussed will be
 applicable to any language - I first implemented this solution in PHP.
@@ -42,7 +40,7 @@ which is something we should all strive to avoid.
 >
 ><cite>Donald Knuth</cite>
 
-### <a name="database"></a> Using databases
+## Using databases
 
 As we will be loading data from the database, it is worth considering the
 expensive nature database queries in terms of execution time and reducing the
@@ -193,7 +191,7 @@ key-value pair mappings - similar to a hashmap - and using them in the inner
 loop the complexity has been reduced yet again to `O(n^2)` as a object/hashmap
 get operation is traditionally an `O(n)` operation. There is one final step we
 could take to improve performance, though it is at the cost of both memory
-usage - though should still be lower than that of the [preloaded](#preloaded)
+usage - though should still be lower than that of the [preloaded](#using-preloaded-data)
 approach - and a significant reduction in the readability of the solution.
 
 ```js
@@ -239,7 +237,7 @@ such as in a case where it is not possible to retrieve all Bravos for all Alphas
 as the current queries rely upon being given a single Alpha, and implementing
 such an approach may lead to many other headaches and potential inefficiencies.
 
-#### <a name="preloaded"></a> Using preloaded data
+## Using preloaded data
 
 Similarly to before, a naive approach to this problem might look something like
 this:

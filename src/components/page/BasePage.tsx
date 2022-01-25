@@ -1,31 +1,31 @@
-import * as React from 'react';
-import {graphql, useStaticQuery} from 'gatsby'
+import * as React from 'react'
+import { graphql, useStaticQuery } from 'gatsby'
 import Helmet from 'react-helmet'
 import * as styles from './page.module.scss'
-import Header from "../header/Header";
+import Header from './header/Header'
 
 const HTML_ATTRIBUTES = {
     lang: 'en',
 }
 
 type Props = {
-    title: string | null,
-    description: string | null,
-    children: React.ReactNode,
+    title?: string | null
+    description?: string | null
+    children: React.ReactNode
 }
 
-const BasePage = ({title, description, children}: Props) => {
-    const {site} = useStaticQuery(
+const BasePage = ({ title, description, children }: Props) => {
+    const { site } = useStaticQuery(
         graphql`
-          query {
-            site {
-              siteMetadata {
-                title
-                description
-                author
-              }
+            query {
+                site {
+                    siteMetadata {
+                        title
+                        description
+                        author
+                    }
+                }
             }
-          }
         `,
     )
 
@@ -71,9 +71,7 @@ const BasePage = ({title, description, children}: Props) => {
                 ]}
             />
             <Header />
-            <div className={styles.body}>
-                {children}
-            </div>
+            <div className={styles.body}>{children}</div>
         </div>
     )
 }

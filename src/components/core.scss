@@ -1,7 +1,7 @@
 // Mobile and dark by default
 
-$max-width: 48rem;
-$collapsable-width: 52rem;
+$max-width: 44rem;
+$collapsible-width: 38rem;
 
 $white: #efefef;
 $black: #121212;
@@ -9,16 +9,18 @@ $invisible: #00000000;
 
 // Dark
 
-$main-background-dark: #1F2933;
-$secondary-background-dark: #222F3B;
-$tertiary-background-dark: #323F4B;
+$main-background-dark: #2e2e2f;
+$main-background-dark-2: #383333;
+$main-background-dark-3: #4D4A49;
+$accent-dark: #DEB9FF;
 
-$primary-colour-text-dark: #F5F7FA;
-$secondary-colour-text-dark: #CBD2D9;
+$primary-colour-text-dark: #E9E1DE;
+$secondary-colour-text-dark: #C8C3C0;
+
 
 $data-background-dark: #090f17;
 $data-text-color-dark: #E12D39;
-$border-dark: darken($white, 15%);
+$border-dark: hsla(13, 3, 29, 100);
 
 // Light
 
@@ -35,31 +37,33 @@ $border-light: darken($white, 15%);
 
 :root {
   --primary-background: #{$main-background-dark};
-  --secondary-background: #{$secondary-background-dark};
-  --tertiary-background: #{$tertiary-background-dark};
+  --secondary-background: #{$main-background-dark-2};
+  --tertiary-background: #{$main-background-dark-3};
 
   --primary-text: #{$primary-colour-text-dark};
   --secondary-text: #{$secondary-colour-text-dark};
 
-  --border-color: #{lighten($main-background-dark, 15%)};
+  --border-color: #{$border-dark};
+
+  --link-color: #{$accent-dark};
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --primary-background: #{$main-background-light};
-    --secondary-background: #{$secondary-background-light};
-    --tertiary-background: #{$tertiary-background-light};
+// @media (prefers-color-scheme: light) {
+//   :root {
+//     --primary-background: #{$main-background-light};
+//     --secondary-background: #{$secondary-background-light};
+//     --tertiary-background: #{$tertiary-background-light};
 
-    --primary-text: #{$primary-colour-text-light};
-    --secondary-text: #{$secondary-colour-text-light};
-  }
-}
+//     --primary-text: #{$primary-colour-text-light};
+//     --secondary-text: #{$secondary-colour-text-light};
+//   }
+// }
 
 * {
   margin: 0;
   padding: 0;
   font-family: 'Muli', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   box-sizing: border-box;
 }
@@ -85,7 +89,7 @@ section,
 article {
   display: flex;
   flex: 1;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 main {
@@ -94,20 +98,19 @@ main {
 }
 
 a {
-  color: var(--primary-text);
+  color: var(--link-color);
   transition: color .25s;
   font-size: inherit;
-  font-weight: bold;
-  text-decoration: none;
+  text-decoration: underline;
 
-  &:visited {
-    color: var(--primary-text);
+  &:hover {
+    text-decoration: none;
   }
 }
 
 p {
   flex: 100%;
-  padding: .5em 0;
+  padding: 1em 0;
   font-size: 110%;
   line-height: 1.5em;
   color: var(--primary-text);
@@ -145,7 +148,7 @@ h6 {
 code {
   padding: .1rem .35rem;
   color: $data-text-color-light;
-  background-color: $data-background-light;
+  // background-color: $data-background-light;
   font-weight: 600;
 
   table-layout: fixed;
@@ -155,10 +158,9 @@ code {
 
 pre {
   flex: 1;
-  background-color: $data-background-light;
+  // background-color: $data-background-light;
   table-layout: fixed;
-  max-width: calc(100vw - 4em);
-  margin: 1rem 0 !important; // Overrule prism
+  max-width: calc(100vw - 2em);
   border: 1px $border-light solid;
 
   code {
@@ -199,9 +201,9 @@ blockquote {
   display: flex;
   flex: 100%;
   flex-wrap: wrap;
-  background: #f5f2f0;
-  border-left: .25rem solid $black;
-  margin: .5rem 0;
+  background: var(--tertiary-background);
+  border-left: .25rem solid var(--secondary-background);
+  margin: .5rem 0 1.5rem;
   padding: 0.75em 1.25em;
 
   p {
@@ -219,4 +221,16 @@ blockquote {
       content: '- '
     }
   }
+}
+
+.header-link-icon {
+  svg {
+    margin-top: .75rem;
+      stroke: var(--link-color);
+      fill: var(--link-color);
+  }
+}
+
+@media only screen and (min-width: $collapsible-width) {
+
 }

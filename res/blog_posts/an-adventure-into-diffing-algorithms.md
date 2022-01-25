@@ -3,8 +3,7 @@ title: An Adventure Into Diffing Algorithms
 slug: an-adventure-into-diffing-algorithms
 date: 2016-11-01
 description: A dive into the wild world of building a custom diffing algorithms
-categories:
-- Programming
+tags: ["Programming"]
 ---
 A while ago at work, we decided that our current diffing algorithm was not
 meeting our requirements. At the time we were using

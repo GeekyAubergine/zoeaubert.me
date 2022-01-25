@@ -2,7 +2,7 @@ import * as path from "path"
 import {PHOTO_ALBUM_ALBUMS} from "../../res/photos/albumData";
 
 export const createBlogPosts = async ({ createPage, graphql }) => {
-    const PageComponent = path.resolve('src/templates/BlogPostPage.tsx')
+    const PageComponent = path.resolve('src/components/blog/BlogPostPage.tsx')
 
     try {
         const { data } = await graphql(`
@@ -17,6 +17,7 @@ export const createBlogPosts = async ({ createPage, graphql }) => {
                     slug
                   }
                   id
+                  timeToRead
                 }
               }
             }
@@ -31,12 +32,13 @@ export const createBlogPosts = async ({ createPage, graphql }) => {
             id: node.id,
         }))
 
-        pages.forEach(({ slug, id }) => {
+        pages.forEach(({ slug, id, timeToRead }) => {
             createPage({
                 path: `/blog/${slug}`,
                 component: PageComponent,
                 context: {
                     id,
+                    timeToRead,
                 }
             })
         })
@@ -46,7 +48,7 @@ export const createBlogPosts = async ({ createPage, graphql }) => {
 }
 
 export const createAlbumPages = ({ createPage }) => {
-    const PageComponent = path.resolve('src/templates/AlbumPage.tsx')
+    const PageComponent = path.resolve('src/components/album/AlbumPage.tsx')
 
     try {
         const albums = Object.keys(PHOTO_ALBUM_ALBUMS)

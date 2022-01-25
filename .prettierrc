@@ -2,7 +2,8 @@
   "endOfLine": "lf",
   "semi": false,
   "singleQuote": true,
-  "tabWidth": 2,
+  "tabWidth": 4,
   "trailingComma": "all",
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "print-width": 120
 }

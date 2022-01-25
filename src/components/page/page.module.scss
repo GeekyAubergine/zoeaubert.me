@@ -5,12 +5,11 @@
   justify-content: center;
   align-items: center;
   min-width: 100vw;
+  margin-bottom: 4rem;
 }
 
 .body {
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   width: 100%;
   max-width: $max-width;
   padding: 0 1rem;

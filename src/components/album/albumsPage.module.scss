@@ -1,0 +1,123 @@
+@import '../../components/core.scss';
+
+$thumb-height: 200px;
+$thumb-width-portrait: 133px;
+$thumb-width-landscape: 300px;
+
+.wrapper {
+    flex-direction: column;
+    width: 100%;
+}
+
+.pageTitle {
+    width: 100%;
+    //text-align: center;
+    font-size: 200%;
+    padding: 2rem 0 1rem;
+    font-weight: bold;
+}
+
+.container {
+    flex-direction: column;
+}
+
+.yearContainer {
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0 0 2rem 0;
+}
+
+.year {
+    width: 100%;
+    margin: 0.25rem 0;
+    padding: 0.25rem 0;
+    font-size: 120%;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.albums {
+    flex-direction: column;
+    width: 100%;
+}
+
+.albumRow {
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.album {
+    flex: 1;
+    flex-wrap: wrap;
+    margin: 0.25rem;
+    padding: 0.125rem 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    background-color: var(--secondary-background);
+
+    &:first-of-type {
+        margin-left: 0;
+    }
+
+    &:last-of-type {
+        margin-right: 0;
+    }
+
+    &:hover {
+        .albumName {
+            text-decoration: underline;
+        }
+    }
+}
+
+.albumNameAndCover {
+    flex: 1;
+    flex-wrap: wrap;
+    flex-direction: row;
+    // background-color: var(--secondary-background);
+}
+
+.albumName {
+    flex: 100%;
+    padding: 0.25rem 0.5rem 0.25rem;
+    color: var(--primary-text);
+
+    transition: text-decoration 0.25s;
+}
+
+.coverContainer {
+    flex: 100%;
+    flex-direction: row;
+    justify-content: center;
+    height: 200px;
+    padding: 0 0.125rem;
+}
+
+.coverPhoto {
+    flex: 100%;
+    justify-content: center;
+}
+
+.thumbContainer {
+    margin: 0 0.125rem 0 0.125rem;
+    align-items: center;
+}
+
+.thumbContainerPortrait {
+    flex: $thumb-width-portrait 0;
+}
+
+.thumbContainerLandscape {
+    flex: $thumb-width-landscape 0;
+}
+
+.thumb {
+    //object-fit: cover;
+    max-height: 100%;
+    width: auto;
+}
+
+.thumbPortrait {
+}
+
+.thumbLandscape {
+}
