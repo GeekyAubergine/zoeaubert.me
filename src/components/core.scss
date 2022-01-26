@@ -9,16 +9,21 @@ $invisible: #00000000;
 
 // Dark
 
-$main-background-dark: #171718;
+$main-background-dark: #1a1c20;
 $main-background-dark-2: #201b1b;
 $main-background-dark-3: #343231;
-$accent-dark: #E288D9;
+$accent-dark: #fdd974;
+
+//FDD974
+//#FE5F55
+//A04668
+//5ca4a9
 
 $primary-color-text-dark: #e9e1de;
 $secondary-color-text-dark: #c8c3c0;
 
 $data-background-dark: #090f17;
-$data-text-color-dark: #e12d39;
+$data-text-color-dark: #fe5f55;
 $border-dark: #4b4948;
 
 // Light
@@ -26,13 +31,13 @@ $border-dark: #4b4948;
 $main-background-light: #faf9f7;
 $secondary-background-light: #f0ede9;
 $tertiary-background-light: #e8e6e1;
-$accent-light:#A30093;
+$accent-light: #a30093;
 
 $primary-color-text-light: #27241d;
 $secondary-color-text-light: #423d33;
 
 $data-background-light: #ffffff;
-$data-text-color-light: #A51821;
+$data-text-color-light: #a51821;
 $border-light: darken($white, 15%);
 
 :root {
@@ -54,23 +59,23 @@ $border-light: darken($white, 15%);
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    --primary-background: #{$main-background-light};
-    --secondary-background: #{$secondary-background-light};
-    --tertiary-background: #{$tertiary-background-light};
+    :root {
+        --primary-background: #{$main-background-light};
+        --secondary-background: #{$secondary-background-light};
+        --tertiary-background: #{$tertiary-background-light};
 
-    --accent-color: #{$accent-light};
+        --accent-color: #{$accent-light};
 
-    --primary-text: #{$primary-color-text-light};
-    --secondary-text: #{$secondary-color-text-light};
+        --primary-text: #{$primary-color-text-light};
+        --secondary-text: #{$secondary-color-text-light};
 
-    --border-color: #{$border-light};
+        --border-color: #{$border-light};
 
-    --link-color: #{$accent-light};
+        --link-color: #{$accent-light};
 
-    --code-color: #{$data-text-color-light};
-    --code-background-color: #{$data-background-light};
-  }
+        --code-color: #{$data-text-color-light};
+        --code-background-color: #{$data-background-light};
+    }
 }
 
 * {
@@ -84,9 +89,9 @@ $border-light: darken($white, 15%);
     // font-family: "Segoe UI", sans-serif;
     // font-family: "Tahoma", sans-serif;
     // font-family: "Verdana", sans-serif;
-    font-family: 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-        'Segoe UI Emoji', 'Segoe UI Symbol';
-    font-size: 16px;
+    font-family: -apple-system, 'system-ui', 'Segoe UI', Helvetica, Arial,
+        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-size: 18px;
     font-weight: 400;
     box-sizing: border-box;
 }
@@ -189,10 +194,15 @@ pre {
 
 // Inline code
 :not(pre) > code[class*='language-text'] {
+    display: inline-block;
     background-color: var(--code-background-color);
     color: var(--code-color);
     font-style: italic;
-    padding: 0 0.3rem 0 0.2rem;
+    padding: 0.15rem 0.3rem 0 0.2rem;
+    max-width: calc(100vw - 2rem);
+    overflow-x: auto;
+    overflow-y: none;
+    vertical-align: top;
 }
 
 table {
@@ -259,4 +269,10 @@ blockquote {
 }
 
 @media only screen and (min-width: $collapsible-width) {
+  // Inline code
+  :not(pre) > code[class*='language-text'] {
+    display: inline;
+    padding: 0.15rem 0.3rem 0 0.2rem;
+    vertical-align: bottom;
+  }
 }
