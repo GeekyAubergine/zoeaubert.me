@@ -32,19 +32,6 @@ module.exports = {
         'gatsby-plugin-robots-txt',
         'gatsby-plugin-mdx',
         'gatsby-plugin-sharp',
-        // {
-        //     resolve: `gatsby-plugin-google-fonts`,
-        //     options: {
-        //         fonts: [
-        //             `Nunito:300,300i,400,400i,500,500i,600,600i,700,700i`,
-        //             `Poppins:300,300i,400,400i,500,500i,600,600i,700,700i`,
-        //             `Muli:300,300i,400,400i,500,500i,600,600i,700,700i`,
-        //             `FiraCode:300,300i,400,400i,500,500i,600,600i,700,700i`,
-        //         ],
-        //         display: `swap`,
-        //         subset: `greek-ext,latin-ext`,
-        //     },
-        // },
         {
             resolve: 'gatsby-plugin-manifest',
             options: {
@@ -134,5 +121,13 @@ module.exports = {
                 ],
             },
         },
+        {
+          resolve: 'gatsby-plugin-fathom',
+          options: {
+            trackingUrl: 'learned-laugh.zoeaubert.me',
+            siteId: 'XPKVFMEO',
+            honorDnt: true,
+          }
+        }
     ],
 }

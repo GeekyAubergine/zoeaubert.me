@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { graphql } from 'gatsby'
-import BasePage from '../page/BasePage'
-import * as styles from './blogPostPage.module.scss'
 import { MarkdownRemarkResponse } from '../../types'
+import BlogPost from '../../components/blog/BlogPost'
+import BasePage from '../../components/page/BasePage'
 
 type QueryResponse = {
   markdownRemark: MarkdownRemarkResponse
@@ -14,15 +14,11 @@ type Props = {
 
 const BlogPostPage = ({ data }: Props) => {
   const { markdownRemark } = data
-  const { frontmatter, html, timeToRead } = markdownRemark
-  const { title, tags, date } = frontmatter
+  const { frontmatter } = markdownRemark
+  const { title } = frontmatter
   return (
     <BasePage title="Blog" description="Blog">
-      <h2 className={styles.pageTitle}>{title}</h2>
-      <div
-        className={styles.content}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <BlogPost data={data} />
     </BasePage>
   )
 }

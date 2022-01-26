@@ -1,11 +1,11 @@
 import { createAlbumPages, createBlogPosts } from './pageCreator'
 import { createAlbumNodes, createCustomNodeSchemas } from './dataCreator'
 
-export const createPages = async ({ actions, graphql }) => {
+export const createPages = async ({ actions, graphql, reporter }) => {
   const { createPage } = actions
 
   try {
-    const blogPostsPromise = createBlogPosts({ createPage, graphql })
+    const blogPostsPromise = createBlogPosts({ createPage, graphql, reporter })
     const albumPagesPromise = createAlbumPages({ createPage })
 
     await Promise.all([blogPostsPromise, albumPagesPromise])

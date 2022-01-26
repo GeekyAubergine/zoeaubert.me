@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { graphql } from 'gatsby'
-import BlogPosts from '../../components/blog/BlogPosts'
 import BasePage from '../../components/page/BasePage'
+import BlogPosts from '../../components/blog/BlogPosts'
 
 const BlogPostsPage = ({ data }) => {
     return (
@@ -13,11 +13,14 @@ const BlogPostsPage = ({ data }) => {
 
 export default BlogPostsPage
 export const pageQuery = graphql`
-    {
+    query ($tag: String) {
         allMarkdownRemark(
             sort: { order: DESC, fields: [frontmatter___date] }
             limit: 1000
-            filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
+            filter: {
+                fileAbsolutePath: { regex: "/res/blog_posts/" }
+                frontmatter: { tags: { in: [$tag] } }
+            }
         ) {
             pageInfo {
                 perPage

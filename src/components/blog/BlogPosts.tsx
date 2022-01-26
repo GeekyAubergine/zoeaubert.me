@@ -15,9 +15,9 @@ type Props = {
 }
 
 const Tag = (tag: string) => (
-    <p key={tag} className={styles.tag}>
+    <Link key={tag} className={styles.tag} to={`/blog/tags/${tag.toLowerCase()}`}>
         {tag}
-    </p>
+    </Link>
 )
 
 const BlogEntry = ({ node }: MarkdownRemarkNode) => {
@@ -29,10 +29,10 @@ const BlogEntry = ({ node }: MarkdownRemarkNode) => {
             <h2 className={styles.title}>{title}</h2>
             <p className={styles.description}>{description}</p>
             <div className={styles.dateAndTags}>
-                <p className={styles.date}>{`${timeToRead}m read`} · {date}</p>
-                <div className={styles.tags}>
-                    {tags.map(Tag)}
-                </div>
+                <p className={styles.date}>
+                    {`${timeToRead}m read`} · {date}
+                </p>
+                <div className={styles.tags}>{tags.map(Tag)}</div>
             </div>
         </Link>
     )
@@ -41,9 +41,9 @@ const BlogEntry = ({ node }: MarkdownRemarkNode) => {
 const BlogPosts = ({ data }: Props) => {
     const { allMarkdownRemark } = data
     return (
-            <div className={styles.posts}>
-                {allMarkdownRemark.edges.map(BlogEntry)}
-            </div>
+        <div className={styles.posts}>
+            {allMarkdownRemark.edges.map(BlogEntry)}
+        </div>
     )
 }
 
