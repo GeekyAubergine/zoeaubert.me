@@ -9,77 +9,100 @@ $invisible: #00000000;
 
 // Dark
 
-$main-background-dark: #2e2e2f;
-$main-background-dark-2: #383333;
-$main-background-dark-3: #4D4A49;
-$accent-dark: #DEB9FF;
+$main-background-dark: #171718;
+$main-background-dark-2: #201b1b;
+$main-background-dark-3: #343231;
+$accent-dark: #E288D9;
 
-$primary-colour-text-dark: #E9E1DE;
-$secondary-colour-text-dark: #C8C3C0;
-
+$primary-color-text-dark: #e9e1de;
+$secondary-color-text-dark: #c8c3c0;
 
 $data-background-dark: #090f17;
-$data-text-color-dark: #E12D39;
-$border-dark: hsla(13, 3, 29, 100);
+$data-text-color-dark: #e12d39;
+$border-dark: #4b4948;
 
 // Light
 
-$main-background-light: #FAF9F7;
-$secondary-background-light: #F0EDE9;
-$tertiary-background-light: #E8E6E1;
+$main-background-light: #faf9f7;
+$secondary-background-light: #f0ede9;
+$tertiary-background-light: #e8e6e1;
+$accent-light:#A30093;
 
-$primary-colour-text-light: #27241D;
-$secondary-colour-text-light: #423D33;
+$primary-color-text-light: #27241d;
+$secondary-color-text-light: #423d33;
 
-$data-background-light: #E8E6E1;
-$data-text-color-light: #E12D39;
+$data-background-light: #ffffff;
+$data-text-color-light: #A51821;
 $border-light: darken($white, 15%);
 
 :root {
-  --primary-background: #{$main-background-dark};
-  --secondary-background: #{$main-background-dark-2};
-  --tertiary-background: #{$main-background-dark-3};
+    --primary-background: #{$main-background-dark};
+    --secondary-background: #{$main-background-dark-2};
+    --tertiary-background: #{$main-background-dark-3};
 
-  --primary-text: #{$primary-colour-text-dark};
-  --secondary-text: #{$secondary-colour-text-dark};
+    --accent-color: #{$accent-dark};
 
-  --border-color: #{$border-dark};
+    --primary-text: #{$primary-color-text-dark};
+    --secondary-text: #{$secondary-color-text-dark};
 
-  --link-color: #{$accent-dark};
+    --border-color: #{$border-dark};
+
+    --link-color: #{$accent-dark};
+
+    --code-color: #{$data-text-color-dark};
+    --code-background-color: #{$data-background-dark};
 }
 
-// @media (prefers-color-scheme: light) {
-//   :root {
-//     --primary-background: #{$main-background-light};
-//     --secondary-background: #{$secondary-background-light};
-//     --tertiary-background: #{$tertiary-background-light};
+@media (prefers-color-scheme: light) {
+  :root {
+    --primary-background: #{$main-background-light};
+    --secondary-background: #{$secondary-background-light};
+    --tertiary-background: #{$tertiary-background-light};
 
-//     --primary-text: #{$primary-colour-text-light};
-//     --secondary-text: #{$secondary-colour-text-light};
-//   }
-// }
+    --accent-color: #{$accent-light};
+
+    --primary-text: #{$primary-color-text-light};
+    --secondary-text: #{$secondary-color-text-light};
+
+    --border-color: #{$border-light};
+
+    --link-color: #{$accent-light};
+
+    --code-color: #{$data-text-color-light};
+    --code-background-color: #{$data-background-light};
+  }
+}
 
 * {
-  margin: 0;
-  padding: 0;
-  font-family: 'Muli', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    // font-family: 'Dejavu Sans', sans-serif;
+    // font-family: 'Helvetica', sans-serif;
+    // font-family: 'Optima', sans-serif;
+    // font-family: 'Palatino', sans-serif;
+    // font-family: "Perpetua", sans-serif;
+    // font-family: "Segoe UI", sans-serif;
+    // font-family: "Tahoma", sans-serif;
+    // font-family: "Verdana", sans-serif;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-size: 16px;
+    font-weight: 400;
+    box-sizing: border-box;
 }
 
 html {
-  width: 100%;
-  overflow-x: hidden;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 body {
-  display: flex;
-  flex-wrap: wrap;
-  background-color: var(--primary-background);
-  width: 100%;
-  justify-content: center;
-  align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: var(--primary-background);
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 header,
@@ -87,52 +110,52 @@ main,
 div,
 section,
 article {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
 }
 
 main {
-  align-items: flex-start;
-  max-width: $max-width;
+    align-items: flex-start;
+    max-width: $max-width;
 }
 
 a {
-  color: var(--link-color);
-  transition: color .25s;
-  font-size: inherit;
-  text-decoration: underline;
+    color: var(--link-color);
+    transition: color 0.25s;
+    font-size: inherit;
+    text-decoration: underline;
 
-  &:hover {
-    text-decoration: none;
-  }
+    &:hover {
+        text-decoration: none;
+    }
 }
 
 p {
-  flex: 100%;
-  padding: 1em 0;
-  font-size: 110%;
-  line-height: 1.5em;
-  color: var(--primary-text);
+    flex: 100%;
+    padding: 1em 0;
+    font-size: 110%;
+    line-height: 1.5em;
+    color: var(--primary-text);
 
-  &:last-of-type {
-    padding-bottom: 0;
-  }
+    &:last-of-type {
+        padding-bottom: 0;
+    }
 }
 
 em {
-  font-size: 100%;
+    font-size: 100%;
 }
 
 ul,
 ol {
-  padding: .5rem 2rem;
+    padding: 0.5rem 2rem;
 }
 
 li {
-  padding: .375rem;
-  color: var(--primary-text);
-  font-size: inherit;
+    padding: 0.375rem;
+    color: var(--primary-text);
+    font-size: inherit;
 }
 
 h1,
@@ -141,96 +164,99 @@ h3,
 h4,
 h5,
 h6 {
-  color: var(--primary-text);
-  line-height: 1.2em;
+    color: var(--primary-text);
+    line-height: 1.2em;
 }
 
 code {
-  padding: .1rem .35rem;
-  color: $data-text-color-light;
-  // background-color: $data-background-light;
-  font-weight: 600;
+    padding: 0.1rem 0.35rem;
+    color: $data-text-color-light;
+    // background-color: $data-background-light;
+    font-weight: 600;
 
-  table-layout: fixed;
-  max-width: 100%;
-  overflow-x: scroll;
+    table-layout: fixed;
+    max-width: 100%;
+    overflow-x: scroll;
 }
 
 pre {
-  flex: 1;
-  // background-color: $data-background-light;
-  table-layout: fixed;
-  max-width: calc(100vw - 2em);
-  border: 1px $border-light solid;
+    flex: 1;
+    // background-color: $data-background-light;
+    table-layout: fixed;
+    max-width: calc(100vw - 2em);
+    border: 1px $border-light solid;
+}
 
-  code {
-    padding: 0;
-  }
+// Inline code
+:not(pre) > code[class*='language-text'] {
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    font-style: italic;
+    padding: 0 0.3rem 0 0.2rem;
 }
 
 table {
-  table-layout: fixed;
-  width: 100%;
-  margin: .5rem auto;
-  padding: 0;
-  border: 1px solid $border-light;
-  border-collapse: collapse;
-
-  tr {
-    background-color: $data-background-light;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0.5rem auto;
+    padding: 0;
     border: 1px solid $border-light;
-    padding: .25em;
-  }
+    border-collapse: collapse;
 
-  thead {
-    text-transform: uppercase;
-  }
+    tr {
+        background-color: $data-background-light;
+        border: 1px solid $border-light;
+        padding: 0.25em;
+    }
 
-  th,
-  td {
-    padding: .5em;
-    text-align: center;
-  }
+    thead {
+        text-transform: uppercase;
+    }
 
-  th {
-    font-weight: bold;
-  }
+    th,
+    td {
+        padding: 0.5em;
+        text-align: center;
+    }
+
+    th {
+        font-weight: bold;
+    }
 }
 
 blockquote {
-  display: flex;
-  flex: 100%;
-  flex-wrap: wrap;
-  background: var(--tertiary-background);
-  border-left: .25rem solid var(--secondary-background);
-  margin: .5rem 0 1.5rem;
-  padding: 0.75em 1.25em;
-
-  p {
-    padding: 0 0 .25rem;
-    font-style: italic;
-    font-weight: bold;
-    font-size: 100%;
-  }
-
-  cite {
+    display: flex;
     flex: 100%;
-    padding: .5rem 0 0 .5rem;
+    flex-wrap: wrap;
+    background: var(--tertiary-background);
+    border-left: 0.25rem solid var(--accent-color);
+    margin: 0.5rem 0 1.5rem;
+    padding: 0.75em 1.25em;
 
-    &:before {
-      content: '- '
+    p {
+        padding: 0 0 0.25rem;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 100%;
     }
-  }
+
+    cite {
+        flex: 100%;
+        padding: 0.5rem 0 0 0.5rem;
+
+        &:before {
+            content: '- ';
+        }
+    }
 }
 
 .header-link-icon {
-  svg {
-    margin-top: .75rem;
-      stroke: var(--link-color);
-      fill: var(--link-color);
-  }
+    svg {
+        margin-top: 0.75rem;
+        stroke: var(--link-color);
+        fill: var(--link-color);
+    }
 }
 
 @media only screen and (min-width: $collapsible-width) {
-
 }

@@ -6,13 +6,13 @@ const HEX_POINTS = 6
 const HEX_ANGLE = (Math.PI * 2) / HEX_POINTS
 const HEX_RADIUS = 64
 const HEX_PATH_WIDTH = 6
-const HEX_BORDER_COLOUR = '#fac800'
+const HEX_BORDER_color = '#fac800'
 
 let container = null
 let canvas = null
 let canvasContext
 
-const genColour = () => {
+const gencolor = () => {
     const h = `${100 * (Math.random() * .04 + .48)}`
     const l = `${100 * (Math.random() * .06 + .60)}%`
 
@@ -22,8 +22,8 @@ const genColour = () => {
 const drawHex = (cx, cy) => {
     canvasContext.beginPath()
 
-    canvasContext.fillStyle = genColour()
-    canvasContext.strokeStyle = HEX_BORDER_COLOUR
+    canvasContext.fillStyle = gencolor()
+    canvasContext.strokeStyle = HEX_BORDER_color
     canvasContext.lineWidth = HEX_PATH_WIDTH
 
     for (let p = 0; p < HEX_POINTS; p++) {

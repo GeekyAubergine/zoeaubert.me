@@ -49,7 +49,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        color: $primary-colour-text-light;
+        color: $primary-color-text-light;
         text-decoration: none;
         text-align: center;
       }
@@ -61,7 +61,7 @@
       }
 
       &:hover {
-        border-bottom-color: $primary-colour-text-light;
+        border-bottom-color: $primary-color-text-light;
       }
 
       &:first-of-type {
@@ -104,11 +104,11 @@
     .links {
       li {
         a {
-          color: $primary-colour-text-dark;
+          color: $primary-color-text-dark;
         }
 
         &:hover {
-          border-bottom-color: $primary-colour-text-dark;
+          border-bottom-color: $primary-color-text-dark;
         }
       }
     }

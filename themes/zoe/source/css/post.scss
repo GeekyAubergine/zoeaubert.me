@@ -45,7 +45,7 @@
     font-size: 150%;
     justify-content: center;
     padding-bottom: 3rem;
-    color: $secondary-colour-text-light;
+    color: $secondary-color-text-light;
   }
 }
 
@@ -60,7 +60,7 @@
 @media (prefers-color-scheme: dark) {
   .post-article {
     .date {
-      color: $secondary-colour-text-dark;
+      color: $secondary-color-text-dark;
     }
   }
 }
