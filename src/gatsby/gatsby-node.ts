@@ -6,9 +6,9 @@ export const createPages = async ({ actions, graphql, reporter }) => {
 
   try {
     const blogPostsPromise = createBlogPosts({ createPage, graphql, reporter })
-    const albumPagesPromise = createAlbumPages({ createPage })
+    // const albumPagesPromise = createAlbumPages({ createPage })
 
-    await Promise.all([blogPostsPromise, albumPagesPromise])
+    await Promise.all([blogPostsPromise])
   } catch (e) {
     console.error(e)
   }
