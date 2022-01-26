@@ -65,3 +65,7 @@ public/
 .deploy*/
 
 .idea/
+
+# Gatsby
+.cache/
+res/photos/cache/
