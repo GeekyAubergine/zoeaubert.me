@@ -5,7 +5,7 @@ import { Link } from 'gatsby'
 const Header = () => (
     <div className={styles.container}>
         <Link className={styles.titleContainer} to="/">
-            <h1 className={styles.title}>Zoe Aubert</h1>
+            <h1 className="text-xl4">Zoe Aubert</h1>
         </Link>
         <div className={styles.links}>
             <Link

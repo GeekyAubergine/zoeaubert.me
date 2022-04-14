@@ -5,7 +5,9 @@
  */
 
 // You can delete this file if you're not using it
-import './src/components/core.scss'
+// import './src/components/core.scss'
+import './src/tailwind-base.css'
+import './src/styles.css'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'

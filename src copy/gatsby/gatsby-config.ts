@@ -137,6 +137,5 @@ module.exports = {
                 honorDnt: true,
             },
         },
-        `gatsby-plugin-fontawesome-css`,
     ],
 }

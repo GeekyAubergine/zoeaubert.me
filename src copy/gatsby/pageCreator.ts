@@ -2,12 +2,12 @@ import * as path from 'path'
 import { PHOTO_ALBUM_ALBUMS } from '../../res/photos/albumData'
 
 export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
-    // const BlogPostPageTemplate = path.resolve(
-    //     'src/templates/blog/BlogPostTemplate.tsx',
-    // )
-    // const BlogTagSearchPageTemplate = path.resolve(
-    //     'src/templates/blog/TagSearchTemplate.tsx',
-    // )
+    const BlogPostPageTemplate = path.resolve(
+        'src/templates/blog/BlogPostTemplate.tsx',
+    )
+    const BlogTagSearchPageTemplate = path.resolve(
+        'src/templates/blog/TagSearchTemplate.tsx',
+    )
 
     try {
         const result = await graphql(`
@@ -54,39 +54,39 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
             id: node.id,
         }))
 
-        // pages.forEach(({ slug, id, timeToRead }) => {
-        //     createPage({
-        //         path: `/blog/${slug}`,
-        //         component: BlogPostPageTemplate,
-        //         context: {
-        //             id,
-        //             timeToRead,
-        //         },
-        //     })
-        // })
+        pages.forEach(({ slug, id, timeToRead }) => {
+            createPage({
+                path: `/blog/${slug}`,
+                component: BlogPostPageTemplate,
+                context: {
+                    id,
+                    timeToRead,
+                },
+            })
+        })
 
         const tags = result.data.tagsGroup.group.map(g => Object.values(g)[0])
 
         console.log('TAGS')
         console.log(tags)
 
-        // tags.forEach((tag) => {
-        //   console.log(tag)
-        //     createPage({
-        //         path: `/blog/tags/${tag.toLowerCase()}`,
-        //         component: BlogTagSearchPageTemplate,
-        //         context: {
-        //             tag,
-        //         },
-        //     })
-        // })
+        tags.forEach((tag) => {
+          console.log(tag)
+            createPage({
+                path: `/blog/tags/${tag.toLowerCase()}`,
+                component: BlogTagSearchPageTemplate,
+                context: {
+                    tag,
+                },
+            })
+        })
     } catch (e) {
         console.error(e)
     }
 }
 
 export const createAlbumPages = ({ createPage }) => {
-    // const PageComponent = path.resolve('src/components/album/AlbumPage.tsx')
+    const PageComponent = path.resolve('src/components/album/AlbumPage.tsx')
 
     // try {
     //     const albums = Object.keys(PHOTO_ALBUM_ALBUMS)
