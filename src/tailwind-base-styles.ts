@@ -1,1 +1,0 @@
-export const TEXT = 'text-text dark:text-text-dark font-sans tabular-nums'

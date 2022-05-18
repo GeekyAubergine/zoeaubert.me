@@ -6,11 +6,15 @@ module.exports = {
                 text: {
                     DEFAULT: '#00070B',
                     dark: '#fefdfb',
+                    secondary: '#aeadab',
                 },
                 background: {
                     DEFAULT: '#ffffff',
                     dark: '#00070B',
                 },
+                accent: {
+                    DEFAULT: '#00ff00'
+                }
             },
             height: (theme) => ({
                 'screen/2': '50vh',

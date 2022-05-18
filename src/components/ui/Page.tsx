@@ -27,7 +27,7 @@ export function Page({ title, description, children }: Props) {
     )
 
     return (
-        <div className="bg-background dark:bg-background-dark min-h-screen m-w-screen">
+        <div className="bg-slate-800 min-h-screen m-w-screen flex justify-center">
             <Helmet
                 htmlAttributes={HTML_ATTRIBUTES}
                 title={title != null ? `${title} | Zoe Aubert` : 'Zoe Aubert'}
@@ -67,7 +67,7 @@ export function Page({ title, description, children }: Props) {
                     },
                 ]}
             />
-            <div>{children}</div>
+            <div className='p-4 max-w-[48em]'>{children}</div>
         </div>
     )
 }
