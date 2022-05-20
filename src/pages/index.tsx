@@ -1,11 +1,10 @@
 import * as React from 'react'
 import { graphql, Link } from 'gatsby'
 import { Page } from '../components/ui/Page'
-import NavBar from '../components/ui/NavBar'
 import BlogListItem from '../components/ui/BlogListItem'
 
 function Heading({ title }: { title: string }) {
-    return <h2 className="text-2xl pt-8 font-bold">{title}</h2>
+    return <h2 className="text-3xl pt-12 font-bold sm:pt-8">{title}</h2>
 }
 
 function SocialLink({
@@ -16,7 +15,7 @@ function SocialLink({
     description: string
 }) {
     return (
-        <li className="flex text-xl ml-4 mb-2 last-of-type:mb-0">
+        <div className="flex text-xl mt-2 last-of-type:mb-0 sm:ml-4">
             <a
                 className="link text-x"
                 href="https://micro.blog/geekyaubergine"
@@ -25,21 +24,20 @@ function SocialLink({
             >
                 {name}
             </a>
-            <span className="text pl-2">-</span>
-            <span className="text pl-2">{description}</span>
-        </li>
+            <span className="text pl-1 sm:pl-2">-</span>
+            <span className="text pl-1 sm:pl-2">{description}</span>
+        </div>
     )
 }
 
 export default function IndexPage({ data }) {
     const renderBlogEntry = React.useCallback(({ node }) => {
-        return <BlogListItem node={node} key={node.id} />
+        return <BlogListItem node={node} key={node.id} style="sm:m-4"  />
     }, [])
 
     return (
         <Page>
-            <NavBar />
-            <p className="text-xl pt-4 px-4">
+            <p className="text-xl pt-4 sm:px-4">
                 Hi there, I’m a software developer from Jersey, living in
                 Portsmouth, working at{' '}
                 <a href="https://radweb.co.uk" target="_blank" rel="noopener">
@@ -55,7 +53,7 @@ export default function IndexPage({ data }) {
                 </a>{' '}
                 and other projects; primarily focusing on app development.
             </p>
-            <p className="text-xl pt-4 px-4">
+            <p className="text-xl pt-4 sm:px-4">
                 I tend to post small things on my{' '}
                 <a
                     href="https://micro.zoeaubert.me"
@@ -65,7 +63,7 @@ export default function IndexPage({ data }) {
                     micro blog
                 </a>{' '}
                 and longer writings on my <Link to="/blog">Blog</Link>. For
-                photos see my{' '}
+                photos see my{'  '}
                 <a
                     href="https://micro.zoeaubert.me/photos/"
                     target="_blank"
@@ -73,14 +71,17 @@ export default function IndexPage({ data }) {
                 >
                     photos page
                 </a>
+                .
             </p>
             <Heading title="Blog Posts" />
             {data.blogPosts.edges.map(renderBlogEntry)}
-            <Link to="/blog">
-                <p className="m-4 mb-0 link">See More</p>
-            </Link>
-            <Heading title="Socials & Other Platforms" />
-            <ul className="pt-4">
+            <div className="mt-2">
+                <Link to="/blog" className="button mb-0 mt-2 sm:ml-4">
+                    See More
+                </Link>
+            </div>
+            <Heading title="Other Platforms" />
+            <div className="sm:pt-2">
                 <SocialLink
                     name="Micro.blog"
                     description="Micro blogging replacement for both Twitter and
@@ -94,11 +95,8 @@ export default function IndexPage({ data }) {
                     name="Twitter"
                     description="Old tweets and occasional retweets of cool things"
                 />
-                <SocialLink
-                    name="LinkedIn"
-                    description="Professional things"
-                />
-            </ul>
+                <SocialLink name="LinkedIn" description="Professional things" />
+            </div>
         </Page>
     )
 }

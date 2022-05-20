@@ -3,11 +3,14 @@ import { Link } from 'gatsby'
 
 export default function NavBar() {
     return (
-        <nav className="flex justify-between items-baseline mt-2">
-            <h1 className={`text-4xl text-center`}>
-                Zoe Aubert
-            </h1>
-            <div>
+        <nav className="flex flex-1 flex-col justify-center items-center my-2 sm:flex-row sm:justify-between">
+            <Link
+                className="w-full text-4xl h-full text-center mb-4 sm:text-left sm:mb-0 sm:text-5xl"
+                to="/"
+            >
+                <h1>Zoe Aubert</h1>
+            </Link>
+            <div className="flex w-full justify-around sm:justify-end">
                 <a
                     className="navbarLink"
                     href="https://micro.zoeaubert.me"
