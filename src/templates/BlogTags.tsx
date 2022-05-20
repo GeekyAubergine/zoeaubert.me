@@ -3,9 +3,7 @@ import * as React from 'react'
 import BlogListItem from '../components/ui/BlogListItem'
 import { Page } from '../components/ui/Page'
 
-export default function BlogTags({ data }) {
-    console.log({ data })
-
+export default function BlogTags({ data, pageContext }) {
     const renderBlogEntry = React.useCallback(({ node }) => {
         return <BlogListItem node={node} key={node.id} />
     }, [])
@@ -13,7 +11,7 @@ export default function BlogTags({ data }) {
     return (
         <Page title="Blog">
             <h2 className="text-2xl pt-12 mb-2 font-bold sm:pt-8">
-                Blog Posts
+                {pageContext.tag} Blog Posts
             </h2>
             {data.blogPosts.edges.map(renderBlogEntry)}
         </Page>
