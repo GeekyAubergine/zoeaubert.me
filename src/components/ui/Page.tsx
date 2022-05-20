@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { graphql, useStaticQuery } from 'gatsby'
 import Helmet from 'react-helmet'
-import * as styles from './page.module.scss'
-import Header from './header/Header'
+import NavBar from './NavBar'
 
 const HTML_ATTRIBUTES = {
     lang: 'en',
@@ -13,8 +12,7 @@ type Props = {
     description?: string | null
     children: React.ReactNode
 }
-
-const BasePage = ({ title, description, children }: Props) => {
+export function Page({ title, description, children }: Props) {
     const { site } = useStaticQuery(
         graphql`
             query {
@@ -30,7 +28,7 @@ const BasePage = ({ title, description, children }: Props) => {
     )
 
     return (
-        <div className={styles.wrapper}>
+        <div className="flex w-full justify-center pt-4 pb-8 px-4 sm:px-8">
             <Helmet
                 htmlAttributes={HTML_ATTRIBUTES}
                 title={title != null ? `${title} | Zoe Aubert` : 'Zoe Aubert'}
@@ -70,10 +68,9 @@ const BasePage = ({ title, description, children }: Props) => {
                     },
                 ]}
             />
-            <Header />
-            <div className={styles.body}>{children}</div>
+            <div className="flex flex-col w-[48em]">
+                <NavBar />
+                {children}</div>
         </div>
     )
 }
-
-export default BasePage

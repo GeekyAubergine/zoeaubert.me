@@ -2,11 +2,11 @@ import * as path from 'path'
 import { PHOTO_ALBUM_ALBUMS } from '../../res/photos/albumData'
 
 export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
-    const BlogPostPageTemplate = path.resolve(
-        'src/templates/blog/BlogPostTemplate.tsx',
+    const BlogPost = path.resolve(
+        'src/templates/BlogPost.tsx',
     )
-    const BlogTagSearchPageTemplate = path.resolve(
-        'src/templates/blog/TagSearchTemplate.tsx',
+    const BlogTags = path.resolve(
+        'src/templates/BlogTags.tsx',
     )
 
     try {
@@ -57,7 +57,7 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
         pages.forEach(({ slug, id, timeToRead }) => {
             createPage({
                 path: `/blog/${slug}`,
-                component: BlogPostPageTemplate,
+                component: BlogPost,
                 context: {
                     id,
                     timeToRead,
@@ -67,38 +67,13 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
 
         const tags = result.data.tagsGroup.group.map(g => Object.values(g)[0])
 
-        console.log('TAGS')
-        console.log(tags)
-
         tags.forEach((tag) => {
           console.log(tag)
             createPage({
                 path: `/blog/tags/${tag.toLowerCase()}`,
-                component: BlogTagSearchPageTemplate,
+                component: BlogTags,
                 context: {
                     tag,
-                },
-            })
-        })
-    } catch (e) {
-        console.error(e)
-    }
-}
-
-export const createAlbumPages = ({ createPage }) => {
-    const PageComponent = path.resolve('src/components/album/AlbumPage.tsx')
-
-    try {
-        const albums = Object.keys(PHOTO_ALBUM_ALBUMS)
-
-        albums.forEach((albumKey) => {
-            const album = PHOTO_ALBUM_ALBUMS[albumKey]
-
-            createPage({
-                path: `/photos/${album.slug}`,
-                component: PageComponent,
-                context: {
-                    albumUid: album.uid,
                 },
             })
         })

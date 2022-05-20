@@ -1,13 +1,43 @@
 import * as React from 'react'
 import { graphql, Link } from 'gatsby'
-import * as styles from './index.module.scss'
-import BasePage from '../components/page/BasePage'
-import BlogPosts from '../components/blog/BlogPosts'
+import { Page } from '../components/ui/Page'
+import BlogListItem from '../components/ui/BlogListItem'
 
-const IndexPage = ({ data }) => {
+function Heading({ title }: { title: string }) {
+    return <h2 className="text-3xl pt-12 font-bold sm:pt-8">{title}</h2>
+}
+
+function SocialLink({
+    name,
+    description,
+}: {
+    name: string
+    description: string
+}) {
     return (
-        <BasePage>
-            <p className={styles.intro}>
+        <div className="flex text-xl mt-2 last-of-type:mb-0 sm:ml-4">
+            <a
+                className="link text-x"
+                href="https://micro.blog/geekyaubergine"
+                target="_blank"
+                rel="noopener"
+            >
+                {name}
+            </a>
+            <span className="text pl-1 sm:pl-2">-</span>
+            <span className="text pl-1 sm:pl-2">{description}</span>
+        </div>
+    )
+}
+
+export default function IndexPage({ data }) {
+    const renderBlogEntry = React.useCallback(({ node }) => {
+        return <BlogListItem node={node} key={node.id} style="sm:m-4"  />
+    }, [])
+
+    return (
+        <Page>
+            <p className="text-xl pt-4 sm:px-4">
                 Hi there, I’m a software developer from Jersey, living in
                 Portsmouth, working at{' '}
                 <a href="https://radweb.co.uk" target="_blank" rel="noopener">
@@ -23,19 +53,59 @@ const IndexPage = ({ data }) => {
                 </a>{' '}
                 and other projects; primarily focusing on app development.
             </p>
-            <Link className={styles.blogPostsHeaderLinkWrapper} to="/blog"><p className={styles.blogPostsHeaderLink}>Blog Posts</p></Link>
-            <BlogPosts data={data} />
-            <Link className={styles.blogPostsLinkWrapper} to="/blog"><p className={styles.blogPostsLink}>Read More</p></Link>
-
-        </BasePage>
+            <p className="text-xl pt-4 sm:px-4">
+                I tend to post small things on my{' '}
+                <a
+                    href="https://micro.zoeaubert.me"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    micro blog
+                </a>{' '}
+                and longer writings on my <Link to="/blog">Blog</Link>. For
+                photos see my{'  '}
+                <a
+                    href="https://micro.zoeaubert.me/photos/"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    photos page
+                </a>
+                .
+            </p>
+            <Heading title="Blog Posts" />
+            {data.blogPosts.edges.map(renderBlogEntry)}
+            <div className="mt-2">
+                <Link to="/blog" className="button mb-0 mt-2 sm:ml-4">
+                    See More
+                </Link>
+            </div>
+            <Heading title="Other Platforms" />
+            <div className="sm:pt-2">
+                <SocialLink
+                    name="Micro.blog"
+                    description="Micro blogging replacement for both Twitter and
+                        Instagram"
+                />
+                <SocialLink
+                    name="GitHub"
+                    description="My open source projects"
+                />
+                <SocialLink
+                    name="Twitter"
+                    description="Old tweets and occasional retweets of cool things"
+                />
+                <SocialLink name="LinkedIn" description="Professional things" />
+            </div>
+        </Page>
     )
 }
 
 export const pageQuery = graphql`
     {
-        allMarkdownRemark(
+        blogPosts: allMarkdownRemark(
             sort: { order: DESC, fields: [frontmatter___date] }
-            limit: 2
+            limit: 5
             filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
         ) {
             pageInfo {
@@ -43,6 +113,7 @@ export const pageQuery = graphql`
             }
             edges {
                 node {
+                    id
                     frontmatter {
                         title
                         slug
@@ -56,5 +127,3 @@ export const pageQuery = graphql`
         }
     }
 `
-
-export default IndexPage
