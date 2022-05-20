@@ -81,25 +81,3 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
         console.error(e)
     }
 }
-
-export const createAlbumPages = ({ createPage }) => {
-    // const PageComponent = path.resolve('src/components/album/AlbumPage.tsx')
-
-    // try {
-    //     const albums = Object.keys(PHOTO_ALBUM_ALBUMS)
-
-    //     albums.forEach((albumKey) => {
-    //         const album = PHOTO_ALBUM_ALBUMS[albumKey]
-
-    //         createPage({
-    //             path: `/photos/${album.slug}`,
-    //             component: PageComponent,
-    //             context: {
-    //                 albumUid: album.uid,
-    //             },
-    //         })
-    //     })
-    // } catch (e) {
-    //     console.error(e)
-    // }
-}
