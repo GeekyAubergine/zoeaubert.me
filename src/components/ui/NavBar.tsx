@@ -2,35 +2,36 @@ import * as React from 'react'
 import { Link } from 'gatsby'
 
 export default function NavBar() {
-    const bodyClassList = document.body.classList
-    const htmlClassList = document.querySelector('html').classList
-    const toggleButton = document.querySelector('.toggle-button')
-    const systemDarkSetting = window.matchMedia('(prefers-color-scheme: dark)')
-    const storeDarkValue = localStorage.getItem('dark')
-
-    const setDark = React.useCallback(
-        (isDark) => {
-            htmlClassList[isDark ? 'add' : 'remove']('dark')
-            localStorage.setItem('dark', isDark ? 'yes' : 'no')
-        },
-        [htmlClassList],
-    )
-
-    const onTogglePressed = React.useCallback(() => {
-        setDark(!htmlClassList.contains('dark'))
-    }, [setDark, htmlClassList])
-
     React.useEffect(() => {
-        setDark(
-            storeDarkValue
-                ? storeDarkValue === 'yes'
-                : systemDarkSetting.matches,
-        )
-        requestAnimationFrame(() => bodyClassList.remove('hidden'))
+        if (typeof window !== 'undefined' && window.document) {
+            const bodyClassList = document.body.classList
 
-        systemDarkSetting.addEventListener('change', (event) =>
-            setDark(event.matches),
-        )
+            const htmlClassList = document.querySelector('html').classList
+            const toggleButton = document.querySelector('.toggle-button')
+            const systemDarkSetting = window.matchMedia(
+                '(prefers-color-scheme: dark)',
+            )
+            const storeDarkValue = localStorage.getItem('dark')
+
+            const setDark = (isDark) => {
+                htmlClassList[isDark ? 'add' : 'remove']('dark')
+                localStorage.setItem('dark', isDark ? 'yes' : 'no')
+            }
+
+            setDark(
+                storeDarkValue
+                    ? storeDarkValue === 'yes'
+                    : systemDarkSetting.matches,
+            )
+            requestAnimationFrame(() => bodyClassList.remove('hidden'))
+
+            toggleButton.addEventListener('click', () =>
+                setDark(!htmlClassList.contains('dark')),
+            )
+            systemDarkSetting.addEventListener('change', (event) =>
+                setDark(event.matches),
+            )
+        }
     }, [])
 
     return (
@@ -42,7 +43,7 @@ export default function NavBar() {
                 >
                     <h1>Zoe Aubert</h1>
                 </Link>
-                <div className="mx-4" onClick={onTogglePressed}>
+                <div className="toggle-button mx-4">
                     <svg
                         className="toggle-button cursor-pointer text-middleGray dark:rotate-180 transition-all duration-500"
                         width="24"

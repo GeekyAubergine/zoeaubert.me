@@ -70,7 +70,8 @@ export function Page({ title, description, children }: Props) {
             />
             <div className="flex flex-col w-[48em]">
                 <NavBar />
-                {children}</div>
+                {children}
+            </div>
         </div>
     )
 }
