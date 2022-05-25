@@ -4,27 +4,31 @@
 
 @layer components {
     html {
-        @apply bg-slate-800;
+        font-size: 16px;
+    }
+
+    body {
+        @apply bg-background dark:bg-background-dark  transition-colors duration-500 max-w-[50rem] mx-4 sm:mx-auto;
     }
 
     .text {
-        @apply text-gray-50 font-sans tabular-nums;
+        @apply text-text dark:text-text-dark font-sans tabular-nums  transition-colors duration-500;
     }
 
     .link {
-        @apply underline text-orange-300;
+        @apply underline text-accent dark:text-accent-dark;
     }
 
     .button {
-        @apply text-lg no-underline py-[.2rem] px-2 border-2 text-orange-300 border-orange-300 rounded-md hover:text-slate-800 hover:bg-orange-300 transition-colors;
+        @apply text-lg no-underline py-[.2rem] px-2 border-2 text-accent dark:text-accent-dark border-accent rounded-md hover:text-background hover:bg-accent transition-colors;
     }
 
     .navbarLink {
-        @apply button sm:ml-4 sm:px-3;
+        @apply link sm:ml-1 sm:px-2 no-underline;
     }
 
     .secondary {
-        @apply text-gray-400;
+        @apply text-secondary dark:text-secondary-dark;
     }
 
     h1,
@@ -37,7 +41,7 @@
     a {
         @apply text;
     }
-    
+
     h2,
     h3,
     h4,
@@ -57,44 +61,51 @@
     h4 {
         @apply text-lg;
     }
-    
+
     .content > p {
         @apply py-3 leading-6 sm:text-[110%];
+    }
+
+    .content > h2,
+    .content > h3,
+    .content > h4,
+    .content > h5,
+    .content > h6 {
+        @apply pt-8;
     }
 
     p > a {
         @apply link;
     }
 
-
     em {
         @apply italic text;
     }
-    
+
     ul,
     ol {
         @apply py-1 px-8 text;
     }
 
     ol {
-        @apply list-decimal
+        @apply list-decimal;
     }
-    
+
     li {
-        @apply p-1.5;
+        @apply px-1.5;
     }
 
     code {
         @apply py-1 px-1.5 font-bold table-fixed overflow-x-scroll;
     }
-    
+
     pre {
-        @apply flex-1 table-fixed border border-slate-300;
+        @apply flex-1 table-fixed border border-border;
         max-width: calc(100vw - 2em);
     }
     
-    :not(pre) > code[class*='language-text'] {
-        @apply inline-block italic pt-1 pr-2 pl-2 overflow-x-auto overflow-y-hidden align-top;
+    :not(pre) > code[class*='language-'] {
+        @apply inline-block italic pt-1 pr-2 pl-2 overflow-x-auto overflow-y-hidden align-top leading-4 bg-code dark:bg-code-dark;
         max-width: calc(100vw - 2rem);
     }
 
@@ -128,28 +139,24 @@
     }
 
     blockquote {
+        @apply bg-tag dark:bg-tag-dark border-l-4 border-l-accent dark:border-l-accent-dark;
         display: flex;
         flex: 100%;
         flex-wrap: wrap;
-        background: var(--tertiary-background);
-        border-left: 0.25rem solid var(--accent-color);
         margin: 0.5rem 0 1.5rem;
         padding: 0.75em 1.25em;
     }
-    
+
     blockquote > p {
-        padding: 0 0 0.25rem;
-        font-style: italic;
-        font-weight: bold;
-        font-size: 100%;
+        @apply text italic font-bold;
     }
 
     blockquote > cite {
-        flex: 100%;
-        padding: 0.5rem 0 0 0.5rem;
+        @apply flex text mt-1 before:content-['-'] before:mr-1;
+    }
 
-        &:before {
-            content: '- ';
-        }
+    img {
+        @apply block max-w-full h-auto my-4 mx-auto rounded;
+        margin-block-end: 1em;
     }
 }

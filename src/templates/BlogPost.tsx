@@ -9,8 +9,8 @@ export default function BlogPost({ data }) {
 
     return (
         <Page title={title}>
-            <h2 className="text-3xl pt-12 mb-2 font-bold sm:pt-8">{title}</h2>
-            <div className="flex flex-row">
+            <h2 className="text-3xl pt-12 mb-0 font-bold sm:pt-8">{title}</h2>
+            <div className="flex flex-row mb-6">
                 <p className="secondary">{date}</p>
                 <p className="secondary mx-1">-</p>
                 <p className="secondary">{timeToRead} min</p>

@@ -105,7 +105,7 @@ export const pageQuery = graphql`
     {
         blogPosts: allMarkdownRemark(
             sort: { order: DESC, fields: [frontmatter___date] }
-            limit: 5
+            limit: 3
             filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
         ) {
             pageInfo {

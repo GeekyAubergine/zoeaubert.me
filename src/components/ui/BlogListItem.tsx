@@ -9,7 +9,7 @@ export default function BlogListItem({ node, style = '' }) {
         return (
             <Link
                 to={`/blog/tags/${tag.toLowerCase()}`}
-                className="bg-slate-700 py-1 px-1.5 rounded"
+                className="bg-tag dark:bg-tag-dark py-1 px-1.5 rounded"
             >
                 {tag}
             </Link>
