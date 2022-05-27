@@ -1,4 +1,5 @@
 module.exports = {
+    important: true,
     darkMode: 'class',
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
@@ -6,7 +7,7 @@ module.exports = {
             colors: {
                 background: {
                     DEFAULT: '#FFFFFF',
-                    dark: '#1B1B1B',
+                    dark: '#181818',
                 },
                 text: {
                     DEFAULT: '#101010',
@@ -17,16 +18,18 @@ module.exports = {
                     dark: '#C0C0C0',
                 },
                 tag: {
-                    DEFAULT: '#E2E1E1',
-                    dark: '#343434',
+                    DEFAULT: "#EBEAEA",
+                    dark: "#303030",
                 },
                 accent: {
-                    DEFAULT: '#B14949',
-                    dark: '#C85E5E',
+                    DEFAULT: '#DA026E',
+                    dark: '#FA007D',
                 },
                 code: {
-                    DEFAULT: '#B14949',
-                    dark: '#1D1F21',
+                    DEFAULT: '#EBEBEB',
+                    dark: '#282828',
+                    text: '#CD0079',
+                    textDark: '#FD419F',
                 },
                 border: {
                     DEFAULT: '#888888',

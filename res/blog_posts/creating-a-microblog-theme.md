@@ -6,9 +6,13 @@ description: How I built my custom Micro.blog theme with Tailwind
 tags: ["Programming"]
 ---
 
-After having messed around with [Micro.blog](https://micro.blog) for a while I decided I wanted to have a go at building my own them. At first the challenge seemed relatively easy as there were many other themes already out there, I was soon to be proven wrong. Hopefully I can steer you in the right direction to save you some time. As of writing my theme is not complete and still has some issues. I've not yet worked out how to mock out the archive and photos pages and I have a weird css build error appearing (thankfully this does not break the build).
+After having messed around with [Micro.blog](https://micro.blog) for a while, I decided I wanted to have a go at building my own them. At first, the challenge seemed relatively easy as there were many other themes already out there, but I was soon to be proven wrong. Hopefully, I can steer you in the right direction to save you some time.
 
-I further complicated things by wishing to style everything using [Tailwind](https://tailwindcss.com/), this is optional of course but it did complicate things further.
+I further complicated things by wishing to style everything using [Tailwind](https://tailwindcss.com/), this is optional, of course, but it did complicate things further.
+
+Many thanks to [Robb Knight](https://rknight.me), who's worked with me to understand some of this weirdness.
+
+You might also find reading [Colin Devroe](https://cdevroe.com/2021/03/29/notes-mb-themes/)'s post about creating a Micro.blog theme useful.
 
 ## 1. Prepping your environment
 
@@ -18,58 +22,107 @@ Once you've installed Hugo, create a new site and open that directory.
 
 ## 2. Getting the right version of Hugo
 
-The first challenge was getting something running. There are some differences between [Hugo](https://gohugo.io/) and [Micro.blog](https://micro.blog) and overcoming them proved annoying. The first thing to ensure is you have Hugo version 0.91.0 installed, anything newer and you'll get issues with almost all templates relying on some RSS data that no longer exists.
+The first challenge was getting something running. There are some differences between [Hugo](https://gohugo.io/) and [Micro.blog](https://micro.blog), and overcoming them proved annoying. The first thing to ensure is you have Hugo version 0.91.0 installed, anything newer, and you'll get issues with almost all templates relying on some RSS data that no longer exists.
 
-Once you have the executable from the website, drag it into your sites main folder, this will allow you to run `./hugo` for all other commands and you'll have the right version.
+Once you have the executable from the website, drag it into your site's main folder, this will allow you to run `./hugo` for all other commands, and you'll have the correct version.
 
-## 3. Mocking your data
+## 3. Getting your data
 
-Go to [this example](https://github.com/microdotblog/theme-ink/tree/master/exampleSite) and download the `content` folder and replace the content folder in your sites directory. 
+Go to your Micro.blog, go to 'design', and click on the 3 dots next to your domain name.
 
-Rename `posts` to `post`, for some reason Micro.blog uses the singular but almost everyone refers to it in the plural, and the error message is not obvious.
+![Micro.blog UI showing where to find the Export button](../images/220526181837.png)
+
+Once you get here, click "Export" and download your "Theme and Markdown" as a ".zip".
+
+Once this has been downloaded, copy the `content` and `data` folder into your Hugo site.
+
+If you have posts with photos, you will have to replace the URLs as they don't work correctly and won't have been downloaded. You can go through each post and add your domain to the front of each URL. For example, mine went from 
+
+```bash
+uploads/2022/11510a1600.png
+```
+
+to
+
+
+```bash
+https://micro.zoeaubert.me/uploads/2022/11510a1600.png
+```
+
+If you want to cheat as I did, perform global replace on the content folder focus-within:
+
+```bash
+find: 'src="u'
+replace: 'src="https://micro.zoeaubert.me/u'
+```
 
 ## 4. Getting configured
 
-Copy [this config](https://github.com/microdotblog/theme-blank/blob/master/config.json) file and [convert it to TOML](https://www.convertsimple.com/convert-json-to-toml/). Once you've done this copy it into your `config.toml` file and update the values to suit you.
+From the data you downloaded before, you will need to take your `config.json` file and [convert it to TOML](https://www.convertsimple.com/convert-json-to-toml/). Once you've done this, copy it into your `config.toml` file.
 
 ## 5. Prepping your theme
 
-I would recommend downloading the [blank](https://github.com/microdotblog/theme-blank) theme, it has _all_ the files you'll need.
+I would recommend downloading the [blank](https://github.com/microdotblog/theme-blank) theme. This will give you all the required files, but you won't see anything. To fix that also download the [default](https://github.com/microdotblog/theme-default).
 
-Thankfully Hugo is nice and allows you to merge themes, so import the blank theme into a 'blank' folder, and create a new theme `hugo new theme <theme_name>` for your new theme. Inside your `config.toml` you can now put `theme=['default', 'new_theme]`, this will merge the two themes. 
+Thankfully Hugo is nice and allows you to merge themes, so import the blank theme into a 'blank' folder and the default into a 'default' folder. You can then add the following to your `config.toml` file (near the top as you'll want this again in a minute).
 
-This is very similar to how Micro.blog does it where it provides the blank template and then overrides them with your custom files. This allows your theme to target specific things without needing all the theme files to run your site.
+```toml
+theme=['default', 'blank']
+```
 
-## 6. Build your theme
+## 6. Validate your environment
 
-At this point you _should_ be able to run `./hugo server` and you should see nothing, but should also see no errors. You're now free to build the site to your hearts content.
+At this point, you should be able to run and see your content with the default theme.
 
-You will need to copy files to your theme folder and then update them. Some of the names for the files is a bit weird but you'll get used to it quickly. For example `_default/list.html` is actually your home page and other paginated pages showing your `list` of posts.
+```bash
+./hugo server
+```
 
-If somethings not quite right I'd recommend copying a theme you like into your themes folder just to verify everything's working right.
+Congrats, now we can customise it.
+
+## 7. Build your theme
+
+Create a new theme using the following command.
+
+```bash
+hugo new theme <theme_name>
+``` 
+
+Inside your `config.toml` you can now add:
+
+```toml
+theme=['theme_name', 'blank']
+``` 
+
+You can now do what you want. I recommend copying files from either `default` or `blank` into your theme and then updating them as you see fit. 
 
 ## Tailwind
 
-Hugo doesn't do Tailwind out of the box so we need to do our own thing. 
+Hugo doesn't do Tailwind out of the box, so we need to do our own thing. 
 
-I have a `assets/css/styles.css` file which is where I put all my styles, note this as this is important later.
+I have an `assets/css/styles.css` file where I put all my styles.
 
-You're going to need to have [node](https://nodejs.org/en/) installed and running. You're going to want to install the same packages as [I have](https://github.com/GeekyAubergine/zoeaubert-micro-theme). After that copy and modify the `postcss.config.js` and `tailwind.config.js`.
+You will need to have [node](https://nodejs.org/en/) installed and running. You're also going to want to install the same packages as [I have](https://github.com/GeekyAubergine/zoeaubert-micro-theme). After that, copy and modify the `postcss.config.js` and `tailwind.config.js`.
 
-You're going to have to have Tailwind watching to rebuild your css for Hugo as it's can do it itself, so run `npx tailwindcss -i ./assets/css/styles.css -o ./assets/css/tw.css --watch`
+You're going to have to have Tailwind watching to rebuild your css for Hugo as it can't do it, so run: 
+
+```bash
+npx tailwindcss -i ./assets/css/styles.css -o ./assets/css/tw.css --watch --minify
+```
 
 In your templates/layouts/partials you're going to need something like this:
 ```html
 {{ $css := resources.Get "css/tw.css" | minify }}
 <link rel="preload stylesheet" as="style" href="{{ $css.Permalink }}" />
 
-{{ $styles := resources.Get "css/styles.css" | resources.PostCSS }} 
 {{ if not hugo.IsProduction }} 
+{{ $styles := resources.Get "css/styles.css" | resources.PostCSS }} 
 {{ $styles = $styles | resources.ExecuteAsTemplate (printf "css/styles.dev.%v.css" now.UnixMilli) . }}
-{{ end }}
 <link href="{{ $styles.RelPermalink }}" rel="stylesheet" />
+{{ end }}
+
 ```
 
-This tell's Hugo to watch the file generated by Tailwind and ignores your non-compiled files in production mode. Congrats, that should be it. 
+This tells Hugo to watch the file generated by Tailwind and ignores your non-compiled files in production mode. Congrats, that should be it. 
 
-Don't forget to have the `tw.css` file committed to your repo otherwise it wont work with Micro.blog. Yes, I also dislike having a generated file committed.
+Don't forget to have the `tw.css` file committed to your repo, otherwise, it won't work with Micro.blog. Yes, I also dislike having a generated file committed.

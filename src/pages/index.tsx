@@ -15,7 +15,7 @@ function SocialLink({
     description: string
 }) {
     return (
-        <div className="flex text-xl mt-2 last-of-type:mb-0 sm:ml-4">
+        <div className="flex text-xl mt-2 last-of-type:mb-0">
             <a
                 className="link text-x"
                 href="https://micro.blog/geekyaubergine"
@@ -32,12 +32,12 @@ function SocialLink({
 
 export default function IndexPage({ data }) {
     const renderBlogEntry = React.useCallback(({ node }) => {
-        return <BlogListItem node={node} key={node.id} style="sm:m-4"  />
+        return <BlogListItem node={node} key={node.id} style=""  />
     }, [])
 
     return (
         <Page>
-            <p className="text-xl pt-4 sm:px-4">
+            <p className="text-xl pt-4">
                 Hi there, I’m a software developer from Jersey, living in
                 Portsmouth, working at{' '}
                 <a href="https://radweb.co.uk" target="_blank" rel="noopener">
@@ -53,30 +53,21 @@ export default function IndexPage({ data }) {
                 </a>{' '}
                 and other projects; primarily focusing on app development.
             </p>
-            <p className="text-xl pt-4 sm:px-4">
-                I tend to post small things on my{' '}
+            <p className="text-xl pt-4">
+                I put small posts and photos on my{' '}
                 <a
                     href="https://micro.zoeaubert.me"
                     target="_blank"
                     rel="noopener"
                 >
-                    micro blog
+                    Micro.blog
                 </a>{' '}
-                and longer writings on my <Link to="/blog">Blog</Link>. For
-                photos see my{'  '}
-                <a
-                    href="https://micro.zoeaubert.me/photos/"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    photos page
-                </a>
-                .
+                and longer writings on here.
             </p>
             <Heading title="Blog Posts" />
             {data.blogPosts.edges.map(renderBlogEntry)}
             <div className="mt-2">
-                <Link to="/blog" className="button mb-0 mt-2 sm:ml-4">
+                <Link to="/blog" className="button mb-0 mt-2">
                     See More
                 </Link>
             </div>

@@ -55,25 +55,23 @@ module.exports = {
             resolve: 'gatsby-source-filesystem',
             options: {
                 name: 'pages',
-                path: './src/pages/',
+                path: './src/pages',
             },
             __key: 'pages',
         },
         {
             resolve: 'gatsby-source-filesystem',
             options: {
-                name: 'images',
-                path: './res/images/',
+                name: 'blog_posts',
+                path: './res/blog_posts',
             },
-            __key: 'images',
+            __key: 'blog_posts',
         },
         {
             resolve: 'gatsby-source-filesystem',
             options: {
-                name: 'blog_posts',
-                path: './res/blog_posts/',
+                path: './res/images',
             },
-            __key: 'blog_posts',
         },
         {
             resolve: `gatsby-transformer-remark`,
@@ -123,6 +121,12 @@ module.exports = {
                             // Add additional HTML escapes by providing a mapping
                             // of HTML entities and their escape value IE: { '}': '&#123;' }
                             escapeEntities: {},
+                        },
+                    },
+                    {
+                        resolve: `gatsby-remark-images`,
+                        options: {
+                            maxWidth: 1200,
                         },
                     },
                 ],
