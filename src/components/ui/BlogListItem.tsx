@@ -2,14 +2,11 @@ import * as React from 'react'
 import { Link } from 'gatsby'
 
 export default function BlogListItem({ node, style = '' }) {
-    console.log({ node })
-
     const renderTagCallback = React.useCallback((tag) => {
-        console.log({ tag })
         return (
             <Link
                 to={`/blog/tags/${tag.toLowerCase()}`}
-                className="bg-tag dark:bg-tag-dark py-1 px-1.5 rounded"
+                className="bg-tag dark:bg-tag-dark py-1 px-1.5 ml-2 rounded"
             >
                 {tag}
             </Link>

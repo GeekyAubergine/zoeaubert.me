@@ -62,7 +62,7 @@ export default function IndexPage({ data }) {
                 >
                     Micro.blog
                 </a>{' '}
-                and longer writings on here.
+                and longer writings here.
             </p>
             <Heading title="Blog Posts" />
             {data.blogPosts.edges.map(renderBlogEntry)}
