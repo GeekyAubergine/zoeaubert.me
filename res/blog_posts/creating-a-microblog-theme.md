@@ -30,7 +30,7 @@ Once you have the executable from the website, drag it into your site's main fol
 
 Go to your Micro.blog, go to 'design', and click on the 3 dots next to your domain name.
 
-![Micro.blog UI showing where to find the Export button](../images/220526181837.png)
+![Micro.blog UI showing where to find the Export button](../images/2022-05-26-18-18-37.png)
 
 Once you get here, click "Export" and download your "Theme and Markdown" as a ".zip".
 
@@ -95,6 +95,22 @@ theme=['theme_name', 'blank']
 ``` 
 
 You can now do what you want. I recommend copying files from either `default` or `blank` into your theme and then updating them as you see fit. 
+
+
+## 8. Deploying your theme
+
+Now you have your theme and you're happy with it, let's deploy it. Firstly you need to push your changes to a *public* git repo. Then go to your Micro.blog and go to `Design`. Here you will find the `Edit Custom Themes` button, click this and click `Create New Theme`. It should look something like this:
+
+![Micro.blog UI showing the create theme screen](../images/2022-05-27-19-40-24.png)
+
+Insert whatever name for the theme you like. One quirk of Micro.blog is that if you push changes to your theme's repo, it will not automatically update on Micro.blog. To remedy this, I _strongly_ recommend you put some sort of version or timestamp at the end of your theme name to allow you to create new ones after each update. Then insert the _https_ link to your repo, the ssh link will not work. It should look something like this:
+
+![Micro.blog UI showing a filled in create theme screen](../images/2022-05-27-19-43-32.png)
+
+Click `Add Theme`, check your new theme is listed there correctly and go back to `Design`. In the `Custom theme` drop-down, you should now see your newly created theme, select it and then click `Update Blog Settings` , this will deploy your changes, though it may take a minute to process.
+
+At this point, you might see an error appear on the `Design` page. If you do see if the error makes sense, it might be something requiring a file you've not committed (that's what happened to me), or you've got something in a `{{ if hugo.IsProduction }}` block that's causing an error you didn't see on your test site. Fix them and create a new theme as described above. If successful, the error might stay around for a while but eventually disappear. 
+
 
 ## Tailwind
 

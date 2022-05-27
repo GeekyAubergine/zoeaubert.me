@@ -63,7 +63,7 @@
     }
 
     .content > p {
-        @apply py-3 leading-6 sm:text-[110%];
+        @apply py-1.5 leading-6 sm:text-[110%];
     }
 
     .content > h2,
