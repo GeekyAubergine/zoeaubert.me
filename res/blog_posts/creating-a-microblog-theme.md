@@ -1,7 +1,7 @@
 ---
 title: Creating a Micro.blog Theme + Tailwind
 slug: creating-a-microblog-theme
-date: 2022-05-25
+date: 2022-05-27
 description: How I built my custom Micro.blog theme with Tailwind
 tags: ["Programming"]
 ---
@@ -96,6 +96,7 @@ theme=['theme_name', 'blank']
 
 You can now do what you want. I recommend copying files from either `default` or `blank` into your theme and then updating them as you see fit. 
 
+An example of what your theme might look like can be found on [my repo](https://github.com/GeekyAubergine/zoeaubert-micro-theme).
 
 ## 8. Deploying your theme
 
