@@ -45,7 +45,7 @@ export default function NavBar() {
                 </Link>
                 <div className="toggle-button mx-4">
                     <svg
-                        className="toggle-button cursor-pointer text-middleGray dark:rotate-180 transition-all duration-500"
+                        className="toggle-button cursor-pointer text-middleGray rotate-180 dark:rotate-0 transition-all duration-500"
                         width="24"
                         height="24"
                         viewBox="0 0 100 100"
