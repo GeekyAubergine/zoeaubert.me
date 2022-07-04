@@ -29,8 +29,6 @@ export default function Photo({
                 onClick != null ? 'cursor-pointer' : ''
             }`}
             src={`${PHOTO_CDN_URL}${url}`}
-            width="600"
-            height="600"
             loading="lazy"
             alt={photo.alt}
         />
