@@ -40,8 +40,11 @@ export function PhotoViewer({
                         photo={currentPhoto}
                         className="max-w-[90vw] max-h-[50vh] mb-[25vh] sm:max-h-[70vh] sm:mb-[15vh]"
                     />
-                    <div className="fixed top-4 right-6 flex justify-center">
-                        <p onClick={onClose} className="cursor-pointer">
+                    <div className="fixed top-0 right-0 flex justify-center">
+                        <p
+                            onClick={onClose}
+                            className="cursor-pointer  px-6 py-4"
+                        >
                             Close
                         </p>
                     </div>
@@ -56,6 +59,7 @@ export function PhotoViewer({
                                         <Link
                                             to={albumToSlug(currentAlbum)}
                                             className="text-center link mt-2"
+                                            onClick={onClose}
                                         >
                                             Album
                                         </Link>
@@ -103,7 +107,11 @@ export function usePhotoViewer({ photos }: { photos: PhotoType[] }) {
     const currentAlbum = React.useMemo(
         () =>
             ALBUMS.find((album) =>
-                album.photos.find((photo) => photo === currentPhoto),
+                album.photos.find(
+                    (photo) =>
+                        photo.takenAt === currentPhoto.takenAt &&
+                        photo.url === currentPhoto.url,
+                ),
             ),
         [currentPhoto],
     )

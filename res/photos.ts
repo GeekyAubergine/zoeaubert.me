@@ -61,6 +61,7 @@ const FarlingonMarches202205: Album = {
                 'portsmouth',
             ],
             takenAt: '2020-04-15T12:00:00.000Z',
+            featured: true,
         },
         {
             url: '/2022/04/20220415-8B5A4918.jpg',
@@ -81,12 +82,6 @@ const FarlingonMarches202205: Album = {
             takenAt: '2020-04-15T12:00:00.000Z',
         },
         {
-            url: '/2022/04/20220415-8B5A4811.jpg',
-            alt: 'Cow sitting in field infront of tall yellow grass',
-            tags: ['cow', 'farlingon_marches', 'portsmouth'],
-            takenAt: '2020-04-15T12:00:00.000Z',
-        },
-        {
             url: '/2022/04/20220415-8B5A5546.jpg',
             alt: 'Black-headed Gull flying infront of pond and tall yellow grass',
             tags: [
@@ -95,6 +90,13 @@ const FarlingonMarches202205: Album = {
                 'backheaded_gull',
                 'portsmouth',
             ],
+            takenAt: '2020-04-15T12:00:00.000Z',
+            featured: true,
+        },
+        {
+            url: '/2022/04/20220415-8B5A4811.jpg',
+            alt: 'Cow sitting in field infront of tall yellow grass',
+            tags: ['cow', 'farlingon_marches', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
         },
         {
