@@ -28,7 +28,7 @@ export function Page({ title, description, children }: Props) {
     )
 
     return (
-        <div className="flex w-full justify-center pt-4 pb-8 px-4 sm:px-8">
+        <main className="flex w-full justify-center pt-4 pb-8 px-4 sm:px-8">
             <Helmet
                 htmlAttributes={HTML_ATTRIBUTES}
                 title={title != null ? `${title} | Zoe Aubert` : 'Zoe Aubert'}
@@ -70,7 +70,8 @@ export function Page({ title, description, children }: Props) {
             />
             <div className="flex flex-col w-[48em]">
                 <NavBar />
-                {children}</div>
-        </div>
+                {children}
+            </div>
+        </main>
     )
 }
