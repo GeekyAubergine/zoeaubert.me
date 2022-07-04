@@ -68,7 +68,6 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
         const tags = result.data.tagsGroup.group.map(g => Object.values(g)[0])
 
         tags.forEach((tag) => {
-          console.log(tag)
             createPage({
                 path: `/blog/tags/${tag.toLowerCase()}`,
                 component: BlogTags,

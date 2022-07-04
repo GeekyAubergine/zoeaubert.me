@@ -1,20 +1,40 @@
 module.exports = {
+    important: true,
+    darkMode: 'class',
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
             colors: {
-                text: {
-                    DEFAULT: '#00070B',
-                    dark: '#fefdfb',
-                    secondary: '#aeadab',
-                },
                 background: {
-                    DEFAULT: '#ffffff',
-                    dark: '#00070B',
+                    DEFAULT: '#FFFFFF',
+                    dark: '#181818',
+                },
+                text: {
+                    DEFAULT: '#101010',
+                    dark: '#F0F0F0',
+                },
+                secondary: {
+                    DEFAULT: '#505050',
+                    dark: '#C0C0C0',
+                },
+                tag: {
+                    DEFAULT: "#EBEAEA",
+                    dark: "#303030",
                 },
                 accent: {
-                    DEFAULT: '#00ff00'
-                }
+                    DEFAULT: '#A1018F',
+                    dark: '#F18AFF',
+                },
+                code: {
+                    DEFAULT: '#EBEBEB',
+                    dark: '#282828',
+                    text: '#8D017D',
+                    textDark: '#F293FF',
+                },
+                border: {
+                    DEFAULT: '#888888',
+                },
+                middleGray: '#888888',
             },
             height: (theme) => ({
                 'screen/2': '50vh',
