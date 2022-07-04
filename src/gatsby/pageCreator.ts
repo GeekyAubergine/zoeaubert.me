@@ -1,13 +1,9 @@
 import * as path from 'path'
-import { PHOTO_ALBUM_ALBUMS } from '../../res/photos/albumData'
+import { ALBUMS, albumToSlug } from '../../res/photos'
 
-export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
-    const BlogPost = path.resolve(
-        'src/templates/BlogPost.tsx',
-    )
-    const BlogTags = path.resolve(
-        'src/templates/BlogTags.tsx',
-    )
+export async function createBlogPosts({ createPage, graphql, reporter }) {
+    const BlogPost = path.resolve('src/templates/BlogPost.tsx')
+    const BlogTags = path.resolve('src/templates/BlogTags.tsx')
 
     try {
         const result = await graphql(`
@@ -29,9 +25,9 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
                     }
                 }
                 tagsGroup: allMarkdownRemark(limit: 2000) {
-                  group(field: frontmatter___tags) {
-                    fieldValue
-                  }
+                    group(field: frontmatter___tags) {
+                        fieldValue
+                    }
                 }
             }
         `)
@@ -65,7 +61,7 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
             })
         })
 
-        const tags = result.data.tagsGroup.group.map(g => Object.values(g)[0])
+        const tags = result.data.tagsGroup.group.map((g) => Object.values(g)[0])
 
         tags.forEach((tag) => {
             createPage({
@@ -73,6 +69,24 @@ export const createBlogPosts = async ({ createPage, graphql, reporter }) => {
                 component: BlogTags,
                 context: {
                     tag,
+                },
+            })
+        })
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+export async function createPhotoPages({ createPage, graphql, reporter }) {
+    const AlbumPage = path.resolve('src/templates/AlbumPage.tsx')
+
+    try {
+        ALBUMS.forEach((album) => {
+            createPage({
+                path: albumToSlug(album),
+                component: AlbumPage,
+                context: {
+                    album,
                 },
             })
         })

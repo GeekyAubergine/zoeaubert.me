@@ -78,14 +78,9 @@ export default function NavBar() {
                 <Link className="navbarLink" to="/blog">
                     Blog
                 </Link>
-                <a
-                    className="navbarLink"
-                    href="https://micro.zoeaubert.me/photos"
-                    target="_blank"
-                    rel="noopener"
-                >
+                <Link className="navbarLink" to="/photos">
                     Photos
-                </a>
+                </Link>
                 <a
                     className="navbarLink"
                     href="https://github.com/geekyaubergine"
