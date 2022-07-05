@@ -2,6 +2,7 @@ import * as React from 'react'
 import { graphql, useStaticQuery } from 'gatsby'
 import Helmet from 'react-helmet'
 import NavBar from './NavBar'
+import Footer from './Footer'
 
 const HTML_ATTRIBUTES = {
     lang: 'en',
@@ -71,6 +72,7 @@ export function Page({ title, description, children }: Props) {
             <div className="flex flex-col w-[48em]">
                 <NavBar />
                 {children}
+                <Footer />
             </div>
         </main>
     )
