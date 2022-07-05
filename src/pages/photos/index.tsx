@@ -67,7 +67,7 @@ export default function IndexPage() {
             const albums = albumsByYear[year]
             return (
                 <div key={year}>
-                    <h3 className='text-xl'>{year}</h3>
+                    <h3 className="text-xl">{year}</h3>
                     <div className="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mb-8">
                         {albums.map(renderAlbum)}
                     </div>
@@ -100,10 +100,21 @@ export default function IndexPage() {
         <Page title="Photos">
             <div className="flex justify-between items-baseline">
                 <h2 className="text-2xl font-bold">Photos</h2>
-                <Link to="/photos/all" className='link'>All Photos</Link>
+                <div>
+                    <Link to="/photos/tags" className="link mr-4">
+                        Tags
+                    </Link>
+                    <Link to="/photos/all" className="link">
+                        All Photos
+                    </Link>
+                </div>
             </div>
             {featuredPhotos.length > 0 && (
-                <PhotoGrid photos={featuredPhotos} className="mb-8" onClick={onClickCallback} />
+                <PhotoGrid
+                    photos={featuredPhotos}
+                    className="mb-8"
+                    onClick={onClickCallback}
+                />
             )}
             {years.map(renderYear)}
             {PhotoViewerComponent}
