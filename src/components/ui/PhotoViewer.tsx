@@ -11,7 +11,7 @@ import Photo from './Photo'
 
 export function renderTag(tag: string) {
     return (
-        <Link to={`/photos/tag/${tag}`} className="m-1 link no-underline">
+        <Link to={`/photos/tags/${tag}`} className="m-1 link no-underline">
             #{tag}
         </Link>
     )

@@ -28,8 +28,8 @@ const FarlingonMarches202205: Album = {
             alt: 'Little Egret in shallow sea water catching a crab',
             tags: [
                 'birds',
-                'farlingon_marches',
-                'little_egret',
+                'farlingon-marches',
+                'little-egret',
                 'egret',
                 'crab',
                 'portsmouth',
@@ -41,8 +41,8 @@ const FarlingonMarches202205: Album = {
             alt: 'Little Egret in shallow sea water catching a crab',
             tags: [
                 'birds',
-                'farlingon_marches',
-                'little_egret',
+                'farlingon-marches',
+                'little-egret',
                 'egret',
                 'crab',
                 'portsmouth',
@@ -54,8 +54,8 @@ const FarlingonMarches202205: Album = {
             alt: 'Little Egret in shallow sea water catching a crab',
             tags: [
                 'birds',
-                'farlingon_marches',
-                'little_egret',
+                'farlingon-marches',
+                'little-egret',
                 'egret',
                 'crab',
                 'portsmouth',
@@ -66,19 +66,19 @@ const FarlingonMarches202205: Album = {
         {
             url: '/2022/04/20220415-8B5A4918.jpg',
             alt: 'Backtail Godwit swimming through a pond',
-            tags: ['birds', 'farlingon_marches', 'godwit', 'portsmouth'],
+            tags: ['birds', 'farlingon-marches', 'godwit', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
         },
         {
             url: '/2022/04/20220415-8B5A5115.jpg',
             alt: 'Avercet swimming through a pond',
-            tags: ['birds', 'farlingon_marches', 'avercet', 'portsmouth'],
+            tags: ['birds', 'farlingon-marches', 'avercet', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
         },
         {
             url: '/2022/04/20220415-8B5A5403.jpg',
             alt: 'Rock Pipet or Skylark flying against clear sky',
-            tags: ['birds', 'farlingon_marches', 'rock_pipet', 'portsmouth'],
+            tags: ['birds', 'farlingon-marches', 'rock-pipet', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
         },
         {
@@ -86,8 +86,8 @@ const FarlingonMarches202205: Album = {
             alt: 'Black-headed Gull flying infront of pond and tall yellow grass',
             tags: [
                 'birds',
-                'farlingon_marches',
-                'backheaded_gull',
+                'farlingon-marches',
+                'back-headed-gull',
                 'portsmouth',
             ],
             takenAt: '2020-04-15T12:00:00.000Z',
@@ -96,13 +96,13 @@ const FarlingonMarches202205: Album = {
         {
             url: '/2022/04/20220415-8B5A4811.jpg',
             alt: 'Cow sitting in field infront of tall yellow grass',
-            tags: ['cow', 'farlingon_marches', 'portsmouth'],
+            tags: ['cow', 'farlingon-marches', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
         },
         {
             url: '/2022/04/20220415-8B5A5552.jpg',
             alt: 'Black-headed Gull flying infront of tall yellow grass',
-            tags: ['birds', 'farlingon_marches', 'godwit', 'portsmouth'],
+            tags: ['birds', 'farlingon-marches', 'black-headed-gull', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
         },
     ],

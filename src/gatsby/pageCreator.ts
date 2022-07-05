@@ -79,6 +79,7 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
 
 export async function createPhotoPages({ createPage, graphql, reporter }) {
     const AlbumPage = path.resolve('src/templates/AlbumPage.tsx')
+    const PhotoTagPage = path.resolve('src/templates/PhotoTagPage.tsx')
 
     try {
         ALBUMS.forEach((album) => {
@@ -87,6 +88,30 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
                 component: AlbumPage,
                 context: {
                     album,
+                },
+            })
+        })
+
+        const tags = ALBUMS.reduce((acc: string[], album) => {
+            const out = acc.slice()
+
+            album.photos.forEach((photo) => {
+                photo.tags.forEach((tag) => {
+                    if (!out.includes(tag)) {
+                        out.push(tag)
+                    }
+                })
+            })
+
+            return out
+        }, [])
+
+        tags.forEach((tag) => {
+            createPage({
+                path: `/photos/tags/${tag.toLowerCase().replace(/ /g, '-')}`,
+                component: PhotoTagPage,
+                context: {
+                    tag,
                 },
             })
         })
