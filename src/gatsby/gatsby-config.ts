@@ -210,7 +210,7 @@ module.exports = {
                         }
                   `,
                         output: '/rss.xml',
-                        title: 'zoeaubert.me RSS Feed',
+                        title: 'Zoe Aubert',
                     },
                 ],
             },
