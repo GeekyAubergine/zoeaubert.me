@@ -1,35 +1,37 @@
 module.exports = {
-    important: true,
     darkMode: 'class',
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
+    safelist: [
+        'gatsby-highlight',
+    ],
     theme: {
         extend: {
             colors: {
                 background: {
                     DEFAULT: '#FFFFFF',
-                    dark: '#181818',
+                    dark: '#0D0E10',
                 },
                 text: {
                     DEFAULT: '#101010',
-                    dark: '#F0F0F0',
+                    dark: '#D8E1EA',
                 },
                 secondary: {
                     DEFAULT: '#505050',
                     dark: '#C0C0C0',
                 },
                 tag: {
-                    DEFAULT: "#EBEAEA",
-                    dark: "#303030",
+                    DEFAULT: '#F6F8FA',
+                    dark: '#181D27',
                 },
                 accent: {
-                    DEFAULT: '#A1018F',
-                    dark: '#F18AFF',
+                    DEFAULT: '#105887',
+                    dark: '#53ACFF',
                 },
                 code: {
-                    DEFAULT: '#EBEBEB',
-                    dark: '#282828',
-                    text: '#8D017D',
-                    textDark: '#F293FF',
+                    DEFAULT: '#F6F8FA',
+                    dark: '#181D27',
+                    text: '#105887',
+                    textDark: '#53ACFF',
                 },
                 border: {
                     DEFAULT: '#888888',

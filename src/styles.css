@@ -20,7 +20,7 @@
     }
 
     .button {
-        @apply text-lg no-underline py-[.2rem] px-2 border-2 text-accent dark:text-accent-dark border-accent dark:border-accent-dark rounded-md hover:text-background hover:bg-accent transition-colors;
+        @apply text-lg no-underline py-[.2rem] px-2 border-2 text-accent dark:text-accent-dark border-accent dark:border-accent-dark rounded-md hover:text-background hover:dark:text-background-dark hover:bg-accent hover:dark:bg-accent-dark transition-colors;
     }
 
     .navbarLink {
@@ -96,20 +96,33 @@
     }
 
     code {
-        @apply py-1 px-1.5 font-bold table-fixed overflow-x-scroll;
+        @apply py-1 font-bold table-fixed overflow-x-scroll !border-0;
     }
 
     pre {
-        @apply flex-1 table-fixed border border-border;
+        @apply flex-1 table-fixed border border-border !border-0;
         max-width: calc(100vw - 2em);
         text-shadow: none;
     }
 
     :not(pre) > code[class*='language-'] {
-        @apply text font-normal inline-block italic !pt-[0.15rem] !pr-2 !pl-1.5 !overflow-x-auto !overflow-y-hidden !align-top !leading-5 !bg-code dark:!bg-code-dark !text-code-text dark:!text-code-textDark;
+        @apply text font-normal inline-block italic !pt-[0.15rem] !pr-2 !pl-1.5 !overflow-x-auto !overflow-y-hidden !align-top !leading-5 !shadow-none !bg-code dark:!bg-code-dark !text-code-text dark:!text-code-textDark;
         max-width: calc(100vw - 2rem);
         text-shadow: none;
     }
+
+    .gatsby-highlight {
+        @apply mb-4;
+    }
+
+    .gatsby-highlight pre {
+        @apply !border-b-0;
+    }
+
+    .gatsby-highlight code {
+        @apply mb-4;
+    }
+
 
     table {
         table-layout: fixed;
