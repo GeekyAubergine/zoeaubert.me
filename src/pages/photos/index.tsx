@@ -16,7 +16,7 @@ const PHOTOS_FOR_ALBUM_COVER = 4
 const MAX_FEATURED_PHOTOS = 9
 
 function renderPhoto(photo: PhotoType) {
-    return <Photo photo={photo} key={photo.url} className="!rounded-none" />
+    return <Photo photo={photo} key={photo.url} className="!rounded-none max-h-[6rem] object-cover" />
 }
 
 function renderAlbum(album: Album) {
@@ -37,7 +37,7 @@ function renderAlbum(album: Album) {
             <div className="grid gap-x-[1px] gap-y-[1px] grid-cols-2 bg-black rounded-md overflow-hidden">
                 {photosForCover.map(renderPhoto)}
             </div>
-            <h4 className="!text-sm underline">{album.title}</h4>
+            <h4 className="!text-sm underline ml-2">{album.title}</h4>
         </Link>
     )
 }
@@ -109,13 +109,13 @@ export default function IndexPage() {
                     </Link>
                 </div>
             </div>
-            {featuredPhotos.length > 0 && (
+            {/* {featuredPhotos.length > 0 && (
                 <PhotoGrid
                     photos={featuredPhotos}
                     className="mb-8"
                     onClick={onClickCallback}
                 />
-            )}
+            )} */}
             {years.map(renderYear)}
             {PhotoViewerComponent}
         </Page>

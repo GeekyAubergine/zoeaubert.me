@@ -1,17 +1,19 @@
 import * as React from 'react'
-import { Album, Photo as PhotoType } from '../../res/photos'
+import { Album, ALBUMS_BY_UUID, Photo as PhotoType } from '../../res/photos'
 import { Page } from '../components/ui/Page'
 import PhotoGrid from '../components/ui/PhotoGrid'
 import { usePhotoViewer } from '../components/ui/PhotoViewer'
 
 type Props = {
     pageContext: {
-        album: Album
+        uuid: string
     }
 }
 
 export default function AlbumPage({ pageContext }: Props) {
-    const { album } = pageContext
+    const { uuid } = pageContext
+
+    const album = ALBUMS_BY_UUID[uuid]
 
     const { onPhotoClick, Component: PhotoViewerComponent } = usePhotoViewer({
         photos: album.photos,

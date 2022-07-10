@@ -5,21 +5,20 @@ import Photo from './Photo'
 type Props = {
     photos: PhotoType[]
     className?: string
-    onClick?: (photo: PhotoType) => void,
+    onClick?: (photo: PhotoType) => void
 }
 
-export default function PhotoGrid({
-    photos,
-    className = '',
-    onClick,
-}: Props) {
+export default function PhotoGrid({ photos, className = '', onClick }: Props) {
     const renderPhoto = React.useCallback(
         (photo) => (
-            <Photo
-                photo={photo}
-                key={photo.url}
-                onClick={onClick}
-            />
+            <div className="flex justify-center items-center max-h-[16rem]">
+                <Photo
+                    photo={photo}
+                    key={photo.url}
+                    onClick={onClick}
+                    className="max-h-[16rem]"
+                />
+            </div>
         ),
         [onClick],
     )

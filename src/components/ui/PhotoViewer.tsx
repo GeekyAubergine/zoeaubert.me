@@ -48,8 +48,11 @@ export function PhotoViewer({
                             Close
                         </p>
                     </div>
-                    <div className="fixed left-0 right-0 bottom-[1vh] flex justify-center">
-                        <div className="flex flex-col justify-start items-start max-w-[90vw] h-[30vh] sm:max-w-[50vw] sm:h-[20vh]">
+                    <div className="fixed left-0 right-0 bottom-[1vh] flex justify-center"
+                                onClick={onClose}
+
+>
+                        <div className="flex flex-col justify-center items-start max-w-[90vw] h-[30vh] sm:max-w-[50vw] sm:h-[20vh]">
                             <p className="w-full text-center">
                                 {currentPhoto.alt}
                             </p>

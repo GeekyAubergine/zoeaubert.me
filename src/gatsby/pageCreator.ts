@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { ALBUMS, albumToSlug } from '../../res/photos'
+import { ALBUMS, albumToSlug, ALL_PHOTO_TAGS } from '../../res/photos'
 
 export async function createBlogPosts({ createPage, graphql, reporter }) {
     const BlogPost = path.resolve('src/templates/BlogPost.tsx')
@@ -50,28 +50,32 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
             id: node.id,
         }))
 
-        pages.forEach(({ slug, id, timeToRead }) => {
-            createPage({
-                path: `/blog/${slug}`,
-                component: BlogPost,
-                context: {
-                    id,
-                    timeToRead,
-                },
-            })
-        })
+        Promise.all(
+            pages.map(async ({ slug, id, timeToRead }) => {
+                await createPage({
+                    path: `/blog/${slug}`,
+                    component: BlogPost,
+                    context: {
+                        id,
+                        timeToRead,
+                    },
+                })
+            }),
+        )
 
         const tags = result.data.tagsGroup.group.map((g) => Object.values(g)[0])
 
-        tags.forEach((tag) => {
-            createPage({
-                path: `/blog/tags/${tag.toLowerCase()}`,
-                component: BlogTags,
-                context: {
-                    tag,
-                },
-            })
-        })
+        Promise.all(
+            tags.map(async (tag) => {
+                await createPage({
+                    path: `/blog/tags/${tag.toLowerCase()}`,
+                    component: BlogTags,
+                    context: {
+                        tag,
+                    },
+                })
+            }),
+        )
     } catch (e) {
         console.error(e)
     }
@@ -82,39 +86,44 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
     const PhotoTagPage = path.resolve('src/templates/PhotoTagPage.tsx')
 
     try {
-        ALBUMS.forEach((album) => {
-            createPage({
-                path: albumToSlug(album),
-                component: AlbumPage,
-                context: {
-                    album,
-                },
-            })
-        })
+        await Promise.all(
+            ALBUMS.map(async (album) => {
+                const path = albumToSlug(album)
 
-        const tags = ALBUMS.reduce((acc: string[], album) => {
-            const out = acc.slice()
+                console.log({ album })
+                
+                try {
+                    await createPage({
+                        path,
+                        component: AlbumPage,
+                        context: {
+                            uuid: album.uuid,
+                        },
+                    })
+                    console.log(`Creating album page for ${path}`)
+                } catch (e) {
+                    console.error(e)
+                }
+            }),
+        )
 
-            album.photos.forEach((photo) => {
-                photo.tags.forEach((tag) => {
-                    if (!out.includes(tag)) {
-                        out.push(tag)
-                    }
+        await Promise.all(
+            ALL_PHOTO_TAGS.map(async (tag) => {
+                const path = `/photos/tags/${tag
+                    .toLowerCase()
+                    .replace(/ /g, '-')}`
+
+                console.log(`Creating tag page for ${path}`)
+
+                await createPage({
+                    path,
+                    component: PhotoTagPage,
+                    context: {
+                        tag,
+                    },
                 })
-            })
-
-            return out
-        }, [])
-
-        tags.forEach((tag) => {
-            createPage({
-                path: `/photos/tags/${tag.toLowerCase().replace(/ /g, '-')}`,
-                component: PhotoTagPage,
-                context: {
-                    tag,
-                },
-            })
-        })
+            }),
+        )
     } catch (e) {
         console.error(e)
     }
