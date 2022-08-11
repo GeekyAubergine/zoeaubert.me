@@ -8,11 +8,11 @@
     }
 
     body {
-        @apply bg-background dark:bg-background-dark  transition-colors duration-500 max-w-[50rem] mx-4 sm:mx-auto;
+        @apply bg-background dark:bg-background-dark transition-colors duration-500 max-w-[50rem] mx-0 sm:mx-auto;
     }
 
     .text {
-        @apply text-text dark:text-text-dark font-sans tabular-nums  transition-colors duration-500;
+        @apply text-text dark:text-text-dark font-sans tabular-nums transition-colors duration-500;
     }
 
     .link {
@@ -31,6 +31,10 @@
         @apply text-secondary dark:text-secondary-dark;
     }
 
+    .pageTitle {
+        @apply text-lg pt-2 font-bold sm:pt-8;
+    }
+
     h1,
     h2,
     h3,
@@ -47,15 +51,19 @@
     h4,
     h5,
     h6 {
-        @apply leading-5 py-2 font-bold;
+        @apply leading-5 my-2 font-bold text-headings dark:text-headings-dark;
+    }
+
+    h1 {
+        @apply text-headings dark:text-headings-dark;
     }
 
     h2 {
-        @apply text-2xl;
+        @apply text-xl;
     }
 
     h3 {
-        @apply text-xl;
+        @apply text-lg;
     }
 
     h4 {
@@ -63,7 +71,7 @@
     }
 
     .content > p {
-        @apply py-1.5 leading-6 sm:text-[110%];
+        @apply my-4 leading-[1.6rem] sm:text-[110%];
     }
 
     .content > h2,
@@ -71,7 +79,7 @@
     .content > h4,
     .content > h5,
     .content > h6 {
-        @apply pt-8;
+        @apply mt-9;
     }
 
     p > a {
@@ -84,7 +92,7 @@
 
     ul,
     ol {
-        @apply py-1 px-8 text;
+        @apply my-1 mx-8 text;
     }
 
     ol {
@@ -92,21 +100,21 @@
     }
 
     li {
-        @apply px-1.5;
+        @apply mx-1.5 my-3;
     }
 
     code {
-        @apply py-1 font-bold table-fixed overflow-x-scroll !border-0;
+        @apply my-1 font-bold table-fixed overflow-x-scroll !border-0;
     }
 
     pre {
-        @apply flex-1 table-fixed border border-border !border-0;
+        @apply flex-1 table-fixed !border-0;
         max-width: calc(100vw - 2em);
         text-shadow: none;
     }
 
     :not(pre) > code[class*='language-'] {
-        @apply text font-normal inline-block italic !pt-[0.15rem] !pr-2 !pl-1.5 !overflow-x-auto !overflow-y-hidden !align-top !leading-5 !shadow-none !bg-code dark:!bg-code-dark !text-code-text dark:!text-code-textDark;
+        @apply text font-normal inline-block italic my-0 !pr-2 !pl-1.5 !overflow-x-auto !overflow-y-hidden !align-top !leading-5 !shadow-none !bg-code dark:!bg-code-dark !text-code-text dark:!text-code-textDark;
         max-width: calc(100vw - 2rem);
         text-shadow: none;
     }

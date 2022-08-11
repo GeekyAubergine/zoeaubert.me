@@ -35,15 +35,15 @@ export default function NavBar() {
     }, [])
 
     return (
-        <nav className="flex flex-1 flex-col justify-center items-center my-2 sm:flex-row sm:justify-between">
-            <div className="w-full flex flex-row items-center justify-between mb-4 sm:justify-start">
+        <nav className="flex flex-1 flex-col justify-center items-center mb-2 sm:flex-row sm:justify-between">
+            <div className="w-full flex flex-row items-center justify-between mb-2 sm:justify-start">
                 <Link
-                    className="text-3xl h-full text-center sm:text-left sm:text-5xl"
+                    className="text-4xl h-full text-center sm:text-left sm:text-3xl"
                     to="/"
                 >
                     <h1>Zoe Aubert</h1>
                 </Link>
-                <div className="toggle-button mx-4">
+                <div className="toggle-button ml-4 small:mx-4">
                     <svg
                         className="toggle-button cursor-pointer text-middleGray rotate-180 dark:rotate-0 transition-all duration-500"
                         width="24"
@@ -66,7 +66,7 @@ export default function NavBar() {
                     </svg>
                 </div>
             </div>
-            <div className="flex w-full justify-around sm:justify-end">
+            <div className="flex w-full justify-between sm:justify-end">
                 <a
                     className="navbarLink"
                     href="https://micro.zoeaubert.me"
