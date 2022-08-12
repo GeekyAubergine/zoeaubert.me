@@ -4,7 +4,7 @@ import { Page } from '../components/ui/Page'
 import BlogListItem from '../components/ui/BlogListItem'
 
 function Heading({ title }: { title: string }) {
-    return <h2 className="text-3xl pt-12 font-bold sm:pt-8">{title}</h2>
+    return <h2 className="text-lg mt-9 font-bold sm:mt-12 sm:mb-0 sm:text-xl">{title}</h2>
 }
 
 function SocialLink({
@@ -15,7 +15,7 @@ function SocialLink({
     description: string
 }) {
     return (
-        <div className="flex text-xl mt-2 last-of-type:mb-0">
+        <div className="flex mb-3 last-of-type:mb-0">
             <a
                 className="link text-x"
                 href="https://micro.blog/geekyaubergine"
@@ -24,20 +24,20 @@ function SocialLink({
             >
                 {name}
             </a>
-            <span className="text pl-1 sm:pl-2">-</span>
-            <span className="text pl-1 sm:pl-2">{description}</span>
+            <span className="text ml-1 sm:ml-2">-</span>
+            <span className="text ml-1 sm:ml-2">{description}</span>
         </div>
     )
 }
 
 export default function IndexPage({ data }) {
     const renderBlogEntry = React.useCallback(({ node }) => {
-        return <BlogListItem node={node} key={node.id} style=""  />
+        return <BlogListItem node={node} key={node.id} />
     }, [])
 
     return (
         <Page>
-            <p className="text-xl pt-4">
+            <p className="text-lg mt-2 leading-6">
                 Hi there, I’m a software developer from Jersey, living in
                 Portsmouth, working at{' '}
                 <a href="https://radweb.co.uk" target="_blank" rel="noopener">
@@ -53,8 +53,8 @@ export default function IndexPage({ data }) {
                 </a>{' '}
                 and other projects; primarily focusing on app development.
             </p>
-            <p className="text-xl pt-4">
-                I put small posts and photos on my{' '}
+            <p className="text-lg mt-4 leading-6">
+                I put small posts on my{' '}
                 <a
                     href="https://micro.zoeaubert.me"
                     target="_blank"
@@ -67,15 +67,15 @@ export default function IndexPage({ data }) {
             <Heading title="Blog Posts" />
             {data.blogPosts.edges.map(renderBlogEntry)}
             <div className="mt-2">
-                <Link to="/blog" className="button mb-0 mt-2">
+                <Link to="/blog" className="text-lg link font-normal pb-1">
                     See More
                 </Link>
             </div>
             <Heading title="Other Platforms" />
-            <div className="sm:pt-2">
+            <div className="pt-4">
                 <SocialLink
                     name="Micro.blog"
-                    description="Micro blogging replacement for both Twitter and
+                    description="Replacement for Twitter and
                         Instagram"
                 />
                 <SocialLink
@@ -84,7 +84,7 @@ export default function IndexPage({ data }) {
                 />
                 <SocialLink
                     name="Twitter"
-                    description="Old tweets and occasional retweets of cool things"
+                    description="Old tweets and occasional retweets"
                 />
                 <SocialLink name="LinkedIn" description="Professional things" />
             </div>

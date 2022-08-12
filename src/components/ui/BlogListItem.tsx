@@ -2,33 +2,23 @@ import * as React from 'react'
 import { Link } from 'gatsby'
 
 export default function BlogListItem({ node, style = '' }) {
-    const renderTagCallback = React.useCallback((tag) => {
-        return (
-            <Link
-                to={`/blog/tags/${tag.toLowerCase()}`}
-                className="bg-tag dark:bg-tag-dark py-1 px-1.5 ml-2 rounded"
-            >
-                {tag}
-            </Link>
-        )
-    }, [])
-
     return (
         <Link
             to={`/blog/${node.frontmatter.slug}`}
-            className={`flex flex-col mt-2 mb-6 no-underline sm:my-2 ${style}`}
+            className={`flex flex-col my-1 no-underline sm:my-2 ${style}`}
         >
             <div className="flex items-center">
-                <h3 className="text-2xl link">{node.frontmatter.title}</h3>
+                <h3 className="text-lg link font-normal mb-1">
+                    {node.frontmatter.title}
+                </h3>
             </div>
-            <p>{node.frontmatter.description}</p>
-            <div className="flex flex-row justify-between">
+            <p className="text">{node.frontmatter.description}</p>
+            <div className="flex flex-row justify-between flex-wrap mt-1">
                 <div className="flex flex-row">
                     <p className="secondary">{node.frontmatter.date}</p>
                     <p className="secondary mx-1">-</p>
                     <p className="secondary">{node.timeToRead} min</p>
                 </div>
-                <div>{node.frontmatter.tags.map(renderTagCallback)}</div>
             </div>
         </Link>
     )
