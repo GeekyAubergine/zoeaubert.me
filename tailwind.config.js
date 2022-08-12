@@ -7,7 +7,7 @@ module.exports = {
             colors: {
                 background: {
                     DEFAULT: '#FFFFFF',
-                    dark: '#18171B',
+                    dark: '#101012',
                 },
                 headings: {
                     DEFAULT: '#252527',
@@ -26,13 +26,13 @@ module.exports = {
                     dark: '#181D27',
                 },
                 accent: {
-                    DEFAULT: '#007F66',
+                    DEFAULT: '#05614F',
                     dark: '#2DB69B',
                 },
                 code: {
                     DEFAULT: '#F6FAF9',
-                    dark: '#0F1917',
-                    text: '#007F66',
+                    dark: '#181D27',
+                    text: '#05614F',
                     textDark: '#2DB69B',
                 },
                 border: {

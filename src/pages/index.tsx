@@ -4,7 +4,7 @@ import { Page } from '../components/ui/Page'
 import BlogListItem from '../components/ui/BlogListItem'
 
 function Heading({ title }: { title: string }) {
-    return <h2 className="text-lg pt-8 font-bold sm:pt-8">{title}</h2>
+    return <h2 className="text-lg mt-9 font-bold sm:mt-12 sm:mb-0 sm:text-xl">{title}</h2>
 }
 
 function SocialLink({
@@ -15,7 +15,7 @@ function SocialLink({
     description: string
 }) {
     return (
-        <div className="flex mt-1 last-of-type:mb-0">
+        <div className="flex mb-3 last-of-type:mb-0">
             <a
                 className="link text-x"
                 href="https://micro.blog/geekyaubergine"
@@ -24,8 +24,8 @@ function SocialLink({
             >
                 {name}
             </a>
-            <span className="text pl-1 sm:pl-2">-</span>
-            <span className="text pl-1 sm:pl-2">{description}</span>
+            <span className="text ml-1 sm:ml-2">-</span>
+            <span className="text ml-1 sm:ml-2">{description}</span>
         </div>
     )
 }
@@ -37,7 +37,7 @@ export default function IndexPage({ data }) {
 
     return (
         <Page>
-            <p className="text-lg pt-2">
+            <p className="text-lg mt-2 leading-6">
                 Hi there, I’m a software developer from Jersey, living in
                 Portsmouth, working at{' '}
                 <a href="https://radweb.co.uk" target="_blank" rel="noopener">
@@ -53,7 +53,7 @@ export default function IndexPage({ data }) {
                 </a>{' '}
                 and other projects; primarily focusing on app development.
             </p>
-            <p className="text-lg pt-4">
+            <p className="text-lg mt-4 leading-6">
                 I put small posts on my{' '}
                 <a
                     href="https://micro.zoeaubert.me"
@@ -67,12 +67,12 @@ export default function IndexPage({ data }) {
             <Heading title="Blog Posts" />
             {data.blogPosts.edges.map(renderBlogEntry)}
             <div className="mt-2">
-                <Link to="/blog" className="text-xl link font-normal pb-1">
+                <Link to="/blog" className="text-lg link font-normal pb-1">
                     See More
                 </Link>
             </div>
             <Heading title="Other Platforms" />
-            <div className="sm:pt-2">
+            <div className="pt-4">
                 <SocialLink
                     name="Micro.blog"
                     description="Replacement for Twitter and

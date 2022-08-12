@@ -35,10 +35,10 @@ export default function NavBar() {
     }, [])
 
     return (
-        <nav className="flex flex-1 flex-col justify-center items-center mb-2 sm:flex-row sm:justify-between">
-            <div className="w-full flex flex-row items-center justify-between mb-2 sm:justify-start">
+        <nav className="flex flex-1 flex-col justify-center items-center mb-4 sm:flex-row sm:justify-between">
+            <div className="w-full flex flex-row items-center justify-between mb-3 sm:justify-start">
                 <Link
-                    className="text-4xl h-full text-center sm:text-left sm:text-3xl"
+                    className="text-4xl h-full text-center sm:text-left"
                     to="/"
                 >
                     <h1>Zoe Aubert</h1>
