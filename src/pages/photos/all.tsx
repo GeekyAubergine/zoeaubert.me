@@ -27,7 +27,7 @@ export default function AllPhotos() {
 
     return (
         <Page title="Photos">
-            <h2 className="text-2xl pt-12 mb-2 font-bold sm:pt-8">
+            <h2 className="text-xl mb-2 font-bold sm:pt-8">
                 All Photos
             </h2>
             <PhotoGrid

@@ -8,7 +8,7 @@ export default function BlogListItem({ node, style = '' }) {
             className={`flex flex-col my-1 no-underline sm:my-2 ${style}`}
         >
             <div className="flex items-center">
-                <h3 className="text-lg link font-normal mb-1">
+                <h3 className="text-xl link font-normal mb-1">
                     {node.frontmatter.title}
                 </h3>
             </div>

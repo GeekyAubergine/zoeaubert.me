@@ -21,9 +21,9 @@ export type Album = {
 
 export type Albums = Albums[]
 
-const FARLINGTON_MARCHES_202205: Album = {
+const FARLINGTON_MARSHES_202205: Album = {
     uuid: '8172872f-19b5-4110-b55e-891b1d56d690',
-    title: 'Farlingon Marches',
+    title: 'Farlington Marshes',
     description:
         'Little Egret, Blacktail Godwit, Avocet, Rock Pipet or Skylark (I think the Pipet is more likely), Black-headed Gull and a chill Cow.\n\nThe Little Egret is easily some of my favourite photos I’ve taken.',
     photos: [
@@ -467,7 +467,7 @@ const BUSKING_FOR_MISFITS_201910: Album = {
 }
 
 export const ALBUMS = [
-    FARLINGTON_MARCHES_202205,
+    FARLINGTON_MARSHES_202205,
     BLVNT_THE_KNIFE_201910,
     ELYSIAN_FIRE_201910,
     BUSKING_FOR_MISFITS_201910,

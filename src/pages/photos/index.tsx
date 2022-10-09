@@ -12,7 +12,7 @@ import PhotoGrid from '../../components/ui/PhotoGrid'
 import { Link } from 'gatsby'
 import { usePhotoViewer } from '../../components/ui/PhotoViewer'
 
-const PHOTOS_FOR_ALBUM_COVER = 4
+const PHOTOS_FOR_ALBUM_COVER = 2
 const MAX_FEATURED_PHOTOS = 9
 
 function renderPhoto(photo: PhotoType) {
@@ -68,7 +68,7 @@ export default function IndexPage() {
             return (
                 <div key={year}>
                     <h3 className="text-xl">{year}</h3>
-                    <div className="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mb-8">
+                    <div className="grid gap-x-2 gap-y-2 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-8">
                         {albums.map(renderAlbum)}
                     </div>
                 </div>
@@ -99,7 +99,7 @@ export default function IndexPage() {
     return (
         <Page title="Photos">
             <div className="flex justify-between items-baseline">
-                <h2 className="text-2xl font-bold">Photos</h2>
+                <h2 className="text-xl font-bold">Photos</h2>
                 <div>
                     <Link to="/photos/tags" className="link mr-4">
                         Tags
