@@ -519,8 +519,8 @@ const MARWELL_ZOO_OCT_2022: Album = {
         },
         {
             url: '/2022/10/marwell_zoo/20221025-8B5A2768.jpg',
-            alt: 'Raven sat on wire with tail flared',
-            tags: ['marwell-zoo', 'birds', 'raven'],
+            alt: 'Crow sat on wire with tail flared',
+            tags: ['marwell-zoo', 'birds', 'crow'],
             takenAt: '2022-10-25T12:00:00.000Z',
         },
         {
