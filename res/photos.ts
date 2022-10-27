@@ -405,7 +405,8 @@ const BUSKING_FOR_MISFITS_201910: Album = {
                 'live-music',
             ],
             takenAt: '2019-10-19T12:00:00.000Z',
-        },{
+        },
+        {
             url: '/2019/10/busking_for_misfits_guildhall_village/20191019-_MG_0285.jpg',
             alt: 'Busking for Misfits guitarist',
             tags: [
@@ -416,7 +417,8 @@ const BUSKING_FOR_MISFITS_201910: Album = {
                 'live-music',
             ],
             takenAt: '2019-10-19T12:00:00.000Z',
-        },{
+        },
+        {
             url: '/2019/10/busking_for_misfits_guildhall_village/20191019-_MG_0315.jpg',
             alt: 'Busking for Misfits singer playing guitar with drummer in the background',
             tags: [
@@ -427,7 +429,8 @@ const BUSKING_FOR_MISFITS_201910: Album = {
                 'live-music',
             ],
             takenAt: '2019-10-19T12:00:00.000Z',
-        },{
+        },
+        {
             url: '/2019/10/busking_for_misfits_guildhall_village/20191019-_MG_0327.jpg',
             alt: 'Busking for Misfits guitarist singing',
             tags: [
@@ -438,7 +441,8 @@ const BUSKING_FOR_MISFITS_201910: Album = {
                 'live-music',
             ],
             takenAt: '2019-10-19T12:00:00.000Z',
-        },{
+        },
+        {
             url: '/2019/10/busking_for_misfits_guildhall_village/20191019-_MG_0346.jpg',
             alt: 'Busking for Misfits singer waving arms over head',
             tags: [
@@ -462,7 +466,87 @@ const BUSKING_FOR_MISFITS_201910: Album = {
             ],
             takenAt: '2019-10-19T12:00:00.000Z',
         },
-        
+    ],
+}
+
+const MARWELL_ZOO_OCT_2022: Album = {
+    uuid: 'b0b27f39-261d-47c2-ab50-4d8d76bbd5ee',
+    title: 'Marwell Zoo',
+    date: '2022-10-25',
+    photos: [
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A3078.jpg',
+            alt: 'Tiger sat looking to side of camera against a dark background',
+            tags: ['marwell-zoo', 'tiger'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+            featured: true,
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2583.jpg',
+            alt: 'Giraffe looking towards camera highlighted against dark background',
+            tags: ['marwell-zoo', 'giraffe'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2928.jpg',
+            alt: 'Wallaby sat on grass as it rains',
+            tags: ['marwell-zoo', 'wallaby'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2480.jpg',
+            alt: 'Giraffe looking sideways',
+            tags: ['marwell-zoo', 'giraffe'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2430.jpg',
+            alt: 'Rook eating some scattered food on the ground',
+            tags: ['marwell-zoo', 'giraffe', 'rook'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A3016.jpg',
+            alt: 'Tiger sat with back to camera looking right',
+            tags: ['marwell-zoo', 'tiger'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2664.jpg',
+            alt: 'Tiger walking with head down and mouth open',
+            tags: ['marwell-zoo', 'tiger'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2768.jpg',
+            alt: 'Raven sat on wire with tail flared',
+            tags: ['marwell-zoo', 'birds', 'raven'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2694.jpg',
+            alt: 'Tiger walking with head down and mouth open behind fence',
+            tags: ['marwell-zoo', 'tiger'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A3002.jpg',
+            alt: 'Snow leopard sitting in cave',
+            tags: ['marwell-zoo', 'snow-leopard'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A2613.jpg',
+            alt: 'Jackdaw on a fence post',
+            tags: ['marwell-zoo', 'birds', 'jackdaw'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
+        {
+            url: '/2022/10/marwell_zoo/20221025-8B5A3116.jpg',
+            alt: 'Tiger sat looking left against a dark background',
+            tags: ['marwell-zoo', 'tiger'],
+            takenAt: '2022-10-25T12:00:00.000Z',
+        },
     ],
 }
 
@@ -471,6 +555,7 @@ export const ALBUMS = [
     BLVNT_THE_KNIFE_201910,
     ELYSIAN_FIRE_201910,
     BUSKING_FOR_MISFITS_201910,
+    MARWELL_ZOO_OCT_2022,
 ]
 
 export const ALBUMS_BY_DATE = ALBUMS.sort(
