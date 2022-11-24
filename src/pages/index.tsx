@@ -82,7 +82,7 @@ export default function IndexPage({ data }) {
                     name="Micro.blog"
                     description="Replacement for Twitter and
                         Instagram"
-                    link="https://micro.zoeaubert.me"
+                    link="https://geekyaubergine.com"
                 />
                 <SocialLink
                     name="GitHub"
