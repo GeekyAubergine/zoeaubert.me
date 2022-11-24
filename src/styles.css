@@ -5,6 +5,7 @@
 @layer components {
     html {
         font-size: 16px;
+        @apply font-sans;
     }
 
     body {

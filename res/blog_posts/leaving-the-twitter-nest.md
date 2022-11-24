@@ -12,7 +12,7 @@ With that said, there were some good moments, either inspired tweets I've retwee
 
 Going forward, I doubt I'll use Twitter for anything other than complaining to companies. I've moved to [geekyaubergine.com](https://geekyaubergine.com), which is powered by [Micro.blog](https://micro.blog) (a community/platform I'd highly recommend looking into).
 
-## Me Tweets
+## My Tweets
 
 ### Top Tweets
 
