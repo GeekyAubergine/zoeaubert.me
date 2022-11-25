@@ -63,7 +63,7 @@ export default function IndexPage({ data }) {
             <p className="text mt-2 mb-2 leading-6">
                 I put small posts on my{' '}
                 <a
-                    href="https://micro.zoeaubert.me"
+                    href="https://geekyaubergine.com"
                     target="_blank"
                     rel="noopener"
                 >

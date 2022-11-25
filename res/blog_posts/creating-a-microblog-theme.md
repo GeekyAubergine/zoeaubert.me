@@ -46,14 +46,14 @@ to
 
 
 ```bash
-https://micro.zoeaubert.me/uploads/2022/11510a1600.png
+https://geekyaubergine.com/uploads/2022/11510a1600.png
 ```
 
 If you want to cheat as I did, perform global replace on the content folder focus-within:
 
 ```bash
 find: 'src="u'
-replace: 'src="https://micro.zoeaubert.me/u'
+replace: 'src="https://geekyaubergine.com/u'
 ```
 
 ## 4. Getting configured

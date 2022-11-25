@@ -69,7 +69,7 @@ export default function NavBar() {
             <div className="flex w-full justify-between sm:justify-end">
                 <a
                     className="navbarLink"
-                    href="https://micro.zoeaubert.me"
+                    href="https://geekyaubergine.com"
                     target="_blank"
                     rel="noopener"
                 >
