@@ -1,6 +1,6 @@
 ---
 title: Leaving the Twitter nest
-slug: leaving-the-twitter-next
+slug: leaving-the-twitter-nest
 date: 2022-11-15
 description: A look back at why I left Twitter, some of my favourite posts and funny retweets
 tags: [""]
@@ -14,35 +14,13 @@ Going forward, I doubt I'll use Twitter for anything other than complaining to c
 
 ## My Tweets
 
-### Top Tweets
-
-Only three tweets I really care about:
-
----
-
-2019-09-27
-
-![](../images/deedpoll.jpg)
-
-That time I changed my name. It took too long to get a photo without failing OpSec and to make sure it didn't look like a friend's who'd done it a week earlier.
-
----
+### Top Tweet
 
 2020-02-11
 
 ![](../images/straight_banana.jpg)
 
 Shocking Straight Brexit Banana. As soon as I saw this, I knew I had to reference [the straight banana rumours](https://www.europarl.europa.eu/unitedkingdom/en/news-and-press-releases/euromyths/bendybananas.html) surrounding Brexit.
-
----
-
-2020-10-25
-
-![](../images/EqFVN4MXcAAWmme.jpeg)
-
-![](../images/EqF7wvKXIAgrVWT.jpeg)
-
-Covid meant I couldn't go home for Christmas, so I did my first-ever roast. Very successful, all things considered, and I only set the fire alarm off once.
 
 ### The Rest
 
@@ -331,6 +309,14 @@ Traditional first BBQ of the year post (yes, it was a year between good posts)
 ![](../images/EH0JkevX4AETp4R.jpeg)
 
 ---
+
+2020-10-25
+
+![](../images/EqFVN4MXcAAWmme.jpeg)
+
+![](../images/EqF7wvKXIAgrVWT.jpeg)
+
+Covid meant I couldn't go home for Christmas, so I did my first-ever roast. Very successful, all things considered, and I only set the fire alarm off once.
 
 ### That time when I tried to make a Minecraft Mod
 
