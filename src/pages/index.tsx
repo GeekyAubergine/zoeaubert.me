@@ -15,10 +15,12 @@ function SocialLink({
     name,
     description,
     link,
+    rel = ''
 }: {
     name: string
     description: string
     link: string
+    rel?: string
 }) {
     return (
         <div className="flex mb-3 last-of-type:mb-0">
@@ -26,7 +28,7 @@ function SocialLink({
                 className="link text-x"
                 href={link}
                 target="_blank"
-                rel="noopener"
+                rel={`noopener ${rel}`}
             >
                 {name}
             </a>
@@ -83,6 +85,12 @@ export default function IndexPage({ data }) {
                     description="Replacement for Twitter and
                         Instagram"
                     link="https://geekyaubergine.com"
+                />
+                <SocialLink
+                    name="Mastodon"
+                    description="Replacement for Twitter"
+                    link="https://social.lol/@geekyaubergine"
+                    rel='me'
                 />
                 <SocialLink
                     name="GitHub"
