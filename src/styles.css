@@ -4,8 +4,8 @@
 
 @layer components {
     html {
-        font-size: 16px;
-        @apply font-sans;
+        font-size: 17px;
+        font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
     body {
@@ -13,15 +13,22 @@
     }
 
     .width-control {
-        @apply w-[66ch];
+        @apply w-[55ch];
     }
 
     .text {
-        @apply text-text dark:text-text-dark font-sans tabular-nums transition-colors duration-500;
+        @apply text-text dark:text-text-dark tabular-nums transition-colors duration-500 leading-4;
+        font-family: 'Atkinson Hyperlegible', sans-serif;
+    }
+
+    .underline_custom {
+        @apply underline decoration-accent dark:decoration-accent-dark;
+        text-underline-offset: 0.175rem;
+        /* text-underline-offset: 0.175rem; */
     }
 
     .link {
-        @apply underline text-accent dark:text-accent-dark;
+        @apply underline_custom text-accent dark:text-accent-dark;
     }
 
     .button {
@@ -60,7 +67,7 @@
     h4,
     h5,
     h6 {
-        @apply leading-5 my-2 font-bold text-headings dark:text-headings-dark;
+        @apply leading-4 my-0 font-bold text-headings dark:text-headings-dark;
     }
 
     h1 {
@@ -80,7 +87,7 @@
     }
 
     .content > p {
-        @apply my-4 leading-[1.6rem] sm:leading-6 sm:my-3;
+        @apply mt-1 mb-4 leading-[1.6rem] sm:leading-6 sm:mb-4;
     }
 
     .content > h2,
@@ -191,7 +198,7 @@
     .header-link-icon {
         @apply mt-9 h-5 flex items-center;
     }
-/* 
+    /* 
     .photogrid {
         @apply w-full grid grid-cols-3 gap-x-2 gap-y-2  sm:gap-x-4 sm:gap-y-4 my-1 sm:my-2;
     }
@@ -199,4 +206,30 @@
     .photogrid > .gatsby-resp-image-image {
         @apply m-0 my-auto h-8;
     } */
+
+    .statuslol_container {
+        @apply flex;
+    }
+
+    .statuslol {
+        @apply flex flex-row items-center;
+    }
+
+    .statuslol_emoji_container {
+        @apply max-h-8 aspect-square mr-2;
+    }
+
+    .statuslol_emoji {
+    }
+
+    .statuslol_content {
+    }
+
+    .statuslol_time {
+        @apply text secondary;
+    }
+
+    .statuslol_time > a {
+        @apply text secondary underline;
+    }
 }

@@ -1,13 +1,23 @@
 module.exports = {
     darkMode: 'class',
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
-    safelist: ['gatsby-highlight', 'photogrid', 'gatsby-resp-image-image'],
+    safelist: [
+        'gatsby-highlight',
+        'photogrid',
+        'gatsby-resp-image-image',
+        'statuslol_container',
+        'statuslol',
+        'statuslol_emoji_container',
+        'statuslol_content',
+        'statuslol_time',
+        'statuslol_emoji',
+    ],
     theme: {
         extend: {
             colors: {
                 background: {
                     DEFAULT: '#FFFFFF',
-                    dark: '#101012',
+                    dark: '#121216',
                 },
                 headings: {
                     DEFAULT: '#252527',
@@ -26,14 +36,14 @@ module.exports = {
                     dark: '#181D27',
                 },
                 accent: {
-                    DEFAULT: '#950500', //"#05614F",
-                    dark: '#FFC040', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF
+                    DEFAULT: '#00645C', //"#05614F",
+                    dark: '#00D5C6', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF
                 },
                 code: {
                     DEFAULT: '#F6FAF9',
                     dark: '#181D27',
-                    text: '#05614F',
-                    textDark: '#2DB69B',
+                    text: '#00645C',
+                    textDark: '#1DF8EA',
                 },
                 border: {
                     DEFAULT: '#505050',

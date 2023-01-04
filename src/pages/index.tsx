@@ -2,10 +2,19 @@ import * as React from 'react'
 import { graphql, Link } from 'gatsby'
 import { Page } from '../components/ui/Page'
 import BlogListItem from '../components/ui/BlogListItem'
+import StatusLol from '../components/ui/StatusLol'
 
-function Heading({ title }: { title: string }) {
+function Heading({
+    title,
+    className = '',
+}: {
+    title: string
+    className?: string
+}) {
     return (
-        <h2 className="text-lg mt-6 font-bold sm:mt-6 sm:mb-0 sm:text-xl">
+        <h2
+            className={`text-lg mt-6 font-bold sm:mt-6 sm:mb-0 sm:text-2xl ${className}`}
+        >
             {title}
         </h2>
     )
@@ -15,7 +24,7 @@ function SocialLink({
     name,
     description,
     link,
-    rel = ''
+    rel = '',
 }: {
     name: string
     description: string
@@ -61,7 +70,18 @@ export default function IndexPage({ data }) {
                 </a>{' '}
                 and other projects; primarily focusing on app development.
             </p>
-            <Heading title="Blog Posts" />
+            <a
+                href="https://geekyaubergine.status.lol"
+                target="_blank"
+                rel="noopener"
+                className='link'
+            >
+                <Heading title="Latest Status" />
+            </a>
+            <StatusLol />
+            <Link to="/blog" className="text-lg link font-normal pb-1">
+                <Heading title="Long Posts" />
+            </Link>
             <p className="text mt-2 mb-2 leading-6">
                 I put small posts on my{' '}
                 <a
@@ -73,11 +93,6 @@ export default function IndexPage({ data }) {
                 </a>
             </p>
             {data.blogPosts.edges.map(renderBlogEntry)}
-            <div className="mt-2">
-                <Link to="/blog" className="text-lg link font-normal pb-1">
-                    See More
-                </Link>
-            </div>
             <Heading title="Socials" />
             <div className="pt-4">
                 <SocialLink
@@ -90,7 +105,7 @@ export default function IndexPage({ data }) {
                     name="Mastodon"
                     description="Replacement for Twitter"
                     link="https://social.lol/@geekyaubergine"
-                    rel='me'
+                    rel="me"
                 />
                 <SocialLink
                     name="GitHub"

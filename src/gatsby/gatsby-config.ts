@@ -15,6 +15,19 @@ module.exports = {
             },
         },
         {
+            resolve: `gatsby-omni-font-loader`,
+            options: {
+                enableListener: true,
+                preconnect: [`https://fonts.bunny.net`],
+                web: [
+                    {
+                        name: `Atkinson Hyperlegible`,
+                        file: `https://fonts.bunny.net/css?family=atkinson-hyperlegible:400,400i,700,700i&display=swap`,
+                    },
+                ],
+            },
+        },
+        {
             resolve: `gatsby-plugin-sharp`,
             options: {
                 defaults: {

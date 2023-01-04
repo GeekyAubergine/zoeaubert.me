@@ -61,7 +61,7 @@ export default function NavBar() {
                             cy="50"
                             r="44"
                             className="stroke-current"
-                            stroke-width="8"
+                            strokeWidth="8"
                         />
                     </svg>
                 </div>
