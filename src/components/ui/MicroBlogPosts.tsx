@@ -26,7 +26,7 @@ function renderPost({ id, url, title, date, summary }: MicroPost) {
     return (
         <div key={id} className="my-4 text content">
             <a href={url} target="_blank" rel="noopener" className="link">
-                <time className="" dateTime={date}>
+                <time className="link" dateTime={date}>
                     {date}
                 </time>
                 {title && ` - ${title}`}
