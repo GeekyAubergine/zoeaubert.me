@@ -3,6 +3,7 @@ import { graphql, Link } from 'gatsby'
 import { Page } from '../components/ui/Page'
 import BlogListItem from '../components/ui/BlogListItem'
 import StatusLol from '../components/ui/StatusLol'
+import MicroBlogPosts from '../components/ui/MicroBlogPosts'
 
 function Heading({
     title,
@@ -13,7 +14,7 @@ function Heading({
 }) {
     return (
         <h2
-            className={`text-lg mt-6 font-bold sm:mt-6 sm:mb-0 sm:text-2xl ${className}`}
+            className={`text-lg mt-6 font-bold sm:mt-10 sm:mb-0 sm:text-2xl ${className}`}
         >
             {title}
         </h2>
@@ -54,7 +55,7 @@ export default function IndexPage({ data }) {
 
     return (
         <Page>
-            <p className="text mt-2 leading-6">
+            <p className="text mt-6 leading-[1.6rem] sm:leading-6">
                 Hi there, I’m a software developer from Jersey, living in
                 Portsmouth, working at{' '}
                 <a href="https://radweb.co.uk" target="_blank" rel="noopener">
@@ -68,31 +69,30 @@ export default function IndexPage({ data }) {
                 >
                     InventoryBase
                 </a>{' '}
-                and other projects; primarily focusing on app development.
+                and other projects, primarily focusing on app development.
             </p>
             <a
                 href="https://geekyaubergine.status.lol"
                 target="_blank"
                 rel="noopener"
-                className='link'
+                className="link"
             >
-                <Heading title="Latest Status" />
+                <Heading title="Status" />
             </a>
             <StatusLol />
             <Link to="/blog" className="text-lg link font-normal pb-1">
-                <Heading title="Long Posts" />
+                <Heading title="Big Blogs" />
             </Link>
-            <p className="text mt-2 mb-2 leading-6">
-                I put small posts on my{' '}
-                <a
-                    href="https://geekyaubergine.com"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    Micro.blog
-                </a>
-            </p>
             {data.blogPosts.edges.map(renderBlogEntry)}
+            <a
+                href="https://geekyaubergine.com"
+                target="_blank"
+                rel="noopener"
+                className="link"
+            >
+                <Heading title="Micro Blogs" />
+            </a>
+            <MicroBlogPosts />
             <Heading title="Socials" />
             <div className="pt-4">
                 <SocialLink
@@ -103,7 +103,7 @@ export default function IndexPage({ data }) {
                 />
                 <SocialLink
                     name="Mastodon"
-                    description="Replacement for Twitter"
+                    description="Cross-posts and occasional funnies"
                     link="https://social.lol/@geekyaubergine"
                     rel="me"
                 />
@@ -131,7 +131,7 @@ export const pageQuery = graphql`
     {
         blogPosts: allMarkdownRemark(
             sort: { order: DESC, fields: [frontmatter___date] }
-            limit: 3
+            limit: 5
             filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
         ) {
             pageInfo {

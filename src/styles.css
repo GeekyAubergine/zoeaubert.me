@@ -22,7 +22,7 @@
     }
 
     .underline_custom {
-        @apply underline decoration-accent dark:decoration-accent-dark;
+        @apply underline;
         text-underline-offset: 0.175rem;
         /* text-underline-offset: 0.175rem; */
     }

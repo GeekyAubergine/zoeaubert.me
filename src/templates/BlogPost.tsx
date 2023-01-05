@@ -11,7 +11,7 @@ export default function BlogPost({ data }) {
         <Page title={title}>
             <h2 className="pageTitle mb-1">{title}</h2>
             <div className="flex flex-row mb-4">
-                <p className="secondary">{date}</p>
+                <time className="text secondary" dateTime={date}>{date}</time>
                 <p className="secondary mx-1">-</p>
                 <p className="secondary">{timeToRead} min</p>
             </div>

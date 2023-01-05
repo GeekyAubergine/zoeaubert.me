@@ -19,7 +19,12 @@ export default function BlogListItem({ node, style = '' }) {
             <p className="text">{node.frontmatter.description}</p>
             <div className="flex flex-row justify-between flex-wrap mt-2">
                 <div className="flex flex-row">
-                    <p className="secondary">{node.frontmatter.date}</p>
+                    <time
+                        className="secondary"
+                        dateTime={node.frontmatter.date}
+                    >
+                        {node.frontmatter.date}
+                    </time>
                     <p className="secondary mx-1">-</p>
                     <p className="secondary">{node.timeToRead} min</p>
                 </div>
