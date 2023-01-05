@@ -2,8 +2,10 @@ module.exports = {
     siteMetadata: {
         siteUrl: 'https://zoeaubert.me',
         title: 'zoeaubert.me',
-        description: '',
+        description:
+            'Software developer, musician, photographer, nerd, and some other things. Making computers go bleep bloop since 2010.',
         author: 'Zoe Aubert | GeekyAubergine',
+        image: './res/images/web-bg.png',
     },
     plugins: [
         {

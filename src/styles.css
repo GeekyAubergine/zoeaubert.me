@@ -58,7 +58,8 @@
     h5,
     h6,
     p,
-    a {
+    a,
+    time {
         @apply text;
     }
 

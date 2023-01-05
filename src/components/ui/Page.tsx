@@ -22,53 +22,73 @@ export function Page({ title, description, children }: Props) {
                         title
                         description
                         author
+                        siteUrl
+                        image
                     }
                 }
             }
         `,
     )
 
+    const pageTitle = title != null ? `${title} | Zoe Aubert` : 'Zoe Aubert'
+    const pageDescription =
+        description != null ? description : site.siteMetadata.description
+
     return (
         <>
             <main className="flex w-full justify-center pt-4 pb-8 px-4 sm:px-8 sm:pt-8">
                 <Helmet
                     htmlAttributes={HTML_ATTRIBUTES}
-                    title={
-                        title != null ? `${title} | Zoe Aubert` : 'Zoe Aubert'
-                    }
+                    title={pageTitle}
                     titleTemplate={`%s`}
                     meta={[
                         {
-                            name: `description`,
-                            content: description,
+                            name: 'title',
+                            content: pageTitle,
                         },
                         {
-                            property: `og:title`,
-                            content: title,
+                            name: 'description',
+                            content: pageDescription,
                         },
                         {
-                            property: `og:description`,
-                            content: description,
+                            property: 'og:type',
+                            content: 'website',
                         },
                         {
-                            property: `og:type`,
-                            content: `website`,
+                            property: 'og:url',
+                            content: site.siteMetadata.siteUrl,
                         },
                         {
-                            name: `twitter:card`,
-                            content: `summary`,
+                            property: 'og:title',
+                            content: pageTitle,
                         },
                         {
-                            name: `twitter:creator`,
-                            content: site.siteMetadata.author,
+                            property: 'og:description',
+                            content: pageDescription,
                         },
                         {
-                            name: `twitter:title`,
-                            content: title,
+                            property: 'og:image',
+                            content: site.siteMetadata.image,
                         },
                         {
-                            name: `twitter:description`,
-                            content: description,
+                            property: 'twitter:card',
+                            content: 'summary_large_image',
+                        },
+                        {
+                            property: 'twitter:url',
+                            content: site.siteMetadata.siteUrl,
+                        },
+                        {
+                            property: 'twitter:title',
+                            content: pageTitle,
+                        },
+                        {
+                            property: 'twitter:description',
+                            content: pageDescription,
+                        },
+                        {
+                            property: 'twitter:image',
+                            content: site.siteMetadata.image,
                         },
                     ]}
                 />
