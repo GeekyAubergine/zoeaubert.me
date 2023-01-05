@@ -108,15 +108,19 @@
 
     ul,
     ol {
-        @apply my-1 mx-8 text;
+        @apply my-4 mb-8 mx-8 text;
     }
 
     ol {
-        @apply list-decimal;
+        @apply list-decimal text;
+    }
+
+    ul {
+        @apply list-disc;
     }
 
     li {
-        @apply mx-1.5 my-3;
+        @apply ml-1.5 my-3;
     }
 
     code {
