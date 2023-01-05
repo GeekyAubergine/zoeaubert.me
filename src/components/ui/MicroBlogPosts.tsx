@@ -14,7 +14,6 @@ type MicroPost = {
 }
 
 function cleanContent(title: string | null, content: string) {
-    console.log({ content })
     return (
         content
             // Replace paragraphs with line breaks
