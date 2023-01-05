@@ -5,7 +5,7 @@ module.exports = {
         description:
             'Software developer, musician, photographer, nerd, and some other things. Making computers go bleep bloop since 2010.',
         author: 'Zoe Aubert | GeekyAubergine',
-        image: './res/images/web-bg.png',
+        image: '/web-bg.png',
     },
     plugins: [
         {
@@ -60,10 +60,10 @@ module.exports = {
                 name: `gatsby-starter-default`,
                 short_name: `starter`,
                 start_url: `/`,
-                background_color: `#ECBDF2`,
-                theme_color: `#ECBDF2`,
+                background_color: `#202022`,
+                theme_color: `#FEB847`,
                 display: `minimal-ui`,
-                icon: './res/images/icon.png',
+                icon: '/icon.png',
             },
         },
         {
