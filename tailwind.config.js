@@ -16,8 +16,8 @@ module.exports = {
         extend: {
             colors: {
                 background: {
-                    DEFAULT: '#FFFFFF',
-                    dark: '#121216',
+                    DEFAULT: '#F9F8F3',
+                    dark: '#202022',
                 },
                 headings: {
                     DEFAULT: '#252527',
@@ -29,15 +29,15 @@ module.exports = {
                 },
                 secondary: {
                     DEFAULT: '#505050',
-                    dark: '#A3A1A8',
+                    dark: '#ABA9B0',
                 },
                 tag: {
                     DEFAULT: '#F6FAF9',
                     dark: '#181D27',
                 },
                 accent: {
-                    DEFAULT: '#00645C', //"#05614F",
-                    dark: '#00D5C6', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF
+                    DEFAULT: '#B40000', //"#05614F",//00645C//794A00
+                    dark: '#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
                 },
                 code: {
                     DEFAULT: '#F6FAF9',
