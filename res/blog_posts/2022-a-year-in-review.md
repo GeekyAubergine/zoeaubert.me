@@ -1,5 +1,5 @@
 ---
-date: 2023-01-06
+date: 2023-01-07
 title: 2022 A Year In Review
 slug: 2022-a-year-in-review
 description: A look back over my 2022

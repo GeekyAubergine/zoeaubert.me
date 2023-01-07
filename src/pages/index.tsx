@@ -4,6 +4,7 @@ import { Page } from '../components/ui/Page'
 import BlogListItem from '../components/ui/BlogListItem'
 import StatusLol from '../components/ui/StatusLol'
 import MicroBlogPosts from '../components/ui/MicroBlogPosts'
+import SEO from '../components/Seo'
 
 function Heading({
     title,
@@ -153,3 +154,5 @@ export const pageQuery = graphql`
         }
     }
 `
+
+export const Head = () => <SEO />
