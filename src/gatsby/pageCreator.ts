@@ -90,8 +90,6 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
             ALBUMS.map(async (album) => {
                 const path = albumToSlug(album)
 
-                console.log({ album })
-                
                 try {
                     await createPage({
                         path,
@@ -100,7 +98,6 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
                             uuid: album.uuid,
                         },
                     })
-                    console.log(`Creating album page for ${path}`)
                 } catch (e) {
                     console.error(e)
                 }
@@ -112,8 +109,6 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
                 const path = `/photos/tags/${tag
                     .toLowerCase()
                     .replace(/ /g, '-')}`
-
-                console.log(`Creating tag page for ${path}`)
 
                 await createPage({
                     path,

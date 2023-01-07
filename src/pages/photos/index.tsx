@@ -60,8 +60,6 @@ export default function IndexPage() {
         [albumsByYear],
     )
 
-    console.log({ albumsByYear })
-
     const renderYear = React.useCallback(
         (year) => {
             const albums = albumsByYear[year]

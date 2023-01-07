@@ -38,8 +38,6 @@ export default function SEO({ title, description }: Props) {
     const pageTitle = title != null ? `${title} | ${siteTitle}` : siteTitle
     const pageDescription = description != null ? description : siteDescription
 
-    console.log('SEO', { pageTitle, pageDescription, siteUrl, image })
-
     return (
         <>
             <Helmet htmlAttributes={HTML_ATTRIBUTES}>

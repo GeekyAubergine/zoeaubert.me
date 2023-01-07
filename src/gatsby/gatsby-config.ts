@@ -5,7 +5,7 @@ module.exports = {
         description:
             'Software developer, musician, photographer, nerd, and some other things. Making computers go bleep bloop since 2010.',
         author: 'Zoe Aubert | GeekyAubergine',
-        image: '/web-bg.png',
+        image: '/res/images/web-bg.png',
     },
     plugins: [
         {

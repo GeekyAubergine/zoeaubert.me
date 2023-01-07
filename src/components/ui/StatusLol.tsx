@@ -6,8 +6,6 @@ export default function StatusLol() {
     let ref = useRef<HTMLDivElement>(null)
     const [loaded, setLoaded] = React.useState(false)
     React.useEffect(() => {
-        console.log('Loading status.lol')
-
         if (
             document &&
             document.querySelector(`script[src="${STATUS_LOL_SRC}"]`) == null &&
@@ -28,8 +26,6 @@ export default function StatusLol() {
                 ref?.current?.removeChild(script)
             }
         }
-
-        console.log('done loading status.lol')
     }, [])
 
     return (
