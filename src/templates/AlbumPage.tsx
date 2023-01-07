@@ -27,10 +27,8 @@ export default function AlbumPage({ pageContext }: Props) {
     )
 
     return (
-        <Page title="Photos">
-            <h2 className="pageTitle">
-                {album.title}
-            </h2>
+        <Page title={`${album.title} | Photos`} description={album.description}>
+            <h2 className="pageTitle">{album.title}</h2>
             {album.description != null && (
                 <p className="pb-2 font-bold sm:pb-6">{album.description}</p>
             )}

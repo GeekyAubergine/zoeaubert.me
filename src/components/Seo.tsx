@@ -41,7 +41,7 @@ export default function SEO({ title, description }: Props) {
     return (
         <>
             <Helmet htmlAttributes={HTML_ATTRIBUTES}>
-                <title>Zoe Aubert</title>
+                <title>{title}</title>
                 <meta name="title" content={pageTitle} />
                 <meta name="description" content={pageDescription} />
 

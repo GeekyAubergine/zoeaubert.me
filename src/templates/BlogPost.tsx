@@ -5,13 +5,15 @@ import { Page } from '../components/ui/Page'
 export default function BlogPost({ data }) {
     const { markdownRemark } = data
     const { frontmatter, html, timeToRead } = markdownRemark
-    const { title, date } = frontmatter
+    const { title, date, description } = frontmatter
 
     return (
-        <Page title={title}>
+        <Page title={title} description={description}>
             <h2 className="pageTitle mb-1">{title}</h2>
             <div className="flex flex-row mb-4">
-                <time className="text secondary" dateTime={date}>{date}</time>
+                <time className="text secondary" dateTime={date}>
+                    {date}
+                </time>
                 <p className="secondary mx-1">-</p>
                 <p className="secondary">{timeToRead} min</p>
             </div>
