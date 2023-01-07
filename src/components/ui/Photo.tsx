@@ -1,5 +1,12 @@
+import { useStaticQuery } from 'gatsby'
+import { graphql } from 'gatsby'
+import { GatsbyImage, getImage, StaticImage } from 'gatsby-plugin-image'
 import * as React from 'react'
-import { PHOTO_CDN_URL, Photo as PhotoType } from '../../../res/photos'
+import {
+    PHOTO_CDN_URL,
+    Photo as PhotoType,
+    IMAGE_FOLDER_PREFIX,
+} from '../../../res/photos'
 
 type Props = {
     photo: PhotoType
@@ -14,7 +21,38 @@ export default function Photo({
     className = '',
     onClick,
 }: Props) {
-    const url = fullSize ? photo.url : photo.url.replace('.jpg', '-min.jpg')
+    const allImages = useStaticQuery(
+        graphql`
+            {
+                allFile(filter: { dir: { regex: "/images/" } }) {
+                    edges {
+                        node {
+                            relativePath
+                            childImageSharp {
+                                gatsbyImageData
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+    )
+
+    const cleanedPath = photo.path.replace(/^\//, '')
+
+    const imageNode = allImages.allFile.edges.find(
+        (edge) => edge.node.relativePath === cleanedPath,
+    )
+
+    if (!imageNode) {
+        return null
+    }
+
+    const image = getImage(imageNode.node)
+
+    if (!image) {
+        return null
+    }
 
     const onClickCallback = React.useCallback(() => {
         if (onClick) {
@@ -23,12 +61,13 @@ export default function Photo({
     }, [onClick, photo])
 
     return (
-        <img
+        <GatsbyImage
+            key={photo.path}
             onClick={onClickCallback}
-            className={`mx-auto my-auto ${className} ${
+            className={`m-auto ${className} ${
                 onClick != null ? 'cursor-pointer' : ''
             }`}
-            src={`${PHOTO_CDN_URL}${url}`}
+            image={image}
             loading="lazy"
             alt={photo.alt}
         />

@@ -40,9 +40,7 @@ export default function AlbumPage({ pageContext }: Props) {
 
     return (
         <Page title="Photos">
-            <h2 className="pageTitle">
-                #{tag}
-            </h2>
+            <h2 className="pageTitle">#{tag}</h2>
             <PhotoGrid
                 photos={photos}
                 className="mb-8"

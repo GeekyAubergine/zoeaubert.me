@@ -2,13 +2,32 @@ import { Console } from 'console'
 import { DateTime } from 'luxon'
 
 export const PHOTO_CDN_URL = 'https://cdn.geekyaubergine.com'
+export const IMAGE_FOLDER_PREFIX = '../res/images/'
 
-export type Photo = {
+export type PhotoLegacy = {
     url: string
     alt: string
     tags: string[]
     takenAt: string
     featured?: boolean
+}
+
+export type Photo = {
+    path: string
+    alt: string
+    tags: string[]
+    takenAt: string
+    orientation: 'landscape' | 'portrait'
+    featured?: boolean
+}
+
+export type AlbumLegacy = {
+    uuid: string
+    title: string
+    description?: string
+    photos: PhotoLegacy[]
+    date: string
+    legacy: true
 }
 
 export type Album = {
@@ -19,9 +38,9 @@ export type Album = {
     date: string
 }
 
-export type Albums = Albums[]
+export type Albums = (Albums | AlbumLegacy)[]
 
-const FARLINGTON_MARSHES_202205: Album = {
+const FARLINGTON_MARSHES_202205: AlbumLegacy = {
     uuid: '8172872f-19b5-4110-b55e-891b1d56d690',
     title: 'Farlington Marshes',
     description:
@@ -115,9 +134,10 @@ const FARLINGTON_MARSHES_202205: Album = {
         },
     ],
     date: '2022-04-15',
+    legacy: true,
 }
 
-const ELYSIAN_FIRE_201910: Album = {
+const ELYSIAN_FIRE_201910: AlbumLegacy = {
     uuid: '3b258ef2-8fee-4248-a6be-eacdc0356a5c',
     title: 'Elysian Fire at the Acapulco',
     date: '2019-10-24',
@@ -221,9 +241,10 @@ const ELYSIAN_FIRE_201910: Album = {
             takenAt: '2019-10-24T12:00:00.000Z',
         },
     ],
+    legacy: true,
 }
 
-const BLVNT_THE_KNIFE_201910: Album = {
+const BLVNT_THE_KNIFE_201910: AlbumLegacy = {
     uuid: 'c875ddba-19ae-4ffe-8195-251f71dae217',
     title: 'Blvnt the Knife at the Acapulco',
     date: '2019-10-24',
@@ -362,9 +383,10 @@ const BLVNT_THE_KNIFE_201910: Album = {
             takenAt: '2019-10-24T12:00:00.000Z',
         },
     ],
+    legacy: true,
 }
 
-const BUSKING_FOR_MISFITS_201910: Album = {
+const BUSKING_FOR_MISFITS_201910: AlbumLegacy = {
     uuid: 'ffb267b3-7c9c-4a19-ac90-a60c454f9995',
     title: 'Busking for Misfits at the Guildhall Village',
     date: '2019-10-19',
@@ -467,9 +489,10 @@ const BUSKING_FOR_MISFITS_201910: Album = {
             takenAt: '2019-10-19T12:00:00.000Z',
         },
     ],
+    legacy: true,
 }
 
-const MARWELL_ZOO_OCT_2022: Album = {
+const MARWELL_ZOO_OCT_2022: AlbumLegacy = {
     uuid: 'b0b27f39-261d-47c2-ab50-4d8d76bbd5ee',
     title: 'Marwell Zoo',
     date: '2022-10-25',
@@ -548,14 +571,87 @@ const MARWELL_ZOO_OCT_2022: Album = {
             takenAt: '2022-10-25T12:00:00.000Z',
         },
     ],
+    legacy: true,
+}
+
+const SHORT_EARED_OWL_202301: Album = {
+    uuid: 'e992e64f-1375-45dc-8322-bae19caeb929',
+    title: 'Short-eared Owl',
+    date: '2023-01-07',
+    photos: [
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A5932.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A5951.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A5969.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A6176.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A6197.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A6206.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A6211.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A6314.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+        {
+            path: '/2023_01_short_eared_owl/20230107-8B5A6321.jpg',
+            alt: 'Short-eared owl',
+            tags: ['birds', 'short-eared-owl'],
+            takenAt: '2023-01-07T15:00:00.000Z',
+            orientation: 'landscape',
+        },
+    ],
 }
 
 export const ALBUMS = [
-    FARLINGTON_MARSHES_202205,
-    BLVNT_THE_KNIFE_201910,
-    ELYSIAN_FIRE_201910,
-    BUSKING_FOR_MISFITS_201910,
-    MARWELL_ZOO_OCT_2022,
+    // FARLINGTON_MARSHES_202205,
+    // BLVNT_THE_KNIFE_201910,
+    // ELYSIAN_FIRE_201910,
+    // BUSKING_FOR_MISFITS_201910,
+    // MARWELL_ZOO_OCT_2022,
+    SHORT_EARED_OWL_202301,
 ]
 
 export const ALBUMS_BY_DATE = ALBUMS.sort(

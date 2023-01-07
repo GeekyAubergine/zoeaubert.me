@@ -1,9 +1,10 @@
-import { Link } from 'gatsby'
+import { graphql, Link, useStaticQuery } from 'gatsby'
 import * as React from 'react'
 import {
     Album,
     ALBUMS,
     albumToSlug,
+    IMAGE_FOLDER_PREFIX,
     Photo as PhotoType,
     PHOTO_CDN_URL,
 } from '../../../res/photos'
@@ -28,11 +29,39 @@ export function PhotoViewer({
     onClose: () => void
     visible: boolean
 }) {
+    const allImages = useStaticQuery(
+        graphql`
+            {
+                allFile(filter: { dir: { regex: "/images/" } }) {
+                    edges {
+                        node {
+                            relativePath
+                            publicURL
+                        }
+                    }
+                }
+            }
+        `,
+    )
+
+    const cleanedPath = currentPhoto?.path.replace(/^\//, '')
+
+    const imageNode = allImages.allFile.edges.find(
+        (edge) => edge.node.relativePath === cleanedPath,
+    )
+
+    if (!imageNode) {
+        return null
+    }
+
+    const staticPath = imageNode.node.publicURL
+
     return (
         <div
             className={`${
                 visible ? 'visible opacity-100' : 'invisible opacity-0'
             } fixed top-0 left-0 right-0 bottom-0 z-10 w-screen h-screen bg-background dark:bg-background-dark flex justify-center items-center transition-all duration-300`}
+            onClick={onClose}
         >
             {currentPhoto != null && (
                 <div>
@@ -48,10 +77,10 @@ export function PhotoViewer({
                             Close
                         </p>
                     </div>
-                    <div className="fixed left-0 right-0 bottom-[1vh] flex justify-center"
-                                onClick={onClose}
-
->
+                    <div
+                        className="fixed left-0 right-0 bottom-[1vh] flex justify-center"
+                        onClick={onClose}
+                    >
                         <div className="flex flex-col justify-center items-start max-w-[90vw] h-[30vh] sm:max-w-[50vw] sm:h-[20vh]">
                             <p className="w-full text-center">
                                 {currentPhoto.alt}
@@ -71,7 +100,7 @@ export function PhotoViewer({
                                 )}
                                 <a
                                     className="link"
-                                    href={`${PHOTO_CDN_URL}${currentPhoto.url}`}
+                                    href={staticPath}
                                     target="_blank"
                                     rel="noopener"
                                 >
@@ -112,10 +141,10 @@ export function usePhotoViewer({ photos }: { photos: PhotoType[] }) {
             ALBUMS.find((album) =>
                 album.photos.find(
                     (photo) =>
-                        photo.takenAt === currentPhoto.takenAt &&
-                        photo.url === currentPhoto.url,
+                        photo.takenAt === currentPhoto?.takenAt &&
+                        photo.path === currentPhoto?.path,
                 ),
-            ),
+            ) ?? null,
         [currentPhoto],
     )
 

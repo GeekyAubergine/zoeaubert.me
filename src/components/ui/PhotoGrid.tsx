@@ -10,11 +10,13 @@ type Props = {
 
 export default function PhotoGrid({ photos, className = '', onClick }: Props) {
     const renderPhoto = React.useCallback(
-        (photo) => (
-            <div className="flex justify-center items-center max-h-[16rem]">
+        (photo: PhotoType) => (
+            <div
+                className="flex justify-center items-center max-h-[16rem]"
+                key={photo.path}
+            >
                 <Photo
                     photo={photo}
-                    key={photo.url}
                     onClick={onClick}
                     className="max-h-[16rem]"
                 />

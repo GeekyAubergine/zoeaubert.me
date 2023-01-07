@@ -2,23 +2,30 @@ import * as React from 'react'
 import {
     Album,
     Photo as PhotoType,
+    PhotoLegacy as PhotoLegacyType,
     albumToSlug,
     ALBUMS_BY_DATE,
+    AlbumLegacy,
 } from '../../../res/photos'
 import { Page } from '../../components/ui/Page'
-import Photo from '../../components/ui/Photo'
 import { DateTime } from 'luxon'
 import PhotoGrid from '../../components/ui/PhotoGrid'
 import { Link } from 'gatsby'
 import { usePhotoViewer } from '../../components/ui/PhotoViewer'
+import Photo from '../../components/ui/Photo'
 
 const PHOTOS_FOR_ALBUM_COVER = 2
 const MAX_FEATURED_PHOTOS = 9
 
 function renderPhoto(photo: PhotoType) {
-    return <Photo photo={photo} key={photo.url} className="!rounded-none max-h-[6rem] object-cover" />
+    return (
+        <Photo
+            photo={photo}
+            key={photo.path}
+            className="!rounded-none max-h-[6rem] object-cover"
+        />
+    )
 }
-
 function renderAlbum(album: Album) {
     const featuredPhotos = album.photos.filter((photo) => photo.featured)
     const otherPhotos = album.photos.filter((photo) => !photo.featured)
@@ -63,9 +70,10 @@ export default function IndexPage() {
     const renderYear = React.useCallback(
         (year) => {
             const albums = albumsByYear[year]
+
             return (
-                <div key={year}>
-                    <h3 className="text-xl">{year}</h3>
+                <div key={year} className="my-2">
+                    <h3 className="">{year}</h3>
                     <div className="grid gap-x-2 gap-y-2 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-8">
                         {albums.map(renderAlbum)}
                     </div>
@@ -97,7 +105,7 @@ export default function IndexPage() {
     return (
         <Page title="Photos">
             <div className="flex justify-between items-baseline">
-                <h2 className="text-xl font-bold">Photos</h2>
+                <h2 className='pageTitle'>Photos</h2>
                 <div>
                     <Link to="/photos/tags" className="link mr-4">
                         Tags
@@ -107,13 +115,13 @@ export default function IndexPage() {
                     </Link>
                 </div>
             </div>
-            {/* {featuredPhotos.length > 0 && (
+            {featuredPhotos.length > 0 && (
                 <PhotoGrid
                     photos={featuredPhotos}
                     className="mb-8"
                     onClick={onClickCallback}
                 />
-            )} */}
+            )}
             {years.map(renderYear)}
             {PhotoViewerComponent}
         </Page>
