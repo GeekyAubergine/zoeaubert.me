@@ -4,14 +4,14 @@ import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 import * as React from 'react'
 import {
     Photo as PhotoType,
-    PhotoAndAlbum,
+    PhotoWithAlbum,
     photoAndAlbumToSlug,
+    PhotoNodeData,
 } from '../../../res/photos'
-import FullsizePhoto from './FullsizePhoto'
-import ThumbnailPhoto from './ThumbnailPhoto'
 
 type Props = {
-    photoAndAlbum: PhotoAndAlbum
+    photo: PhotoWithAlbum
+    photoNodeData: PhotoNodeData[]
     fullSize?: boolean
     className?: string
     disableLink?: boolean
@@ -19,29 +19,72 @@ type Props = {
 }
 
 export default function Photo({
-    photoAndAlbum,
+    photo: photoProp,
+    photoNodeData,
     className = '',
     onClick,
     disableLink = false,
-    fullSize = false,
 }: Props) {
-    if (fullSize) {
+    const { photo, album } = photoProp
+
+    // const allImages = useStaticQuery(
+    //     graphql`
+    //         {
+    //             allFile(filter: { dir: { regex: "/images/" } }) {
+    //                 edges {
+    //                     node {
+    //                         relativePath
+    //                         childImageSharp {
+    //                             gatsbyImageData
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     `,
+    // )
+
+    const cleanedPath = photo.path.replace(/^\//, '')
+
+    const imageNode = photoNodeData.find(
+        (node) => node.relativePath === cleanedPath,
+    )
+
+    if (!imageNode) {
+        return null
+    }
+
+    const image = getImage(imageNode)
+
+    if (!image) {
+        return null
+    }
+
+    if (disableLink || !album) {
         return (
-            <FullsizePhoto
-                photoAndAlbum={photoAndAlbum}
-                className={className}
-                onClick={onClick}
-                disableLink={disableLink}
+            <GatsbyImage
+                key={photo.path}
+                className={`m-auto ${className} ${
+                    onClick != null ? 'cursor-pointer' : ''
+                }`}
+                image={image}
+                loading="lazy"
+                alt={photo.alt}
             />
         )
     }
 
     return (
-        <ThumbnailPhoto
-            photoAndAlbum={photoAndAlbum}
-            className={className}
-            onClick={onClick}
-            disableLink={disableLink}
-        />
+        <Link to={photoAndAlbumToSlug(album, photo)}>
+            <GatsbyImage
+                key={photo.path}
+                className={`m-auto ${className} ${
+                    onClick != null ? 'cursor-pointer' : ''
+                }`}
+                image={image}
+                loading="lazy"
+                alt={photo.alt}
+            />
+        </Link>
     )
 }

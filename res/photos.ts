@@ -1,4 +1,5 @@
 import { Console } from 'console'
+import { ImageDataLike } from 'gatsby-plugin-image'
 import { DateTime } from 'luxon'
 
 export const PHOTO_CDN_URL = 'https://cdn.geekyaubergine.com'
@@ -42,7 +43,9 @@ export type Album = {
 
 export type Albums = (Albums | AlbumLegacy)[]
 
-export type PhotoAndAlbum = { photo: Photo; album: Album }
+export type PhotoWithAlbum = { photo: Photo; album: Album }
+
+export type PhotoNodeData = { relativePath: string } & ImageDataLike
 
 const FARLINGTON_MARSHES_202205: Album = {
     uuid: '8172872f-19b5-4110-b55e-891b1d56d690',
@@ -747,7 +750,7 @@ export const ALBUMS_BY_UUID = ALBUMS.reduce(
 )
 
 export const ALBUMS_AND_PHOTOS_BY_TAG = ALL_PHOTO_TAGS.reduce<{
-    [tag: string]: PhotoAndAlbum[]
+    [tag: string]: PhotoWithAlbum[]
 }>((acc, tag) => {
     const out = acc[tag] || []
 

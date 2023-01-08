@@ -1,14 +1,11 @@
-import * as React from 'react'
+import React, { useCallback } from 'react'
 import { ALBUM_YEARS } from '../../../res/photos'
 import { Page } from '../../components/ui/Page'
-import { Link } from 'gatsby'
+import { graphql, Link, useStaticQuery } from 'gatsby'
 import AlbumsYearGroup from '../../components/ui/AlbumsYearGroup'
+import { usePhotoNodeData } from '../../utils'
 
 const MAX_FEATURED_PHOTOS = 9
-
-function renderYear(year: number) {
-    return <AlbumsYearGroup key={year} year={year} />
-}
 
 export default function IndexPage() {
     // const featuredPhotos: PhotoType[] = React.useMemo(() => {
@@ -29,6 +26,18 @@ export default function IndexPage() {
     //     },
     //     [onPhotoClick],
     // )
+    const photoNodeData = usePhotoNodeData()
+
+    const renderYear = useCallback(
+        (year) => (
+            <AlbumsYearGroup
+                key={year}
+                year={year}
+                photoNodeData={photoNodeData}
+            />
+        ),
+        [photoNodeData],
+    )
 
     return (
         <Page title="Photos">
