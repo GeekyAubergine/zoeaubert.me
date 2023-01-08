@@ -154,7 +154,6 @@ module.exports = {
                 honorDnt: true,
             },
         },
-        `gatsby-plugin-fontawesome-css`,
         {
             resolve: `gatsby-plugin-feed`,
             options: {
