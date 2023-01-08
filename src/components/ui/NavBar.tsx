@@ -1,72 +1,20 @@
 import * as React from 'react'
 import { Link } from 'gatsby'
+import ThemeToggle from './ThemeToggle'
 
 export default function NavBar() {
-    React.useEffect(() => {
-        if (typeof window !== 'undefined' && window.document) {
-            const bodyClassList = document.body.classList
-
-            const htmlClassList = document.querySelector('html').classList
-            const toggleButton = document.querySelector('.toggle-button')
-            const systemDarkSetting = window.matchMedia(
-                '(prefers-color-scheme: dark)',
-            )
-            const storeDarkValue = localStorage.getItem('dark')
-
-            const setDark = (isDark) => {
-                htmlClassList[isDark ? 'add' : 'remove']('dark')
-                localStorage.setItem('dark', isDark ? 'yes' : 'no')
-            }
-
-            setDark(
-                storeDarkValue
-                    ? storeDarkValue === 'yes'
-                    : systemDarkSetting.matches,
-            )
-            requestAnimationFrame(() => bodyClassList.remove('hidden'))
-
-            toggleButton.addEventListener('click', () =>
-                setDark(!htmlClassList.contains('dark')),
-            )
-            systemDarkSetting.addEventListener('change', (event) =>
-                setDark(event.matches),
-            )
-        }
-    }, [])
-
     return (
         <nav className="flex flex-1 flex-col justify-center items-center mb-4 sm:flex-row sm:justify-between">
-            <div className="w-full flex flex-row items-center justify-between mb-3 sm:justify-start">
+            <div className="flex w-full flex-row items-center justify-between my-2 sm:justify-start">
                 <Link
-                    className="text-4xl h-full text-center sm:text-left"
+                    className="text-4xl h-full text-left"
                     to="/"
                 >
                     <h1>Zoe Aubert</h1>
                 </Link>
-                <div className="toggle-button ml-4 small:mx-4">
-                    <svg
-                        className="toggle-button cursor-pointer text-middleGray rotate-180 dark:rotate-0 transition-all duration-500"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 100 100"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                    >
-                        <path
-                            className="fill-current"
-                            d="M 50 0 A 1 1 0 0 0 50 100"
-                        />
-                        <circle
-                            cx="50"
-                            cy="50"
-                            r="44"
-                            className="stroke-current"
-                            strokeWidth="8"
-                        />
-                    </svg>
-                </div>
+                <ThemeToggle />
             </div>
-            <div className="flex w-full justify-between sm:justify-end">
+            <div className="flex w-full justify-between mt-2 sm:justify-end">
                 <a
                     className="navbarLink"
                     href="https://geekyaubergine.com"

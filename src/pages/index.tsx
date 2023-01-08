@@ -56,7 +56,7 @@ export default function IndexPage({ data }) {
 
     return (
         <Page>
-            <p className="text mt-6 leading-[1.6rem] sm:leading-6">
+            <p className="text mt-4 leading-[1.6rem] sm:mt-6 sm:leading-6">
                 Hi there, I’m a software developer from Jersey, living in
                 Portsmouth, working at{' '}
                 <a href="https://radweb.co.uk" target="_blank" rel="noopener">

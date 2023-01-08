@@ -1,36 +1,47 @@
+import { Link, useStaticQuery } from 'gatsby'
+import { graphql } from 'gatsby'
+import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 import * as React from 'react'
-import { PHOTO_CDN_URL, Photo as PhotoType } from '../../../res/photos'
+import {
+    Photo as PhotoType,
+    PhotoAndAlbum,
+    photoAndAlbumToSlug,
+} from '../../../res/photos'
+import FullsizePhoto from './FullsizePhoto'
+import ThumbnailPhoto from './ThumbnailPhoto'
 
 type Props = {
-    photo: PhotoType
+    photoAndAlbum: PhotoAndAlbum
     fullSize?: boolean
     className?: string
+    disableLink?: boolean
     onClick?: (photo: PhotoType) => void
 }
 
 export default function Photo({
-    photo,
-    fullSize,
+    photoAndAlbum,
     className = '',
     onClick,
+    disableLink = false,
+    fullSize = false,
 }: Props) {
-    const url = fullSize ? photo.url : photo.url.replace('.jpg', '-min.jpg')
-
-    const onClickCallback = React.useCallback(() => {
-        if (onClick) {
-            onClick(photo)
-        }
-    }, [onClick, photo])
+    if (fullSize) {
+        return (
+            <FullsizePhoto
+                photoAndAlbum={photoAndAlbum}
+                className={className}
+                onClick={onClick}
+                disableLink={disableLink}
+            />
+        )
+    }
 
     return (
-        <img
-            onClick={onClickCallback}
-            className={`mx-auto my-auto ${className} ${
-                onClick != null ? 'cursor-pointer' : ''
-            }`}
-            src={`${PHOTO_CDN_URL}${url}`}
-            loading="lazy"
-            alt={photo.alt}
+        <ThumbnailPhoto
+            photoAndAlbum={photoAndAlbum}
+            className={className}
+            onClick={onClick}
+            disableLink={disableLink}
         />
     )
 }

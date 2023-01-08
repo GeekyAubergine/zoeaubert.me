@@ -1,5 +1,11 @@
 import * as path from 'path'
-import { ALBUMS, albumToSlug, ALL_PHOTO_TAGS } from '../../res/photos'
+import {
+    ALBUMS,
+    albumToSlug,
+    ALL_PHOTO_TAGS,
+    photoAndAlbumToSlug,
+    photoToFileName,
+} from '../../res/photos'
 
 export async function createBlogPosts({ createPage, graphql, reporter }) {
     const BlogPost = path.resolve('src/templates/BlogPost.tsx')
@@ -84,20 +90,37 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
 export async function createPhotoPages({ createPage, graphql, reporter }) {
     const AlbumPage = path.resolve('src/templates/AlbumPage.tsx')
     const PhotoTagPage = path.resolve('src/templates/PhotoTagPage.tsx')
+    const PhotoPage = path.resolve('src/templates/PhotoPage.tsx')
 
     try {
         await Promise.all(
             ALBUMS.map(async (album) => {
-                const path = albumToSlug(album)
+                const albumPath = albumToSlug(album)
 
                 try {
                     await createPage({
-                        path,
+                        path: albumPath,
                         component: AlbumPage,
                         context: {
                             uuid: album.uuid,
                         },
                     })
+
+                    await Promise.all(
+                        album.photos.map(async (photo) => {
+                            const fileName = photoToFileName(photo)
+
+                            await createPage({
+                                path: photoAndAlbumToSlug(album, photo),
+                                component: PhotoPage,
+                                context: {
+                                    albumUuid: album.uuid,
+                                    photoPath: photo.path,
+                                    fileName,
+                                },
+                            })
+                        }),
+                    )
                 } catch (e) {
                     console.error(e)
                 }

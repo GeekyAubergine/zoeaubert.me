@@ -34,9 +34,9 @@ module.exports = {
             options: {
                 defaults: {
                     formats: [`auto`, `jpg`, `webp`, `avif`],
-                    placeholder: `blurred`,
+                    placeholder: `dominantColor`,
                     quality: 50,
-                    breakpoints: [250, 500, 750, 1080, 1366, 1920],
+                    breakpoints: [ 300, 600, 900, 1200, 1500],
                     backgroundColor: `transparent`,
                     tracedSVGOptions: {},
                     blurredOptions: {},
