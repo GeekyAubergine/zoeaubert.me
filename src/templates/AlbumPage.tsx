@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { Album, ALBUMS_BY_UUID, Photo as PhotoType } from '../../res/photos'
+import { ALBUMS_BY_UUID } from '../../res/photos'
 import { Page } from '../components/ui/Page'
 import PhotoGrid from '../components/ui/PhotoGrid'
-import { usePhotoViewer } from '../components/ui/PhotoViewer'
 
 type Props = {
     pageContext: {
@@ -15,15 +14,13 @@ export default function AlbumPage({ pageContext }: Props) {
 
     const album = ALBUMS_BY_UUID[uuid]
 
-    const { onPhotoClick, Component: PhotoViewerComponent } = usePhotoViewer({
-        photos: album.photos,
-    })
-
-    const onClickCallback = React.useCallback(
-        (photo: PhotoType) => {
-            onPhotoClick(photo)
-        },
-        [onPhotoClick],
+    const photosAndAlbums = React.useMemo(
+        () =>
+            album.photos.map((photo) => ({
+                photo,
+                album,
+            })),
+        [album],
     )
 
     return (
@@ -32,12 +29,7 @@ export default function AlbumPage({ pageContext }: Props) {
             {album.description != null && (
                 <p className="pb-8">{album.description}</p>
             )}
-            <PhotoGrid
-                photos={album.photos}
-                className="mb-8"
-                onClick={onClickCallback}
-            />
-            {PhotoViewerComponent}
+            <PhotoGrid photosAndAlbums={photosAndAlbums} className="mb-8" />
         </Page>
     )
 }

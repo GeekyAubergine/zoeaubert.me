@@ -1,12 +1,7 @@
 import * as React from 'react'
-import {
-    Photo as PhotoType,
-    ALBUMS_BY_DATE,
-    ALBUM_YEARS,
-} from '../../../res/photos'
+import { ALBUM_YEARS } from '../../../res/photos'
 import { Page } from '../../components/ui/Page'
 import { Link } from 'gatsby'
-import { usePhotoViewer } from '../../components/ui/PhotoViewer'
 import AlbumsYearGroup from '../../components/ui/AlbumsYearGroup'
 
 const MAX_FEATURED_PHOTOS = 9

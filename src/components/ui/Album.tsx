@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
     Album as AlbumType,
     Photo as PhotoType,
@@ -15,12 +15,15 @@ type Props = {
     uuid: string
 }
 
-function renderPhoto(photo: PhotoType) {
+function renderPhoto(photo: PhotoType, album: AlbumType) {
+    const photoAndAlbum = useMemo(() => ({ photo, album }), [photo, album])
+
     return (
         <Photo
-            photo={photo}
+            photoAndAlbum={photoAndAlbum}
             key={photo.path}
-            className="!rounded-none object-cover sm:max-h-[11rem]"
+            className="!rounded-none object-cover sm:max-h-[12rem]"
+            disableLink
         />
     )
 }
@@ -36,10 +39,7 @@ function AlbumWrapper({
 }) {
     if (single) {
         return (
-            <Link
-                className="cursor-pointer my-2 flex flex-col justify-between"
-                to={albumToSlug(album)}
-            >
+            <Link className="cursor-pointer my-2" to={albumToSlug(album)}>
                 <div />
                 <div className="bg-black rounded-md overflow-hidden">
                     {children}
@@ -62,6 +62,16 @@ function AlbumWrapper({
 export default function Album({ uuid }: Props) {
     const album = ALBUMS_BY_UUID[uuid]
 
+    const renderAlbumPhotos = useCallback(
+        (photo) => {
+            if (!album) {
+                return null
+            }
+            return renderPhoto(photo, album)
+        },
+        [album],
+    )
+
     if (!album) {
         return null
     }
@@ -77,7 +87,7 @@ export default function Album({ uuid }: Props) {
     ) {
         return (
             <AlbumWrapper album={album} single>
-                {renderPhoto(featuredPhotos[0])}
+                {renderAlbumPhotos(featuredPhotos[0])}
             </AlbumWrapper>
         )
     }
@@ -91,7 +101,7 @@ export default function Album({ uuid }: Props) {
     ) {
         return (
             <AlbumWrapper album={album} single>
-                {renderPhoto(otherPhotos[0])}
+                {renderAlbumPhotos(otherPhotos[0])}
             </AlbumWrapper>
         )
     }
@@ -109,7 +119,7 @@ export default function Album({ uuid }: Props) {
     if (featuredPortraitPhotos.length >= 2) {
         return (
             <AlbumWrapper album={album}>
-                {featuredPortraitPhotos.slice(0, 2).map(renderPhoto)}
+                {featuredPortraitPhotos.slice(0, 2).map(renderAlbumPhotos)}
             </AlbumWrapper>
         )
     }
@@ -120,8 +130,8 @@ export default function Album({ uuid }: Props) {
     ) {
         return (
             <AlbumWrapper album={album}>
-                {featuredPortraitPhotos.map(renderPhoto)}
-                {otherPortraitPhotos.slice(0, 1).map(renderPhoto)}
+                {featuredPortraitPhotos.map(renderAlbumPhotos)}
+                {otherPortraitPhotos.slice(0, 1).map(renderAlbumPhotos)}
             </AlbumWrapper>
         )
     }
@@ -129,7 +139,7 @@ export default function Album({ uuid }: Props) {
     if (otherPortraitPhotos.length >= 2) {
         return (
             <AlbumWrapper album={album}>
-                {otherPortraitPhotos.slice(0, 2).map(renderPhoto)}
+                {otherPortraitPhotos.slice(0, 2).map(renderAlbumPhotos)}
             </AlbumWrapper>
         )
     }
@@ -139,15 +149,15 @@ export default function Album({ uuid }: Props) {
     if (featuredPortraitPhotos.length === 1) {
         return (
             <AlbumWrapper album={album}>
-                {featuredPortraitPhotos.map(renderPhoto)}
-                {otherPhotos.slice(0, 1).map(renderPhoto)}
+                {featuredPortraitPhotos.map(renderAlbumPhotos)}
+                {otherPhotos.slice(0, 1).map(renderAlbumPhotos)}
             </AlbumWrapper>
         )
     }
 
     return (
         <AlbumWrapper album={album}>
-            {otherPhotos.slice(0, 2).map(renderPhoto)}
+            {otherPhotos.slice(0, 2).map(renderAlbumPhotos)}
         </AlbumWrapper>
     )
 }

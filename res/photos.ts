@@ -4,6 +4,8 @@ import { DateTime } from 'luxon'
 export const PHOTO_CDN_URL = 'https://cdn.geekyaubergine.com'
 export const IMAGE_FOLDER_PREFIX = '../res/images/'
 
+const FILE_NAME_REGEX = /([\w,\s-]+)\.[A-Za-z]{3}$/
+
 export type PhotoLegacy = {
     url: string
     alt: string
@@ -39,6 +41,8 @@ export type Album = {
 }
 
 export type Albums = (Albums | AlbumLegacy)[]
+
+export type PhotoAndAlbum = { photo: Photo; album: Album }
 
 const FARLINGTON_MARSHES_202205: Album = {
     uuid: '8172872f-19b5-4110-b55e-891b1d56d690',
@@ -742,10 +746,53 @@ export const ALBUMS_BY_UUID = ALBUMS.reduce(
     {},
 )
 
+export const ALBUMS_AND_PHOTOS_BY_TAG = ALL_PHOTO_TAGS.reduce<{
+    [tag: string]: PhotoAndAlbum[]
+}>((acc, tag) => {
+    const out = acc[tag] || []
+
+    ALBUMS.forEach((album) => {
+        album.photos.forEach((photo) => {
+            if (photo.tags.includes(tag)) {
+                out.push({
+                    album,
+
+                    photo,
+                })
+            }
+        })
+    })
+
+    return {
+        ...acc,
+        [tag]: out,
+    }
+}, {})
+
 export function albumToSlug(album: Album): string {
     const date = DateTime.fromISO(album.date)
 
     return `/photos/${date.year}/${date.month < 10 ? '0' : ''}${
         date.month
     }/${album.title.toLowerCase().replace(/\s/g, '-')}`
+}
+
+export function photoToFileName(photo: Photo): string {
+    const matches = photo.path.match(FILE_NAME_REGEX)
+
+    if (!matches) {
+        throw new Error('No file name found')
+    }
+
+    const fileName = matches[1]
+
+    if (!fileName) {
+        throw new Error('No file name found')
+    }
+
+    return fileName
+}
+
+export function photoAndAlbumToSlug(album: Album, photo: Photo): string {
+    return `${albumToSlug(album)}/${photoToFileName(photo)}`
 }

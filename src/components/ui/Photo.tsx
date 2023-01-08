@@ -1,71 +1,47 @@
-import { useStaticQuery } from 'gatsby'
+import { Link, useStaticQuery } from 'gatsby'
 import { graphql } from 'gatsby'
 import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 import * as React from 'react'
-import { Photo as PhotoType } from '../../../res/photos'
+import {
+    Photo as PhotoType,
+    PhotoAndAlbum,
+    photoAndAlbumToSlug,
+} from '../../../res/photos'
+import FullsizePhoto from './FullsizePhoto'
+import ThumbnailPhoto from './ThumbnailPhoto'
 
 type Props = {
-    photo: PhotoType
+    photoAndAlbum: PhotoAndAlbum
     fullSize?: boolean
     className?: string
+    disableLink?: boolean
     onClick?: (photo: PhotoType) => void
 }
 
-export default function Photo({ photo, className = '', onClick }: Props) {
-    const allImages = useStaticQuery(
-        graphql`
-            {
-                allFile(filter: { dir: { regex: "/images/" } }) {
-                    edges {
-                        node {
-                            relativePath
-                            childImageSharp {
-                                gatsbyImageData
-                            }
-                        }
-                    }
-                }
-            }
-        `,
-    )
-
-    const cleanedPath = photo.path.replace(/^\//, '')
-
-    const imageNode = allImages.allFile.edges.find(
-        (edge) => edge.node.relativePath === cleanedPath,
-    )
-
-    if (!imageNode) {
-        console.log('failed imageNode', { cleanedPath, photo })
-        console.log(
-            allImages.allFile.edges.map((edge) => edge.node.relativePath),
+export default function Photo({
+    photoAndAlbum,
+    className = '',
+    onClick,
+    disableLink = false,
+    fullSize = false,
+}: Props) {
+    if (fullSize) {
+        return (
+            <FullsizePhoto
+                photoAndAlbum={photoAndAlbum}
+                className={className}
+                onClick={onClick}
+                disableLink={disableLink}
+            />
         )
-        return null
     }
-
-    const image = getImage(imageNode.node)
-
-    if (!image) {
-        console.log('failed image', { cleanedPath, photo, imageNode })
-        return null
-    }
-
-    const onClickCallback = React.useCallback(() => {
-        if (onClick) {
-            onClick(photo)
-        }
-    }, [onClick, photo])
 
     return (
-        <GatsbyImage
-            key={photo.path}
-            onClick={onClickCallback}
-            className={`m-auto ${className} ${
-                onClick != null ? 'cursor-pointer' : ''
-            }`}
-            image={image}
-            loading="lazy"
-            alt={photo.alt}
+        <ThumbnailPhoto
+            photoAndAlbum={photoAndAlbum}
+            className={className}
+            onClick={onClick}
+            disableLink={disableLink}
         />
     )
 }

@@ -196,7 +196,7 @@
     }
 
     img {
-        @apply block max-w-full h-auto my-4 mx-auto rounded;
+        @apply block max-w-full h-auto my-4 mx-auto !rounded !object-contain;
         margin-block-end: 1em;
     }
 
