@@ -9,7 +9,7 @@
 import './src/tailwind-base.css'
 import './src/styles.css'
 
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
+// import { config } from '@fortawesome/fontawesome-svg-core'
+// import '@fortawesome/fontawesome-svg-core/styles.css'
 import "prism-themes/themes/prism-atom-dark.css"
 config.autoAddCss = false

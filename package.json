@@ -18,16 +18,11 @@
     "clean": "gatsby clean"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.2.1",
-    "@fortawesome/free-brands-svg-icons": "^6.2.1",
-    "@fortawesome/free-solid-svg-icons": "^6.2.1",
-    "@fortawesome/react-fontawesome": "^0.2.0",
     "gatsby": "^5.3.3",
     "gatsby-omni-font-loader": "^2.0.2",
     "gatsby-plugin-fathom": "^2.1.1",
     "gatsby-plugin-feed": "^5.3.1",
     "gatsby-plugin-feed-generator": "^2.0.5",
-    "gatsby-plugin-fontawesome-css": "^1.2.0",
     "gatsby-plugin-image": "^3.3.2",
     "gatsby-plugin-manifest": "^5.3.1",
     "gatsby-plugin-react-helmet": "^6.3.0",
