@@ -61,7 +61,7 @@ export default function AlbumPage({ pageContext }: Props) {
     return (
         <Page
             title={`${album.title} | Photos`}
-            description={album.description}
+            description="Album"
             image={seoImage(album, photoNodeData)}
         >
             <h2 className="pageTitle pb-4">{album.title}</h2>
