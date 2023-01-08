@@ -40,14 +40,14 @@ export type Album = {
 
 export type Albums = (Albums | AlbumLegacy)[]
 
-const FARLINGTON_MARSHES_202205: AlbumLegacy = {
+const FARLINGTON_MARSHES_202205: Album = {
     uuid: '8172872f-19b5-4110-b55e-891b1d56d690',
     title: 'Farlington Marshes',
     description:
         'Little Egret, Blacktail Godwit, Avocet, Rock Pipet or Skylark (I think the Pipet is more likely), Black-headed Gull and a chill Cow.\n\nThe Little Egret is easily some of my favourite photos I’ve taken.',
     photos: [
         {
-            url: '/2022/04/20220415-8B5A6085.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A6085.jpg',
             alt: 'Little Egret in shallow sea water catching a crab',
             tags: [
                 'birds',
@@ -58,9 +58,11 @@ const FARLINGTON_MARSHES_202205: AlbumLegacy = {
                 'portsmouth',
             ],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
+            featured: true,
         },
         {
-            url: '/2022/04/20220415-8B5A6086.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A6086.jpg',
             alt: 'Little Egret in shallow sea water catching a crab',
             tags: [
                 'birds',
@@ -71,9 +73,10 @@ const FARLINGTON_MARSHES_202205: AlbumLegacy = {
                 'portsmouth',
             ],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
         },
         {
-            url: '/2022/04/20220415-8B5A6087.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A6087.jpg',
             alt: 'Little Egret in shallow sea water catching a crab',
             tags: [
                 'birds',
@@ -85,27 +88,31 @@ const FARLINGTON_MARSHES_202205: AlbumLegacy = {
             ],
             takenAt: '2020-04-15T12:00:00.000Z',
             featured: true,
+            orientation: 'landscape',
         },
         {
-            url: '/2022/04/20220415-8B5A4918.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A4918.jpg',
             alt: 'Backtail Godwit swimming through a pond',
             tags: ['birds', 'farlingon-marches', 'godwit', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
         },
         {
-            url: '/2022/04/20220415-8B5A5115.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A5115.jpg',
             alt: 'Avercet swimming through a pond',
             tags: ['birds', 'farlingon-marches', 'avercet', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
         },
         {
-            url: '/2022/04/20220415-8B5A5403.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A5403.jpg',
             alt: 'Rock Pipet or Skylark flying against clear sky',
             tags: ['birds', 'farlingon-marches', 'rock-pipet', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
         },
         {
-            url: '/2022/04/20220415-8B5A5546.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A5546.jpg',
             alt: 'Black-headed Gull flying infront of pond and tall yellow grass',
             tags: [
                 'birds',
@@ -114,15 +121,17 @@ const FARLINGTON_MARSHES_202205: AlbumLegacy = {
                 'portsmouth',
             ],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
         },
         {
-            url: '/2022/04/20220415-8B5A4811.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A4811.jpg',
             alt: 'Cow sitting in field infront of tall yellow grass',
             tags: ['cow', 'farlingon-marches', 'portsmouth'],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
         },
         {
-            url: '/2022/04/20220415-8B5A5552.jpg',
+            path: '/farlington_marshes_2022_04/20220415-8B5A5552.jpg',
             alt: 'Black-headed Gull flying infront of tall yellow grass',
             tags: [
                 'birds',
@@ -131,10 +140,10 @@ const FARLINGTON_MARSHES_202205: AlbumLegacy = {
                 'portsmouth',
             ],
             takenAt: '2020-04-15T12:00:00.000Z',
+            orientation: 'landscape',
         },
     ],
     date: '2022-04-15',
-    legacy: true,
 }
 
 const ELYSIAN_FIRE_201910: AlbumLegacy = {
@@ -647,7 +656,7 @@ const SHORT_EARED_OWL_202301: Album = {
 }
 
 export const ALBUMS = [
-    // FARLINGTON_MARSHES_202205,
+    FARLINGTON_MARSHES_202205,
     // BLVNT_THE_KNIFE_201910,
     // ELYSIAN_FIRE_201910,
     // BUSKING_FOR_MISFITS_201910,

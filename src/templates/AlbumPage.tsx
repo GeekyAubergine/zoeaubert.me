@@ -28,9 +28,9 @@ export default function AlbumPage({ pageContext }: Props) {
 
     return (
         <Page title={`${album.title} | Photos`} description={album.description}>
-            <h2 className="pageTitle">{album.title}</h2>
+            <h2 className="pageTitle pb-4">{album.title}</h2>
             {album.description != null && (
-                <p className="pb-2 font-bold sm:pb-6">{album.description}</p>
+                <p className="pb-8">{album.description}</p>
             )}
             <PhotoGrid
                 photos={album.photos}
