@@ -576,69 +576,70 @@ const MARWELL_ZOO_OCT_2022: AlbumLegacy = {
 
 const SHORT_EARED_OWL_202301: Album = {
     uuid: 'e992e64f-1375-45dc-8322-bae19caeb929',
-    title: 'Short-eared Owl',
+    title: 'Short-eared owl',
     date: '2023-01-07',
     photos: [
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A5932.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A5951.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
+            featured: true,
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A5969.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A6176.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A6197.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A6206.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A6211.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A6314.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
         {
             path: '/2023_01_short_eared_owl/20230107-8B5A6321.jpg',
             alt: 'Short-eared owl',
-            tags: ['birds', 'short-eared-owl'],
+            tags: ['birds', 'short-eared-owl', 'owl'],
             takenAt: '2023-01-07T15:00:00.000Z',
             orientation: 'landscape',
         },
@@ -659,6 +660,21 @@ export const ALBUMS_BY_DATE = ALBUMS.sort(
         DateTime.fromISO(b.date).toMillis() -
         DateTime.fromISO(a.date).toMillis(),
 )
+
+export const ALBUMS_BY_YEAR: {
+    [year: number]: string[]
+} = ALBUMS_BY_DATE.reduce((acc, album) => {
+    const year = DateTime.fromISO(album.date).year
+    return {
+        ...acc,
+        [year]: [...(acc[year] || []), album.uuid],
+    }
+}, {})
+
+export const ALBUM_YEARS = Object.keys(ALBUMS_BY_YEAR)
+    .sort()
+    .reverse()
+    .map(Number)
 
 export const ALL_PHOTO_TAGS = ALBUMS.reduce((acc: string[], album) => {
     const out = acc.slice()
