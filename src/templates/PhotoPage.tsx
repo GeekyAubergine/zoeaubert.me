@@ -87,7 +87,9 @@ export default function PhotoPage({ data, pageContext }: Props) {
 
     return (
         <Page
-            title={photo.alt}
+            title={`${album.title} | Photos`}
+            description={photo.alt}
+            image={publicURL}
             hideNavBar
             hideFooter
             widthControlled={false}
@@ -107,7 +109,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
                     Photos
                 </Link>
             </div>
-            <div className='hidden sm:flex width-control mx-auto'>
+            <div className="hidden sm:flex width-control mx-auto">
                 <NavBar />
             </div>
             <GatsbyImage

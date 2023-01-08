@@ -9,9 +9,10 @@ const HTML_ATTRIBUTES = {
 type Props = {
     title?: string | null
     description?: string | null
+    image?: string | null
 }
 
-export default function SEO({ title, description }: Props) {
+export default function SEO({ title, description, image }: Props) {
     const { site } = useStaticQuery(
         graphql`
             query {
@@ -32,7 +33,7 @@ export default function SEO({ title, description }: Props) {
         title: siteTitle,
         description: siteDescription,
         siteUrl,
-        image,
+        image: siteImage,
     } = site.siteMetadata
 
     const pageTitle = title != null ? `${title} | ${siteTitle}` : siteTitle
@@ -49,7 +50,7 @@ export default function SEO({ title, description }: Props) {
                 <meta property="og:url" content={siteUrl} />
                 <meta property="og:title" content={pageTitle} />
                 <meta property="og:description" content={pageDescription} />
-                <meta property="og:image" content={image} />
+                <meta property="og:image" content={image ?? siteImage} />
 
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:url" content={siteUrl} />
@@ -58,7 +59,7 @@ export default function SEO({ title, description }: Props) {
                     property="twitter:description"
                     content={pageDescription}
                 />
-                <meta property="twitter:image" content={image} />
+                <meta property="twitter:image" content={image ?? siteImage} />
             </Helmet>
         </>
     )

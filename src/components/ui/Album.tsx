@@ -29,7 +29,7 @@ function renderPhoto(
             photo={photoData}
             photoNodeData={photoNodeData}
             key={photo.path}
-            className="!rounded-none object-cover sm:max-h-[12rem]"
+            className="object-cover sm:max-h-[12rem] "
             disableLink
         />
     )
@@ -58,7 +58,7 @@ function AlbumWrapper({
 
     return (
         <Link className="cursor-pointer my-2" to={albumToSlug(album)}>
-            <div className="grid gap-x-[1px] gap-y-[1px] grid-cols-2 bg-black rounded-md overflow-hidden">
+            <div className="grid gap-x-[1px] gap-y-[1px] grid-cols-2 rounded-md overflow-hidden">
                 {children}
             </div>
             <h4 className="link text-sm text-center my-1">{album.title}</h4>

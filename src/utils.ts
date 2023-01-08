@@ -12,6 +12,7 @@ export function usePhotoNodeData(): PhotoNodeData[] {
                             childImageSharp {
                                 gatsbyImageData
                             }
+                            publicURL
                         }
                     }
                 }
@@ -22,5 +23,6 @@ export function usePhotoNodeData(): PhotoNodeData[] {
     return allImages.allFile.edges.map((edge) => ({
         relativePath: edge.node.relativePath,
         gatsbyImageData: edge.node.childImageSharp.gatsbyImageData,
+        publicURL: edge.node.publicURL,
     }))
 }

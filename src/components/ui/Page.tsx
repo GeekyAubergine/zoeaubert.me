@@ -3,10 +3,10 @@ import NavBar from './NavBar'
 import Footer from './Footer'
 import SEO from '../Seo'
 
-
 type Props = {
     title?: string | null
     description?: string | null
+    image?: string | null
     children: React.ReactNode
     hideNavBar?: boolean
     hideFooter?: boolean
@@ -16,6 +16,7 @@ type Props = {
 export function Page({
     title,
     description,
+    image,
     children,
     hideNavBar = false,
     hideFooter = false,
@@ -24,7 +25,7 @@ export function Page({
 }: Props) {
     return (
         <main className="flex w-full justify-center">
-            <SEO title={title} description={description} />
+            <SEO title={title} description={description} image={image} />
             <div
                 className={`flex flex-col pt-4 pb-4 px-4 sm:px-0 sm:pt-8 ${
                     widthControlled ? 'width-control' : ''

@@ -45,7 +45,10 @@ export type Albums = (Albums | AlbumLegacy)[]
 
 export type PhotoWithAlbum = { photo: Photo; album: Album }
 
-export type PhotoNodeData = { relativePath: string } & ImageDataLike
+export type PhotoNodeData = {
+    relativePath: string
+    publicURL: string
+} & ImageDataLike
 
 const FARLINGTON_MARSHES_202205: Album = {
     uuid: '8172872f-19b5-4110-b55e-891b1d56d690',

@@ -27,23 +27,6 @@ export default function Photo({
 }: Props) {
     const { photo, album } = photoProp
 
-    // const allImages = useStaticQuery(
-    //     graphql`
-    //         {
-    //             allFile(filter: { dir: { regex: "/images/" } }) {
-    //                 edges {
-    //                     node {
-    //                         relativePath
-    //                         childImageSharp {
-    //                             gatsbyImageData
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     `,
-    // )
-
     const cleanedPath = photo.path.replace(/^\//, '')
 
     const imageNode = photoNodeData.find(
