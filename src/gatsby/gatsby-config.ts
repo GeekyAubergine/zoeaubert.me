@@ -52,7 +52,6 @@ module.exports = {
         'gatsby-plugin-react-helmet',
         'gatsby-plugin-sitemap',
         'gatsby-plugin-robots-txt',
-        'gatsby-plugin-mdx',
         'gatsby-plugin-sharp',
         {
             resolve: 'gatsby-plugin-manifest',

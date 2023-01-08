@@ -131,7 +131,7 @@ export default function IndexPage({ data }) {
 export const pageQuery = graphql`
     {
         blogPosts: allMarkdownRemark(
-            sort: { order: DESC, fields: [frontmatter___date] }
+            sort: { frontmatter: { date: DESC } }
             limit: 5
             filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
         ) {

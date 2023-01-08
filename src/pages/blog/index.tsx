@@ -3,7 +3,6 @@ import { graphql, Link } from 'gatsby'
 import { Page } from '../../components/ui/Page'
 import BlogListItem from '../../components/ui/BlogListItem'
 
-
 export default function IndexPage({ data }) {
     const renderBlogEntry = React.useCallback(({ node }) => {
         return <BlogListItem node={node} key={node.id} />
@@ -20,7 +19,7 @@ export default function IndexPage({ data }) {
 export const pageQuery = graphql`
     {
         blogPosts: allMarkdownRemark(
-            sort: { order: DESC, fields: [frontmatter___date] }
+            sort: { frontmatter: { date: DESC } }
             filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
         ) {
             pageInfo {
