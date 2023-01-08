@@ -10,9 +10,15 @@ type Props = {
     title?: string | null
     description?: string | null
     image?: string | null
+    preventIndexing?: boolean
 }
 
-export default function SEO({ title, description, image }: Props) {
+export default function SEO({
+    title,
+    description,
+    image,
+    preventIndexing,
+}: Props) {
     const { site } = useStaticQuery(
         graphql`
             query {
@@ -60,6 +66,8 @@ export default function SEO({ title, description, image }: Props) {
                     content={pageDescription}
                 />
                 <meta property="twitter:image" content={image ?? siteImage} />
+
+                {preventIndexing && <meta name="robots" content="noindex" />}
             </Helmet>
         </>
     )

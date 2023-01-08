@@ -94,6 +94,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
             hideFooter
             widthControlled={false}
             mainClassName="h-screen max-h-screen justify-between sm:mx-4"
+            preventIndexing
         >
             <div className="flex justify-between items-center mb-4 sm:hidden">
                 <div className="flex items-center">
