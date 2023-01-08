@@ -4,9 +4,7 @@ import {
     Album,
     ALBUMS,
     albumToSlug,
-    IMAGE_FOLDER_PREFIX,
     Photo as PhotoType,
-    PHOTO_CDN_URL,
 } from '../../../res/photos'
 import Photo from './Photo'
 

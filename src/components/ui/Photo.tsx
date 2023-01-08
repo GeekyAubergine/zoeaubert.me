@@ -1,12 +1,8 @@
 import { useStaticQuery } from 'gatsby'
 import { graphql } from 'gatsby'
-import { GatsbyImage, getImage, StaticImage } from 'gatsby-plugin-image'
+import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 import * as React from 'react'
-import {
-    PHOTO_CDN_URL,
-    Photo as PhotoType,
-    IMAGE_FOLDER_PREFIX,
-} from '../../../res/photos'
+import { Photo as PhotoType } from '../../../res/photos'
 
 type Props = {
     photo: PhotoType
@@ -17,7 +13,6 @@ type Props = {
 
 export default function Photo({
     photo,
-    fullSize,
     className = '',
     onClick,
 }: Props) {
