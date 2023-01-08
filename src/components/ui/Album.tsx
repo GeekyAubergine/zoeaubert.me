@@ -36,7 +36,11 @@ function AlbumWrapper({
 }) {
     if (single) {
         return (
-            <Link className="cursor-pointer my-2" to={albumToSlug(album)}>
+            <Link
+                className="cursor-pointer my-2 flex flex-col justify-between"
+                to={albumToSlug(album)}
+            >
+                <div />
                 <div className="bg-black rounded-md overflow-hidden">
                     {children}
                 </div>
@@ -102,10 +106,12 @@ export default function Album({ uuid }: Props) {
         (photo) => photo.orientation === 'portrait',
     )
 
+    console.log('here')
+
     if (featuredPortraitPhotos.length >= 2) {
         return (
             <AlbumWrapper album={album}>
-                <h4 className="link text-sm text-center my-1">{album.title}</h4>
+                {featuredPortraitPhotos.slice(0, 2).map(renderPhoto)}
             </AlbumWrapper>
         )
     }

@@ -11,11 +11,7 @@ type Props = {
     onClick?: (photo: PhotoType) => void
 }
 
-export default function Photo({
-    photo,
-    className = '',
-    onClick,
-}: Props) {
+export default function Photo({ photo, className = '', onClick }: Props) {
     const allImages = useStaticQuery(
         graphql`
             {
@@ -40,12 +36,17 @@ export default function Photo({
     )
 
     if (!imageNode) {
+        console.log('failed imageNode', { cleanedPath, photo })
+        console.log(
+            allImages.allFile.edges.map((edge) => edge.node.relativePath),
+        )
         return null
     }
 
     const image = getImage(imageNode.node)
 
     if (!image) {
+        console.log('failed image', { cleanedPath, photo, imageNode })
         return null
     }
 
