@@ -20,7 +20,7 @@ function renderPhoto(photo: PhotoType) {
         <Photo
             photo={photo}
             key={photo.path}
-            className="!rounded-none object-cover"
+            className="!rounded-none object-cover sm:max-h-[11rem]"
         />
     )
 }
@@ -105,8 +105,6 @@ export default function Album({ uuid }: Props) {
     const otherPortraitPhotos = otherPhotos.filter(
         (photo) => photo.orientation === 'portrait',
     )
-
-    console.log('here')
 
     if (featuredPortraitPhotos.length >= 2) {
         return (

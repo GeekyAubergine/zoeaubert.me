@@ -78,7 +78,7 @@ God, was I cool, maths challanges, so funny hahhahahhaa
 
 > I swear my bank account cries every time there's a steam sale.
 
-Universal truths. Still the most I've spent in a steam slashed-zero
+Universal truths. Still the most I've spent in a steam sale
 
 ---
 
@@ -150,7 +150,7 @@ Turns out I've never been able to spell
 
 ---
 
-2014*02-25
+2014-02-25
 
 > Nothing quiet like revision and classical music
 
