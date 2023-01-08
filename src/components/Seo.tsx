@@ -44,6 +44,10 @@ export default function SEO({
 
     const pageTitle = title != null ? `${title} | ${siteTitle}` : siteTitle
     const pageDescription = description != null ? description : siteDescription
+    const pageImage =
+        image != null && !image.startsWith('http')
+            ? `${siteUrl}${image}`
+            : siteImage
 
     return (
         <>
@@ -56,7 +60,7 @@ export default function SEO({
                 <meta property="og:url" content={siteUrl} />
                 <meta property="og:title" content={pageTitle} />
                 <meta property="og:description" content={pageDescription} />
-                <meta property="og:image" content={image ?? siteImage} />
+                <meta property="og:image" content={pageImage} />
 
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:url" content={siteUrl} />
@@ -65,7 +69,7 @@ export default function SEO({
                     property="twitter:description"
                     content={pageDescription}
                 />
-                <meta property="twitter:image" content={image ?? siteImage} />
+                <meta property="twitter:image" content={pageImage} />
 
                 {preventIndexing && <meta name="robots" content="noindex" />}
             </Helmet>
