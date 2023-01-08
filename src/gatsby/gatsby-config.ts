@@ -33,10 +33,10 @@ module.exports = {
             resolve: `gatsby-plugin-sharp`,
             options: {
                 defaults: {
-                    formats: [`auto`, `jpg`, `webp`, `avif`],
-                    placeholder: `dominantColor`,
-                    quality: 50,
-                    breakpoints: [ 300, 600, 900, 1200, 1500],
+                    formats: [`jpg`, `webp`, `avif`],
+                    placeholder: `blurred`,
+                    quality: 80,
+                    breakpoints: [300, 600, 900, 1200, 1500],
                     backgroundColor: `transparent`,
                     tracedSVGOptions: {},
                     blurredOptions: {},
@@ -52,7 +52,6 @@ module.exports = {
         'gatsby-plugin-react-helmet',
         'gatsby-plugin-sitemap',
         'gatsby-plugin-robots-txt',
-        'gatsby-plugin-mdx',
         'gatsby-plugin-sharp',
         {
             resolve: 'gatsby-plugin-manifest',
@@ -155,7 +154,6 @@ module.exports = {
                 honorDnt: true,
             },
         },
-        `gatsby-plugin-fontawesome-css`,
         {
             resolve: `gatsby-plugin-feed`,
             options: {
@@ -199,30 +197,30 @@ module.exports = {
                         },
                         query: `
                         {
-                            allMarkdownRemark(
-                                filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
-                            ) {
-                                pageInfo {
-                                    perPage
+                            allMarkdownRemark(filter: {fileAbsolutePath: {regex: "/res/blog_posts/"}}) {
+                              pageInfo {
+                                perPage
+                              }
+                              edges {
+                                node {
+                                  excerpt
+                                  html
+                                  fields {
+                                    slug
+                                  }
+                                  frontmatter {
+                                    title
+                                    date
+                                  }
                                 }
-                                edges {
-                                    node {
-                                        excerpt
-                                        html
-                                        fields { slug }
-                                        frontmatter {
-                                          title
-                                          date
-                                        }
-                                      }
-                                }
+                              }
                             }
                             tagsGroup: allMarkdownRemark(limit: 2000) {
-                                group(field: frontmatter___tags) {
-                                    fieldValue
-                                }
+                              group(field: {frontmatter: {tags: SELECT}}) {
+                                fieldValue
+                              }
                             }
-                        }
+                          }
                   `,
                         output: '/rss.xml',
                         title: 'Zoe Aubert',

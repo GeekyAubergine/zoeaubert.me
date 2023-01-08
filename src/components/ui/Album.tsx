@@ -5,6 +5,7 @@ import {
     albumToSlug,
     ALBUMS_BY_YEAR,
     ALBUMS_BY_UUID,
+    PhotoNodeData,
 } from '../../../res/photos'
 import { Link } from 'gatsby'
 import Photo from '../../components/ui/Photo'
@@ -13,14 +14,20 @@ const PHOTOS_FOR_ALBUM_COVER = 2
 
 type Props = {
     uuid: string
+    photoNodeData: PhotoNodeData[]
 }
 
-function renderPhoto(photo: PhotoType, album: AlbumType) {
-    const photoAndAlbum = useMemo(() => ({ photo, album }), [photo, album])
+function renderPhoto(
+    photo: PhotoType,
+    album: AlbumType,
+    photoNodeData: PhotoNodeData[],
+) {
+    const photoData = useMemo(() => ({ photo, album }), [photo, album])
 
     return (
         <Photo
-            photoAndAlbum={photoAndAlbum}
+            photo={photoData}
+            photoNodeData={photoNodeData}
             key={photo.path}
             className="!rounded-none object-cover sm:max-h-[12rem]"
             disableLink
@@ -59,7 +66,7 @@ function AlbumWrapper({
     )
 }
 
-export default function Album({ uuid }: Props) {
+export default function Album({ uuid, photoNodeData }: Props) {
     const album = ALBUMS_BY_UUID[uuid]
 
     const renderAlbumPhotos = useCallback(
@@ -67,9 +74,9 @@ export default function Album({ uuid }: Props) {
             if (!album) {
                 return null
             }
-            return renderPhoto(photo, album)
+            return renderPhoto(photo, album, photoNodeData)
         },
-        [album],
+        [album, photoNodeData],
     )
 
     if (!album) {

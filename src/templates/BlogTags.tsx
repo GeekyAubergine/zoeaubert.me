@@ -10,9 +10,7 @@ export default function BlogTags({ data, pageContext }) {
 
     return (
         <Page title="Blog">
-            <h2 className="pageTitle">
-                {pageContext.tag} Blog Posts
-            </h2>
+            <h2 className="pageTitle">{pageContext.tag} Blog Posts</h2>
             {data.blogPosts.edges.map(renderBlogEntry)}
         </Page>
     )
@@ -21,7 +19,7 @@ export default function BlogTags({ data, pageContext }) {
 export const pageQuery = graphql`
     query ($tag: String) {
         blogPosts: allMarkdownRemark(
-            sort: { order: DESC, fields: [frontmatter___date] }
+            sort: { frontmatter: { date: DESC } }
             limit: 1000
             filter: {
                 fileAbsolutePath: { regex: "/res/blog_posts/" }
