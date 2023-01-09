@@ -1,14 +1,12 @@
 import { navigate } from 'gatsby'
 import { graphql, Link } from 'gatsby'
 import { GatsbyImage, getImage } from 'gatsby-plugin-image'
-import React from 'react'
-import { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
     ALBUMS_BY_UUID,
     albumToSlug,
     photoAndAlbumToSlug,
 } from '../../res/photos'
-import NavBar from '../components/ui/NavBar'
 import { Page } from '../components/ui/Page'
 import ThemeToggle from '../components/ui/ThemeToggle'
 
@@ -52,19 +50,30 @@ export default function PhotoPage({ data, pageContext }: Props) {
     const previousPhoto = album.photos[photoIndex - 1] ?? null
     const nextPhoto = album.photos[photoIndex + 1] ?? null
 
-    const onKeyUp = React.useCallback(
+    const goBack = useCallback(() => {
+        navigate(-1)
+    }, [])
+
+    const onKeyUp = useCallback(
         (event) => {
+            if (event.key === 'Escape') {
+                goBack()
+            }
             if (event.key === 'ArrowLeft' && previousPhoto) {
-                navigate(photoAndAlbumToSlug(album, previousPhoto))
+                navigate(photoAndAlbumToSlug(album, previousPhoto), {
+                    replace: true,
+                })
             }
             if (event.key === 'ArrowRight' && nextPhoto) {
-                navigate(photoAndAlbumToSlug(album, nextPhoto))
+                navigate(photoAndAlbumToSlug(album, nextPhoto), {
+                    replace: true,
+                })
             }
         },
         [previousPhoto, nextPhoto],
     )
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (typeof window !== 'undefined' && window.document) {
             window.addEventListener('keyup', onKeyUp)
         }
@@ -106,9 +115,9 @@ export default function PhotoPage({ data, pageContext }: Props) {
                     </Link>
                     <ThemeToggle />
                 </div>
-                <Link className="navbarLink" to="/photos">
-                    Back to Photos
-                </Link>
+                <p className="navbarLink" onClick={goBack}>
+                    Back
+                </p>
             </div>
             {/* <div className="hidden sm:flex width-control mx-auto">
                 <NavBar />
@@ -132,6 +141,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
                         <Link
                             to={photoAndAlbumToSlug(album, previousPhoto)}
                             className="flex flex-1 text-center link no-underline py-2"
+                            replace
                         >
                             ←
                         </Link>
@@ -148,6 +158,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
                         <Link
                             to={photoAndAlbumToSlug(album, nextPhoto)}
                             className="flex flex-1 justify-end text-center link no-underline py-2"
+                            replace
                         >
                             →
                         </Link>
