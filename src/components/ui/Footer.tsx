@@ -4,8 +4,8 @@ import * as React from 'react'
 export default function Footer() {
     return (
         <footer className="flex w-full flex-ro justify-center border-t border-t-border mt-12 mb-4 p-4 mx-auto">
-            <Link to="/referals" className="link text-center">
-                Referals
+            <Link to="/referrals" className="link text-center">
+                Referrals
             </Link>
             <span className="text mx-2">-</span>
             <a
