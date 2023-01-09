@@ -7,6 +7,7 @@ module.exports = {
         author: 'Zoe Aubert | GeekyAubergine',
         image: 'https://zoeaubert.me/web-bg.png',
     },
+    trailingSlash: 'never',
     plugins: [
         {
             resolve: `gatsby-plugin-postcss`,

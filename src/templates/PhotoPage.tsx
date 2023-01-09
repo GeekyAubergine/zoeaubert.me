@@ -96,7 +96,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
             mainClassName="h-screen max-h-screen justify-between sm:mx-4"
             preventIndexing
         >
-            <div className="flex justify-between items-center mb-4 sm:hidden">
+            <div className="flex justify-between items-center mb-4 sm:width-control sm:mx-auto">
                 <div className="flex items-center">
                     <Link
                         className="text-2xl h-full text-center sm:text-left"
@@ -107,12 +107,12 @@ export default function PhotoPage({ data, pageContext }: Props) {
                     <ThemeToggle />
                 </div>
                 <Link className="navbarLink" to="/photos">
-                    Photos
+                    Back to Photos
                 </Link>
             </div>
-            <div className="hidden sm:flex width-control mx-auto">
+            {/* <div className="hidden sm:flex width-control mx-auto">
                 <NavBar />
-            </div>
+            </div> */}
             <GatsbyImage
                 key={photo.path}
                 image={image}
@@ -127,11 +127,11 @@ export default function PhotoPage({ data, pageContext }: Props) {
                         {photo.tags.map(renderTag)}
                     </div>
                 </div>
-                <div className="flex w-full justify-between my-2">
+                <div className="flex w-full justify-between items-center">
                     {previousPhoto != null ? (
                         <Link
                             to={photoAndAlbumToSlug(album, previousPhoto)}
-                            className="flex flex-1 text-center link no-underline"
+                            className="flex flex-1 text-center link no-underline py-2"
                         >
                             ←
                         </Link>
@@ -147,7 +147,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
                     {nextPhoto != null ? (
                         <Link
                             to={photoAndAlbumToSlug(album, nextPhoto)}
-                            className="flex flex-1 justify-end text-center link no-underline"
+                            className="flex flex-1 justify-end text-center link no-underline py-2"
                         >
                             →
                         </Link>
