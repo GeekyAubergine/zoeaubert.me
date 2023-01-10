@@ -1,9 +1,8 @@
 import fs from 'fs'
 import yaml from 'js-yaml'
 import path from 'path'
+import { ALBUM_NODE_TYPE, ALBUM_PHOTO_NODE_TYPE } from './gatsby-node'
 
-const ALBUM_NODE_TYPE = 'Album'
-const ALBUM_PHOTO_NODE_TYPE = 'AlbumPhoto'
 const ALBUMS_DATA_PATH = './albums'
 
 async function getFilesRecursive(path, ext) {
@@ -27,9 +26,16 @@ async function photoYmlToPhoto({
     tags,
     featured,
     albumDataAbsolutePath,
+    albumUid,
 }) {
     const dir = path.dirname(albumDataAbsolutePath)
+
+    if (!fileName) {
+        throw new Error('fileName is required')
+    }
+
     return {
+        albumUid,
         url: `${dir}/${fileName}`,
         fileName,
         description,
@@ -45,14 +51,19 @@ async function albumYamlToAlbum({
     photos,
     albumDataAbsolutePath,
 }) {
+    const uid = `${title}-${date}`.replace(/ /g, '-').toLowerCase()
     return {
-        uid: `${title}-${date}`.replace(/ /g, '-').toLowerCase(),
+        uid,
         title,
         date,
         description,
         photos: await Promise.all(
             photos.map((photo) =>
-                photoYmlToPhoto({ ...photo, albumDataAbsolutePath }),
+                photoYmlToPhoto({
+                    ...photo,
+                    albumDataAbsolutePath,
+                    albumUid: uid,
+                }),
             ),
         ),
     }
@@ -92,15 +103,18 @@ export async function createAlbumNodes({
 
             const albumNodeId = createNodeId(`${ALBUM_NODE_TYPE}-${album.uid}`)
 
+            const { photos, ...albumData } = album
+
             const photoNodeIds: string[] = []
-            album.photos.forEach((photo) => {
+            photos.forEach((photo) => {
+                console.log({ photo })
                 const nodeContent = JSON.stringify(photo)
                 const photoNodeId = createNodeId(
                     `${ALBUM_PHOTO_NODE_TYPE}-${photo.fileName}`,
                 )
                 const nodeMeta = {
                     id: photoNodeId,
-                    parent: albumNodeId,
+                    parent: null,
                     children: [],
                     internal: {
                         type: ALBUM_PHOTO_NODE_TYPE,
@@ -120,10 +134,10 @@ export async function createAlbumNodes({
                 internal: {
                     type: ALBUM_NODE_TYPE,
                     content: nodeContent,
-                    contentDigest: createContentDigest(album),
+                    contentDigest: createContentDigest(albumData),
                 },
             }
-            const albumNode = { ...album, ...albumNodeMeta }
+            const albumNode = { ...albumData, ...albumNodeMeta }
 
             console.log(albumNode)
 
