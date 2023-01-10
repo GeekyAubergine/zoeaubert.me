@@ -69,3 +69,5 @@ public/
 # Gatsby
 .cache/
 res/photos/cache/
+
+.photo_cache/

@@ -14,24 +14,32 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
     try {
         const result = await graphql(`
             {
-                allMarkdownRemark(
-                    filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
-                ) {
-                    pageInfo {
-                        perPage
+                posts: allFile(
+                    sort: {
+                        childMarkdownRemark: { frontmatter: { date: DESC } }
                     }
+                    filter: { sourceInstanceName: { eq: "posts" } }
+                ) {
                     edges {
                         node {
-                            frontmatter {
-                                slug
-                            }
                             id
-                            timeToRead
+                            childMarkdownRemark {
+                                frontmatter {
+                                    slug
+                                }
+                                id
+                            }
                         }
                     }
                 }
-                tagsGroup: allMarkdownRemark(limit: 2000) {
-                    group(field: { frontmatter: { tags: SELECT } }) {
+                tags: allFile(filter: { sourceInstanceName: { eq: "posts" } }) {
+                    group(
+                        field: {
+                            childMarkdownRemark: {
+                                frontmatter: { tags: SELECT }
+                            }
+                        }
+                    ) {
                         fieldValue
                     }
                 }
@@ -47,29 +55,30 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
 
         const { data } = result
 
-        const { allMarkdownRemark, tagsGroup } = data
+        const { posts, tags: tagsResult } = data
 
-        const { edges } = allMarkdownRemark
+        const { edges } = posts
 
         const pages = edges.map(({ node }) => ({
-            slug: node.frontmatter.slug,
-            id: node.id,
+            slug: node.childMarkdownRemark.frontmatter.slug,
+            id: node.childMarkdownRemark.id,
         }))
 
         Promise.all(
-            pages.map(async ({ slug, id, timeToRead }) => {
+            pages.map(async ({ slug, id }) => {
                 await createPage({
                     path: `/blog/${slug}`,
                     component: BlogPost,
                     context: {
                         id,
-                        timeToRead,
                     },
                 })
             }),
         )
 
-        const tags = result.data.tagsGroup.group.map((g) => Object.values(g)[0])
+        const tags = tagsResult.group
+            .map((g) => g.fieldValue)
+            .filter((t) => t.length > 0)
 
         Promise.all(
             tags.map(async (tag) => {

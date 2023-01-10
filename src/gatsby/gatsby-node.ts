@@ -1,4 +1,5 @@
 import { createFilePath } from 'gatsby-source-filesystem'
+import { createAlbumNodes } from './nodeCreator'
 import { createBlogPosts, createPhotoPages } from './pageCreator'
 
 export const createPages = async ({ actions, graphql, reporter }) => {
@@ -20,6 +21,10 @@ export const createPages = async ({ actions, graphql, reporter }) => {
     } catch (e) {
         console.error(e)
     }
+}
+
+export const sourceNodes = async (props) => {
+    await createAlbumNodes(props)
 }
 
 export function onCreateNode({ node, actions, getNode }) {

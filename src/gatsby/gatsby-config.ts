@@ -63,7 +63,7 @@ module.exports = {
                 background_color: `#202022`,
                 theme_color: `#FEB847`,
                 display: `minimal-ui`,
-                icon: './res/images/icon.png',
+                icon: './files/icon.png',
             },
         },
         {
@@ -77,16 +77,26 @@ module.exports = {
         {
             resolve: 'gatsby-source-filesystem',
             options: {
-                name: 'blog_posts',
-                path: './res/blog_posts',
+                name: 'posts',
+                path: './posts',
             },
-            __key: 'blog_posts',
+            __key: 'posts',
         },
         {
             resolve: 'gatsby-source-filesystem',
             options: {
-                path: './res/images',
+                path: './files',
+                name: 'files',
             },
+            __key: 'files',
+        },
+        {
+            resolve: 'gatsby-source-filesystem',
+            options: {
+                path: './albums',
+                name: 'albums',
+            },
+            __key: 'albums',
         },
         {
             resolve: `gatsby-transformer-remark`,

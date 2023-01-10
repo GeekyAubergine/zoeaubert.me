@@ -802,3 +802,5 @@ export function photoToFileName(photo: Photo): string {
 export function photoAndAlbumToSlug(album: Album, photo: Photo): string {
     return `${albumToSlug(album)}/${photoToFileName(photo)}`
 }
+
+// console.log(JSON.stringify(MARWELL_ZOO_OCT_2022))
