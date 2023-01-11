@@ -1,11 +1,19 @@
 import React, { useCallback } from 'react'
-import { ALBUM_YEARS } from '../../../res/photos'
 import { Page } from '../../components/ui/Page'
 import { graphql, Link, useStaticQuery } from 'gatsby'
 import AlbumsYearGroup from '../../components/ui/AlbumsYearGroup'
 import { usePhotoNodeData } from '../../utils'
+import { Album } from '../../types'
 
 const MAX_FEATURED_PHOTOS = 9
+
+type QueryResult = {
+    allAlbum: {
+        edges: {
+            node: Album
+        }[]
+    }
+}
 
 export default function IndexPage() {
     // const featuredPhotos: PhotoType[] = React.useMemo(() => {
@@ -26,16 +34,76 @@ export default function IndexPage() {
     //     },
     //     [onPhotoClick],
     // )
+    const data: QueryResult = useStaticQuery(graphql`
+        {
+            allAlbum(sort: { date: DESC }) {
+                edges {
+                    node {
+                        year
+                        uid
+                        title
+                        photos {
+                            id
+                            description
+                            featured
+                            url
+                            tags
+                            localFile {
+                                childImageSharp {
+                                    gatsbyImageData
+                                    original {
+                                        width
+                                        height
+                                    }
+                                }
+                            }
+                        }
+                        date
+                        description
+                    }
+                }
+            }
+        }
+    `)
+
+    const albums = data.allAlbum.edges.map(({ node }) => node)
+
+    const albumsByYear = albums.reduce<Record<number, Album[]>>(
+        (acc, album) => {
+            const year = acc[album.year]
+            if (year) {
+                return {
+                    ...acc,
+                    [album.year]: [...year, album],
+                }
+            }
+
+            return {
+                ...acc,
+                [album.year]: [album],
+            }
+        },
+        {},
+    )
+
+    const albumYears = albums.reduce<number[]>((acc, album) => {
+        if (!acc.includes(album.year)) {
+            return [...acc, album.year]
+        }
+        return acc
+    }, [])
+
     const photoNodeData = usePhotoNodeData()
 
     const renderYear = useCallback(
-        (year) => (
-            <AlbumsYearGroup
-                key={year}
-                year={year}
-                photoNodeData={photoNodeData}
-            />
-        ),
+        (year: number) => {
+            const albums = albumsByYear[year]
+            if (!albums) {
+                return null
+            }
+
+            return <AlbumsYearGroup key={year} year={year} albums={albums} />
+        },
         [photoNodeData],
     )
 
@@ -59,7 +127,7 @@ export default function IndexPage() {
                     onClick={onClickCallback}
                 />
             )} */}
-            {ALBUM_YEARS.map(renderYear)}
+            {albumYears.map(renderYear)}
             {/* {PhotoViewerComponent} */}
         </Page>
     )

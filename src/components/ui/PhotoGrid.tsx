@@ -1,46 +1,42 @@
 import * as React from 'react'
-import {
-    Photo as PhotoType,
-    PhotoNodeData,
-    PhotoWithAlbum,
-} from '../../../res/photos'
+import { Album, Photo as PhotoType } from '../../types'
 import Photo from './Photo'
 
+type PhotoAndAlbum = { photo: PhotoType; album: Album }
+
 type Props = {
-    photos: PhotoWithAlbum[]
-    photoNodeData: PhotoNodeData[]
+    photosAndAlbums: PhotoAndAlbum[]
     className?: string
     onClick?: (photo: PhotoType) => void
 }
 
 export default function PhotoGrid({
-    photos,
-    photoNodeData,
+    photosAndAlbums,
     className = '',
     onClick,
 }: Props) {
     const renderPhoto = React.useCallback(
-        (photo: PhotoWithAlbum) => (
+        (photoAndAlbum: PhotoAndAlbum) => (
             <div
                 className="flex justify-center items-center sm:max-h-[16rem]"
-                key={photo.photo.path}
+                key={photoAndAlbum.photo.url}
             >
                 <Photo
-                    photo={photo}
-                    photoNodeData={photoNodeData}
+                    photo={photoAndAlbum.photo}
+                    album={photoAndAlbum.album}
                     onClick={onClick}
                     className="sm:max-h-[16rem]"
                 />
             </div>
         ),
-        [onClick, photoNodeData],
+        [onClick],
     )
 
     return (
         <div
             className={`grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 ${className}`}
         >
-            {photos.map(renderPhoto)}
+            {photosAndAlbums.map(renderPhoto)}
         </div>
     )
 }

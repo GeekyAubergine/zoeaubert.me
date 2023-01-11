@@ -1,20 +1,19 @@
 import React, { useCallback } from 'react'
 import { ALBUMS_BY_YEAR, PhotoNodeData } from '../../../res/photos'
+import { Album as AlbumType } from '../../types'
 import Album from './Album'
 
 type Props = {
     year: number
-    photoNodeData: PhotoNodeData[]
+    albums: AlbumType[]
 }
 
-export default function AlbumsYearGroup({ year, photoNodeData }: Props) {
-    const albums = ALBUMS_BY_YEAR[year]
-
+export default function AlbumsYearGroup({ year, albums }: Props) {
     const renderAlbum = useCallback(
-        (uuid: string) => (
-            <Album uuid={uuid} key={uuid} photoNodeData={photoNodeData} />
-        ),
-        [photoNodeData],
+        (album: AlbumType) => {
+            return <Album key={album.uid} album={album} />
+        },
+        [albums],
     )
 
     if (!albums) {

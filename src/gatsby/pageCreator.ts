@@ -1,11 +1,5 @@
 import * as path from 'path'
-import {
-    ALBUMS,
-    albumToSlug,
-    ALL_PHOTO_TAGS,
-    photoAndAlbumToSlug,
-    photoToFileName,
-} from '../../res/photos'
+import { albumToSlug, photoAndAlbumToSlug } from '../utils'
 
 export async function createBlogPosts({ createPage, graphql, reporter }) {
     const BlogPost = path.resolve('src/templates/BlogPost.tsx')
@@ -102,30 +96,51 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
     const PhotoPage = path.resolve('src/templates/PhotoPage.tsx')
 
     try {
+        const result = await graphql(`
+            {
+                allAlbum {
+                    edges {
+                        node {
+                            id
+                            title
+                            date
+                            photos {
+                                id
+                                url
+                            }
+                        }
+                    }
+                }
+            }
+        `)
+
         await Promise.all(
-            ALBUMS.map(async (album) => {
-                const albumPath = albumToSlug(album)
+            result.data.allAlbum.edges.map(async ({ node }) => {
+                const { id: albumId, title, date, photos } = node
+                const albumPath = albumToSlug({ title, date })
 
                 try {
                     await createPage({
                         path: albumPath,
                         component: AlbumPage,
                         context: {
-                            uuid: album.uuid,
+                            id: albumId,
                         },
                     })
 
-                    await Promise.all(
-                        album.photos.map(async (photo) => {
-                            const fileName = photoToFileName(photo)
+                    console.log({ albumPath })
 
+                    await Promise.all(
+                        photos.map(async (photo) => {
                             await createPage({
-                                path: photoAndAlbumToSlug(album, photo),
+                                path: photoAndAlbumToSlug(
+                                    { title, date },
+                                    photo,
+                                ),
                                 component: PhotoPage,
                                 context: {
-                                    albumUuid: album.uuid,
-                                    photoPath: photo.path,
-                                    fileName,
+                                    albumId: albumId,
+                                    photoId: photo.id,
                                 },
                             })
                         }),
@@ -136,21 +151,21 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
             }),
         )
 
-        await Promise.all(
-            ALL_PHOTO_TAGS.map(async (tag) => {
-                const path = `/photos/tags/${tag
-                    .toLowerCase()
-                    .replace(/ /g, '-')}`
+        // await Promise.all(
+        //     ALL_PHOTO_TAGS.map(async (tag) => {
+        //         const path = `/photos/tags/${tag
+        //             .toLowerCase()
+        //             .replace(/ /g, '-')}`
 
-                await createPage({
-                    path,
-                    component: PhotoTagPage,
-                    context: {
-                        tag,
-                    },
-                })
-            }),
-        )
+        //         await createPage({
+        //             path,
+        //             component: PhotoTagPage,
+        //             context: {
+        //                 tag,
+        //             },
+        //         })
+        //     }),
+        // )
     } catch (e) {
         console.error(e)
     }

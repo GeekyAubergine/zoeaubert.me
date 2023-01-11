@@ -62,7 +62,6 @@ export async function onCreateNode({
     getCache,
     createNodeId,
 }) {
-    console.log('node', node.internal.type)
     const { createNode, createNodeField } = actions
     if (node.internal.type === `MarkdownRemark`) {
         const value = createFilePath({ node, getNode })

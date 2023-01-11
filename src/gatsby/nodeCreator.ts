@@ -40,6 +40,7 @@ async function albumYamlToAlbum({ title, date, description, photos }) {
         title,
         date,
         description,
+        year: new Date(date).getFullYear(),
         photos: await Promise.all(
             photos.map((photo) =>
                 photoYmlToPhoto({

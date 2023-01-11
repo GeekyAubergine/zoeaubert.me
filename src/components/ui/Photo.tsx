@@ -2,16 +2,12 @@ import { Link, useStaticQuery } from 'gatsby'
 import { graphql } from 'gatsby'
 import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 import * as React from 'react'
-import {
-    Photo as PhotoType,
-    PhotoWithAlbum,
-    photoAndAlbumToSlug,
-    PhotoNodeData,
-} from '../../../res/photos'
+import { Album as AlbumType, Photo as PhotoType } from '../../types'
+import { photoAndAlbumToSlug } from '../../utils'
 
 type Props = {
-    photo: PhotoWithAlbum
-    photoNodeData: PhotoNodeData[]
+    photo: PhotoType
+    album: AlbumType
     fullSize?: boolean
     className?: string
     disableLink?: boolean
@@ -19,25 +15,13 @@ type Props = {
 }
 
 export default function Photo({
-    photo: photoProp,
-    photoNodeData,
+    photo,
+    album,
     className = '',
     onClick,
     disableLink = false,
 }: Props) {
-    const { photo, album } = photoProp
-
-    const cleanedPath = photo.path.replace(/^\//, '')
-
-    const imageNode = photoNodeData.find(
-        (node) => node.relativePath === cleanedPath,
-    )
-
-    if (!imageNode) {
-        return null
-    }
-
-    const image = getImage(imageNode)
+    const image = getImage(photo.localFile)
 
     if (!image) {
         return null
@@ -46,13 +30,13 @@ export default function Photo({
     if (disableLink || !album) {
         return (
             <GatsbyImage
-                key={photo.path}
+                key={photo.url}
                 className={`m-auto ${className} ${
                     onClick != null ? 'cursor-pointer' : ''
                 }`}
                 image={image}
                 loading="lazy"
-                alt={photo.alt}
+                alt={photo.description}
             />
         )
     }
@@ -60,13 +44,13 @@ export default function Photo({
     return (
         <Link to={photoAndAlbumToSlug(album, photo)}>
             <GatsbyImage
-                key={photo.path}
+                key={photo.url}
                 className={`m-auto ${className} ${
                     onClick != null ? 'cursor-pointer' : ''
                 }`}
                 image={image}
                 loading="lazy"
-                alt={photo.alt}
+                alt={photo.description}
             />
         </Link>
     )
