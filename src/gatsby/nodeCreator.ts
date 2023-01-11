@@ -1,6 +1,5 @@
 import fs from 'fs'
 import yaml from 'js-yaml'
-import path from 'path'
 import { ALBUM_NODE_TYPE, ALBUM_PHOTO_NODE_TYPE } from './gatsby-node'
 
 const ALBUMS_DATA_PATH = './albums'
@@ -77,54 +76,45 @@ export async function createAlbumNodes({
     try {
         const albums = await loadAlbumData()
 
-        await Promise.all(
-            albums.map(async (album) => {
-                const nodeContent = JSON.stringify(album)
+        albums.forEach((album) => {
+            const nodeContent = JSON.stringify(album)
 
-                const albumNodeId = createNodeId(
-                    `${ALBUM_NODE_TYPE}-${album.uid}`,
+            const albumNodeId = createNodeId(`${ALBUM_NODE_TYPE}-${album.uid}`)
+
+            const { photos, ...albumData } = album
+
+            photos.forEach((photo) => {
+                const nodeContent = JSON.stringify(photo)
+                const photoNodeId = createNodeId(
+                    `${ALBUM_PHOTO_NODE_TYPE}-${photo.url}`,
                 )
-
-                const { photos, ...albumData } = album
-
-                await Promise.all(
-                    photos.map(async (photo) => {
-                        console.log({ photo })
-                        const nodeContent = JSON.stringify(photo)
-                        const photoNodeId = createNodeId(
-                            `${ALBUM_PHOTO_NODE_TYPE}-${photo.url}`,
-                        )
-                        const nodeMeta = {
-                            id: photoNodeId,
-                            parent: null,
-                            children: [],
-                            internal: {
-                                type: ALBUM_PHOTO_NODE_TYPE,
-                                content: nodeContent,
-                                contentDigest: createContentDigest(photo),
-                            },
-                        }
-                        const photoNode = { ...photo, ...nodeMeta }
-                        await createNode(photoNode)
-                    }),
-                )
-
-                const albumNodeMeta = {
-                    id: albumNodeId,
+                const nodeMeta = {
+                    id: photoNodeId,
                     parent: null,
                     children: [],
                     internal: {
-                        type: ALBUM_NODE_TYPE,
+                        type: ALBUM_PHOTO_NODE_TYPE,
                         content: nodeContent,
-                        contentDigest: createContentDigest(albumData),
+                        contentDigest: createContentDigest(photo),
                     },
                 }
-                const albumNode = { ...albumData, ...albumNodeMeta }
-                await createNode(albumNode)
-            }),
-        )
+                const photoNode = { ...photo, ...nodeMeta }
+                createNode(photoNode)
+            })
 
-        console.log(albums)
+            const albumNodeMeta = {
+                id: albumNodeId,
+                parent: null,
+                children: [],
+                internal: {
+                    type: ALBUM_NODE_TYPE,
+                    content: nodeContent,
+                    contentDigest: createContentDigest(albumData),
+                },
+            }
+            const albumNode = { ...albumData, ...albumNodeMeta }
+            createNode(albumNode)
+        })
     } catch (e) {
         console.error(e)
     }

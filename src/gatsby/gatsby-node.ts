@@ -1,11 +1,11 @@
-import { createFilePath } from 'gatsby-source-filesystem'
+import { createFilePath, createRemoteFileNode } from 'gatsby-source-filesystem'
 import { createAlbumNodes } from './nodeCreator'
 import { createBlogPosts, createPhotoPages } from './pageCreator'
 
 export const ALBUM_NODE_TYPE = 'Album'
 export const ALBUM_PHOTO_NODE_TYPE = 'AlbumPhoto'
 
-export const createPages = async ({ actions, graphql, reporter }) => {
+export async function createPages({ actions, graphql, reporter }) {
     const { createPage } = actions
 
     try {
@@ -26,11 +26,11 @@ export const createPages = async ({ actions, graphql, reporter }) => {
     }
 }
 
-export const sourceNodes = async (props) => {
+export async function sourceNodes(props) {
     await createAlbumNodes(props)
 }
 
-export const createSchemaCustomization = ({ actions }) => {
+export function createSchemaCustomization({ actions }) {
     const { createTypes } = actions
     createTypes(
         `type AlbumPhoto implements Node {
@@ -41,6 +41,7 @@ export const createSchemaCustomization = ({ actions }) => {
             tags: [String!]
             featured: Boolean
             album: Album @link(by: "uid", from: "albumUid")
+            localFile: File @link(from : "fields.localFile")
         }
         type Album implements Node {
             id: ID!
@@ -54,8 +55,15 @@ export const createSchemaCustomization = ({ actions }) => {
     )
 }
 
-export function onCreateNode({ node, actions, getNode }) {
-    const { createNodeField } = actions
+export async function onCreateNode({
+    node,
+    actions,
+    getNode,
+    getCache,
+    createNodeId,
+}) {
+    console.log('node', node.internal.type)
+    const { createNode, createNodeField } = actions
     if (node.internal.type === `MarkdownRemark`) {
         const value = createFilePath({ node, getNode })
         createNodeField({
@@ -63,5 +71,21 @@ export function onCreateNode({ node, actions, getNode }) {
             node,
             value,
         })
+    }
+    if (node.internal.type === ALBUM_PHOTO_NODE_TYPE) {
+        const fileNode = await createRemoteFileNode({
+            url: node.url,
+            parentNodeId: node.id,
+            createNode,
+            createNodeId,
+            getCache,
+        })
+        if (fileNode) {
+            createNodeField({
+                node,
+                name: 'localFile',
+                value: fileNode.id,
+            })
+        }
     }
 }
