@@ -1,0 +1,67 @@
+---
+title: Marwell Zoo
+date: '2022-10-25'
+photos:
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A3078.jpg'
+      description: Tiger sat looking to side of camera against a dark background
+      tags:
+          - marwell-zoo
+          - tiger
+      featured: true
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2583.jpg'
+      description: Giraffe looking towards camera highlighted against dark background
+      tags:
+          - marwell-zoo
+          - giraffe
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2928.jpg'
+      description: Wallaby sat on grass as it rains
+      tags:
+          - marwell-zoo
+          - wallaby
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2480.jpg'
+      description: Giraffe looking sideways
+      tags:
+          - marwell-zoo
+          - giraffe
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2430.jpg'
+      description: Rook eating some scattered food on the ground
+      tags:
+          - marwell-zoo
+          - rook
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A3016.jpg'
+      description: Tiger sat with back to camera looking right
+      tags:
+          - marwell-zoo
+          - tiger
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2664.jpg'
+      description: Tiger walking with head down and mouth open
+      tags:
+          - marwell-zoo
+          - tiger
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2768.jpg'
+      description: Crow sat on wire with tail flared
+      tags:
+          - marwell-zoo
+          - birds
+          - crow
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2694.jpg'
+      description: Tiger walking with head down and mouth open behind fence
+      tags:
+          - marwell-zoo
+          - tiger
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A3002.jpg'
+      description: Snow leopard sitting in cave
+      tags:
+          - marwell-zoo
+          - snow-leopard
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2613.jpg'
+      description: Jackdaw on a fence post
+      tags:
+          - marwell-zoo
+          - birds
+          - jackdaw
+    - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A3116.jpg'
+      description: Tiger sat looking left against a dark background
+      tags:
+          - marwell-zoo
+          - tiger

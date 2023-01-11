@@ -20,37 +20,21 @@ async function getFilesRecursive(path, ext) {
     return result
 }
 
-async function photoYmlToPhoto({
-    fileName,
-    description,
-    tags,
-    featured,
-    albumDataAbsolutePath,
-    albumUid,
-}) {
-    const dir = path.dirname(albumDataAbsolutePath)
-
-    if (!fileName) {
-        throw new Error('fileName is required')
+async function photoYmlToPhoto({ url, description, tags, featured, albumUid }) {
+    if (!url) {
+        throw new Error('url is required')
     }
 
     return {
         albumUid,
-        url: `${dir}/${fileName}`,
-        fileName,
+        url,
         description,
         tags,
         featured: featured || false,
     }
 }
 
-async function albumYamlToAlbum({
-    title,
-    date,
-    description,
-    photos,
-    albumDataAbsolutePath,
-}) {
+async function albumYamlToAlbum({ title, date, description, photos }) {
     const uid = `${title}-${date}`.replace(/ /g, '-').toLowerCase()
     return {
         uid,
@@ -61,7 +45,6 @@ async function albumYamlToAlbum({
             photos.map((photo) =>
                 photoYmlToPhoto({
                     ...photo,
-                    albumDataAbsolutePath,
                     albumUid: uid,
                 }),
             ),
@@ -76,10 +59,7 @@ async function loadAlbumData() {
         files.map(async (path) => {
             const data = fs.promises.readFile(path, 'utf8')
             const yml = yaml.load(await data)
-            const album = await albumYamlToAlbum({
-                ...yml,
-                albumDataAbsolutePath: path,
-            })
+            const album = await albumYamlToAlbum(yml)
             return album
         }),
     )
@@ -88,7 +68,6 @@ async function loadAlbumData() {
 
 export async function createAlbumNodes({
     actions,
-    graphql,
     reporter,
     createNodeId,
     createContentDigest,
@@ -98,51 +77,52 @@ export async function createAlbumNodes({
     try {
         const albums = await loadAlbumData()
 
-        albums.forEach((album) => {
-            const nodeContent = JSON.stringify(album)
+        await Promise.all(
+            albums.map(async (album) => {
+                const nodeContent = JSON.stringify(album)
 
-            const albumNodeId = createNodeId(`${ALBUM_NODE_TYPE}-${album.uid}`)
-
-            const { photos, ...albumData } = album
-
-            const photoNodeIds: string[] = []
-            photos.forEach((photo) => {
-                console.log({ photo })
-                const nodeContent = JSON.stringify(photo)
-                const photoNodeId = createNodeId(
-                    `${ALBUM_PHOTO_NODE_TYPE}-${photo.fileName}`,
+                const albumNodeId = createNodeId(
+                    `${ALBUM_NODE_TYPE}-${album.uid}`,
                 )
-                const nodeMeta = {
-                    id: photoNodeId,
+
+                const { photos, ...albumData } = album
+
+                await Promise.all(
+                    photos.map(async (photo) => {
+                        console.log({ photo })
+                        const nodeContent = JSON.stringify(photo)
+                        const photoNodeId = createNodeId(
+                            `${ALBUM_PHOTO_NODE_TYPE}-${photo.url}`,
+                        )
+                        const nodeMeta = {
+                            id: photoNodeId,
+                            parent: null,
+                            children: [],
+                            internal: {
+                                type: ALBUM_PHOTO_NODE_TYPE,
+                                content: nodeContent,
+                                contentDigest: createContentDigest(photo),
+                            },
+                        }
+                        const photoNode = { ...photo, ...nodeMeta }
+                        await createNode(photoNode)
+                    }),
+                )
+
+                const albumNodeMeta = {
+                    id: albumNodeId,
                     parent: null,
                     children: [],
                     internal: {
-                        type: ALBUM_PHOTO_NODE_TYPE,
+                        type: ALBUM_NODE_TYPE,
                         content: nodeContent,
-                        contentDigest: createContentDigest(photo),
+                        contentDigest: createContentDigest(albumData),
                     },
                 }
-                const photoNode = { ...photo, ...nodeMeta }
-                createNode(photoNode)
-                photoNodeIds.push(photoNodeId)
-            })
-
-            const albumNodeMeta = {
-                id: albumNodeId,
-                parent: null,
-                children: photoNodeIds,
-                internal: {
-                    type: ALBUM_NODE_TYPE,
-                    content: nodeContent,
-                    contentDigest: createContentDigest(albumData),
-                },
-            }
-            const albumNode = { ...albumData, ...albumNodeMeta }
-
-            console.log(albumNode)
-
-            createNode(albumNode)
-        })
+                const albumNode = { ...albumData, ...albumNodeMeta }
+                await createNode(albumNode)
+            }),
+        )
 
         console.log(albums)
     } catch (e) {

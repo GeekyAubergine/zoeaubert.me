@@ -37,10 +37,10 @@ export const createSchemaCustomization = ({ actions }) => {
             id: ID!
             albumUid: String!
             url: String!
-            fileName: String!
             description: String
             tags: [String!]
             featured: Boolean
+            album: Album @link(by: "uid", from: "albumUid")
         }
         type Album implements Node {
             id: ID!
