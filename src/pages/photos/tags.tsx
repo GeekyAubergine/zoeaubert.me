@@ -1,7 +1,5 @@
 import { graphql, Link, useStaticQuery } from 'gatsby'
-import natsort from 'natsort'
 import * as React from 'react'
-import { ALBUMS } from '../../../res/photos'
 import { Page } from '../../components/ui/Page'
 
 type Result = {

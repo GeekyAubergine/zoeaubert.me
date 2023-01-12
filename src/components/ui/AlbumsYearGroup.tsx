@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import { ALBUMS_BY_YEAR, PhotoNodeData } from '../../../res/photos'
 import { Album as AlbumType } from '../../types'
 import Album from './Album'
 

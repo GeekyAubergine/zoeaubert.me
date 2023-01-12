@@ -1,35 +1,8 @@
 import { graphql, useStaticQuery } from 'gatsby'
 import { DateTime } from 'luxon'
-import { PhotoNodeData } from '../res/photos'
-import { Album, Photo } from './types'
+import { Photo } from './types'
 
 const FILE_NAME_REGEX = /([\w,\s-]+)\.[A-Za-z]{3}$/
-
-export function usePhotoNodeData(): PhotoNodeData[] {
-    const allImages = useStaticQuery(
-        graphql`
-            {
-                allFile(filter: { dir: { regex: "/images/" } }) {
-                    edges {
-                        node {
-                            relativePath
-                            childImageSharp {
-                                gatsbyImageData
-                            }
-                            publicURL
-                        }
-                    }
-                }
-            }
-        `,
-    )
-
-    return allImages.allFile.edges.map((edge) => ({
-        relativePath: edge.node.relativePath,
-        gatsbyImageData: edge.node.childImageSharp.gatsbyImageData,
-        publicURL: edge.node.publicURL,
-    }))
-}
 
 export function isPhotoPortrait(photo: Photo): boolean {
     const { width, height } = photo.localFile.childImageSharp.original
