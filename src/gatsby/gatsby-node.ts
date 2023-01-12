@@ -1,9 +1,6 @@
 import { createFilePath, createRemoteFileNode } from 'gatsby-source-filesystem'
-import { createAlbumNodes } from './nodeCreator'
+import { ALBUM_PHOTO_NODE_TYPE, createAlbumNodes } from './nodeCreator'
 import { createBlogPosts, createPhotoPages } from './pageCreator'
-
-export const ALBUM_NODE_TYPE = 'Album'
-export const ALBUM_PHOTO_NODE_TYPE = 'AlbumPhoto'
 
 export async function createPages({ actions, graphql, reporter }) {
     const { createPage } = actions

@@ -111,6 +111,9 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
                         }
                     }
                 }
+                allAlbumPhoto {
+                    distinct(field: { tags: SELECT })
+                }
             }
         `)
 
@@ -151,21 +154,21 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
             }),
         )
 
-        // await Promise.all(
-        //     ALL_PHOTO_TAGS.map(async (tag) => {
-        //         const path = `/photos/tags/${tag
-        //             .toLowerCase()
-        //             .replace(/ /g, '-')}`
+        await Promise.all(
+            result.data.allAlbumPhoto.distinct.map(async (tag) => {
+                const path = `/photos/tags/${tag
+                    .toLowerCase()
+                    .replace(/ /g, '-')}`
 
-        //         await createPage({
-        //             path,
-        //             component: PhotoTagPage,
-        //             context: {
-        //                 tag,
-        //             },
-        //         })
-        //     }),
-        // )
+                await createPage({
+                    path,
+                    component: PhotoTagPage,
+                    context: {
+                        tag,
+                    },
+                })
+            }),
+        )
     } catch (e) {
         console.error(e)
     }

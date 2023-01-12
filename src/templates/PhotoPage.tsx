@@ -43,7 +43,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
     const { publicURL } = localFile
     const image = getImage(localFile)
 
-    const photoIndex = album.photos.findIndex((photo) => (photo.id === photoId))
+    const photoIndex = album.photos.findIndex((photo) => photo.id === photoId)
 
     const previousPhoto = album.photos[photoIndex - 1] ?? null
     const nextPhoto = album.photos[photoIndex + 1] ?? null
@@ -51,6 +51,8 @@ export default function PhotoPage({ data, pageContext }: Props) {
     const goBack = useCallback(() => {
         navigate(-1)
     }, [])
+
+    console.log( { localFile })
 
     const onKeyUp = useCallback(
         (event) => {
@@ -200,6 +202,11 @@ export const pageQuery = graphql`
                         height
                     }
                 }
+                publicURL
+            }
+            album {
+                title
+                date
             }
         }
         album(id: { eq: $albumId }) {

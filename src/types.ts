@@ -32,6 +32,10 @@ export type Photo = {
         }
         publicURL
     }
+    album: {
+        title
+        date
+    } | null
 }
 
 export type Album = {

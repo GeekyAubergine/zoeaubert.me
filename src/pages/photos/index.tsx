@@ -57,6 +57,10 @@ export default function IndexPage() {
                                     }
                                 }
                             }
+                            album {
+                                title
+                                date
+                            }
                         }
                         date
                         description

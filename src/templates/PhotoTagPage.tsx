@@ -1,30 +1,70 @@
+import { graphql } from 'gatsby'
 import * as React from 'react'
-import { ALBUMS_AND_PHOTOS_BY_TAG } from '../../res/photos'
 import { Page } from '../components/ui/Page'
 import PhotoGrid from '../components/ui/PhotoGrid'
-import { usePhotoNodeData } from '../utils'
+import { Photo } from '../types'
 
 type Props = {
     pageContext: {
         tag: string
     }
+    data: {
+        allAlbumPhoto: {
+            edges: {
+                node: Photo
+            }[]
+        }
+    }
 }
 
-export default function AlbumPage({ pageContext }: Props) {
+export default function PhotoTagPage({ data, pageContext }: Props) {
     const { tag } = pageContext
 
-    const photoNodeData = usePhotoNodeData()
+    const { allAlbumPhoto } = data
 
-    const photos = ALBUMS_AND_PHOTOS_BY_TAG[tag]
+    const photos = React.useMemo(() => {
+        return allAlbumPhoto.edges.map((edge) => edge.node)
+    }, [allAlbumPhoto])
 
     return (
         <Page title="Photos">
-            <h2 className="pageTitle">#{tag}</h2>
+            <h2 className="pageTitle pb-4">#{tag}</h2>
             <PhotoGrid
                 photos={photos}
-                photoNodeData={photoNodeData}
                 className="mb-8"
             />
         </Page>
     )
 }
+
+export const pageQuery = graphql`
+    query PhotoTagPageQuery($tag: String) {
+        allAlbumPhoto(
+            filter: { tags: { in: [$tag] } }
+            sort: { album: { date: DESC } }
+        ) {
+            edges {
+                node {
+                    id
+                    description
+                    featured
+                    url
+                    tags
+                    localFile {
+                        childImageSharp {
+                            gatsbyImageData
+                            original {
+                                width
+                                height
+                            }
+                        }
+                    }
+                    album {
+                        title
+                        date
+                    }
+                }
+            }
+        }
+    }
+`

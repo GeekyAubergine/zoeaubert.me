@@ -29,15 +29,6 @@ function seoImage(album: Album): string | null {
 export default function AlbumPage({ data }: Props) {
     const { album } = data
 
-    const photosAndAlbums = React.useMemo(
-        () =>
-            album.photos.map((photo) => ({
-                photo,
-                album,
-            })),
-        [album],
-    )
-
     return (
         <Page
             title={`${album.title} | Photos`}
@@ -48,7 +39,7 @@ export default function AlbumPage({ data }: Props) {
             {album.description != null && (
                 <p className="pb-8">{album.description}</p>
             )}
-            <PhotoGrid photosAndAlbums={photosAndAlbums} className="mb-8" />
+            <PhotoGrid photos={album.photos} className="mb-8" />
         </Page>
     )
 }
@@ -73,6 +64,10 @@ export const pageQuery = graphql`
                             height
                         }
                     }
+                }
+                album {
+                    title
+                    date
                 }
             }
             date

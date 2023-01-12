@@ -1,6 +1,8 @@
 import fs from 'fs'
 import yaml from 'js-yaml'
-import { ALBUM_NODE_TYPE, ALBUM_PHOTO_NODE_TYPE } from './gatsby-node'
+
+export const ALBUM_NODE_TYPE = 'Album'
+export const ALBUM_PHOTO_NODE_TYPE = 'AlbumPhoto'
 
 const ALBUMS_DATA_PATH = './albums'
 

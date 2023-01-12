@@ -8,11 +8,10 @@ type Props = {
     album: AlbumType
 }
 
-function renderPhoto(photo: PhotoType, album: AlbumType) {
+function renderPhoto(photo: PhotoType) {
     return (
         <Photo
             photo={photo}
-            album={album}
             key={photo.url}
             className="object-cover sm:max-h-[12rem] "
             disableLink
@@ -57,7 +56,7 @@ export default function Album({ album }: Props) {
             if (!album) {
                 return null
             }
-            return renderPhoto(photo, album)
+            return renderPhoto(photo)
         },
         [album],
     )

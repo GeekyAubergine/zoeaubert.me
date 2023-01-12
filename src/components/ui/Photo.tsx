@@ -7,7 +7,6 @@ import { photoAndAlbumToSlug } from '../../utils'
 
 type Props = {
     photo: PhotoType
-    album: AlbumType
     fullSize?: boolean
     className?: string
     disableLink?: boolean
@@ -16,7 +15,6 @@ type Props = {
 
 export default function Photo({
     photo,
-    album,
     className = '',
     onClick,
     disableLink = false,
@@ -27,7 +25,7 @@ export default function Photo({
         return null
     }
 
-    if (disableLink || !album) {
+    if (disableLink || !photo.album) {
         return (
             <GatsbyImage
                 key={photo.url}
@@ -42,7 +40,7 @@ export default function Photo({
     }
 
     return (
-        <Link to={photoAndAlbumToSlug(album, photo)}>
+        <Link to={photoAndAlbumToSlug(photo.album, photo)}>
             <GatsbyImage
                 key={photo.url}
                 className={`m-auto ${className} ${
