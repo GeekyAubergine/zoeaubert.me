@@ -9,7 +9,7 @@ export default function IndexPage({ data }) {
     }, [])
 
     return (
-        <Page title="Blog">
+        <Page title="Blog" description="List of all my blog posts">
             <h2 className="pageTitle">Blog Posts</h2>
             {data.blogPosts.edges.map(renderBlogEntry)}
         </Page>

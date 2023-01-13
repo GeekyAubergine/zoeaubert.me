@@ -69,7 +69,11 @@ export default function AllPhotos() {
     }, [result])
 
     return (
-        <Page title="Photos" widthControlled={false}>
+        <Page
+            title="All Photos"
+            description="Album of all my photos"
+            widthControlled={false}
+        >
             <div className="width-control mx-auto">
                 <h2 className="pageTitle mb-4">All Photos</h2>
             </div>

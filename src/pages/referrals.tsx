@@ -37,9 +37,9 @@ function renderReferalLink({
     )
 }
 
-export default function ReferealPage() {
+export default function ReferralPage() {
     return (
-        <Page>
+        <Page title="Referrals" description="All my referral links">
             <h2 className="pageTitle mb-8">Referrals</h2>
             {REFERALS.map(renderReferalLink)}
         </Page>
