@@ -11,6 +11,15 @@ module.exports = {
         'statuslol_content',
         'statuslol_time',
         'statuslol_emoji',
+        'col-span-1',
+        'col-span-2',
+        'col-span-3',
+        'col-span-4',
+        'col-span-5',
+        'col-span-6',
+        'col-span-7',
+        'col-span-8',
+        'col-span-9',
     ],
     theme: {
         extend: {

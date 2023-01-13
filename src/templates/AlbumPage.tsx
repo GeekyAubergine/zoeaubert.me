@@ -34,12 +34,15 @@ export default function AlbumPage({ data }: Props) {
             title={`${album.title} | Photos`}
             description="Album"
             image={seoImage(album)}
+            widthControlled={false}
         >
-            <h2 className="pageTitle pb-4">{album.title}</h2>
+            <div className="width-control mx-auto">
+                <h2 className="pageTitle pb-4">{album.title}</h2>
+            </div>
             {album.description != null && (
                 <p className="pb-8">{album.description}</p>
             )}
-            <PhotoGrid photos={album.photos} className="mb-8" />
+            <PhotoGrid photos={album.photos} className="mx-auto" />
         </Page>
     )
 }

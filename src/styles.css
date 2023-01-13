@@ -13,7 +13,7 @@
     }
 
     .width-control {
-        @apply w-[55ch];
+        @apply w-[55ch] max-w-[100%];
     }
 
     .text {

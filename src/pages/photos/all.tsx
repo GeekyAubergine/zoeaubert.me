@@ -16,12 +16,14 @@ type Result = {
 function renderAlbum(album: Album) {
     return (
         <div key={album.uid} className="mb-8">
-            <h3 className="text-sm pb-2">
-                <Link to={albumToSlug(album)} className="link">
-                    {album.date} - {album.title}
-                </Link>
-            </h3>
-            <PhotoGrid photos={album.photos} />
+            <div className="mx-0 px-0 width-control sm:px-2">
+                <h3 className="text-sm pb-2">
+                    <Link to={albumToSlug(album)} className="link">
+                        {album.date} - {album.title}
+                    </Link>
+                </h3>
+            </div>
+            <PhotoGrid className="mx-auto" photos={album.photos} />
         </div>
     )
 }
@@ -67,8 +69,10 @@ export default function AllPhotos() {
     }, [result])
 
     return (
-        <Page title="Photos">
-            <h2 className="pageTitle mb-4">All Photos</h2>
+        <Page title="Photos" widthControlled={false}>
+            <div className="width-control mx-auto">
+                <h2 className="pageTitle mb-4">All Photos</h2>
+            </div>
             {albums.map(renderAlbum)}
         </Page>
     )
