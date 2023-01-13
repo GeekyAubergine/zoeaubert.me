@@ -27,12 +27,16 @@ export default function PhotoTagPage({ data, pageContext }: Props) {
     }, [allAlbumPhoto])
 
     return (
-        <Page title="Photos">
-            <h2 className="pageTitle pb-4">#{tag}</h2>
-            <PhotoGrid
-                photos={photos}
-                className="mb-8"
-            />
+        <Page
+            title={`#${tag} | Photos`}
+            description="Album"
+            image={photos[0]?.localFile.publicURL}
+            widthControlled={false}
+        >
+            <div className="width-control mx-auto">
+                <h2 className="pageTitle pb-4">#{tag}</h2>
+            </div>
+            <PhotoGrid photos={photos} className="mx-auto" />
         </Page>
     )
 }
@@ -58,6 +62,7 @@ export const pageQuery = graphql`
                                 height
                             }
                         }
+                        publicURL
                     }
                     album {
                         title
