@@ -32,6 +32,7 @@ export default function AllPhotos() {
             allAlbum(sort: { date: DESC }) {
                 edges {
                     node {
+                        uid
                         photos {
                             id
                             description
