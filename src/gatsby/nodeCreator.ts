@@ -21,7 +21,14 @@ async function getFilesRecursive(path, ext) {
     return result
 }
 
-async function photoYmlToPhoto({ url, description, tags, featured, albumUid }) {
+async function photoYmlToPhoto({
+    url,
+    description,
+    tags,
+    featured,
+    albumUid,
+    photoIndex,
+}) {
     if (!url) {
         throw new Error('url is required')
     }
@@ -32,6 +39,7 @@ async function photoYmlToPhoto({ url, description, tags, featured, albumUid }) {
         description,
         tags,
         featured: featured || false,
+        photoIndex,
     }
 }
 
@@ -44,10 +52,11 @@ async function albumYamlToAlbum({ title, date, description, photos }) {
         description,
         year: new Date(date).getFullYear(),
         photos: await Promise.all(
-            photos.map((photo) =>
+            photos.map((photo, photoIndex) =>
                 photoYmlToPhoto({
                     ...photo,
                     albumUid: uid,
+                    photoIndex,
                 }),
             ),
         ),

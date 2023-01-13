@@ -131,8 +131,6 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
                         },
                     })
 
-                    console.log({ albumPath })
-
                     await Promise.all(
                         photos.map(async (photo) => {
                             await createPage({

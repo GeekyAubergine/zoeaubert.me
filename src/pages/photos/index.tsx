@@ -4,8 +4,6 @@ import { graphql, Link, useStaticQuery } from 'gatsby'
 import AlbumsYearGroup from '../../components/ui/AlbumsYearGroup'
 import { Album } from '../../types'
 
-const MAX_FEATURED_PHOTOS = 9
-
 type QueryResult = {
     allAlbum: {
         edges: {

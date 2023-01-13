@@ -52,8 +52,6 @@ export default function PhotoPage({ data, pageContext }: Props) {
         navigate(-1)
     }, [])
 
-    console.log( { localFile })
-
     const onKeyUp = useCallback(
         (event) => {
             if (event.key === 'Escape') {

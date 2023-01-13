@@ -22,6 +22,7 @@ export type Photo = {
     description: string
     tags: string[]
     featured: boolean
+    photoIndex: number
     localFile: {
         childImageSharp: {
             gatsbyImageData: IGatsbyImageData

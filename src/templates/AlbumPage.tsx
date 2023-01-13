@@ -56,6 +56,7 @@ export const pageQuery = graphql`
                 featured
                 url
                 tags
+                photoIndex
                 localFile {
                     childImageSharp {
                         gatsbyImageData

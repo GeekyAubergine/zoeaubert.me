@@ -9,6 +9,10 @@ type Props = {
 }
 
 export default function PhotoGrid({ photos, className = '', onClick }: Props) {
+    const sortedPhotos = React.useMemo(() => {
+        return photos.sort((a, b) => a.photoIndex - b.photoIndex)
+    }, [photos])
+
     const renderPhoto = React.useCallback(
         (photo: PhotoType) => (
             <div
@@ -29,7 +33,7 @@ export default function PhotoGrid({ photos, className = '', onClick }: Props) {
         <div
             className={`grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 ${className}`}
         >
-            {photos.map(renderPhoto)}
+            {sortedPhotos.map(renderPhoto)}
         </div>
     )
 }
