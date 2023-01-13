@@ -63,8 +63,6 @@ export default function PhotoGrid({
     const [columns, setColumns] = React.useState<number | null>(null)
 
     const sortedPhotos = React.useMemo(() => {
-        console.log({ columns })
-
         const sorted = photos.sort((a, b) => a.photoIndex - b.photoIndex)
 
         if (columns == null) {
@@ -76,7 +74,6 @@ export default function PhotoGrid({
 
     const onResize = React.useCallback(() => {
         if (typeof window !== 'undefined' && window.document) {
-            console.log('resize')
             const grid = window.document.querySelector('.photo-grid')
 
             if (!grid) {

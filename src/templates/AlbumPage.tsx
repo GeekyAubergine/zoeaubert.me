@@ -13,6 +13,7 @@ type Props = {
 function seoImage(album: Album): string | null {
     const featuredPhotos = album.photos.filter((photo) => photo.featured)
     const featuredPhoto = featuredPhotos[0]
+    console.log({ featuredPhoto })
     if (featuredPhoto) {
         return featuredPhoto.localFile.publicURL
     }
@@ -28,6 +29,8 @@ function seoImage(album: Album): string | null {
 
 export default function AlbumPage({ data }: Props) {
     const { album } = data
+
+    console.log({ i: seoImage(album) })
 
     return (
         <Page
@@ -68,6 +71,7 @@ export const pageQuery = graphql`
                             height
                         }
                     }
+                    publicURL
                 }
                 album {
                     title
