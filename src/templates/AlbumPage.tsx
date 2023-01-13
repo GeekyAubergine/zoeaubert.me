@@ -35,7 +35,7 @@ export default function AlbumPage({ data }: Props) {
     return (
         <Page
             title={`${album.title} | Photos`}
-            description="Album"
+            description={album.title}
             image={seoImage(album)}
             widthControlled={false}
         >

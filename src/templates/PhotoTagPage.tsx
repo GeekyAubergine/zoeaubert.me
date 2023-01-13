@@ -29,7 +29,7 @@ export default function PhotoTagPage({ data, pageContext }: Props) {
     return (
         <Page
             title={`#${tag} | Photos`}
-            description="Album"
+            description={`Photos tagged with #${tag}`}
             image={photos[0]?.localFile.publicURL}
             widthControlled={false}
         >
