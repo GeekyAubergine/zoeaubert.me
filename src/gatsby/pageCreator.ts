@@ -3,7 +3,6 @@ import { albumToSlug, photoAndAlbumToSlug } from '../utils'
 
 export async function createBlogPosts({ createPage, graphql, reporter }) {
     const BlogPost = path.resolve('src/templates/BlogPost.tsx')
-    const BlogTags = path.resolve('src/templates/BlogTags.tsx')
 
     try {
         const result = await graphql(`
@@ -26,17 +25,6 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
                         }
                     }
                 }
-                tags: allFile(filter: { sourceInstanceName: { eq: "posts" } }) {
-                    group(
-                        field: {
-                            childMarkdownRemark: {
-                                frontmatter: { tags: SELECT }
-                            }
-                        }
-                    ) {
-                        fieldValue
-                    }
-                }
             }
         `)
 
@@ -49,7 +37,7 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
 
         const { data } = result
 
-        const { posts, tags: tagsResult } = data
+        const { posts } = data
 
         const { edges } = posts
 
@@ -58,29 +46,13 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
             id: node.childMarkdownRemark.id,
         }))
 
-        Promise.all(
+        await Promise.all(
             pages.map(async ({ slug, id }) => {
                 await createPage({
                     path: `/blog/${slug}`,
                     component: BlogPost,
                     context: {
                         id,
-                    },
-                })
-            }),
-        )
-
-        const tags = tagsResult.group
-            .map((g) => g.fieldValue)
-            .filter((t) => t.length > 0)
-
-        Promise.all(
-            tags.map(async (tag) => {
-                await createPage({
-                    path: `/blog/tags/${tag.toLowerCase()}`,
-                    component: BlogTags,
-                    context: {
-                        tag,
                     },
                 })
             }),

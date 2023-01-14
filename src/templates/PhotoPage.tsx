@@ -2,6 +2,7 @@ import { navigate } from 'gatsby'
 import { graphql, Link } from 'gatsby'
 import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 import React, { useCallback, useEffect } from 'react'
+import SEO from '../components/Seo'
 import { Page } from '../components/ui/Page'
 import ThemeToggle from '../components/ui/ThemeToggle'
 import { Album, Photo } from '../types'
@@ -181,6 +182,27 @@ export default function PhotoPage({ data, pageContext }: Props) {
                 </div>
             </div>
         </Page>
+    )
+}
+
+export function Head({ data, pageContext }: Props) {
+    const { albumPhoto, album } = data
+
+    if (!album || !albumPhoto) {
+        return null
+    }
+
+    const { localFile, description } = albumPhoto
+
+    const { publicURL } = localFile
+
+    return (
+        <SEO
+            title={`${album.title} ${album.date}`}
+            description={description}
+            image={publicURL}
+            noIndex
+        />
     )
 }
 

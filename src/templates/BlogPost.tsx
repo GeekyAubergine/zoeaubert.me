@@ -1,14 +1,15 @@
-import { graphql, Link } from 'gatsby'
+import { graphql } from 'gatsby'
 import * as React from 'react'
+import SEO from '../components/Seo'
 import { Page } from '../components/ui/Page'
 
 export default function BlogPost({ data }) {
     const { markdownRemark } = data
     const { frontmatter, html, timeToRead } = markdownRemark
-    const { title, date, description } = frontmatter
+    const { title, date } = frontmatter
 
     return (
-        <Page title={title} description={description}>
+        <Page>
             <h2 className="pageTitle mb-1">{title}</h2>
             <div className="flex flex-row mb-4">
                 <time className="text secondary" dateTime={date}>
@@ -23,6 +24,14 @@ export default function BlogPost({ data }) {
             />
         </Page>
     )
+}
+
+export function Head({ data }) {
+    const { markdownRemark } = data
+    const { frontmatter } = markdownRemark
+    const { title, description } = frontmatter
+
+    return <SEO title={title} description={description} />
 }
 
 export const pageQuery = graphql`

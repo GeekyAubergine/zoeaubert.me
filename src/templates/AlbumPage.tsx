@@ -1,5 +1,6 @@
 import { graphql } from 'gatsby'
 import * as React from 'react'
+import SEO from '../components/Seo'
 import { Page } from '../components/ui/Page'
 import PhotoGrid from '../components/ui/PhotoGrid'
 import { Album } from '../types'
@@ -30,23 +31,31 @@ function seoImage(album: Album): string | null {
 export default function AlbumPage({ data }: Props) {
     const { album } = data
 
-    console.log({ i: seoImage(album) })
-
     return (
-        <Page
-            title={`${album.title} | Photos`}
-            description={album.title}
-            image={seoImage(album)}
-            widthControlled={false}
-        >
-            <div className="width-control mx-auto">
-                <h2 className="pageTitle pb-4">{album.title}</h2>
+        <Page widthControlled={false}>
+            <div className="width-control mx-auto pb-4">
+                <h2 className="pageTitle">{album.title}</h2>
+                <time className="text secondary" dateTime={album.date}>
+                    {album.date}
+                </time>
             </div>
             {album.description != null && (
                 <p className="pb-8">{album.description}</p>
             )}
             <PhotoGrid photos={album.photos} className="mx-auto" />
         </Page>
+    )
+}
+
+export function Head({ data }: Props) {
+    const { album } = data
+
+    return (
+        <SEO
+            title={`${album.title}`}
+            description={album.title}
+            image={seoImage(album)}
+        />
     )
 }
 

@@ -31,11 +31,13 @@ function AlbumWrapper({
     if (single) {
         return (
             <Link className="cursor-pointer my-2" to={albumToSlug(album)}>
-                <div />
                 <div className="bg-black rounded-md overflow-hidden">
                     {children}
                 </div>
-                <h4 className="link text-sm text-center my-1">{album.title}</h4>
+                <h4 className="link text-sm text-center mt-1">{album.title}</h4>
+                <h4 className="secondary text-sm text-center mb-1">
+                    {album.date}
+                </h4>
             </Link>
         )
     }
@@ -45,7 +47,8 @@ function AlbumWrapper({
             <div className="grid gap-x-[1px] gap-y-[1px] grid-cols-2 rounded-md overflow-hidden">
                 {children}
             </div>
-            <h4 className="link text-sm text-center my-1">{album.title}</h4>
+            <h4 className="link text-sm text-center mt-1">{album.title}</h4>
+            <h4 className="secondary text-sm text-center mb-1">{album.date}</h4>
         </Link>
     )
 }

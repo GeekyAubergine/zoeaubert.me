@@ -3,6 +3,7 @@ import { Page } from '../../components/ui/Page'
 import { graphql, Link, useStaticQuery } from 'gatsby'
 import AlbumsYearGroup from '../../components/ui/AlbumsYearGroup'
 import { Album } from '../../types'
+import SEO from '../../components/Seo'
 
 type QueryResult = {
     allAlbum: {
@@ -97,7 +98,7 @@ export default function IndexPage() {
     )
 
     return (
-        <Page title="Photos">
+        <Page>
             <div className="flex justify-between items-baseline">
                 <h2 className="pageTitle">Photos</h2>
                 <div>
@@ -121,3 +122,5 @@ export default function IndexPage() {
         </Page>
     )
 }
+
+export const Head = () => <SEO title="Photos" />
