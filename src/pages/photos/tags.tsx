@@ -17,7 +17,7 @@ type Tags = Record<string, number>
 
 export function renderTag({ name, count }) {
     return (
-        <div className="flex items-baseline">
+        <div className="flex items-baseline" key={name}>
             <Link
                 to={`/photos/tags/${name}`}
                 className="m-1 ml-0 link no-underline"

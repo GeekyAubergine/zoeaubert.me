@@ -7,27 +7,6 @@ const ALLOWED_STYLE_KEYS = [
 ]
 
 export default function HTML(props) {
-    // console.log({ h: props.headComponents })
-
-    // Tailwind adds a huge amount of CSS to the head, which we don't need
-    const headComponents = props.headComponents.filter(
-        (component) =>
-            component != null &&
-            (component.type !== 'style' ||
-                ALLOWED_STYLE_KEYS.includes(component.key)),
-    )
-
-    // const styleComponents = props.headComponents.filter(
-    //     (component) =>
-    //         component.type === 'style' &&
-    //         !ALLOWED_STYLE_KEYS.includes(component.key),
-    // )
-
-    // console.log('style components')
-    // styleComponents.forEach((component) => {
-    //     console.log({ component })
-    // })
-
     return (
         <html lang="en">
             <head>

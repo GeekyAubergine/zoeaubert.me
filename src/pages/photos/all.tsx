@@ -17,14 +17,14 @@ type Result = {
 function renderAlbum(album: Album) {
     return (
         <div key={album.uid} className="mb-8">
-            <div className="mx-0 px-0 width-control sm:px-2">
-                <h3 className="text-sm pb-2">
+            <div className="largePhotoGrid">
+                <h3 className="text-sm pb-2 sm:ml-2">
                     <Link to={albumToSlug(album)} className="link">
                         {album.date} - {album.title}
                     </Link>
                 </h3>
             </div>
-            <PhotoGrid className="mx-auto" photos={album.photos} />
+            <PhotoGrid photos={album.photos} />
         </div>
     )
 }

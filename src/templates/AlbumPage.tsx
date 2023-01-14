@@ -14,7 +14,6 @@ type Props = {
 function seoImage(album: Album): string | null {
     const featuredPhotos = album.photos.filter((photo) => photo.featured)
     const featuredPhoto = featuredPhotos[0]
-    console.log({ featuredPhoto })
     if (featuredPhoto) {
         return featuredPhoto.localFile.publicURL
     }
@@ -44,7 +43,7 @@ export default function AlbumPage({ data }: Props) {
                     <p className="pb-8">{album.description}</p>
                 )}
             </div>
-            <PhotoGrid photos={album.photos} className="mx-auto" />
+            <PhotoGrid photos={album.photos} />
         </Page>
     )
 }

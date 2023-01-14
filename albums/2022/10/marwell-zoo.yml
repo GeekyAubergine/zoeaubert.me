@@ -50,7 +50,7 @@ photos:
       alt: Crow sat on wire with tail flared
       tags:
           - marwell-zoo
-          - birds
+          - bird
           - crow
     - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A2694.jpg'
       description: Tiger
@@ -69,7 +69,7 @@ photos:
       alt: Jackdaw on a fence post with out of focus trees in the background
       tags:
           - marwell-zoo
-          - birds
+          - bird
           - jackdaw
     - url: 'https://cdn.geekyaubergine.com/2022/10/marwell_zoo/20221025-8B5A3116.jpg'
       description: Tiger

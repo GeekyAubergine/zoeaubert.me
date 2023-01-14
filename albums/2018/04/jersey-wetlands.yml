@@ -8,7 +8,7 @@ photos:
           - jersey
           - wetlands
           - kestrel
-          - birds
+          - bird
     - url: 'https://cdn.geekyaubergine.com/2018/04/jersey-wetlands/59.jpg'
       description: Marsh Harrier flying
       alt: Marsh Harrier flying against blue sky approaching camera
@@ -16,7 +16,7 @@ photos:
           - jersey
           - wetlands
           - marsh-harrier
-          - birds
+          - bird
     - url: 'https://cdn.geekyaubergine.com/2018/04/jersey-wetlands/60.jpg'
       description: Marsh Harrier
       alt: Marsh Harrier flying against blue sky approaching camera
@@ -24,7 +24,7 @@ photos:
           - jersey
           - wetlands
           - marsh-harrier
-          - birds
+          - bird
     - url: 'https://cdn.geekyaubergine.com/2018/04/jersey-wetlands/61.jpg'
       description: Marsh Harrier
       alt: Marsh Harrier flying against blue from below flying towards top right of frame
@@ -32,7 +32,7 @@ photos:
           - jersey
           - wetlands
           - marsh-harrier
-          - birds
+          - bird
       featured: true
     - url: 'https://cdn.geekyaubergine.com/2018/04/jersey-wetlands/62.jpg'
       description: Marsh Harrier
@@ -41,7 +41,7 @@ photos:
           - jersey
           - wetlands
           - marsh-harrier
-          - birds
+          - bird
       featured: true
     - url: 'https://cdn.geekyaubergine.com/2018/04/jersey-wetlands/63.jpg'
       description: Marsh Harrier
@@ -50,4 +50,4 @@ photos:
           - jersey
           - wetlands
           - marsh-harrier
-          - birds
+          - bird

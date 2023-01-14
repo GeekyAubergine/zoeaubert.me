@@ -6,7 +6,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flying left low between bushes and bramble
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape
@@ -14,7 +14,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flying right with wings on display above bushes and reeds
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape
@@ -23,7 +23,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flying right low across grass looking towards camera
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape
@@ -31,7 +31,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flying left low between bushes and bramble
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape
@@ -39,7 +39,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flying right low going behind bramble
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       takenAt: '2023-01-07T15:00:00.000Z'
@@ -47,7 +47,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flying towards camera above bramble
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape
@@ -55,7 +55,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flying to the right above bramble
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape
@@ -63,7 +63,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl hovering above bushes facing downwards
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape
@@ -71,7 +71,7 @@ photos:
       description: Short-eared owl
       alt: Short-eared owl flowing right and away from camera over branbles with back markings on display
       tags:
-          - birds
+          - bird
           - short-eared-owl
           - owl
       orientation: landscape

@@ -55,11 +55,7 @@ function buildGrid(photos: PhotoType[], columns: number): PhotoType[] {
     return rows.reduce<PhotoType[]>((acc, row) => acc.concat(row.photos), [])
 }
 
-export default function PhotoGrid({
-    photos,
-    className = '',
-    onClick,
-}: Props) {
+export default function PhotoGrid({ photos, className = '', onClick }: Props) {
     const [columns, setColumns] = React.useState<number | null>(null)
 
     const sortedPhotos = React.useMemo(() => {
@@ -125,10 +121,12 @@ export default function PhotoGrid({
 
     return (
         <div className="flex w-full justify-center">
-            <div
-                className={`photo-grid max-w-[80rem] grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-48 sm:px-2 ${className}`}
-            >
-                {sortedPhotos.map(renderPhoto)}
+            <div className="largePhotoGrid">
+                <div
+                    className={`photo-grid grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-48 sm:px-2 ${className}`}
+                >
+                    {sortedPhotos.map(renderPhoto)}
+                </div>
             </div>
         </div>
     )
