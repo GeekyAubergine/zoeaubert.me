@@ -91,14 +91,10 @@ export default function PhotoPage({ data, pageContext }: Props) {
 
     return (
         <Page
-            title={`${album.title} | Photos`}
-            description={description}
-            image={publicURL}
             hideNavBar
             hideFooter
             widthControlled={false}
             mainClassName="h-screen max-h-screen justify-between sm:mx-4"
-            preventIndexing
         >
             <div className="flex justify-between items-center mb-4 sm:width-control sm:mx-auto">
                 <div className="flex items-center">

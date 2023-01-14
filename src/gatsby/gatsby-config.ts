@@ -160,7 +160,7 @@ module.exports = {
         {
             resolve: 'gatsby-plugin-fathom',
             options: {
-                trackingUrl: 'learned-laugh.zoeaubert.me',
+                trackingUrl: 'lets-dance-twentyseven.zoeaubert.me',
                 siteId: 'XPKVFMEO',
                 honorDnt: true,
             },
