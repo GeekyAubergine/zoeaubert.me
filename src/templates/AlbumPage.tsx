@@ -33,15 +33,17 @@ export default function AlbumPage({ data }: Props) {
 
     return (
         <Page widthControlled={false}>
-            <div className="width-control mx-auto pb-4">
-                <h2 className="pageTitle">{album.title}</h2>
-                <time className="text secondary" dateTime={album.date}>
-                    {album.date}
-                </time>
+            <div className="width-control mx-auto">
+                <div className="pb-4">
+                    <h2 className="pageTitle">{album.title}</h2>
+                    <time className="text secondary" dateTime={album.date}>
+                        {album.date}
+                    </time>
+                </div>
+                {album.description != null && (
+                    <p className="pb-8">{album.description}</p>
+                )}
             </div>
-            {album.description != null && (
-                <p className="pb-8">{album.description}</p>
-            )}
             <PhotoGrid photos={album.photos} className="mx-auto" />
         </Page>
     )
@@ -68,6 +70,7 @@ export const pageQuery = graphql`
             photos {
                 id
                 description
+                alt
                 featured
                 url
                 tags

@@ -25,6 +25,7 @@ export default function IndexPage() {
                         photos {
                             id
                             description
+                            alt
                             featured
                             url
                             tags

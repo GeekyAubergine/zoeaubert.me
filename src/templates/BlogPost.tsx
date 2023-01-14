@@ -19,7 +19,7 @@ export default function BlogPost({ data }) {
                 <p className="secondary">{timeToRead} min</p>
             </div>
             <div
-                className="m-w-full content"
+                className="w-full content"
                 dangerouslySetInnerHTML={{ __html: html }}
             />
         </Page>

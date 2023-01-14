@@ -4,6 +4,7 @@ date: '2023-01-07'
 photos:
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A5932.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flying left low between bushes and bramble
       tags:
           - birds
           - short-eared-owl
@@ -11,6 +12,7 @@ photos:
       orientation: landscape
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A5951.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flying right with wings on display above bushes and reeds
       tags:
           - birds
           - short-eared-owl
@@ -19,6 +21,7 @@ photos:
       featured: true
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A5969.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flying right low across grass looking towards camera
       tags:
           - birds
           - short-eared-owl
@@ -26,6 +29,7 @@ photos:
       orientation: landscape
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A6176.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flying left low between bushes and bramble
       tags:
           - birds
           - short-eared-owl
@@ -33,6 +37,7 @@ photos:
       orientation: landscape
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A6197.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flying right low going behind bramble
       tags:
           - birds
           - short-eared-owl
@@ -40,6 +45,7 @@ photos:
       takenAt: '2023-01-07T15:00:00.000Z'
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A6206.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flying towards camera above bramble
       tags:
           - birds
           - short-eared-owl
@@ -47,6 +53,7 @@ photos:
       orientation: landscape
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A6211.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flying to the right above bramble
       tags:
           - birds
           - short-eared-owl
@@ -54,6 +61,7 @@ photos:
       orientation: landscape
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A6314.jpg'
       description: Short-eared owl
+      alt: Short-eared owl hovering above bushes facing downwards
       tags:
           - birds
           - short-eared-owl
@@ -61,6 +69,7 @@ photos:
       orientation: landscape
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owl/20230107-8B5A6321.jpg'
       description: Short-eared owl
+      alt: Short-eared owl flowing right and away from camera over branbles with back markings on display
       tags:
           - birds
           - short-eared-owl

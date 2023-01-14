@@ -31,7 +31,7 @@ function AlbumWrapper({
     if (single) {
         return (
             <Link className="cursor-pointer my-2" to={albumToSlug(album)}>
-                <div className="bg-black rounded-md overflow-hidden">
+                <div className="rounded-md overflow-hidden">
                     {children}
                 </div>
                 <h4 className="link text-sm text-center mt-1">{album.title}</h4>

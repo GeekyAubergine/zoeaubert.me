@@ -39,6 +39,7 @@ export default function AllPhotos() {
                         photos {
                             id
                             description
+                            alt
                             featured
                             tags
                             url

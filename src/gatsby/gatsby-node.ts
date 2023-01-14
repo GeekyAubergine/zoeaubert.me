@@ -35,6 +35,7 @@ export function createSchemaCustomization({ actions }) {
             albumUid: String!
             url: String!
             description: String
+            alt: String
             tags: [String!]
             featured: Boolean
             album: Album @link(by: "uid", from: "albumUid")

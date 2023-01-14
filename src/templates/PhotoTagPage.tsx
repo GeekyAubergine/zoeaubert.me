@@ -65,6 +65,7 @@ export const pageQuery = graphql`
                 node {
                     id
                     description
+                    alt
                     featured
                     url
                     tags

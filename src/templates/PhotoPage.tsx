@@ -39,7 +39,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
         return null
     }
 
-    const { localFile, description, url, tags } = albumPhoto
+    const { localFile, description, url, tags, alt } = albumPhoto
 
     const { publicURL } = localFile
     const image = getImage(localFile)
@@ -117,7 +117,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
                 key={url}
                 image={image}
                 loading="lazy"
-                alt={description}
+                alt={alt}
             />
 
             <div className="flex flex-col justify-between items-center sm:mb-8 sm:width-control sm:mx-auto">
@@ -207,6 +207,7 @@ export const pageQuery = graphql`
         albumPhoto(id: { eq: $photoId }) {
             id
             description
+            alt
             featured
             tags
             url
