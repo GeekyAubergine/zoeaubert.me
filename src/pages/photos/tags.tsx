@@ -1,49 +1,72 @@
-import { Link } from 'gatsby'
-import natsort from 'natsort'
+import { graphql, Link, useStaticQuery } from 'gatsby'
 import * as React from 'react'
-import { ALBUMS } from '../../../res/photos'
 import { Page } from '../../components/ui/Page'
+
+type Result = {
+    allAlbumPhoto: {
+        edges: {
+            node: {
+                tags: string[]
+            }
+        }[]
+    }
+}
+
+type Tags = Record<string, number>
 
 export function renderTag({ name, count }) {
     return (
-        <div className='flex items-baseline'>
-            <Link to={`/photos/tags/${name}`} className="m-1 ml-0 link no-underline">
+        <div className="flex items-baseline">
+            <Link
+                to={`/photos/tags/${name}`}
+                className="m-1 ml-0 link no-underline"
+            >
                 #{name}
             </Link>
-            <p className='ml-2'>{count}</p>
+            <p className="ml-2">{count}</p>
         </div>
     )
 }
 
-export default function AllPhotos() {
-    const tagCounts = React.useMemo(
-        () =>
-            ALBUMS.reduce((acc: { name: string; count: number }[], album) => {
-                const out = acc.slice()
+export default function PhotoTags() {
+    const result = useStaticQuery<Result>(graphql`
+        {
+            allAlbumPhoto {
+                edges {
+                    node {
+                        tags
+                    }
+                }
+            }
+        }
+    `)
 
-                album.photos.forEach((photo) => {
-                    photo.tags.forEach((tag) => {
-                        if (!out.find((tc) => tc.name === tag)) {
-                            out.push({ name: tag, count: 1 })
-                        } else {
-                            const t = out.find((tc) => tc.name === tag)
-                            if (t != null) {
-                                t.count += 1
-                            }
-                        }
-                    })
+    const tagCounts = React.useMemo(() => {
+        const tagsMap = result.allAlbumPhoto.edges.reduce<Tags>(
+            (acc, { node }) => {
+                const { tags } = node
+
+                tags.forEach((tag) => {
+                    if (acc[tag]) {
+                        acc[tag]++
+                    } else {
+                        acc[tag] = 1
+                    }
                 })
 
-                return out
-            }, []).sort((a, b) => b.count - a.count),
-        [],
-    )
+                return acc
+            },
+            {},
+        )
+
+        return Object.entries(tagsMap)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count)
+    }, [result])
 
     return (
         <Page title="Photo Tags">
-            <h2 className="text-xl mb-2 font-bold sm:pt-8">
-                All Photo tags
-            </h2>
+            <h2 className="pageTitle mb-2">Photo Tags</h2>
             {tagCounts.map(renderTag)}
         </Page>
     )

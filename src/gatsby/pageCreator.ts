@@ -1,11 +1,5 @@
 import * as path from 'path'
-import {
-    ALBUMS,
-    albumToSlug,
-    ALL_PHOTO_TAGS,
-    photoAndAlbumToSlug,
-    photoToFileName,
-} from '../../res/photos'
+import { albumToSlug, photoAndAlbumToSlug } from '../utils'
 
 export async function createBlogPosts({ createPage, graphql, reporter }) {
     const BlogPost = path.resolve('src/templates/BlogPost.tsx')
@@ -14,24 +8,32 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
     try {
         const result = await graphql(`
             {
-                allMarkdownRemark(
-                    filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
-                ) {
-                    pageInfo {
-                        perPage
+                posts: allFile(
+                    sort: {
+                        childMarkdownRemark: { frontmatter: { date: DESC } }
                     }
+                    filter: { sourceInstanceName: { eq: "posts" } }
+                ) {
                     edges {
                         node {
-                            frontmatter {
-                                slug
-                            }
                             id
-                            timeToRead
+                            childMarkdownRemark {
+                                frontmatter {
+                                    slug
+                                }
+                                id
+                            }
                         }
                     }
                 }
-                tagsGroup: allMarkdownRemark(limit: 2000) {
-                    group(field: { frontmatter: { tags: SELECT } }) {
+                tags: allFile(filter: { sourceInstanceName: { eq: "posts" } }) {
+                    group(
+                        field: {
+                            childMarkdownRemark: {
+                                frontmatter: { tags: SELECT }
+                            }
+                        }
+                    ) {
                         fieldValue
                     }
                 }
@@ -47,29 +49,30 @@ export async function createBlogPosts({ createPage, graphql, reporter }) {
 
         const { data } = result
 
-        const { allMarkdownRemark, tagsGroup } = data
+        const { posts, tags: tagsResult } = data
 
-        const { edges } = allMarkdownRemark
+        const { edges } = posts
 
         const pages = edges.map(({ node }) => ({
-            slug: node.frontmatter.slug,
-            id: node.id,
+            slug: node.childMarkdownRemark.frontmatter.slug,
+            id: node.childMarkdownRemark.id,
         }))
 
         Promise.all(
-            pages.map(async ({ slug, id, timeToRead }) => {
+            pages.map(async ({ slug, id }) => {
                 await createPage({
                     path: `/blog/${slug}`,
                     component: BlogPost,
                     context: {
                         id,
-                        timeToRead,
                     },
                 })
             }),
         )
 
-        const tags = result.data.tagsGroup.group.map((g) => Object.values(g)[0])
+        const tags = tagsResult.group
+            .map((g) => g.fieldValue)
+            .filter((t) => t.length > 0)
 
         Promise.all(
             tags.map(async (tag) => {
@@ -93,30 +96,52 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
     const PhotoPage = path.resolve('src/templates/PhotoPage.tsx')
 
     try {
+        const result = await graphql(`
+            {
+                allAlbum {
+                    edges {
+                        node {
+                            id
+                            title
+                            date
+                            photos {
+                                id
+                                url
+                            }
+                        }
+                    }
+                }
+                allAlbumPhoto {
+                    distinct(field: { tags: SELECT })
+                }
+            }
+        `)
+
         await Promise.all(
-            ALBUMS.map(async (album) => {
-                const albumPath = albumToSlug(album)
+            result.data.allAlbum.edges.map(async ({ node }) => {
+                const { id: albumId, title, date, photos } = node
+                const albumPath = albumToSlug({ title, date })
 
                 try {
                     await createPage({
                         path: albumPath,
                         component: AlbumPage,
                         context: {
-                            uuid: album.uuid,
+                            id: albumId,
                         },
                     })
 
                     await Promise.all(
-                        album.photos.map(async (photo) => {
-                            const fileName = photoToFileName(photo)
-
+                        photos.map(async (photo) => {
                             await createPage({
-                                path: photoAndAlbumToSlug(album, photo),
+                                path: photoAndAlbumToSlug(
+                                    { title, date },
+                                    photo,
+                                ),
                                 component: PhotoPage,
                                 context: {
-                                    albumUuid: album.uuid,
-                                    photoPath: photo.path,
-                                    fileName,
+                                    albumId: albumId,
+                                    photoId: photo.id,
                                 },
                             })
                         }),
@@ -128,7 +153,7 @@ export async function createPhotoPages({ createPage, graphql, reporter }) {
         )
 
         await Promise.all(
-            ALL_PHOTO_TAGS.map(async (tag) => {
+            result.data.allAlbumPhoto.distinct.map(async (tag) => {
                 const path = `/photos/tags/${tag
                     .toLowerCase()
                     .replace(/ /g, '-')}`

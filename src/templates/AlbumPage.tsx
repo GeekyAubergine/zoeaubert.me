@@ -1,78 +1,85 @@
+import { graphql } from 'gatsby'
 import * as React from 'react'
-import { ALBUMS_BY_UUID, Album, PhotoNodeData } from '../../res/photos'
 import { Page } from '../components/ui/Page'
 import PhotoGrid from '../components/ui/PhotoGrid'
-import { usePhotoNodeData } from '../utils'
+import { Album } from '../types'
 
 type Props = {
-    pageContext: {
-        uuid: string
+    data: {
+        album: Album
     }
 }
 
-function seoImage(album: Album, photoNodeData: PhotoNodeData[]): string | null {
+function seoImage(album: Album): string | null {
     const featuredPhotos = album.photos.filter((photo) => photo.featured)
     const featuredPhoto = featuredPhotos[0]
+    console.log({ featuredPhoto })
     if (featuredPhoto) {
-        const cleanedPath = featuredPhoto.path.replace(/^\//, '')
-
-        const imageNode = photoNodeData.find(
-            (node) => node.relativePath === cleanedPath,
-        )
-
-        if (imageNode) {
-            return imageNode.publicURL
-        }
+        return featuredPhoto.localFile.publicURL
     }
 
     const otherPhotos = album.photos.filter((photo) => !photo.featured)
     const otherPhoto = otherPhotos[0]
     if (otherPhoto) {
-        const cleanedPath = otherPhoto.path.replace(/^\//, '')
-
-        const imageNode = photoNodeData.find(
-            (node) => node.relativePath === cleanedPath,
-        )
-
-        if (imageNode) {
-            return imageNode.publicURL
-        }
+        return otherPhoto.localFile.publicURL
     }
 
     return null
 }
 
-export default function AlbumPage({ pageContext }: Props) {
-    const { uuid } = pageContext
+export default function AlbumPage({ data }: Props) {
+    const { album } = data
 
-    const album = ALBUMS_BY_UUID[uuid]
-
-    const photoNodeData = usePhotoNodeData()
-
-    const photos = React.useMemo(
-        () =>
-            album.photos.map((photo) => ({
-                photo,
-                album,
-            })),
-        [album],
-    )
+    console.log({ i: seoImage(album) })
 
     return (
         <Page
             title={`${album.title} | Photos`}
-            description="Album"
-            image={seoImage(album, photoNodeData)}
+            description={album.title}
+            image={seoImage(album)}
+            widthControlled={false}
         >
-            <h2 className="pageTitle pb-4">{album.title}</h2>
+            <div className="width-control mx-auto">
+                <h2 className="pageTitle pb-4">{album.title}</h2>
+            </div>
             {album.description != null && (
                 <p className="pb-8">{album.description}</p>
             )}
-            <PhotoGrid
-                photos={photos}
-                photoNodeData={photoNodeData}
-                className="mb-8"
-            />
+            <PhotoGrid photos={album.photos} className="mx-auto" />
         </Page>
     )
 }
+
+export const pageQuery = graphql`
+    query AlbumPageQuery($id: String!) {
+        album(id: { eq: $id }) {
+            year
+            uid
+            title
+            photos {
+                id
+                description
+                featured
+                url
+                tags
+                photoIndex
+                localFile {
+                    childImageSharp {
+                        gatsbyImageData
+                        original {
+                            width
+                            height
+                        }
+                    }
+                    publicURL
+                }
+                album {
+                    title
+                    date
+                }
+            }
+            date
+            description
+        }
+    }
+`

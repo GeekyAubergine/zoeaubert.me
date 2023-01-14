@@ -34,7 +34,7 @@ export function Page({
                 preventIndexing={preventIndexing}
             />
             <div
-                className={`flex flex-col pt-4 pb-4 px-4 sm:px-0 sm:pt-8 ${
+                className={`flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8 ${
                     widthControlled ? 'width-control' : ''
                 } ${mainClassName}`}
             >

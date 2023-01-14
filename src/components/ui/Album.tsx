@@ -1,34 +1,18 @@
-import React, { useCallback, useMemo } from 'react'
-import {
-    Album as AlbumType,
-    Photo as PhotoType,
-    albumToSlug,
-    ALBUMS_BY_YEAR,
-    ALBUMS_BY_UUID,
-    PhotoNodeData,
-} from '../../../res/photos'
+import React, { useCallback } from 'react'
 import { Link } from 'gatsby'
 import Photo from '../../components/ui/Photo'
-
-const PHOTOS_FOR_ALBUM_COVER = 2
+import { Album as AlbumType, Photo as PhotoType } from '../../types'
+import { albumToSlug, isPhotoLandscape, isPhotoPortrait } from '../../utils'
 
 type Props = {
-    uuid: string
-    photoNodeData: PhotoNodeData[]
+    album: AlbumType
 }
 
-function renderPhoto(
-    photo: PhotoType,
-    album: AlbumType,
-    photoNodeData: PhotoNodeData[],
-) {
-    const photoData = useMemo(() => ({ photo, album }), [photo, album])
-
+function renderPhoto(photo: PhotoType) {
     return (
         <Photo
-            photo={photoData}
-            photoNodeData={photoNodeData}
-            key={photo.path}
+            photo={photo}
+            key={photo.url}
             className="object-cover sm:max-h-[12rem] "
             disableLink
         />
@@ -66,17 +50,15 @@ function AlbumWrapper({
     )
 }
 
-export default function Album({ uuid, photoNodeData }: Props) {
-    const album = ALBUMS_BY_UUID[uuid]
-
+export default function Album({ album }: Props) {
     const renderAlbumPhotos = useCallback(
-        (photo) => {
+        (photo: PhotoType) => {
             if (!album) {
                 return null
             }
-            return renderPhoto(photo, album, photoNodeData)
+            return renderPhoto(photo)
         },
-        [album, photoNodeData],
+        [album],
     )
 
     if (!album) {
@@ -90,7 +72,7 @@ export default function Album({ uuid, photoNodeData }: Props) {
     if (
         featuredPhotos.length > 0 &&
         featuredPhotos[0] &&
-        featuredPhotos[0].orientation === 'landscape'
+        isPhotoLandscape(featuredPhotos[0])
     ) {
         return (
             <AlbumWrapper album={album} single>
@@ -104,7 +86,7 @@ export default function Album({ uuid, photoNodeData }: Props) {
     if (
         otherPhotos.length > 0 &&
         otherPhotos[0] &&
-        otherPhotos[0].orientation === 'landscape'
+        isPhotoLandscape(featuredPhotos[0])
     ) {
         return (
             <AlbumWrapper album={album} single>
@@ -115,12 +97,12 @@ export default function Album({ uuid, photoNodeData }: Props) {
 
     // If portrait show the first two available portrait photos
 
-    const featuredPortraitPhotos = featuredPhotos.filter(
-        (photo) => photo.orientation === 'portrait',
+    const featuredPortraitPhotos = featuredPhotos.filter((photo) =>
+        isPhotoPortrait(photo),
     )
 
-    const otherPortraitPhotos = otherPhotos.filter(
-        (photo) => photo.orientation === 'portrait',
+    const otherPortraitPhotos = otherPhotos.filter((photo) =>
+        isPhotoPortrait(photo),
     )
 
     if (featuredPortraitPhotos.length >= 2) {

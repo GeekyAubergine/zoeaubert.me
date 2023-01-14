@@ -1,42 +1,99 @@
-import React, { useCallback } from 'react'
-import { ALBUM_YEARS } from '../../../res/photos'
+import React, { useCallback, useMemo } from 'react'
 import { Page } from '../../components/ui/Page'
 import { graphql, Link, useStaticQuery } from 'gatsby'
 import AlbumsYearGroup from '../../components/ui/AlbumsYearGroup'
-import { usePhotoNodeData } from '../../utils'
+import { Album } from '../../types'
 
-const MAX_FEATURED_PHOTOS = 9
+type QueryResult = {
+    allAlbum: {
+        edges: {
+            node: Album
+        }[]
+    }
+}
 
 export default function IndexPage() {
-    // const featuredPhotos: PhotoType[] = React.useMemo(() => {
-    //     return ALBUMS_BY_DATE.reduce(
-    //         (acc: PhotoType[], album) =>
-    //             acc.concat(album.photos.filter((photo) => photo.featured)),
-    //         [],
-    //     ).slice(0, MAX_FEATURED_PHOTOS)
-    // }, [])
+    const data: QueryResult = useStaticQuery(graphql`
+        {
+            allAlbum(sort: { date: DESC }) {
+                edges {
+                    node {
+                        year
+                        uid
+                        title
+                        photos {
+                            id
+                            description
+                            featured
+                            url
+                            tags
+                            localFile {
+                                childImageSharp {
+                                    gatsbyImageData
+                                    original {
+                                        width
+                                        height
+                                    }
+                                }
+                            }
+                            album {
+                                title
+                                date
+                            }
+                        }
+                        date
+                        description
+                    }
+                }
+            }
+        }
+    `)
 
-    // const { onPhotoClick, Component: PhotoViewerComponent } = usePhotoViewer({
-    //     photos: featuredPhotos,
-    // })
+    const albums = useMemo(
+        () => data.allAlbum.edges.map(({ node }) => node),
+        [data],
+    )
 
-    // const onClickCallback = React.useCallback(
-    //     (photo: PhotoType) => {
-    //         onPhotoClick(photo)
-    //     },
-    //     [onPhotoClick],
-    // )
-    const photoNodeData = usePhotoNodeData()
+    const albumsByYear = useMemo(
+        () =>
+            albums.reduce<Record<number, Album[]>>((acc, album) => {
+                const year = acc[album.year]
+                if (year) {
+                    return {
+                        ...acc,
+                        [album.year]: [...year, album],
+                    }
+                }
+
+                return {
+                    ...acc,
+                    [album.year]: [album],
+                }
+            }, {}),
+        [albums],
+    )
+
+    const albumYears = useMemo(
+        () =>
+            albums.reduce<number[]>((acc, album) => {
+                if (!acc.includes(album.year)) {
+                    return [...acc, album.year]
+                }
+                return acc
+            }, []),
+        [albums],
+    )
 
     const renderYear = useCallback(
-        (year) => (
-            <AlbumsYearGroup
-                key={year}
-                year={year}
-                photoNodeData={photoNodeData}
-            />
-        ),
-        [photoNodeData],
+        (year: number) => {
+            const albums = albumsByYear[year]
+            if (!albums) {
+                return null
+            }
+
+            return <AlbumsYearGroup key={year} year={year} albums={albums} />
+        },
+        [albumsByYear],
     )
 
     return (
@@ -59,7 +116,7 @@ export default function IndexPage() {
                     onClick={onClickCallback}
                 />
             )} */}
-            {ALBUM_YEARS.map(renderYear)}
+            {albumYears.map(renderYear)}
             {/* {PhotoViewerComponent} */}
         </Page>
     )

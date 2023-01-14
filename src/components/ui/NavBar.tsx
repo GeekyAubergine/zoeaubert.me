@@ -4,12 +4,9 @@ import ThemeToggle from './ThemeToggle'
 
 export default function NavBar() {
     return (
-        <nav className="flex flex-1 flex-col justify-center items-center mb-4 sm:flex-row sm:justify-between">
+        <nav className="flex flex-1 flex-col width-control mx-auto justify-center items-center mb-4 sm:flex-row sm:justify-between">
             <div className="flex w-full flex-row items-center justify-between my-2 sm:justify-start">
-                <Link
-                    className="text-4xl h-full text-left"
-                    to="/"
-                >
+                <Link className="text-4xl h-full text-left" to="/">
                     <h1>Zoe Aubert</h1>
                 </Link>
                 <ThemeToggle />

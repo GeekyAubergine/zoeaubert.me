@@ -51,7 +51,12 @@ function SocialLink({
 
 export default function IndexPage({ data }) {
     const renderBlogEntry = React.useCallback(({ node }) => {
-        return <BlogListItem node={node} key={node.id} />
+        return (
+            <BlogListItem
+                node={node.childMarkdownRemark}
+                key={node.childMarkdownRemark.id}
+            />
+        )
     }, [])
 
     return (
@@ -130,25 +135,23 @@ export default function IndexPage({ data }) {
 
 export const pageQuery = graphql`
     {
-        blogPosts: allMarkdownRemark(
-            sort: { frontmatter: { date: DESC } }
+        blogPosts: allFile(
+            filter: { sourceInstanceName: { eq: "posts" } }
             limit: 5
-            filter: { fileAbsolutePath: { regex: "/res/blog_posts/" } }
+            sort: { childMarkdownRemark: { frontmatter: { date: DESC } } }
         ) {
-            pageInfo {
-                perPage
-            }
             edges {
                 node {
                     id
-                    frontmatter {
-                        title
-                        slug
-                        tags
-                        description
-                        date(formatString: "YYYY-MM-DD")
+                    childMarkdownRemark {
+                        frontmatter {
+                            title
+                            slug
+                            description
+                            date(formatString: "YYYY-MM-DD")
+                        }
+                        id
                     }
-                    timeToRead
                 }
             }
         }

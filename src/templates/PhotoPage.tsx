@@ -1,22 +1,20 @@
 import { navigate } from 'gatsby'
 import { graphql, Link } from 'gatsby'
 import { GatsbyImage, getImage } from 'gatsby-plugin-image'
-import React from 'react'
-import { useCallback } from 'react'
-import {
-    ALBUMS_BY_UUID,
-    albumToSlug,
-    photoAndAlbumToSlug,
-} from '../../res/photos'
-import NavBar from '../components/ui/NavBar'
+import React, { useCallback, useEffect } from 'react'
 import { Page } from '../components/ui/Page'
 import ThemeToggle from '../components/ui/ThemeToggle'
+import { Album, Photo } from '../types'
+import { albumToSlug, photoAndAlbumToSlug } from '../utils'
 
 type Props = {
-    data: any
+    data: {
+        albumPhoto: Photo | null
+        album: Album | null
+    }
     pageContext: {
-        albumUuid: string
-        photoPath: string
+        albumId: string
+        photoId: string
     }
 }
 
@@ -33,38 +31,47 @@ function renderTag(tag: string) {
 }
 
 export default function PhotoPage({ data, pageContext }: Props) {
-    const { albumUuid, photoPath } = pageContext
-    const { file } = data
-    const { publicURL } = file
-    const image = getImage(file)
+    const { albumPhoto, album } = data
+    const { photoId } = pageContext
 
-    const album = ALBUMS_BY_UUID[albumUuid]
-
-    const photoIndex = album.photos.findIndex(
-        (photo) => photo.path === photoPath,
-    )
-    const photo = album.photos[photoIndex]
-
-    if (!photo || photoIndex === -1) {
+    if (!album || !albumPhoto) {
         return null
     }
+
+    const { localFile, description, url, tags } = albumPhoto
+
+    const { publicURL } = localFile
+    const image = getImage(localFile)
+
+    const photoIndex = album.photos.findIndex((photo) => photo.id === photoId)
 
     const previousPhoto = album.photos[photoIndex - 1] ?? null
     const nextPhoto = album.photos[photoIndex + 1] ?? null
 
-    const onKeyUp = React.useCallback(
+    const goBack = useCallback(() => {
+        navigate(-1)
+    }, [])
+
+    const onKeyUp = useCallback(
         (event) => {
+            if (event.key === 'Escape') {
+                goBack()
+            }
             if (event.key === 'ArrowLeft' && previousPhoto) {
-                navigate(photoAndAlbumToSlug(album, previousPhoto))
+                navigate(photoAndAlbumToSlug(album, previousPhoto), {
+                    replace: true,
+                })
             }
             if (event.key === 'ArrowRight' && nextPhoto) {
-                navigate(photoAndAlbumToSlug(album, nextPhoto))
+                navigate(photoAndAlbumToSlug(album, nextPhoto), {
+                    replace: true,
+                })
             }
         },
         [previousPhoto, nextPhoto],
     )
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (typeof window !== 'undefined' && window.document) {
             window.addEventListener('keyup', onKeyUp)
         }
@@ -79,16 +86,12 @@ export default function PhotoPage({ data, pageContext }: Props) {
         return null
     }
 
-    if (!photo) {
-        return null
-    }
-
     const totalPhotosDigits = album.photos.length.toString().length
 
     return (
         <Page
             title={`${album.title} | Photos`}
-            description={photo.alt}
+            description={description}
             image={publicURL}
             hideNavBar
             hideFooter
@@ -106,25 +109,27 @@ export default function PhotoPage({ data, pageContext }: Props) {
                     </Link>
                     <ThemeToggle />
                 </div>
-                <Link className="navbarLink" to="/photos">
-                    Back to Photos
-                </Link>
+                <p className="navbarLink" onClick={goBack}>
+                    Back
+                </p>
             </div>
             {/* <div className="hidden sm:flex width-control mx-auto">
                 <NavBar />
             </div> */}
             <GatsbyImage
-                key={photo.path}
+                key={url}
                 image={image}
                 loading="lazy"
-                alt={photo.alt}
+                alt={description}
             />
 
             <div className="flex flex-col justify-between items-center sm:mb-8 sm:width-control sm:mx-auto">
                 <div className="flex flex-col justify-between items-center">
-                    <p className="w-full text-center mt-4 mb-2">{photo.alt}</p>
+                    <p className="w-full text-center mt-4 mb-2">
+                        {description}
+                    </p>
                     <div className="flex w-full flex-wrap justify-center">
-                        {photo.tags.map(renderTag)}
+                        {tags.map(renderTag)}
                     </div>
                 </div>
                 <div className="flex w-full justify-between items-center">
@@ -132,6 +137,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
                         <Link
                             to={photoAndAlbumToSlug(album, previousPhoto)}
                             className="flex flex-1 text-center link no-underline py-2"
+                            replace
                         >
                             ←
                         </Link>
@@ -148,6 +154,7 @@ export default function PhotoPage({ data, pageContext }: Props) {
                         <Link
                             to={photoAndAlbumToSlug(album, nextPhoto)}
                             className="flex flex-1 justify-end text-center link no-underline py-2"
+                            replace
                         >
                             →
                         </Link>
@@ -156,17 +163,13 @@ export default function PhotoPage({ data, pageContext }: Props) {
                     )}
                 </div>
                 <div className="flex w-full justify-center items-baseline">
-                    {photo != null && (
-                        <>
-                            <Link
-                                to={albumToSlug(album)}
-                                className="text-center link mt-2"
-                            >
-                                Rest of Album
-                            </Link>
-                            <p className="mx-2"> - </p>
-                        </>
-                    )}
+                    <Link
+                        to={albumToSlug(album)}
+                        className="text-center link mt-2"
+                    >
+                        Rest of Album
+                    </Link>
+                    <p className="mx-2"> - </p>
                     <a
                         className="link"
                         href={publicURL}
@@ -182,12 +185,42 @@ export default function PhotoPage({ data, pageContext }: Props) {
 }
 
 export const pageQuery = graphql`
-    query ($fileName: String!) {
-        file(name: { eq: $fileName }) {
-            childImageSharp {
-                gatsbyImageData
+    query ($photoId: String!, $albumId: String!) {
+        albumPhoto(id: { eq: $photoId }) {
+            id
+            description
+            featured
+            tags
+            url
+            localFile {
+                childImageSharp {
+                    gatsbyImageData
+                    original {
+                        width
+                        height
+                    }
+                }
+                publicURL
             }
-            publicURL
+            album {
+                title
+                date
+            }
+        }
+        album(id: { eq: $albumId }) {
+            id
+            year
+            uid
+            title
+            date
+            description
+            photos {
+                id
+                description
+                featured
+                tags
+                url
+            }
         }
     }
 `

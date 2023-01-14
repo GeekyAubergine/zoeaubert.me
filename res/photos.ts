@@ -709,6 +709,13 @@ export const ALBUMS = [
     SHORT_EARED_OWL_202301,
 ]
 
+console.log({
+    a: JSON.stringify(FARLINGTON_MARSHES_202205),
+    b: JSON.stringify(BLVNT_THE_KNIFE_201910),
+    c: JSON.stringify(ELYSIAN_FIRE_201910),
+    d: JSON.stringify(BUSKING_FOR_MISFITS_201910),
+})
+
 export const ALBUMS_BY_DATE = ALBUMS.sort(
     (a, b) =>
         DateTime.fromISO(b.date).toMillis() -
@@ -802,3 +809,5 @@ export function photoToFileName(photo: Photo): string {
 export function photoAndAlbumToSlug(album: Album, photo: Photo): string {
     return `${albumToSlug(album)}/${photoToFileName(photo)}`
 }
+
+// console.log(JSON.stringify(MARWELL_ZOO_OCT_2022))
