@@ -6,7 +6,7 @@ description: I made a meme programming language and it was terrible
 tags: ['Programming']
 ---
 
-## Disclaimer & Errata
+## Disclaimer/Errata
 
 This post was retrieved from the archives of and old website. I wrote this just after Christmas during my first year of University, as such it wasn't it's best. I've left it as true to the origial as possible, though I have cleared up some aggregious errors.
 
