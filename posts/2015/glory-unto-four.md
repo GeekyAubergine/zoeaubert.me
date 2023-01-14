@@ -8,7 +8,7 @@ tags: ['Programming']
 
 ## Disclaimer & Errata
 
-This post was pulled from the archives of and old website. I wrote this just after Christmas during my first year of University, as such it wasn't it's best. I've left it as true to the origial as possible, though I have cleared up some aggregious errors.
+This post was retrieved from the archives of and old website. I wrote this just after Christmas during my first year of University, as such it wasn't it's best. I've left it as true to the origial as possible, though I have cleared up some aggregious errors.
 
 Unlike the original, I have also included the (terrible) source code (see bottom). No I don't know why I chose Java and no, I don't think I could get it working now. Hopefully you'll find it a least a bit amusing.
 
@@ -134,7 +134,7 @@ bb/bbbb/b/b/b/b/b/b/b/b/b/b/b/b/b/bbbbb/bbbbbbbbbbbbbb/bbb/b/b/b/b/b/b/b/b/bbbbb
 
 Currently the compiler for this project is unavailable and will be until I see a demand to make it shippable product.
 
-Overall this has been a very interesting project, regardless oh how impracticable it is, it certainly turns a few faces.
+Overall this has been a very interesting project, regardless of how impracticable it is, it certainly turns a few faces.
 
 ## The Code
 
@@ -149,157 +149,157 @@ import com.geekyaubergine.geekyutil.math.MathUtil;
 
 public class B_B {
 
-	public static final int MAX_INDEX = 100;
-	public static int type = 0;
-	public static int position = 0;
-	public static int acc = 0;
-	public static String separator = "/";
+    public static final int MAX_INDEX = 100;
+    public static int type = 0;
+    public static int position = 0;
+    public static int acc = 0;
+    public static String separator = "/";
 
-	static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+    static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 
-	public static int parse(String[] data, int index) {
-		String command = data[index];
-		if (command.equals("bbbbbbbbbbbbbb")) { //14
-			int counter = acc;
-			int end = index;
-			for (int i = index + 1; i < data.length; i++) {
-				if (data[i].equals("bbbbbbbbbbbbbbb")) { //15
-					end = i;
-				}
-			}
-			for (int n = 0; n < counter; n++) {
-				for (int j = index + 1; j < end; j++) {
-					j = parse(data, j);
-				}
-			}
-			return end;
-		}
-		else if (command.equals("b")) {
-			if (!map.containsKey(position)) {
-				map.put(position, 1);
-			} else {
-				map.put(position, map.get(position) + 1);
-			}
-		}
-		else if (command.equals("bb")) {
-			if (!map.containsKey(position)) {
-				map.put(position, -1);
-			} else {
-				map.put(position, map.get(position) - 1);
-			}
-		}
-		else if (command.equals("bbb")) {
-			position++;
-		}
-		else if (command.equals("bbbb")) {
-			position--;
-		}
-		else if (command.equals("bbbbb")) { //5
-			acc = map.get(position);
-		}
-		else if (command.equals("bbbbbb")) { //6
-			map.put(position, acc);
-		}
-		else if (command.equals("bbbbbbb")) { //7
-			if (!map.containsKey(position)) {
-				map.put(position, acc);
-			} else {
-				map.put(position, acc + map.get(position));
-			}
-		}
-		else if (command.equals("bbbbbbbb")) { //8
-			acc = position;
-		}
-		else if (command.equals("bbbbbbbbb")) { //9
-			acc++;
-		}
-		else if (command.equals("bbbbbbbbbb")) { //10
-			acc--;
-		}
-		else if (command.equals("bbbbbbbbbbb")) { //11
-			map.put(position, -map.get(position));
-		}
-		else if (command.equals("bbbbbbbbbbbb")) { //12
-			map.put(position, map.get(position) * 2);
-		}
-		else if (command.equals("bbbbbbbbbbbbb")) { //13
-			map.put(position, map.get(position) / 2);
-		}
-		
-		return index;
-	}
+    public static int parse(String[] data, int index) {
+        String command = data[index];
+        if (command.equals("bbbbbbbbbbbbbb")) { //14
+            int counter = acc;
+            int end = index;
+            for (int i = index + 1; i < data.length; i++) {
+                if (data[i].equals("bbbbbbbbbbbbbbb")) { //15
+                    end = i;
+                }
+            }
+            for (int n = 0; n < counter; n++) {
+                for (int j = index + 1; j < end; j++) {
+                    j = parse(data, j);
+                }
+            }
+            return end;
+        }
+        else if (command.equals("b")) {
+            if (!map.containsKey(position)) {
+                map.put(position, 1);
+            } else {
+                map.put(position, map.get(position) + 1);
+            }
+        }
+        else if (command.equals("bb")) {
+            if (!map.containsKey(position)) {
+                map.put(position, -1);
+            } else {
+                map.put(position, map.get(position) - 1);
+            }
+        }
+        else if (command.equals("bbb")) {
+            position++;
+        }
+        else if (command.equals("bbbb")) {
+            position--;
+        }
+        else if (command.equals("bbbbb")) { //5
+            acc = map.get(position);
+        }
+        else if (command.equals("bbbbbb")) { //6
+            map.put(position, acc);
+        }
+        else if (command.equals("bbbbbbb")) { //7
+            if (!map.containsKey(position)) {
+                map.put(position, acc);
+            } else {
+                map.put(position, acc + map.get(position));
+            }
+        }
+        else if (command.equals("bbbbbbbb")) { //8
+            acc = position;
+        }
+        else if (command.equals("bbbbbbbbb")) { //9
+            acc++;
+        }
+        else if (command.equals("bbbbbbbbbb")) { //10
+            acc--;
+        }
+        else if (command.equals("bbbbbbbbbbb")) { //11
+            map.put(position, -map.get(position));
+        }
+        else if (command.equals("bbbbbbbbbbbb")) { //12
+            map.put(position, map.get(position) * 2);
+        }
+        else if (command.equals("bbbbbbbbbbbbb")) { //13
+            map.put(position, map.get(position) / 2);
+        }
 
-	public static void parseFile(ArrayList<String> lines) {
-		if (lines == null) {
-			return;
-		}
-		map = new HashMap<Integer, Integer>();
-		map.put(position, 0);
+        return index;
+    }
 
-		String dataRaw = "";
-		for (String line : lines) {
-			if (!line.startsWith("#")) {
-				if (!line.endsWith(separator)) {
-					line += separator;
-				}
-				dataRaw += line;
-			}
-		}
-		FileUtils.deleteFile("min.txt");
-		FileUtils.addToFile("min.txt", dataRaw);
-		String[] data = dataRaw.split(separator);
+    public static void parseFile(ArrayList<String> lines) {
+        if (lines == null) {
+            return;
+        }
+        map = new HashMap<Integer, Integer>();
+        map.put(position, 0);
 
-		/* Data type */
-		String dataTypeDec = data[0];
-		if (dataTypeDec.equals("b")) {
-			type = 1;
-		}
-		else if (dataTypeDec.equals("bb")) {
-			type = 2;
-		}
+        String dataRaw = "";
+        for (String line : lines) {
+            if (!line.startsWith("#")) {
+                if (!line.endsWith(separator)) {
+                    line += separator;
+                }
+                dataRaw += line;
+            }
+        }
+        FileUtils.deleteFile("min.txt");
+        FileUtils.addToFile("min.txt", dataRaw);
+        String[] data = dataRaw.split(separator);
 
-		for (int i = 1; i < data.length; i++) {
-			//System.out.println(i);
-			i = parse(data, i);
-			position = (int) MathUtil.clampFloat(position, -MAX_INDEX, MAX_INDEX);
-		}
-	}
+        /* Data type */
+        String dataTypeDec = data[0];
+        if (dataTypeDec.equals("b")) {
+            type = 1;
+        }
+        else if (dataTypeDec.equals("bb")) {
+            type = 2;
+        }
+
+        for (int i = 1; i < data.length; i++) {
+            //System.out.println(i);
+            i = parse(data, i);
+            position = (int) MathUtil.clampFloat(position, -MAX_INDEX, MAX_INDEX);
+        }
+    }
 
 
-	public static void print() {
-		FileUtils.deleteFile("output.txt");
-		String out1 = "";
-		String out2 = "";
-		for (int i = 0; i < MAX_INDEX; i++) {
-			if (map.containsKey(i)) {
-				int n = map.get(i);
-				char c = (char) (n);
-				out1 += n + " ";
-				out2 += c;
-			}
-		}
-		String out = "";
-		if (type == 1) {
-			out = out1;
-		} 
-		else if (type == 2) {
-			out = out2;
-		}
-		FileUtils.deleteFile("out.txt");
-		FileUtils.addToFile("out.txt", out);
-		System.out.println("Out:");
-		System.out.println(out);
-	}
+    public static void print() {
+        FileUtils.deleteFile("output.txt");
+        String out1 = "";
+        String out2 = "";
+        for (int i = 0; i < MAX_INDEX; i++) {
+            if (map.containsKey(i)) {
+                int n = map.get(i);
+                char c = (char) (n);
+                out1 += n + " ";
+                out2 += c;
+            }
+        }
+        String out = "";
+        if (type == 1) {
+            out = out1;
+        }
+        else if (type == 2) {
+            out = out2;
+        }
+        FileUtils.deleteFile("out.txt");
+        FileUtils.addToFile("out.txt", out);
+        System.out.println("Out:");
+        System.out.println(out);
+    }
 
-	public static void runFile(String file) {
-		parseFile(FileUtils.getFileStrings(file, false));
-		print();
-	}
+    public static void runFile(String file) {
+        parseFile(FileUtils.getFileStrings(file, false));
+        print();
+    }
 
-	public static void main(String[] args) {
-		//File file = new File("res/test.txt");
-		runFile("script.txt");
-	}
+    public static void main(String[] args) {
+        //File file = new File("res/test.txt");
+        runFile("script.txt");
+    }
 
 }
 ```
