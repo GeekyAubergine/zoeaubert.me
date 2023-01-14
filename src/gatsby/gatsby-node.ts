@@ -83,6 +83,8 @@ export async function onCreateNode({
                 name: 'localFile',
                 value: fileNode.id,
             })
+        } else {
+            throw new Error(`Failed to create remote file node ${node.url}`)
         }
     }
 }
