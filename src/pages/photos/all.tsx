@@ -1,5 +1,6 @@
 import { graphql, Link, useStaticQuery } from 'gatsby'
 import * as React from 'react'
+import SEO from '../../components/Seo'
 import { Page } from '../../components/ui/Page'
 import PhotoGrid from '../../components/ui/PhotoGrid'
 import { Album } from '../../types'
@@ -69,11 +70,7 @@ export default function AllPhotos() {
     }, [result])
 
     return (
-        <Page
-            title="All Photos"
-            description="Album of all my photos"
-            widthControlled={false}
-        >
+        <Page widthControlled={false}>
             <div className="width-control mx-auto">
                 <h2 className="pageTitle mb-4">All Photos</h2>
             </div>
@@ -81,3 +78,7 @@ export default function AllPhotos() {
         </Page>
     )
 }
+
+export const Head = () => (
+    <SEO title="All Photos" description="Album of all my photos" />
+)

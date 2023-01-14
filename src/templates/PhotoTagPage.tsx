@@ -1,5 +1,6 @@
 import { graphql } from 'gatsby'
 import * as React from 'react'
+import SEO from '../components/Seo'
 import { Page } from '../components/ui/Page'
 import PhotoGrid from '../components/ui/PhotoGrid'
 import { Photo } from '../types'
@@ -27,17 +28,30 @@ export default function PhotoTagPage({ data, pageContext }: Props) {
     }, [allAlbumPhoto])
 
     return (
-        <Page
-            title={`#${tag} | Photos`}
-            description={`Photos tagged with #${tag}`}
-            image={photos[0]?.localFile.publicURL}
-            widthControlled={false}
-        >
+        <Page widthControlled={false}>
             <div className="width-control mx-auto">
                 <h2 className="pageTitle pb-4">#{tag}</h2>
             </div>
             <PhotoGrid photos={photos} className="mx-auto" />
         </Page>
+    )
+}
+
+export function Head({ data, pageContext }: Props) {
+    const { tag } = pageContext
+
+    const { allAlbumPhoto } = data
+
+    const photos = React.useMemo(() => {
+        return allAlbumPhoto.edges.map((edge) => edge.node)
+    }, [allAlbumPhoto])
+
+    return (
+        <SEO
+            title={`#${tag} Photos`}
+            description={`Photos tagged with #${tag}`}
+            image={photos[0]?.localFile.publicURL}
+        />
     )
 }
 

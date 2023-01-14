@@ -1,5 +1,6 @@
 import { graphql, Link, useStaticQuery } from 'gatsby'
 import * as React from 'react'
+import SEO from '../../components/Seo'
 import { Page } from '../../components/ui/Page'
 
 type Result = {
@@ -65,9 +66,11 @@ export default function PhotoTags() {
     }, [result])
 
     return (
-        <Page title="Photo Tags">
+        <Page>
             <h2 className="pageTitle mb-2">Photo Tags</h2>
             {tagCounts.map(renderTag)}
         </Page>
     )
 }
+
+export const Head = () => <SEO title="Photo Tags" />

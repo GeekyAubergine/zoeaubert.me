@@ -1,4 +1,5 @@
 import * as React from 'react'
+import SEO from '../components/Seo'
 import { Page } from '../components/ui/Page'
 
 const REFERALS = [
@@ -32,16 +33,20 @@ function renderReferalLink({
                     <span className="ml-1 link">{link}</span>
                 </a>
             </div>
-            <p className='secondary'>{description}</p>
+            <p className="secondary">{description}</p>
         </div>
     )
 }
 
 export default function ReferralPage() {
     return (
-        <Page title="Referrals" description="All my referral links">
+        <Page>
             <h2 className="pageTitle mb-8">Referrals</h2>
             {REFERALS.map(renderReferalLink)}
         </Page>
     )
 }
+
+export const Head = () => (
+    <SEO title="Referrals" description="All my referral links" />
+)
