@@ -34,7 +34,7 @@ function AlbumWrapper({
                 className="flex flex-col justify-between cursor-pointer my-2"
                 to={albumToSlug(album)}
             >
-                <div className="rounded-md overflow-hidden">{children}</div>
+                <div className="overflow-hidden">{children}</div>
                 <div>
                     <h4 className="link text-sm text-center mt-1">
                         {album.title}
@@ -52,7 +52,7 @@ function AlbumWrapper({
             className="flex flex-col justify-between cursor-pointer my-2"
             to={albumToSlug(album)}
         >
-            <div className="grid gap-x-[1px] gap-y-[1px] grid-cols-2 rounded-md overflow-hidden">
+            <div className="grid gap-x-[1px] gap-y-[1px] grid-cols-2 overflow-hidden">
                 {children}
             </div>
             <div>

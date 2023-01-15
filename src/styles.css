@@ -200,7 +200,17 @@
     }
 
     img {
-        @apply block max-w-full h-auto my-4 mx-auto !rounded !object-contain;
+        @apply block max-w-full h-auto my-4 mx-auto !object-contain;
+        margin-block-end: 1em;
+    }
+
+    picture > img {
+        @apply block max-w-full h-auto my-4 mx-auto !object-contain;
+        margin-block-end: 1em;
+    }
+
+    .gatsby-image-wrapper {
+        @apply block max-w-full h-auto my-4 mx-auto !object-contain;
         margin-block-end: 1em;
     }
 
