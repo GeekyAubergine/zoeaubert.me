@@ -6,14 +6,14 @@ photos:
       alt: Nicobar Pigeon standing on woodchip ground displaying in green and orange
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - nicobar-pigeon
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2209.jpg'
       description: Lesser Antillean iguana
       alt: Lesser Antillean iguana sitting on layed down tree trunk
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - iguana
           - lesser-antillean-iguana
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2242.jpg'
@@ -21,7 +21,7 @@ photos:
       alt: Amazong milk frog sittong on branch in forgound with Panther chameleon on a different branch in background
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - frog
           - amazon-milk-frog
           - chameleon
@@ -31,14 +31,14 @@ photos:
       alt: Lizzard sitting on a branch
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - lizzard
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2337.jpg'
       description: Galápagos tortoises
       alt: Galápagos tortoise walking along grass and trying to eat
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - tortoise
           - galapagos-tortoise
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2369.jpg'
@@ -46,28 +46,28 @@ photos:
       alt: Meerkat sat on sand with body facing away from camera and head turns in general direction of camera
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - meerkat
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2381.jpg'
       description: Meerkat
       alt: Meerkat sat on rock with body facing away from camera and head turns in general direction of camera
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - meerkat
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2401.jpg'
       description: Meerkat
       alt: Meerkat stood up on rock looking at camera
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - meerkat
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2443.jpg'
-      description: Sumatran Orangutan
-      alt: Sumatran Orangutan climbing upsidedown along rope
+      description: Sumatran orangutan
+      alt: Sumatran orangutan climbing upsidedown along rope
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - orangutan
           - sumatran-orangutan
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2475.jpg'
@@ -75,47 +75,51 @@ photos:
       alt: White lar gibbon sitting on ropes mid air
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - gibbon
           - lar-gibbon
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2538.jpg'
-      description: Chilean Flamingos
-      alt: A pair of Chilean Flamingos standing in water with chest and heads together in what appears to be a mating dance. Several other Flamingos in background
+      description: Chilean flamingos
+      alt: A pair of Chilean flamingos standing in water with chest and heads together in what appears to be a mating dance. Several other flamingos in background
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - bird
           - flamingo
+          - chilean-flamingo
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2561.jpg'
-      description: Chilean Flamingo
-      alt: A Chilean Flamingos walking in water in the general diection of the camera
+      description: Chilean flamingo
+      alt: A Chilean flamingos walking in water in the general diection of the camera
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - bird
           - flamingo
+          - chilean-flamingo
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2637.jpg'
-      description: Chilean Flamingos
-      alt: A pair of Chilean Flamingos standing in water with faciing eachother with wings spread in what appears to be a mating dance. Several other Flamingos in foreground
+      description: Chilean flamingos
+      alt: A pair of Chilean flamingos standing in water with faciing eachother with wings spread in what appears to be a mating dance. Several other flamingos in foreground
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - bird
           - flamingo
+          - chilean-flamingo
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2677.jpg'
-      description: Chilean Flamingos
-      alt: A pair of Chilean Flamingos. One sitting in the water with the other standing protectively by its side.
+      description: Chilean flamingos
+      alt: A pair of Chilean flamingos. One sitting in the water with the other standing protectively by its side.
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - bird
           - flamingo
+          - chilean-flamingo
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-zoo/20180914-IMG_2750.jpg'
       description: Ring-tailed Lemur
       alt: Ring-tailed sitting in tree surrounded by trees
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - ring-tailed-lemur
           - lemur
     

@@ -6,7 +6,7 @@ photos:
       alt: White lar gibbon sitting at top of tree looking left holding an apple
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - gibbon
           - lar-gibbon
       featured: true
@@ -15,7 +15,7 @@ photos:
       alt: Amazong milk frog side profile sitting on a bit of wood
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - frog
           - amazon-milk-frog
     - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9321.jpg'
@@ -23,7 +23,7 @@ photos:
       alt: Andean bear cub sitting on a tree branch
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - bear
           - andean-bear
     - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9355.jpg'
@@ -31,7 +31,7 @@ photos:
       alt: Galápagos tortoise walking along sand and grass looking down
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - tortoise
           - galapagos-tortoise
     - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9360.jpg'
@@ -39,12 +39,12 @@ photos:
       alt: Pair of meerkats looking sitting in sandy area with rocks. One is looking down at the sky to the left and the other is looking at the ground to the right
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - meerkat
     - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9362.jpg'
       description: Meerkats
       alt: Pair of meerkats looking sitting in sandy area with rocks with a glass dome to the right. Both meetkats are looking in the general direction of the camera
       tags:
           - jersey
-          - durrel-zoo
+          - zoo
           - meerkat
