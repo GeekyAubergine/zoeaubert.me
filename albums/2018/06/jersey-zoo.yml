@@ -1,0 +1,50 @@
+title: Jersey Zoo
+date: '2018-06-12'
+photos:
+    - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9438.jpg'
+      description: Lar gibbon
+      alt: White lar gibbon sitting at top of tree looking left holding an apple
+      tags:
+          - jersey
+          - zoo
+          - gibbon
+          - lar-gibbon
+      featured: true
+    - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9262.jpg'
+      description: Amazong milk frog
+      alt: Amazong milk frog side profile sitting on a bit of wood
+      tags:
+          - jersey
+          - zoo
+          - frog
+          - amazon-milk-frog
+    - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9321.jpg'
+      description: Baby andean bear
+      alt: Andean bear cub sitting on a tree branch
+      tags:
+          - jersey
+          - zoo
+          - bear
+          - andean-bear
+    - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9355.jpg'
+      description: Galápagos tortoises
+      alt: Galápagos tortoise walking along sand and grass looking down
+      tags:
+          - jersey
+          - zoo
+          - tortoise
+          - galapagos-tortoise
+    - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9360.jpg'
+      description: Meerkats
+      alt: Pair of meerkats looking sitting in sandy area with rocks. One is looking down at the sky to the left and the other is looking at the ground to the right
+      tags:
+          - jersey
+          - zoo
+          - meerkat
+    - url: 'https://cdn.geekyaubergine.com/2018/06/jersey-zoo/IMG_9362.jpg'
+      description: Meerkats
+      alt: Pair of meerkats looking sitting in sandy area with rocks with a glass dome to the right. Both meetkats are looking in the general direction of the camera
+      tags:
+          - jersey
+          - zoo
+          - meerkat

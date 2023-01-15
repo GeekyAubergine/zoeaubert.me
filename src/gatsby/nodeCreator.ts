@@ -24,6 +24,7 @@ async function getFilesRecursive(path, ext) {
 async function photoYmlToPhoto({
     url,
     description,
+    alt,
     tags,
     featured,
     albumUid,
@@ -37,6 +38,7 @@ async function photoYmlToPhoto({
         albumUid,
         url,
         description,
+        alt: alt || description,
         tags,
         featured: featured || false,
         photoIndex,

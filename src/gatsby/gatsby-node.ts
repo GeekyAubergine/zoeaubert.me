@@ -35,6 +35,7 @@ export function createSchemaCustomization({ actions }) {
             albumUid: String!
             url: String!
             description: String
+            alt: String
             tags: [String!]
             featured: Boolean
             album: Album @link(by: "uid", from: "albumUid")
@@ -82,6 +83,8 @@ export async function onCreateNode({
                 name: 'localFile',
                 value: fileNode.id,
             })
+        } else {
+            throw new Error(`Failed to create remote file node ${node.url}`)
         }
     }
 }

@@ -4,6 +4,7 @@ import SEO from '../components/Seo'
 import { Page } from '../components/ui/Page'
 import PhotoGrid from '../components/ui/PhotoGrid'
 import { Album } from '../types'
+import { isPhotoLandscape } from '../utils'
 
 type Props = {
     data: {
@@ -13,13 +14,30 @@ type Props = {
 
 function seoImage(album: Album): string | null {
     const featuredPhotos = album.photos.filter((photo) => photo.featured)
+
+    const featuredLandscapes = featuredPhotos.filter(isPhotoLandscape)
+
+    const featuredLandscape = featuredLandscapes[0]
+
+    if (featuredLandscape) {
+        return featuredLandscape.localFile.publicURL
+    }
+
     const featuredPhoto = featuredPhotos[0]
-    console.log({ featuredPhoto })
     if (featuredPhoto) {
         return featuredPhoto.localFile.publicURL
     }
 
     const otherPhotos = album.photos.filter((photo) => !photo.featured)
+
+    const otherLandscapes = otherPhotos.filter(isPhotoLandscape)
+
+    const otherLandscape = otherLandscapes[0]
+
+    if (otherLandscape) {
+        return otherLandscape.localFile.publicURL
+    }
+
     const otherPhoto = otherPhotos[0]
     if (otherPhoto) {
         return otherPhoto.localFile.publicURL
@@ -33,16 +51,18 @@ export default function AlbumPage({ data }: Props) {
 
     return (
         <Page widthControlled={false}>
-            <div className="width-control mx-auto pb-4">
-                <h2 className="pageTitle">{album.title}</h2>
-                <time className="text secondary" dateTime={album.date}>
-                    {album.date}
-                </time>
+            <div className="width-control mx-auto">
+                <div className="pb-4">
+                    <h2 className="pageTitle">{album.title}</h2>
+                    <time className="text secondary" dateTime={album.date}>
+                        {album.date}
+                    </time>
+                </div>
+                {album.description != null && (
+                    <p className="pb-8">{album.description}</p>
+                )}
             </div>
-            {album.description != null && (
-                <p className="pb-8">{album.description}</p>
-            )}
-            <PhotoGrid photos={album.photos} className="mx-auto" />
+            <PhotoGrid photos={album.photos} />
         </Page>
     )
 }
@@ -68,6 +88,7 @@ export const pageQuery = graphql`
             photos {
                 id
                 description
+                alt
                 featured
                 url
                 tags

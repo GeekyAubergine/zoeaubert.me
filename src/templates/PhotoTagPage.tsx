@@ -32,7 +32,7 @@ export default function PhotoTagPage({ data, pageContext }: Props) {
             <div className="width-control mx-auto">
                 <h2 className="pageTitle pb-4">#{tag}</h2>
             </div>
-            <PhotoGrid photos={photos} className="mx-auto" />
+            <PhotoGrid photos={photos} />
         </Page>
     )
 }
@@ -65,6 +65,7 @@ export const pageQuery = graphql`
                 node {
                     id
                     description
+                    alt
                     featured
                     url
                     tags

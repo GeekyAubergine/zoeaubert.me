@@ -5,7 +5,34 @@ import { Photo } from './types'
 const FILE_NAME_REGEX = /([\w,\s-]+)\.[A-Za-z]{3}$/
 
 export function isPhotoPortrait(photo: Photo): boolean {
-    const { width, height } = photo.localFile.childImageSharp.original
+    if (!photo) {
+        return false
+    }
+
+    const { localFile } = photo
+
+    if (!localFile) {
+        return false
+    }
+
+    const { childImageSharp } = localFile
+
+    if (!childImageSharp) {
+        return false
+    }
+
+    const { original } = childImageSharp
+
+    if (!original) {
+        return false
+    }
+
+    const { width, height } = original
+
+    if (!width || !height) {
+        return false
+    }
+
     return height > width
 }
 

@@ -13,7 +13,7 @@ function renderPhoto(photo: PhotoType) {
         <Photo
             photo={photo}
             key={photo.url}
-            className="object-cover sm:max-h-[12rem] "
+            className="object-cover sm:max-h-[12rem]"
             disableLink
         />
     )
@@ -30,25 +30,37 @@ function AlbumWrapper({
 }) {
     if (single) {
         return (
-            <Link className="cursor-pointer my-2" to={albumToSlug(album)}>
-                <div className="bg-black rounded-md overflow-hidden">
-                    {children}
+            <Link
+                className="flex flex-col justify-between cursor-pointer my-2"
+                to={albumToSlug(album)}
+            >
+                <div className="rounded-md overflow-hidden">{children}</div>
+                <div>
+                    <h4 className="link text-sm text-center mt-1">
+                        {album.title}
+                    </h4>
+                    <h4 className="secondary text-sm text-center mb-1">
+                        {album.date}
+                    </h4>
                 </div>
-                <h4 className="link text-sm text-center mt-1">{album.title}</h4>
-                <h4 className="secondary text-sm text-center mb-1">
-                    {album.date}
-                </h4>
             </Link>
         )
     }
 
     return (
-        <Link className="cursor-pointer my-2" to={albumToSlug(album)}>
+        <Link
+            className="flex flex-col justify-between cursor-pointer my-2"
+            to={albumToSlug(album)}
+        >
             <div className="grid gap-x-[1px] gap-y-[1px] grid-cols-2 rounded-md overflow-hidden">
                 {children}
             </div>
-            <h4 className="link text-sm text-center mt-1">{album.title}</h4>
-            <h4 className="secondary text-sm text-center mb-1">{album.date}</h4>
+            <div>
+                <h4 className="link text-sm text-center mt-1">{album.title}</h4>
+                <h4 className="secondary text-sm text-center mb-1">
+                    {album.date}
+                </h4>
+            </div>
         </Link>
     )
 }
@@ -100,12 +112,12 @@ export default function Album({ album }: Props) {
 
     // If portrait show the first two available portrait photos
 
-    const featuredPortraitPhotos = featuredPhotos.filter((photo) =>
-        isPhotoPortrait(photo),
+    const featuredPortraitPhotos = featuredPhotos.filter(
+        (photo) => photo && isPhotoPortrait(photo),
     )
 
-    const otherPortraitPhotos = otherPhotos.filter((photo) =>
-        isPhotoPortrait(photo),
+    const otherPortraitPhotos = otherPhotos.filter(
+        (photo) => photo && isPhotoPortrait(photo),
     )
 
     if (featuredPortraitPhotos.length >= 2) {

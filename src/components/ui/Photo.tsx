@@ -34,7 +34,7 @@ export default function Photo({
                 }`}
                 image={image}
                 loading="lazy"
-                alt={photo.description}
+                alt={photo.alt}
             />
         )
     }
@@ -48,7 +48,7 @@ export default function Photo({
                 }`}
                 image={image}
                 loading="lazy"
-                alt={photo.description}
+                alt={photo.alt}
             />
         </Link>
     )

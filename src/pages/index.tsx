@@ -151,6 +151,7 @@ export const pageQuery = graphql`
                             date(formatString: "YYYY-MM-DD")
                         }
                         id
+                        timeToRead
                     }
                 }
             }

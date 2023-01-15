@@ -20,6 +20,7 @@ export type Photo = {
     id: string
     url: string
     description: string
+    alt: string
     tags: string[]
     featured: boolean
     photoIndex: number
