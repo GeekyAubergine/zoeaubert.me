@@ -25,13 +25,15 @@ export default function Photo({
         return null
     }
 
+    const computedClassName = `m-auto ${className} ${
+        onClick != null ? 'cursor-pointer' : ''
+    }`
+
     if (disableLink || !photo.album) {
         return (
             <GatsbyImage
                 key={photo.url}
-                className={`m-auto ${className} ${
-                    onClick != null ? 'cursor-pointer' : ''
-                }`}
+                className={computedClassName}
                 image={image}
                 loading="lazy"
                 alt={photo.alt}
@@ -43,9 +45,7 @@ export default function Photo({
         <Link to={photoAndAlbumToSlug(photo.album, photo)}>
             <GatsbyImage
                 key={photo.url}
-                className={`m-auto ${className} ${
-                    onClick != null ? 'cursor-pointer' : ''
-                }`}
+                className={computedClassName}
                 image={image}
                 loading="lazy"
                 alt={photo.alt}

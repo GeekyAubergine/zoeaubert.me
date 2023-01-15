@@ -7,7 +7,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - red-arrows
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5319.jpg'
       description: Antonov An-2
@@ -15,7 +15,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - antonov
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5525.jpg'
       description: Republic P-47 Thunderbolt
@@ -23,7 +23,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - p-47
           - thunderbolt
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5541.jpg'
@@ -32,7 +32,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - p-47
           - thunderbolt
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5672.jpg'
@@ -41,7 +41,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - p-51
           - mustang
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5679.jpg'
@@ -50,7 +50,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - p-51
           - mustang
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5694.jpg'
@@ -59,7 +59,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - p-51
           - mustang
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5967.jpg'
@@ -68,7 +68,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - wingwalkers
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_5967.jpg'
       description: Wingwalkers
@@ -76,7 +76,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - wingwalkers
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_7140.jpg'
       description: Commonwealth Boomerang
@@ -84,7 +84,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - boomerang
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-air-display/IMG_7381.jpg'
       description: Battle of Britain Memorial Flight
@@ -92,7 +92,7 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - battle-of-britain
           - memorial-flight
           - lancaster-bomber
@@ -104,6 +104,6 @@ photos:
       tags:
           - jersey
           - air-display
-          - planes
+          - aircraft
           - saab
           - viggen
