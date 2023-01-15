@@ -10,8 +10,6 @@ async function getLatestStatus() {
 
     const latest = statuses[0]
 
-    console.log({ latest })
-
     return {
         content: latest.content,
         relativeTime: latest.relative_time,
