@@ -1,6 +1,6 @@
 module.exports = {
     darkMode: 'class',
-    content: ['./src/**/*.{js,jsx,ts,tsx}'],
+    content: ['./src/**/*.{njk,md}'],
     safelist: [
         'gatsby-highlight',
         'photogrid',

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Link } from 'gatsby'
-import Photo from '../../components/ui/Photo'
+import Photo from './Photo'
 import { Album as AlbumType, Photo as PhotoType } from '../../types'
 import { albumToSlug, isPhotoLandscape, isPhotoPortrait } from '../../utils'
 

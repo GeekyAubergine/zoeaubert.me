@@ -71,3 +71,8 @@ public/
 res/photos/cache/
 
 .photo_cache/
+
+# Eleventy
+_site
+
+.config
