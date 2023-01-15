@@ -1,6 +1,7 @@
 ---
+layout: post
+permalink: /blog/leaving-the-twitter-nest.html
 title: Leaving the Twitter nest
-slug: leaving-the-twitter-nest
 date: 2022-11-15
 description: A look back at why I left Twitter, some of my favourite posts and funny retweets
 tags: [""]

@@ -1,6 +1,7 @@
 ---
+layout: post
+permalink: /blog/optimising-nested-database-operations.html
 title: Optimising Nested Database Operations
-slug: optimising-nested-database-operations
 date: 2019-02-23
 description: A discussion in reducing nested database calls
 tags: ["Programming"]

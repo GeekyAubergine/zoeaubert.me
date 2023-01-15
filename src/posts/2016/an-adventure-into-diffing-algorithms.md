@@ -1,6 +1,7 @@
 ---
+layout: post
+permalink: /blog/an-adventure-into-diffing-algorithms.html
 title: An Adventure Into Diffing Algorithms
-slug: an-adventure-into-diffing-algorithms
 date: 2016-11-01
 description: A dive into the wild world of building a custom diffing algorithms
 tags: ["Programming"]

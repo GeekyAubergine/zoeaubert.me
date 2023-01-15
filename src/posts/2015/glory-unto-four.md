@@ -1,6 +1,7 @@
 ---
+layout: post
+permalink: /blog/glory-unto-four.html
 title: Glory Unto Four
-slug: glory-unto-four
 date: 2015-01-25
 description: I made a meme programming language and it was terrible
 tags: ['Programming']

@@ -1,6 +1,7 @@
 ---
+layout: post
+permalink: /blog/transferring-a-spotify-playlist.html
 title: Transferring a Spotify Playlist
-slug: tranferring-a-spotify-playlist
 date: 2019-11-02
 description: How to easily transfer a Spotify playlist between two accounts
 tags: ["Tech"]
