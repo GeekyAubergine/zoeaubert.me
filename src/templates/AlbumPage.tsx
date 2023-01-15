@@ -72,7 +72,7 @@ export function Head({ data }: Props) {
 
     return (
         <SEO
-            title={`${album.title}`}
+            title={`${album.title} - ${album.date}`}
             description={album.title}
             image={seoImage(album)}
         />
