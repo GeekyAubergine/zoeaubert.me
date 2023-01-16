@@ -1,4 +1,38 @@
 const timeToRead = require('eleventy-plugin-time-to-read')
+const Image = require('@11ty/eleventy-img')
+const utils = require('./src/_utils/generateAlbumData.js')
+
+// https://www.11ty.dev/docs/plugins/image/
+async function renderPhotoShortcut(photo) {
+    const { alt, image, url } = photo
+
+    if (alt === undefined) {
+        // You bet we throw an error on missing alt (alt="" works okay)
+        throw new Error(`Missing \`alt\` on responsiveimage from: ${url}`)
+    }
+
+    let lowsrc = image.avif[0]
+    let highsrc = image.avif[image.avif.length - 1]
+
+    return `<picture>
+      ${Object.values(image)
+          .map((imageFormat) => {
+              return `  <source type="${
+                  imageFormat[0].sourceType
+              }" srcset="${imageFormat
+                  .map((entry) => entry.srcset)
+                  .join(', ')}" sizes="100vw">`
+          })
+          .join('\n')}
+        <img
+          src="${lowsrc.url}"
+          width="${highsrc.width}"
+          height="${highsrc.height}"
+          alt="${alt}"
+          loading="lazy"
+          decoding="async">
+      </picture>`
+}
 
 module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(timeToRead)
@@ -34,6 +68,8 @@ module.exports = function (eleventyConfig) {
         'debug',
         (content) => `<pre>${inspect(content)}</pre>`,
     )
+
+    eleventyConfig.addAsyncShortcode('renderPhoto', renderPhotoShortcut)
 
     eleventyConfig.setWatchThrottleWaitTime(100)
 

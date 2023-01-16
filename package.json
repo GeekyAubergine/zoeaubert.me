@@ -11,7 +11,7 @@
     "version": "3.8.0"
   },
   "scripts": {
-    "develop": "gatsby develop",
+    "clean": "rm -rf _site && rm -rf .cache",
     "build": "run-s build:*",
     "start": "eleventy --serve",
     "dev:css": "tailwindcss -i src/assets/css/tailwind.css -o _site/assets/css/tw.css --watch --postcss",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@11ty/eleventy": "^1.0.2",
+    "@11ty/eleventy-img": "^2.0.1",
     "eleventy-plugin-time-to-read": "^1.3.0",
     "gatsby": "^5.4.0",
     "gatsby-omni-font-loader": "^2.0.2",
