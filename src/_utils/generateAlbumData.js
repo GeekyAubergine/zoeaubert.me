@@ -84,7 +84,20 @@ async function buildPhoto(photo) {
 }
 
 async function buildPhotos(photos) {
-    return Promise.all(photos.map(buildPhoto))
+    const processedPhotos = []
+
+    for (let i = 0; i < photos.length; i++) {
+        const photo = photos[i]
+        console.log(
+            `Processing photo ${i + 1} of ${photos.length} ${(
+                (i / photos.length) *
+                100
+            ).toFixed(2)}%`,
+        )
+        processedPhotos.push(await buildPhoto(photo))
+    }
+
+    return processedPhotos
 }
 
 function calculateAlbumCover(photos) {
@@ -132,32 +145,45 @@ function calculateAlbumCover(photos) {
     return photos[0] != null ? [photos[0]] : []
 }
 
+async function buildAlbum(album) {
+    const { title, description, date, photos: rawPhotos } = album
+
+    const photosWithImage = await buildPhotos(rawPhotos)
+
+    const albumPermalink = albumToPermalink(album)
+
+    const photos = photosWithImage.map((photo) => ({
+        ...photo,
+        permalink: photoPermalink(albumPermalink, photo),
+    }))
+
+    return {
+        title,
+        description,
+        date,
+        permalink: albumPermalink,
+        photos,
+        cover: calculateAlbumCover(photos),
+    }
+}
+
 async function buildAlbums() {
     const yamlData = await loadYamlFile()
 
-    return Promise.all(
-        yamlData.map(async (album) => {
-            const { title, description, date, photos: rawPhotos } = album
+    const albums = []
 
-            const photosWithImage = await buildPhotos(rawPhotos)
+    for (let i = 0; i < yamlData.length; i++) {
+        const album = yamlData[i]
+        console.log(
+            `Processing album ${i + 1} of ${yamlData.length} ${(
+                (i / yamlData.length) *
+                100
+            ).toFixed(2)}%`,
+        )
+        albums.push(await buildAlbum(album))
+    }
 
-            const albumPermalink = albumToPermalink(album)
-
-            const photos = photosWithImage.map((photo) => ({
-                ...photo,
-                permalink: photoPermalink(albumPermalink, photo),
-            }))
-
-            return {
-                title,
-                description,
-                date,
-                permalink: albumPermalink,
-                photos,
-                cover: calculateAlbumCover(photos),
-            }
-        }),
-    )
+    return albums
 }
 
 async function buildAlbumsByYear() {
