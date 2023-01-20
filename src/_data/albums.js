@@ -238,6 +238,7 @@ module.exports = async function () {
         .map(([tag, count]) => ({
             tag,
             count,
+            permalink: `/photos/tags/${tag}/index.html`,
         }))
         .sort((a, b) => b.count - a.count)
 
