@@ -1,6 +1,6 @@
 ---
 layout: post
-permalink: /blog/2022-a-year-in-review.html
+permalink: /blog/2022-a-year-in-review/index.html
 date: 2023-01-08
 title: 2022 A Year In Review
 description: A look back over my 2022

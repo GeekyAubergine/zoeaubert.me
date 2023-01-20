@@ -1,51 +1,41 @@
 const timeToRead = require('eleventy-plugin-time-to-read')
 const Image = require('@11ty/eleventy-img')
-const utils = require('./src/_utils/generateAlbumData.js')
 
 // https://www.11ty.dev/docs/plugins/image/
-async function renderPhotoShortcut(photo) {
-    const { alt, image, url } = photo
+async function renderPhotoShortcut(photo, alt, classes = '') {
+    const { url, width, height } = photo
 
     if (alt === undefined) {
         // You bet we throw an error on missing alt (alt="" works okay)
         throw new Error(`Missing \`alt\` on responsiveimage from: ${url}`)
     }
 
-    let lowsrc = image.avif[0]
-    let highsrc = image.avif[image.avif.length - 1]
-
-    return `<picture>
-      ${Object.values(image)
-          .map((imageFormat) => {
-              return `  <source type="${
-                  imageFormat[0].sourceType
-              }" srcset="${imageFormat
-                  .map((entry) => entry.srcset)
-                  .join(', ')}" sizes="100vw">`
-          })
-          .join('\n')}
-        <img
-          src="${lowsrc.url}"
-          width="${highsrc.width}"
-          height="${highsrc.height}"
-          alt="${alt}"
-          loading="lazy"
-          decoding="async">
-      </picture>`
+    return `
+          <img
+            class="${classes}"
+            src="${url}"
+            alt="${alt}"
+            width="${width}"
+            height="${height}"
+            loading="lazy"
+            decoding="async" />
+        `
 }
 
 module.exports = function (eleventyConfig) {
+    eleventyConfig.addWatchTarget('./albums')
+
     eleventyConfig.addPlugin(timeToRead)
 
-    eleventyConfig.addPassthroughCopy('./src/assets')
+    eleventyConfig.addPassthroughCopy('./assets')
 
     eleventyConfig.addCollection('posts', (collection) =>
-        collection.getFilteredByGlob('./src/posts/**/*.md').reverse(),
+        collection.getFilteredByGlob('./posts/**/*.md').reverse(),
     )
 
     eleventyConfig.addCollection('recentPosts', (collection) =>
         collection
-            .getFilteredByGlob('./src/posts/**/*.md')
+            .getFilteredByGlob('./posts/**/*.md')
             .reverse()
             .slice(0, 5),
     )
@@ -68,6 +58,10 @@ module.exports = function (eleventyConfig) {
         'debug',
         (content) => `<pre>${inspect(content)}</pre>`,
     )
+
+    eleventyConfig.addFilter('stripIndex', function (path) {
+        return path.replace('/index.html', '/')
+    })
 
     eleventyConfig.addAsyncShortcode('renderPhoto', renderPhotoShortcut)
 

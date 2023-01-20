@@ -1,6 +1,6 @@
 ---
 layout: post
-permalink: /blog/creating-a-microblog-theme.html
+permalink: /blog/creating-a-microblog-theme/index.html
 title: Creating a Micro.blog Theme + Tailwind
 date: 2022-05-27
 description: How I built my custom Micro.blog theme with Tailwind

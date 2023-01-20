@@ -14,10 +14,11 @@ async function getLatestStatus() {
         content: latest.content,
         relativeTime: latest.relative_time,
         link: `https://geekyaubergine.status.lol/${latest.id}`,
+        emoji: latest.emoji,
     }
 }
 
-async function getLatestEmoji() {
+async function getFluentEmoji() {
     const response = await fetch(
         'https://status.lol/geekyaubergine.js?time&link&fluent',
     )
@@ -41,8 +42,13 @@ async function getLatestEmoji() {
 }
 
 module.exports = async function () {
-    return {
-        ...(await getLatestStatus()),
-        emoji: await getLatestEmoji(),
+    const out = await getLatestStatus()
+
+    try {
+        out.fluentEmoji = await getFluentEmoji()
+    } catch (_e) {
+        // No fluent emoji, so just ignore
     }
+
+    return out
 }

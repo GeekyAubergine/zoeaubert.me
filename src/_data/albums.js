@@ -4,22 +4,28 @@ const Image = require('@11ty/eleventy-img')
 
 const FILE_NAME_REGEX = /([\w,\s-]+)\.[A-Za-z]{3}$/
 
-const ALBUMS_DATA_PATH = './src/albums'
+const ALBUMS_DATA_PATH = './albums'
 
 const PHOTO_PROCESSING_OPTIONS = {
     // widths: [150, 300, 600, 1200, 'auto'],
-    widths: [150, 'auto'],
-    formats: ['webp', 'avif'],
+    widths: [600, 1200, 'auto'],
+    formats: ['jpeg'],
     outputDir: './_site/assets/img/',
     urlPath: '/assets/img/',
+    filenameFormat: (id, src, width, format, options) => {
+        const name = src.split('/').pop()
+        const extension = src.split('.').pop()
+
+        return `${name}-${width}.${extension}`
+    },
 }
 
 function albumToPermalink(album) {
     const date = album.date.split('-')
-    return `/photos/${date[1].padStart(2, '0')}/${date[2].padStart(
-        2,
-        '0',
-    )}/${album.title.toLowerCase().replace(/ /g, '-')}`
+    return `/photos/${date[0]}/${date[1].padStart(2, '0')}/${album.title
+        .toLowerCase()
+        .replace(/ /g, '-')
+        .replace(/[^a-z0-9-]/g, '')}/index.html`
 }
 
 function photoPermalink(albumPermalink, photo) {
@@ -35,7 +41,7 @@ function photoPermalink(albumPermalink, photo) {
         throw new Error('No file name found')
     }
 
-    return `${albumPermalink}/${fileName}`
+    return `${albumPermalink.replace('/index.html', '')}/${fileName}/index.html`
 }
 
 async function getFilesRecursive(path, ext) {
@@ -71,12 +77,27 @@ async function buildPhoto(photo) {
 
     return {
         url,
+        thumnailSmall: {
+            url: image.jpeg[0].url,
+            width: image.jpeg[0].width,
+            height: image.jpeg[0].height,
+        },
+        thumnailLarge: {
+            url: image.jpeg[1].url,
+            width: image.jpeg[1].width,
+            height: image.jpeg[1].height,
+        },
+        original: {
+            url: image.jpeg[2].url,
+            width: image.jpeg[2].width,
+            height: image.jpeg[2].height,
+        },
         description,
         alt: alt || description,
         tags: tags || [],
         featured: featured || false,
         orientation:
-            image.avif[0].width >= image.avif[0].height
+            image.jpeg[0].width >= image.jpeg[0].height
                 ? 'landscape'
                 : 'portrait',
         image,
@@ -88,16 +109,10 @@ async function buildPhotos(photos) {
 
     for (let i = 0; i < photos.length; i++) {
         const photo = photos[i]
-        console.log(
-            `Processing photo ${i + 1} of ${photos.length} ${(
-                (i / photos.length) *
-                100
-            ).toFixed(2)}%`,
-        )
-        processedPhotos.push(await buildPhoto(photo))
+        processedPhotos.push(buildPhoto(photo))
     }
 
-    return processedPhotos
+    return Promise.all(processedPhotos)
 }
 
 function calculateAlbumCover(photos) {
@@ -174,23 +189,14 @@ async function buildAlbums() {
 
     for (let i = 0; i < yamlData.length; i++) {
         const album = yamlData[i]
-        console.log(
-            `Processing album ${i + 1} of ${yamlData.length} ${(
-                (i / yamlData.length) *
-                100
-            ).toFixed(2)}%`,
-        )
+        console.log(`Processing album ${i + 1} of ${yamlData.length}`)
         albums.push(await buildAlbum(album))
     }
 
     return albums
 }
 
-async function buildAlbumsByYear() {
-    const yamlData = await loadYamlFile()
-
-    const albums = await buildAlbums()
-
+function buildAlbumsByYear(albums) {
     const albumsByYear = albums.reduce((acc, album) => {
         const year = album.date.slice(0, 4)
         if (!acc[year]) {
@@ -208,6 +214,37 @@ async function buildAlbumsByYear() {
         .reverse()
 }
 
-module.exports = {
-    buildAlbumsByYear,
+module.exports = async function () {
+    const albums = await buildAlbums()
+
+    const albumsByYear = buildAlbumsByYear(albums)
+
+    const photos = albums.reduce((acc, album) => {
+        acc.push(...album.photos)
+        return acc
+    }, [])
+
+    const tagsCounts = photos.reduce((acc, photo) => {
+        photo.tags.forEach((tag) => {
+            if (!acc[tag]) {
+                acc[tag] = 0
+            }
+            acc[tag]++
+        })
+        return acc
+    }, {})
+
+    const tags = Object.entries(tagsCounts)
+        .map(([tag, count]) => ({
+            tag,
+            count,
+        }))
+        .sort((a, b) => b.count - a.count)
+
+    return {
+        albums,
+        albumsByYear,
+        photos,
+        tags
+    }
 }

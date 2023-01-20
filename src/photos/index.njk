@@ -1,0 +1,47 @@
+---
+layout: base
+title: Photos
+---
+<div class="width-control mx-auto flex justify-between items-baseline">
+    {% if title %}
+        <h2 class="pageTitle mb-8 text-red-500">{{ title }}</h2>
+    {% endif %}
+    <div>
+        <a href="/tags" class="link mr-4">Tags</a>
+        <a href="/all" class="link">All Photos</a>
+    </div>
+</div>
+<div class="width-control mx-auto">
+    {% for year in albums.albumsByYear %}
+        <div class="my-2">
+            <h3>{{ year.year }}</h3>
+            <div class="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8">
+                {% for album in year.albums %}
+                    <a href="{{ album.permalink | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2">
+                        <div class="flex flex-col flex-1 justify-center">
+                            {% if album.cover | length > 1 %}
+                                <div class="grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem]">
+                                    {% for photo in album.cover %}
+                                        {% renderPhoto photo.thumnailSmall,
+                                        photo.alt, "max-h-[16rem]" %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="flex flex-col justify-between cursor-pointer my-2">
+                                    {% renderPhoto album.cover[0].thumnailSmall,
+                                album.cover[0].alt, "max-h-[16rem]" %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex flex-col justify-center items-center mt-2">
+                            <h4 class="link text-sm text-center mt-1">{{ album.title }}</h4>
+                            <date datetime="{{ album.date }}" class="secondary no-underline text-sm">
+                                {{ album.date }}
+                            </date>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

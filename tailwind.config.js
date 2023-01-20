@@ -5,7 +5,7 @@ module.exports = {
         'gatsby-highlight',
         'photogrid',
         'gatsby-resp-image-image',
-        'gatsby-image-wrapper',
+        'image-wrapper',
         'statuslol_container',
         'statuslol',
         'statuslol_emoji_container',
