@@ -1,5 +1,7 @@
 const timeToRead = require('eleventy-plugin-time-to-read')
 const Image = require('@11ty/eleventy-img')
+const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
+
 
 // https://www.11ty.dev/docs/plugins/image/
 function renderPhotoShortcut(photo, alt, classes = '') {
@@ -21,9 +23,12 @@ function renderPhotoShortcut(photo, alt, classes = '') {
 }
 
 module.exports = function (eleventyConfig) {
-    eleventyConfig.addWatchTarget('./albums')
+    eleventyConfig.addPlugin(timeToRead, {
+        style: 'short'
+    })
+    eleventyConfig.addPlugin(syntaxHighlight);
 
-    eleventyConfig.addPlugin(timeToRead)
+    eleventyConfig.addWatchTarget('./albums')
 
     eleventyConfig.addPassthroughCopy('./src/assets')
 
