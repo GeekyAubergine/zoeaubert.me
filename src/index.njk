@@ -38,7 +38,7 @@ layout: page
                 - {{ micro.title }}
             {% endif %}
         </a>
-        <p class="text my-1">{{ micro.summary }}</p>
+        <p class="text my-1">{{ micro.summary | safe }}</p>
     </div>
 {% endfor %}
 <h2 class="mainPageHeading">Socials</h2>

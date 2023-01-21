@@ -8,12 +8,15 @@ const ALBUMS_DATA_PATH = './albums'
 
 const PHOTO_PROCESSING_OPTIONS = {
     // widths: [150, 300, 600, 1200, 'auto'],
-    widths: [600, 1200, 'auto'],
+    widths: [500, 1500],
     formats: ['jpeg'],
     outputDir: './_site/assets/img/',
     urlPath: '/assets/img/',
     filenameFormat: (id, src, width, format, options) => {
-        const name = src.split('/').pop()
+        const name = src
+            .split('/')
+            .pop()
+            .replace(/\.[^/.]+$/, '')
         const extension = src.split('.').pop()
 
         return `${name}-${width}.${extension}`
@@ -79,18 +82,12 @@ async function buildPhoto(photo) {
         url,
         thumnailSmall: {
             url: image.jpeg[0].url,
-            width: image.jpeg[0].width,
-            height: image.jpeg[0].height,
         },
         thumnailLarge: {
             url: image.jpeg[1].url,
-            width: image.jpeg[1].width,
-            height: image.jpeg[1].height,
         },
         original: {
-            url: image.jpeg[2].url,
-            width: image.jpeg[2].width,
-            height: image.jpeg[2].height,
+            url,
         },
         description,
         alt: alt || description,
@@ -167,9 +164,21 @@ async function buildAlbum(album) {
 
     const albumPermalink = albumToPermalink(album)
 
-    const photos = photosWithImage.map((photo) => ({
+    const photosWithPermalink = photosWithImage.map((photo) => ({
         ...photo,
         permalink: photoPermalink(albumPermalink, photo),
+        albumPermalink,
+    }))
+
+    const totalPhotosDigits = photosWithPermalink.length.toString().length
+
+    const photos = photosWithPermalink.map((photo, index) => ({
+        ...photo,
+        index: index + 1,
+        indexString: (index + 1).toString().padStart(totalPhotosDigits, '0'),
+        totalPhotos: photosWithPermalink.length,
+        previous: photosWithPermalink[index - 1] || null,
+        next: photosWithPermalink[index + 1] || null,
     }))
 
     return {
@@ -193,7 +202,7 @@ async function buildAlbums() {
         albums.push(await buildAlbum(album))
     }
 
-    return albums
+    return albums.sort((a, b) => new Date(b.date) - new Date(a.date))
 }
 
 function buildAlbumsByYear(albums) {
@@ -209,7 +218,7 @@ function buildAlbumsByYear(albums) {
     return Object.entries(albumsByYear)
         .map(([year, albums]) => ({
             year,
-            albums: albums.reverse(),
+            albums,
         }))
         .reverse()
 }
@@ -239,6 +248,17 @@ module.exports = async function () {
             tag,
             count,
             permalink: `/photos/tags/${tag}/index.html`,
+            photos: photos.filter((photo) => photo.tags.includes(tag)),
+            albums: albums
+                .filter((album) =>
+                    album.photos.some((photo) => photo.tags.includes(tag)),
+                )
+                .map((album) => ({
+                    ...album,
+                    photos: album.photos.filter((photo) =>
+                        photo.tags.includes(tag),
+                    ),
+                })),
         }))
         .sort((a, b) => b.count - a.count)
 
@@ -246,6 +266,6 @@ module.exports = async function () {
         albums,
         albumsByYear,
         photos,
-        tags
+        tags,
     }
 }

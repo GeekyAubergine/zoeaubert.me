@@ -1,15 +1,11 @@
 ---
 layout: base
-pagination:
-    data: albums.tags
-    size: 1
-    alias: tag
-permalink: "/photos/tags/{{ tag.tag }}/index.html"
+title: "All Photos"
 ---
 <div class="width-control mx-auto pb-4">
-    <h2 class="pageTitle text-red-500">#{{tag.tag}} Photos</h2>
+    <h2 class="pageTitle text-red-500">All Photos</h2>
 </div>
-{%- for album in tag.albums %}
+{%- for album in albums.albums %}
     <div class="mb-4 mx-auto">
         <h3 class="text-sm pb-2 sm:ml-2">
             <a href="{{ album.permalink | stripIndex }}" class="link">{{ album.date }} - {{ album.title }}

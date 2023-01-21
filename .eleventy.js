@@ -2,7 +2,7 @@ const timeToRead = require('eleventy-plugin-time-to-read')
 const Image = require('@11ty/eleventy-img')
 
 // https://www.11ty.dev/docs/plugins/image/
-async function renderPhotoShortcut(photo, alt, classes = '') {
+function renderPhotoShortcut(photo, alt, classes = '') {
     const { url, width, height } = photo
 
     if (alt === undefined) {
@@ -15,8 +15,6 @@ async function renderPhotoShortcut(photo, alt, classes = '') {
             class="${classes}"
             src="${url}"
             alt="${alt}"
-            width="${width}"
-            height="${height}"
             loading="lazy"
             decoding="async" />
         `
@@ -34,10 +32,7 @@ module.exports = function (eleventyConfig) {
     )
 
     eleventyConfig.addCollection('recentPosts', (collection) =>
-        collection
-            .getFilteredByGlob('./posts/**/*.md')
-            .reverse()
-            .slice(0, 5),
+        collection.getFilteredByGlob('./posts/**/*.md').reverse().slice(0, 5),
     )
 
     eleventyConfig.addFilter('linkifyMarkdown', (text) => {
@@ -54,16 +49,16 @@ module.exports = function (eleventyConfig) {
             .padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
     })
 
-    eleventyConfig.addFilter(
-        'debug',
-        (content) => `<pre>${inspect(content)}</pre>`,
-    )
+    eleventyConfig.addFilter("debug", (...args) => {
+        console.log(...args)
+        debugger;
+      })
 
     eleventyConfig.addFilter('stripIndex', function (path) {
         return path.replace('/index.html', '/')
     })
 
-    eleventyConfig.addAsyncShortcode('renderPhoto', renderPhotoShortcut)
+    eleventyConfig.addShortcode('renderPhoto', renderPhotoShortcut)
 
     eleventyConfig.setWatchThrottleWaitTime(100)
 
