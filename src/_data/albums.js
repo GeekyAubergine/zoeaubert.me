@@ -4,7 +4,7 @@ const Image = require('@11ty/eleventy-img')
 
 const FILE_NAME_REGEX = /([\w,\s-]+)\.[A-Za-z]{3}$/
 
-const ALBUMS_DATA_PATH = './albums'
+const ALBUMS_DATA_PATH = './src/content/albums'
 
 const PHOTO_PROCESSING_OPTIONS = {
     // widths: [150, 300, 600, 1200, 'auto'],

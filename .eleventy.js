@@ -25,14 +25,14 @@ module.exports = function (eleventyConfig) {
 
     eleventyConfig.addPlugin(timeToRead)
 
-    eleventyConfig.addPassthroughCopy('./assets')
+    eleventyConfig.addPassthroughCopy('./src/assets')
 
     eleventyConfig.addCollection('posts', (collection) =>
-        collection.getFilteredByGlob('./posts/**/*.md').reverse(),
+        collection.getFilteredByGlob('./src/content/posts/**/*.md').reverse(),
     )
 
     eleventyConfig.addCollection('recentPosts', (collection) =>
-        collection.getFilteredByGlob('./posts/**/*.md').reverse().slice(0, 5),
+        collection.getFilteredByGlob('./src/content/posts/**/*.md').reverse().slice(0, 5),
     )
 
     eleventyConfig.addFilter('linkifyMarkdown', (text) => {
