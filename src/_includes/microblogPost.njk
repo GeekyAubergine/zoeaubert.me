@@ -1,0 +1,12 @@
+<div class="mt-2 mb-6 content">
+    <a href="{{ post.url }}" target="_blank" rel="noopener" class="link">
+        <time class="link" datetime="{{ post.date }}">
+            {{ post.date }}
+        </time>
+        {% if post.title %}
+                - {{ post.title }}
+        {% endif %}
+    </a>
+    {{ post | log}}
+    {{ post.content | mdToHtml | safe }}
+</div>

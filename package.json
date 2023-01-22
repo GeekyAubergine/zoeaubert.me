@@ -26,8 +26,10 @@
     "eleventy-plugin-time-to-read": "^1.3.0",
     "js-yaml": "^4.1.0",
     "luxon": "^3.2.1",
+    "marked": "^4.2.12",
     "natsort": "^2.0.3",
-    "sass": "^1.57.1"
+    "sass": "^1.57.1",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@emotion/styled": "^11.10.5",

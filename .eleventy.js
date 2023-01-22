@@ -2,6 +2,7 @@ const timeToRead = require('eleventy-plugin-time-to-read')
 const Image = require('@11ty/eleventy-img')
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const pluginRss = require('@11ty/eleventy-plugin-rss')
+const marked = require('marked')
 
 // https://www.11ty.dev/docs/plugins/image/
 function renderPhotoShortcut(photo, alt, classes = '') {
@@ -28,6 +29,8 @@ module.exports = function (eleventyConfig) {
     })
     eleventyConfig.addPlugin(syntaxHighlight)
     eleventyConfig.addPlugin(pluginRss)
+
+    eleventyConfig.setQuietMode(true);
 
     eleventyConfig.addWatchTarget('./albums')
 
@@ -65,6 +68,10 @@ module.exports = function (eleventyConfig) {
 
     eleventyConfig.addFilter('stripIndex', function (path) {
         return path.replace('/index.html', '/')
+    })
+
+    eleventyConfig.addFilter('mdToHtml', function (content = '') {
+        return marked.parse(content)
     })
 
     eleventyConfig.addShortcode('renderPhoto', renderPhotoShortcut)
