@@ -1,6 +1,6 @@
 build_and_deploy:
 	git pull
-	npm i
-	npm run build
+	/root/.nvm/versions/node/v19.4.0/bin/nvm i
+	/root/.nvm/versions/node/v19.4.0/bin/nvm run build
 	cp -R _site/. /var/www/zoeaubert.me/
 	

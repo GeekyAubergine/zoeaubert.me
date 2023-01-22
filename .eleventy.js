@@ -69,6 +69,10 @@ module.exports = function (eleventyConfig) {
 
     eleventyConfig.addShortcode('renderPhoto', renderPhotoShortcut)
 
+    eleventyConfig.addShortcode('currentTimestamp', () => {
+        return new Date().toISOString()
+    })
+
     eleventyConfig.setWatchThrottleWaitTime(100)
 
     return {
