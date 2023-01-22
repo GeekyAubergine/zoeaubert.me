@@ -28,7 +28,7 @@
         <link>{{ absolutePostUrl }}</link>
         <description>{{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) }}</description>
         <pubDate>{{ post.date | dateToRfc822 }}</pubDate>
-        <dc:creator>{{ metadata.author.name }}</dc:creator>
+        <dc:creator>{{ site.author }}</dc:creator>
         <guid>{{ absolutePostUrl }}</guid>
       </item>
     {%- endfor %}
