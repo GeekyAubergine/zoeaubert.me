@@ -1,4 +1,5 @@
 build_and_deploy:
 	git fetch origin
-	yarn
-	yarn build
+	npm i
+	npm run build
+	
