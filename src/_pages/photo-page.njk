@@ -5,6 +5,10 @@ pagination:
     size: 1
     alias: photo
 permalink: "{{ photo.permalink }}"
+eleventyComputed:
+    title: "{{ photo.description }}"
+    description: "{{ photo.date }} - {{ photo.albumTitle }}"
+    image: "{{ photo.thumbnailSmall.url }}"
 ---
 <main class="flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8 h-screen max-h-screen justify-between">
     <nav class="flex flex-row width-control mx-auto justify-between items-center mb-4">
@@ -19,7 +23,7 @@ permalink: "{{ photo.permalink }}"
         </div>
     </nav>
     <div class="flex flex-1 justify-center object-contain overflow-hidden m-4">
-        {% renderPhoto photo.thumnailLarge, photo.alt, "flex max-h-full max-w-full" %}
+        {% renderPhoto photo.thumbnailLarge, photo.alt, "flex max-h-full max-w-full" %}
     </div>
     <div class="flex flex-col justify-between items-center sm:mb-8 sm:width-control sm:mx-auto">
         <div class="flex flex-col justify-between items-center">

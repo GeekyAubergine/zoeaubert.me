@@ -7,7 +7,7 @@
                 {% set span = "col-span-1" %}
             {% endif %}
             <a href="{{ photo.permalink | stripIndex }}" class="flex justify-center items-center {{ span }}">
-                {% renderPhoto photo.thumnailSmall,
+                {% renderPhoto photo.thumbnailSmall,
                 photo.alt,
                 "" %}
             </a>

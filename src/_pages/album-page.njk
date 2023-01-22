@@ -7,6 +7,8 @@ pagination:
 permalink: "{{ album.permalink }}"
 eleventyComputed:
     title: "{{ album.title }}"
+    description: "{{ album.date }}"
+    image: "{{ album.cover[0].thumbnailSmall.url }}"
 ---
 <div class="width-control mx-auto pb-4">
     {% if title %}

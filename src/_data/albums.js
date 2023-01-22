@@ -80,10 +80,10 @@ async function buildPhoto(photo) {
 
     return {
         url,
-        thumnailSmall: {
+        thumbnailSmall: {
             url: image.jpeg[0].url,
         },
-        thumnailLarge: {
+        thumbnailLarge: {
             url: image.jpeg[1].url,
         },
         original: {
@@ -179,6 +179,8 @@ async function buildAlbum(album) {
         totalPhotos: photosWithPermalink.length,
         previous: photosWithPermalink[index - 1] || null,
         next: photosWithPermalink[index + 1] || null,
+        albumTitle: title,
+        date: date,
     }))
 
     return {
