@@ -73,6 +73,7 @@ photos:
           - short-eared-owl
           - owl
           - bird-of-prey
+      featured: true
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owls-2/20230121-8B5A7049.jpg'
       description: Short-eared owls and kestrel
       alt: There are 2 short-eared owls and a kestrel. The birds are arragened in a line slightly off horizontal, from left to right the birds are the kestrel and the 2 short-eared owls. The kestrel is flying towards the central own and it's tail feathers are spread out fat-side towards the camera allowing a good view of the spotted plumedge. The central owl has it's back towards the camera. It has it's wings spread. It has talons facing the other owl. The right owl is facing away from the other birds and is flying directly to the right. It's wings are bent in an L shape leading to the closet wing covering the body. The birds appear to be a few feet appart. In the backgound is a blue sky and some very out of focus yellow fields and dark green trees. Below the birds are some bushes with some small green leaves and white flowers, and some bare bushes.
@@ -141,7 +142,6 @@ photos:
           - short-eared-owl
           - owl
           - bird-of-prey
-      featured: true
     - url: 'https://cdn.geekyaubergine.com/2023/01/short-eared-owls-2/20230121-8B5A7346.jpg'
       description: Short-eared owl
       alt: Short-eared owl flying left to right with it's back facing the camera. It's wings are fully spread with the backs facing the camera. In the background is a blue sky with some hills and trees in the distance. In the bottom of the frame are some bushes of various colours.
