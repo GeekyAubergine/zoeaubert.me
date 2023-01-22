@@ -21,6 +21,10 @@
         font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
+    .spacedText {
+        @apply mt-1 mb-4 leading-[1.6rem] sm:leading-6 sm:mb-4
+    }
+
     .underline_custom {
         @apply underline;
         text-underline-offset: 0.175rem;
@@ -91,19 +95,19 @@
         @apply text-lg;
     }
 
-    .content > p {
-        @apply mt-1 mb-4 leading-[1.6rem] sm:leading-6 sm:mb-4;
+    .content p {
+        @apply spacedText;
     }
 
-    .content > h2,
-    .content > h3,
-    .content > h4,
-    .content > h5,
-    .content > h6 {
+    .content h2,
+    .content h3,
+    .content h4,
+    .content h5,
+    .content h6 {
         @apply mt-9;
     }
 
-    .content > h2:first-of-type {
+    .content h2:first-of-type {
         @apply !mt-0;
     }
 
@@ -112,7 +116,11 @@
         margin-block-end: 1em;
     } */
 
-    p > a {
+    .content a {
+        @apply link;
+    }
+
+    p a {
         @apply link;
     }
 
@@ -126,7 +134,7 @@
     }
 
     ol {
-        @apply list-decimal text;
+        @apply list-decimal text spacedText;
     }
 
     ul {
@@ -134,7 +142,7 @@
     }
 
     li {
-        @apply ml-1.5 my-3;
+        @apply ml-1.5 my-2 spacedText;
     }
 
     code {

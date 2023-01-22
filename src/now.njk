@@ -1,0 +1,11 @@
+---
+layout: page
+title: "/now"
+description: "My now page"
+---
+
+<p class="mb-8">This is <a href="https://nownownow.com/about"  target="_blank" rel="noopener">a now page</a>, and if you have your own site, you should make one, too.</p>
+
+<div class="content">
+    {{ now.markdown | mdToHtml | safe }}
+</div>

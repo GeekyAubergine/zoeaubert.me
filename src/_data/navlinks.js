@@ -18,6 +18,12 @@ module.exports = [
         url: '/photos',
     },
     {
+        name: '/now',
+        target: '',
+        rel: '',
+        url: '/now',
+    },
+    {
         name: 'GitHub',
         target: '_blank',
         rel: 'noopener',
