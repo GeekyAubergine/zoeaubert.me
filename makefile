@@ -1,5 +1,5 @@
 build_and_deploy:
-	git fetch origin
+	git pull
 	nvm use
 	npm i
 	npm run build
