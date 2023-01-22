@@ -34,12 +34,12 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy('./src/assets')
 
     eleventyConfig.addCollection('posts', (collection) =>
-        collection.getFilteredByGlob('./src/content/posts/**/*.md').reverse(),
+        collection.getFilteredByGlob('./src/_content/posts/**/*.md').reverse(),
     )
 
     eleventyConfig.addCollection('recentPosts', (collection) =>
         collection
-            .getFilteredByGlob('./src/content/posts/**/*.md')
+            .getFilteredByGlob('./src/_content/posts/**/*.md')
             .reverse()
             .slice(0, 5),
     )
