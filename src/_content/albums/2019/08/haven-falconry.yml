@@ -10,6 +10,7 @@ photos:
           - lanner-falcon
           - bird
           - falcon
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2019/08/haven-falconry/20190811-_MG_0322.jpg'
       description: American bald eagle
       alt: Side profile of and American bald eagle looking to the right contrasted against a dark background
@@ -19,6 +20,7 @@ photos:
           - american-bald-eagle
           - bird
           - eagle
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2019/08/haven-falconry/20190811-_MG_0326.jpg'
       description: American bald eagle
       alt: Side profile of and American bald eagle looking to the right contrasted against a dark background
@@ -28,6 +30,7 @@ photos:
           - american-bald-eagle
           - bird
           - eagle
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2019/08/haven-falconry/20190811-_MG_0367.jpg'
       description: American kestrel
       alt: American kestrel sat on purch looking to the right
@@ -37,3 +40,4 @@ photos:
           - american-kestrel
           - bird
           - kestrel
+          - bird-of-prey

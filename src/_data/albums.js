@@ -86,9 +86,9 @@ async function buildPhoto(photo) {
             height: image.jpeg[0].height,
         },
         thumbnailLarge: {
-            url: image.jpeg[1].url,
-            width: image.jpeg[1].width,
-            height: image.jpeg[1].height,
+            url: (image.jpeg[1] || image.jpeg[0]).url,
+            width: (image.jpeg[1] || image.jpeg[0]).width,
+            height: (image.jpeg[1] || image.jpeg[0]).height,
         },
         original: {
             url,

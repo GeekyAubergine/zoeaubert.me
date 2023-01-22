@@ -9,6 +9,7 @@ photos:
           - wetlands
           - marsh-harrier
           - bird
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-wetlands/20180915-IMG_3096.jpg'
       description: Unidentified bird
       alt: Unidentified bird flying direction overhead against blue sky
@@ -17,6 +18,7 @@ photos:
           - wetlands
           - bird
           - unidentified
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-wetlands/20180915-IMG_3143.jpg'
       description: Unidentified bird
       alt: Unidentified bird flying against grey sky
@@ -25,6 +27,7 @@ photos:
           - wetlands
           - bird
           - unidentified
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-wetlands/20180915-IMG_3177.jpg'
       description: Unidentified bird
       alt: Unidentified bird flying against blue sky
@@ -33,6 +36,7 @@ photos:
           - wetlands
           - bird
           - unidentified        
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-wetlands/20180915-IMG_3182.jpg'
       description: Unidentified bird
       alt: Unidentified bird flying against grey sky
@@ -41,6 +45,7 @@ photos:
           - wetlands
           - bird
           - unidentified
+          - bird-of-prey
     - url: 'https://cdn.geekyaubergine.com/2018/09/jersey-wetlands/20180915-IMG_3187.jpg'
       description: Unidentified bird
       alt: Unidentified bird flying against cloudy sky
@@ -49,4 +54,5 @@ photos:
           - wetlands
           - bird
           - unidentified         
+          - bird-of-prey
     
