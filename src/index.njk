@@ -1,7 +1,9 @@
 ---
 layout: page
 ---
-<p class="text mt-4 leading-[1.6rem] sm:mt-6 sm:leading-6">Hi there, I’m a software developer from Jersey, living in Portsmouth, working at <a href="https://radweb.co.uk" target="_blank" rel="noopener">Radweb</a> on <a href="https://inventorybase.co.uk" target="_blank" rel="noopener">InventoryBase</a> and other projects, primarily focusing on app development.</p>
+<div class="content mt-4">
+    {{ about | mdToHtml | safe}}
+</div>
 {# <h2 class="mainPageHeading">Status</h2> #}
 {# <div class="flex my-4">
     {% if statuslol.fluentEmoji %}
@@ -19,24 +21,24 @@ layout: page
 {# <p class="secondary">See previous status' at <a href="https://geekyaubergine.status.lol" target="_blank" rel="noopener" class="secondary">status.lol</a> #}
 </p>
 <a href="/blog" class="link">
-    <h2 class="mainPageHeading">Marco Blogs</h2>
+<h2 class="mainPageHeading">Marco Blogs</h2>
 </a>
 {%- for blogPost in collections.recentPosts %}
-    {% include "blogPost.njk" %}
+{% include "blogPost.njk" %}
 {% endfor %}
 <a href="https://geekyaubergine.com" target="_blank" rel="noopener" class="link">
-    <h2 class="mainPageHeading">Micro Blogs</h2>
+<h2 class="mainPageHeading">Micro Blogs</h2>
 </a>
 {%- for post in microblog %}
-    {% include 'microblogPost.njk' %}
+{% include 'microblogPost.njk' %}
 {% endfor %}
 <h2 class="mainPageHeading">Socials</h2>
 <div class="mt-4">
-    {% for social in socials %}
-        <div class="flex mb-3 last-of-type:mb-0">
-            <a class="link text-x" href="{{ social.link }}" target="_blank" rel="me">{{ social.name }}</a>
-            <span class="text ml-1 sm:ml-2">-</span>
-            <span class="text ml-1 sm:ml-2">{{ social.description }}</span>
-        </div>
-    {% endfor %}
+{% for social in socials %}
+    <div class="flex mb-3 last-of-type:mb-0">
+        <a class="link text-x" href="{{ social.link }}" target="_blank" rel="me">{{ social.name }}</a>
+        <span class="text ml-1 sm:ml-2">-</span>
+        <span class="text ml-1 sm:ml-2">{{ social.description }}</span>
+    </div>
+{% endfor %}
 </div>
