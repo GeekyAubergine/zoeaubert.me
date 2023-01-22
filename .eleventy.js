@@ -1,7 +1,7 @@
 const timeToRead = require('eleventy-plugin-time-to-read')
 const Image = require('@11ty/eleventy-img')
-const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
-
+const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
+const pluginRss = require('@11ty/eleventy-plugin-rss')
 
 // https://www.11ty.dev/docs/plugins/image/
 function renderPhotoShortcut(photo, alt, classes = '') {
@@ -24,9 +24,10 @@ function renderPhotoShortcut(photo, alt, classes = '') {
 
 module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(timeToRead, {
-        style: 'short'
+        style: 'short',
     })
-    eleventyConfig.addPlugin(syntaxHighlight);
+    eleventyConfig.addPlugin(syntaxHighlight)
+    eleventyConfig.addPlugin(pluginRss)
 
     eleventyConfig.addWatchTarget('./albums')
 
@@ -37,7 +38,10 @@ module.exports = function (eleventyConfig) {
     )
 
     eleventyConfig.addCollection('recentPosts', (collection) =>
-        collection.getFilteredByGlob('./src/content/posts/**/*.md').reverse().slice(0, 5),
+        collection
+            .getFilteredByGlob('./src/content/posts/**/*.md')
+            .reverse()
+            .slice(0, 5),
     )
 
     eleventyConfig.addFilter('linkifyMarkdown', (text) => {
@@ -54,10 +58,10 @@ module.exports = function (eleventyConfig) {
             .padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
     })
 
-    eleventyConfig.addFilter("debug", (...args) => {
+    eleventyConfig.addFilter('debug', (...args) => {
         console.log(...args)
-        debugger;
-      })
+        debugger
+    })
 
     eleventyConfig.addFilter('stripIndex', function (path) {
         return path.replace('/index.html', '/')
