@@ -6,27 +6,15 @@
         {% include "themeToggle.njk" %}
     </div>
     <div class="flex w-full justify-between mt-2 sm:justify-end">
-        <a
-            class="navbarLink"
-                    href="https://geekyaubergine.com"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    MicroBlog
-                </a>
-        <a class="navbarLink" href="/blog">
-                    Blog
-                </mx-auto>
-        <a class="navbarLink" href="/photos">
-                    Photos
-                </a>
-        <a
-                    class="navbarLink"
-                    href="https://github.com/geekyaubergine"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    GitHub
-                </a>
+        {% for link in navlinks %}
+            <a
+                class="navbarLink"
+                href="{{ link.url }}"
+                target="{{ link.target }}"
+                rel="{{ link.rel }}"
+            >
+                {{ link.name }}
+            </a>
+        {% endfor %}
     </div>
 </nav>
