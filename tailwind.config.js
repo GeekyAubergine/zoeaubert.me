@@ -1,11 +1,11 @@
 module.exports = {
     darkMode: 'class',
-    content: ['./src/**/*.{js,jsx,ts,tsx}'],
+    content: ['./src/**/*.{njk,md}'],
     safelist: [
         'gatsby-highlight',
         'photogrid',
         'gatsby-resp-image-image',
-        'gatsby-image-wrapper',
+        'image-wrapper',
         'statuslol_container',
         'statuslol',
         'statuslol_emoji_container',
