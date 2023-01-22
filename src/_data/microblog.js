@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-
 const POSTS_LIMIT = 5
 
 function cleanContent(title, content) {

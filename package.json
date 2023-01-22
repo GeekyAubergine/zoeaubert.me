@@ -27,7 +27,6 @@
     "js-yaml": "^4.1.0",
     "luxon": "^3.2.1",
     "natsort": "^2.0.3",
-    "node-fetch": "^2.6.8",
     "sass": "^1.57.1"
   },
   "devDependencies": {

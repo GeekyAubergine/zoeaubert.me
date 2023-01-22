@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-
 async function getLatestStatus() {
     const response = await fetch(
         'https://api.omg.lol/address/geekyaubergine/statuses/',
