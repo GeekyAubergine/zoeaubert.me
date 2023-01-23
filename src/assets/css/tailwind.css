@@ -22,7 +22,7 @@
     }
 
     .spacedText {
-        @apply mt-1 mb-4 leading-[1.6rem] sm:leading-6 sm:mb-4;
+        @apply mt-1 mb-4 leading-[1.6rem] sm:leading-6 sm:mb-4
     }
 
     .underline_custom {
@@ -120,8 +120,7 @@
         @apply link;
     }
 
-    p,
-    li a {
+    p a, li a {
         @apply link;
     }
 
