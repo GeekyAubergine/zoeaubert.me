@@ -1,7 +1,7 @@
 ---
 layout: post
 permalink: /blog/leaving-the-twitter-nest/index.html
-title: Leaving the Twitter nest
+title: Leaving the Twitter Nest
 date: 2022-11-15
 description: A look back at why I left Twitter, some of my favourite posts and funny retweets
 tags: [""]

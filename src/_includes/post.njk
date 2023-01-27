@@ -6,7 +6,7 @@ layout: base
     <div class="flex flex-row mb-4">
         <time class="text secondary" datetime="{{date.toISOString()}}">{{ date | formatDate }}</time>
         <p class="secondary mx-1">-</p>
-        <p class="secondary">{{content | timeToRead}} min</p>
+        <p class="secondary">{{content | timeToRead}}</p>
     </div>
     <div class="w-full content">
         {{ content | safe }}

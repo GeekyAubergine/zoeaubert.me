@@ -30,7 +30,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(syntaxHighlight)
     eleventyConfig.addPlugin(pluginRss)
 
-    eleventyConfig.setQuietMode(true);
+    // eleventyConfig.setQuietMode(true);
 
     eleventyConfig.addWatchTarget('./albums')
 
