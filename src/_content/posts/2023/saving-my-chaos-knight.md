@@ -4,7 +4,7 @@ permalink: /blog/saving-my-chaos-knight/index.html
 date: 2023-01-29
 title: Saving my Chaos Knight
 description: How I saved my broken Chaos Knight model with some stressful drilling
-tags: ['warhammer']
+tags: ['warhammer', 'warhammer-aos', 'slaves-to-darkness']
 image: "/assets/img/saving-my-chaos-knight/IMG_2656.JPG"
 ---
 
