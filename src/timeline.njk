@@ -3,8 +3,10 @@ layout: page
 title: Timeline
 description: My timeline
 ---
+
+{% set filter = "lego" %}
 {%- for post in collections.timelinePosts %}
-    {% include "timelinePost.njk" %}
+    {% include "timelinepost.njk" %}
 {% endfor %}
 
 {# {%- for post in microblog %}

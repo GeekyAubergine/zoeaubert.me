@@ -1,13 +1,11 @@
-{# {{ blogPost | log }} #}
-
-{# <div class="flex flex-col mt-2 mb-6 no-underline text">
-    <a href="{{ blogPost.data.permalink | stripIndex }}" class="flex flex-col no-underline">
-        <h3 class="text-lg link font-normal mb-1">{{ blogPost.data.title }}</h3>
+<div class="flex flex-col mt-2 mb-6 no-underline text">
+    <a href="{{ post.url | stripIndex }}" class="flex flex-col no-underline">
+        <h3 class="text-lg link font-normal mb-1">{{ post.title }}</h3>
     </a>
-    <p>{{ blogPost.data.description }}</p>
+    <p>{{ post.data.description }}</p>
     <div class="flex flex-row mt-2">
-        <time class="secondary" dateTime="{{blogPost.date.toISOString()}}">{{blogPost.date | formatDate}}</time>
+        <time class="secondary" dateTime="{{post.date.toISOString()}}">{{post.date | formatDate}}</time>
         <p class="secondary mx-1">-</p>
-        <p class="secondary">{{ blogPost.templateContent | timeToRead }}</p>
+        <p class="secondary">{{ post.content() | timeToRead }}</p>
     </div>
-</div> #}
+</div>

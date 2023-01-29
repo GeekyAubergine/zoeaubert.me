@@ -116,6 +116,10 @@
         @apply link;
     }
 
+    .content img:last-of-type {
+        @apply mb-4;
+    }
+
     .content > *:first-child {
         @apply mt-0;
     }

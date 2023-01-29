@@ -21,17 +21,17 @@ layout: page
 {# <p class="secondary">See previous status' at <a href="https://geekyaubergine.status.lol" target="_blank" rel="noopener" class="secondary">status.lol</a> #}
 </p>
 <a href="/blog" class="link">
-    <h2 class="mainPageHeading">Macro Blogs</h2>
+    <h2 class="mainPageHeading">Blog Posts</h2>
 </a>
-{%- for blogPost in collections.recentPosts %}
-{% include "blogPost.njk" %}
+{%- for post in collections.recentPosts %}
+{% include "blogpost.njk" %}
 {% endfor %}
 <a href="https://geekyaubergine.com" target="_blank" rel="noopener" class="link">
-<h2 class="mainPageHeading">Micro Blogs</h2>
+{# <h2 class="mainPageHeading">Micro Blogs</h2>
 </a>
 {%- for post in microblog %}
 {% include 'microblogPost.njk' %}
-{% endfor %}
+{% endfor %} #}
 <h2 class="mainPageHeading">Socials</h2>
 <div class="mt-4">
 {% for social in socials %}

@@ -1,71 +1,77 @@
+{# {% if not filter or filter in post.tags %} #}
 <div class="flex flex-col my-10 sm:flex-row">
     <a href="{{ post.url }}" class="flex mb-2 backdrop:link min-w-[12rem] sm:mb-0" target="_blank" rel="noopener">
         <time class="secondary under" datetime="{{ post.date.toISOString() }}">
             {{ post.date | formatDateTime }}
         </time>
     </a>
-    <div class="flex flex-col no-underline content">
-        {% if post.type == 'blogPost' %}
-            <a href="{{ post.url | stripIndex }}" class="no-underline">
-                <h3 class="text-lg link font-normal my-0">{{ post.title }}</h3>
-            </a>
-            <p class="my-0">{{ post.description }}</p>
-            <div class="flex flex-row">
-                <p class="secondary">{{ post.content() | timeToRead }}</p>
-            </div>
-        {% endif %}
-        {% if post.type == 'micro' %}
-            <a href="{{ post.url | stripIndex }}" class="no-underline">
-                <h3 class="text-lg link font-normal my-0">{{ post.title }}</h3>
-            </a>
-            {{ post.content() | mdToHtml | safe }}
-        {% endif %}
-        {% if post.type == 'microBlog' %}
-            <a href="{{ post.url }}" class="link">
-                <time class="" datetime="{{ post.date.toISOString() }}">
-                    {{ post.date | formatDate }}
-                </time>
+    <div class="flex flex-col">
+        <div class="flex flex-col content">
+            {% if post.type == 'blogPost' %}
+                <a href="{{ post.url | stripIndex }}" class="no-underline">
+                    <h3 class="text-lg link font-normal my-0">{{ post.title }}</h3>
+                </a>
+                <p class="my-2">{{ post.description }}</p>
+                <div class="flex flex-row">
+                    <p class="secondary">{{ post.content() | timeToRead }}</p>
+                </div>
+            {% endif %}
+            {% if post.type == 'micro' %}
+                <a href="{{ post.url | stripIndex }}" class="no-underline">
+                    <h3 class="text-lg link font-normal my-0">{{ post.title }}</h3>
+                </a>
+                {{ post.content() | mdToHtml | safe }}
+            {% endif %}
+            {% if post.type == 'microBlog' %}
                 {% if post.title %}
                 - {{ post.title }}
                 {% endif %}
-            </a>
-            <p>{{ post.content() | mdToHtml | safe }}</p>
-        {% endif %}
-        {% if post.type == 'album' %}
-            <a href="{{ post.url | stripIndex }}" class="flex no-underline">
-                <h3 class="text-lg link font-normal my-0">{{ post.title }}</h3>
-            </a>
-            {% if post.description %}
-                <p>{{ post.description }}</p>
+                {{ post.content | mdToHtml | safe }}
             {% endif %}
-            <div class="flex flex-col flex-1 justify-center">
-                {% if post.headerImage | length > 1 %}
-                    <div class="grid gap-x-1 grid-cols-2 overflow-hidden items-center">
-                        {% for photo in post.headerImage %}
-                            {% renderPhoto photo.thumbnailSmall,
-                            photo.alt,
-                            "" %}
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="flex flex-col justify-between cursor-pointer my-2">
-                        {% renderPhoto post
-                            .headerImage[0]
-                            .thumbnailSmall,
-                        post
-                            .headerImage[0]
-                            .alt,
-                        "" %}
-                    </div>
+            {% if post.type == 'album' %}
+                <a href="{{ post.url | stripIndex }}" class="flex no-underline">
+                    <h3 class="text-lg link font-normal my-0">{{ post.title }}</h3>
+                </a>
+                {% if post.description %}
+                    <p>{{ post.description }}</p>
                 {% endif %}
-            </div>
-        {% endif %}
-        {% if post.type == 'status' %}
-            <div class="flex items-start">
-                <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
-                <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
-            </div>
-        {% endif %}
+                <div class="flex flex-col flex-1 justify-center">
+                    {% if post.headerImage | length > 1 %}
+                        <div class="grid gap-x-1 grid-cols-2 overflow-hidden items-center">
+                            {% for photo in post.headerImage %}
+                                {% renderPhoto photo.thumbnailSmall,
+                                photo.alt,
+                                "" %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="flex flex-col justify-between my-2">
+                            {% renderPhoto post
+                                .headerImage[0]
+                                .thumbnailSmall,
+                            post
+                                .headerImage[0]
+                                .alt,
+                            "" %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if post.type == 'status' %}
+                <div class="flex items-start">
+                    <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
+                    <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="flex flex-wrap">
+            {% for tag in post.tags %}
+                <a href="/tags/{{ tag | slugify }}" class="link secondary mr-2">
+                    #{{ tag | cleanTag }}
+                </a>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {# <hr/> #}
+{# {% endif %} #}

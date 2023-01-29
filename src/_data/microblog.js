@@ -1,6 +1,5 @@
 const EleventyFetch = require('@11ty/eleventy-fetch')
 const xml2js = require('xml2js')
-const config = require('../../.config.json')
 const axios = require('axios')
 
 const POSTS_LIMIT = 5
@@ -17,89 +16,14 @@ function cleanContent(title, content) {
 }
 
 function cleanId(id) {
-    return id.replace(/.*\.(com|blog)/g, '')
+    return id.replace(/.*?\.(com|blog)/g, '')
 }
 
 async function fetchFromMicroBlog() {
     const response = await EleventyFetch(
-        'https://micro.blog/posts/geekyaubergine?count=10000',
+        'https://geekyaubergine.com/feed.json',
         {
-            duration: '1h',
-            type: 'json',
-            fetchOptions: {
-                Authorization: 'Bearer ' + config.microBlog,
-            },
-        },
-    )
-
-    // const response = await axios.get(
-    //     'https://micro.blog/posts/geekyaubergine',
-    //     {
-    //         headers: {
-    //             Authorization: 'Bearer ' + config.microBlog,
-    //         },
-    //         params: {
-    //             count: 0,
-    //         },
-    //     },
-    // )
-
-    // console.log({ response })
-
-    // return []
-
-    // const { data } = response
-
-    const { items } = response
-
-    // console.log({ items: items.slice(0, 10)})
-
-    return items
-        .filter((post) => {
-            // if (MB_TAGS_TO_IGNORE.some((tag) => post.tags.includes(tag))) {
-            //     return false
-            // }
-
-            // if (post._microblog.is_conversation) {
-            //     return false
-            // }
-
-            return true
-        })
-        .map((post) => ({
-            title: post.title !== '' ? post.title : null,
-            id: cleanId(post.id),
-            url: post.url,
-            date: new Date(post.date_published),
-            content: post.content_html,
-            tags: post.tags,
-        }))
-}
-
-async function fetchFromArchive() {
-    const response = await EleventyFetch(
-        'https://raw.githubusercontent.com/GeekyAubergine/archive.geekyaubergine.com/main/feed.json',
-        {
-            duration: '1d',
-            type: 'json',
-        },
-    )
-
-    return response.items.map((post) => ({
-        title: post.title !== '' ? post.title : null,
-        id: cleanId(post.id),
-        url: post.url,
-        date: new Date(post.date_published),
-        content: post.content_html,
-        tags: post.tags,
-    }))
-}
-
-async function fetchPhotoFromMicroBlog() {
-    const response = await EleventyFetch(
-        'https://geekyaubergine.com/photos/index.json',
-        {
-            duration: '1h',
+            duration: '1m',
             type: 'json',
         },
     )
@@ -116,34 +40,34 @@ async function fetchPhotoFromMicroBlog() {
     }))
 }
 
+async function fetchFromArchive() {
+    const response = await EleventyFetch(
+        'https://raw.githubusercontent.com/GeekyAubergine/archive.geekyaubergine.com/main/feed.json',
+        {
+            duration: '6h',
+            type: 'json',
+        },
+    )
+
+    return response.items.map((post) => ({
+        title: post.title !== '' ? post.title : null,
+        id: cleanId(post.id),
+        url: post.url,
+        date: new Date(post.date_published),
+        content: post.content_text.replace(
+            /src="uploads/g,
+            'src="https://cdn.uploads.micro.blog/67943/',
+        ),
+        tags: post.tags,
+    }))
+}
+
 module.exports = async function () {
-    // const x = await fetch('https://micro.blog/posts/geekyaubergine', {
-    //     headers: {
-    //         Authorization: 'Bearer ' + config.microBlogKey,
-    //     },
-    // })
-
-    // const xml = await x.json()
-
-    // const json = xml //await xml2js.parseStringPromise(xml)
-
-    // return json.items.map((post) => ({
-    //     title: post.title !== '' ? post.title : null,
-    //     id: post.id,
-    //     url: post.url,
-    //     date: new Date(post.date_published),
-    //     content: post.content_html,
-    //     tags: post.tags,
-    // }))
-
-    // console.log({ json })
-
     const livePosts = await fetchFromMicroBlog()
-
-    return livePosts
-
     const archivedPosts = await fetchFromArchive()
-    const photoPosts = await fetchPhotoFromMicroBlog()
+    // const photoPosts = await fetchPhotoFromMicroBlog()
+
+    // console.log(archivedPosts)
 
     const livePostsMap = livePosts.reduce((acc, post) => {
         acc[post.id] = post
@@ -155,14 +79,13 @@ module.exports = async function () {
         return acc
     }, {})
 
-    const photoPostsMap = photoPosts.reduce((acc, post) => {
-        acc[post.id] = post
-        return acc
-    }, {})
+    // const photoPostsMap = photoPosts.reduce((acc, post) => {
+    //     acc[post.id] = post
+    //     return acc
+    // }, {})
 
-    const allPosts = { ...archivedPostsMap, ...livePostsMap, ...photoPostsMap }
-
-    // console.log(Object.values(allPosts).slice(0, 5))
+    // const allPosts = { ...archivedPostsMap, ...livePostsMap, ...photoPostsMap }
+    const allPosts = { ...archivedPostsMap, ...livePostsMap }
 
     return Object.values(allPosts)
 
