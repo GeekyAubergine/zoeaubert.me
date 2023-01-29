@@ -34,7 +34,7 @@ Next came the pinning. I use 0.7mm outer diameter brass tubing. It might not be 
 
 ![Me holding a Slaves to Darkness Chaos Knight side on. The lance has been broken off and in its place is a 0.7mm brass rod that I'm going to use to pin the lance back in place. The entrance to the hole the brass is sat in is misshapen and is wider than the rod. In the background is a green and yellow cutting mat and several other models](/assets/img/saving-my-chaos-knight/IMG_2641.JPG)
 
-Once I got a rod in safely, I noticed that it wobbled significantly due to the issue noted earlier, where the entrance to the hole had given way. This was problematic and could not be saved with glue. In a moment of inspired brilliance, I decided to try pushing an offcut of a rod into the hole. This resolved this issue, though there were a few tense moments where the plastic felt like it would give way completely.
+Once I got a rod in safely, I noticed that it wobbled significantly due to the issue noted earlier, where the entrance to the hole had given way. This was problematic and could not be saved with glue. In a moment of inspired brilliance, I decided to try pushing an offcut of a rod into the hole. This resolved this issue, though there were a few tense moments where the plastic felt like it would give way completely. Sorry about the quality. It looked fine when I took it. I missed the focus, but you can see the smaller bit at sicking out.
 
 ![Zoomed in picture of me holding a Slaves to Darkness Chaos Knight. The picture is focused on the handle where the lance should be. In its place is a long brass rod with another brass rod in the same hole to provide support.](/assets/img/saving-my-chaos-knight/Screenshot-2023-01-29.png)
 
