@@ -1,3 +1,4 @@
+const utils = require('./utils')
 const fs = require('fs')
 const yaml = require('js-yaml')
 const Image = require('@11ty/eleventy-img')
@@ -47,23 +48,8 @@ function photoPermalink(albumPermalink, photo) {
     return `${albumPermalink.replace('/index.html', '')}/${fileName}/index.html`
 }
 
-async function getFilesRecursive(path, ext) {
-    const files = await fs.promises.readdir(path)
-    const result = []
-    for (const file of files) {
-        const filePath = `${path}/${file}`
-        const stats = await fs.promises.stat(filePath)
-        if (stats.isDirectory()) {
-            result.push(...(await getFilesRecursive(filePath, ext)))
-        } else if (stats.isFile() && filePath.endsWith(ext)) {
-            result.push(filePath)
-        }
-    }
-    return result
-}
-
 async function loadYamlFile() {
-    const files = await getFilesRecursive(ALBUMS_DATA_PATH, 'yml')
+    const files = await utils.getFilesRecursive(ALBUMS_DATA_PATH, 'yml')
 
     return Promise.all(
         files.map(async (path) => {
@@ -187,6 +173,15 @@ async function buildAlbum(album) {
         date: date,
     }))
 
+    const albumTags = photos.reduce((acc, photo) => {
+        photo.tags.forEach((tag) => {
+            if (!acc.includes(tag)) {
+                acc.push(tag)
+            }
+        })
+        return acc
+    }, [])
+
     return {
         title,
         description,
@@ -194,6 +189,7 @@ async function buildAlbum(album) {
         permalink: albumPermalink,
         photos,
         cover: calculateAlbumCover(photos),
+        tags: albumTags,
     }
 }
 

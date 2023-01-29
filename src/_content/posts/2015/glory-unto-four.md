@@ -1,5 +1,5 @@
 ---
-layout: post
+
 permalink: /blog/glory-unto-four/index.html
 title: Glory Unto Four
 date: 2015-01-25

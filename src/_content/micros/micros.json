@@ -1,0 +1,4 @@
+{
+    "layout": "microPost",
+    "permalink": "/micros/{{ page.filePathStem | mbFilePathToPermalink }}/index.html"
+}

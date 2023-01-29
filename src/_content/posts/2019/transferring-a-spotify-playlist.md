@@ -1,5 +1,5 @@
 ---
-layout: post
+
 permalink: /blog/transferring-a-spotify-playlist/index.html
 title: Transferring a Spotify Playlist
 date: 2019-11-02

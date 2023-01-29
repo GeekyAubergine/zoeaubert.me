@@ -1,5 +1,5 @@
 ---
-layout: post
+
 permalink: /blog/optimising-nested-database-operations/index.html
 title: Optimising Nested Database Operations
 date: 2019-02-23

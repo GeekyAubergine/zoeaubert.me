@@ -1,3 +1,5 @@
+const EleventyFetch = require('@11ty/eleventy-fetch')
+
 async function getLatestStatus() {
     const response = await fetch(
         'https://api.omg.lol/address/geekyaubergine/statuses/',
@@ -39,14 +41,38 @@ async function getFluentEmoji() {
     }
 }
 
-module.exports = async function () {
-    const out = await getLatestStatus()
+async function getStatuses() {
+    const response = await EleventyFetch(
+        'https://api.omg.lol/address/geekyaubergine/statuses/',
+        {
+            duration: '1h',
+            type: 'json',
+        },
+    )
 
-    try {
-        out.fluentEmoji = await getFluentEmoji()
-    } catch (_e) {
-        // No fluent emoji, so just ignore
-    }
+    const {
+        response: { statuses },
+    } = response
+
+    return statuses.map((status) => ({
+        id: status.id,
+        url: `https://geekyaubergine.status.lol/${status.id}`,
+        date: new Date(status.created * 1000),
+        content: status.content,
+        emoji: status.emoji,
+    }))
+}
+
+module.exports = async function () {
+    const out = await getStatuses()
+
+    // try {
+    //     out.fluentEmoji = await getFluentEmoji()
+    // } catch (_e) {
+    //     // No fluent emoji, so just ignore
+    // }
+
+    // console.log({ out })
 
     return out
 }

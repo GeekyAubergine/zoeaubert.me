@@ -4,7 +4,7 @@ title: Photos
 ---
 <div class="width-control mx-auto flex justify-between items-baseline">
     {% if title %}
-        <h2 class="pageTitle mb-8 text-red-500">{{ title }}</h2>
+        <h1 class="pageTitle mb-8 text-red-500">{{ title }}</h1>
     {% endif %}
     <div>
         <a href="tags" class="link mr-4">Tags</a>
@@ -14,7 +14,7 @@ title: Photos
 <div class="width-control mx-auto">
     {% for year in albums.albumsByYear %}
         <div class="my-2">
-            <h3>{{ year.year }}</h3>
+            <h2 class="mt-0">{{ year.year }}</h2>
             <div class="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8">
                 {% for album in year.albums %}
                     <a href="{{ album.permalink | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2">
@@ -33,8 +33,8 @@ title: Photos
                                 </div>
                             {% endif %}
                         </div>
-                        <div class="flex flex-col justify-center items-center mt-2">
-                            <h4 class="link text-sm text-center mt-1">{{ album.title }}</h4>
+                        <div class="flex flex-col justify-center items-center">
+                            <h3 class="link text-lg text-center mt-0">{{ album.title }}</h3>
                             <date datetime="{{ album.date }}" class="secondary no-underline text-sm">
                                 {{ album.date }}
                             </date>

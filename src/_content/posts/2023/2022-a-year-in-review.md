@@ -1,14 +1,12 @@
 ---
-layout: post
 permalink: /blog/2022-a-year-in-review/index.html
 date: 2023-01-08
 title: 2022 A Year In Review
 description: A look back over my 2022
-tags: ["Life"]
+tags: ['life']
 ---
 
-
-2022 has been a year of significant change for me. I've wanted to write this since the summer when I thought of this title. I was considering borrowing the style from [Robb Knight](https://rknight.me/just-2022-things/)'s and [Sophie](https://localghost.dev/blog/2022-the-year-in-lists/)'s posts, but much like my journalling, I find lists restrictive (more on this later in the journaling section), so I chose to do it this way instead. 
+2022 has been a year of significant change for me. I've wanted to write this since the summer when I thought of this title. I was considering borrowing the style from [Robb Knight](https://rknight.me/just-2022-things/)'s and [Sophie](https://localghost.dev/blog/2022-the-year-in-lists/)'s posts, but much like my journalling, I find lists restrictive (more on this later in the journaling section), so I chose to do it this way instead.
 
 ## Buying my house
 
@@ -28,7 +26,7 @@ To learn more about 40k, I started reading (listening) to some [books](https://g
 
 On top of all this, I also decided to participate in a [Painting Competition](https://geekyaubergine.com/categories/painting-competition-2022/). So far hasn't gone very well, but as it's for a friend, I intend to finish this project before starting any new ones (we'll see how long that lasts).
 
-## Obsidian and Journaling 
+## Obsidian and Journaling
 
 This year I stumbled upon [Obsidian](https://obsidian.md/), and I cannot stress how useful this tool has been. The ability to write something down and file it away and not have to keep all the details in my working memory has been a vast improvement.
 
@@ -36,29 +34,30 @@ Now, whenever I'm researching/learning something, I will open a note about it, j
 
 I've not followed this religiously, and there are many things I should've taken notes on, so my graph could be more impressive, but what I have so far makes me happy. I am aware this might fall into the "feeling productive without really being productive" category.
 
-![Screenshot of obsidan graph](/assets/img/2022_year_in_review/2022-obsidian-graph.png)
+![Screenshot of obsidan graph](/assets/2023/2022_year_in_review/2022-obsidian-graph.png)
 
 I also have a note called "inbox". This is where I stick _any and all_ links to anything I find interesting for me to review later. I used to try and remember things, and writing them down and not worrying about forgetting them is easily the biggest win for me so far.
 
 ### Journaling
 
 Something else that Obsidian has given me is a journaling solution that works for me. I've tried it numerous times but never stuck with it for more than a short period. I think what clicked for me was:
+
 1. It's digital and private (no questionable cloud storage)
 2. I can link to notes
 3. I can link to people
 
-Once I realised I could have notes for people and link to them in my daily notes, I was hooked. This was further enhanced when I started linking them to each other, interests, places of work, and social groups. 
+Once I realised I could have notes for people and link to them in my daily notes, I was hooked. This was further enhanced when I started linking them to each other, interests, places of work, and social groups.
 
 I often struggle to remember people and things about them. Now, if I know I'm going to a social event, I can find the note for that social event and quickly review people's interests. It's prevented a few "oh, I'd forgotten that" moments and allowed for more flowing conversation.
 
 For an example of why I think this is powerful, see this graph where I've unhidden the "people" (pink) and "journal" (yellow) notes. The purple ones are social events/groups. It shows how deeply connected both my journal, and people's notes are to everything I do.
 
-![Screenshot of obsidan graph](/assets/img/2022_year_in_review/2022-obsidian-graph-full.png)
+![Screenshot of obsidan graph](/assets/2023/2022_year_in_review/2022-obsidian-graph-full.png)
 
 Later in the year, I noticed I was journaling less and less again and wasn't sure why. I have a template I use for my notes, and the way I'd designed it was groups of lists such as "what went well", "what was bad", and "reflections". This led to very restricted and "stiff" journaling where I'd just list things and not actually talk about them. As a result, I never really got my thoughts or emotions down on paper and removing them from my mind. Once I realised this, I completely redesigned my template to be much less restrictive.
 
-```
-# {{title}}
+```md
+# {% raw %}{{title}}{% endraw %}
 
 ## Season Theme:
 
@@ -73,9 +72,9 @@ I also stumbled across [CGP Grey's Theme Video](https://www.youtube.com/watch?v=
 
 ## Health
 
-This has been an unpredictable year for my health. At the start of the year, I made some rules for myself, which could be grouped into a broader category of "not consuming so much crap". 
+This has been an unpredictable year for my health. At the start of the year, I made some rules for myself, which could be grouped into a broader category of "not consuming so much crap".
 
-This was a good start, and to keep me on track, I downloaded an app to monitor the number of days since I last broke a rule. I do well when I gamify aspects of my life, and losing the big streaks helped a lot. 
+This was a good start, and to keep me on track, I downloaded an app to monitor the number of days since I last broke a rule. I do well when I gamify aspects of my life, and losing the big streaks helped a lot.
 
 I followed my rules for a while until the house purchase stress caused me to fall off the rails a bit. An added benefit I didn't expect was the money I would save, despite the ridiculously high cost of soft drinks at bars.
 
@@ -104,6 +103,7 @@ Rust promised something I strive for, fewer bugs and more safety. This might be 
 After messing around with it and getting bullied by the borrow checker, I started working on some more "serious" and larger projects. It was also around this time that I stumbled across [NoBoilerplate](https://www.youtube.com/@NoBoilerplate)'s fantastic Rust videos that introduced me to the power of Rust's type system and "correctness". This, combined with [Result](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html) and [Option](https://doc.rust-lang.org/rust-by-example/std/option.html) types demonstrated how a compiler can do a lot of the work for you if you give it a lot of information.
 
 As you might've guessed, I fell in love with this and talked about it a lot, much to my friends and colleagues' annoyance. Unfortunately, I can't move all my projects to Rust, so I had to make do. We have moved a few of them that I work on to Typescript, which has allowed me to implement both `Result` with a custom error definition and [Typestate](https://en.wikipedia.org/wiki/Typestate_analysis) for internal APIs. Unfortunately, we can't use Option as you'd have to do something special with `JSON.seralize` to make it work. Applying these techniques has:
+
 1. Improved my confidence in the projects
 2. Highlighted a significant number of bugs
 3. Allowed us to focus on correctness vs bug fixing
@@ -117,13 +117,14 @@ During this year, I also became much more privacy-conscious. I made efforts on a
 
 ## Social Media
 
-As outlined in my [leaving Twitter](https://zoeaubert.me/blog/leaving-the-twitter-nest) post I'm not, or at least wasn't, one for social media or posting in general. I rarely posted more than a few times a year and often less. More often than not, I was retweeting funny things or getting angry with the state of the world. 
+As outlined in my [leaving Twitter](https://zoeaubert.me/blog/leaving-the-twitter-nest) post I'm not, or at least wasn't, one for social media or posting in general. I rarely posted more than a few times a year and often less. More often than not, I was retweeting funny things or getting angry with the state of the world.
 
 ### Micro.blog
 
-With people leaving for greener pastures, I took it as an opportunity to re-evaluate my position within the social media world. I was first told about [Micro.blog](https://micro.blog) by [Robb Knight](https://rknight.me/), we discussed it a few times before I gave it a go, and I'm glad I did. The community is friendlier, and the lack of likes and a retweeting equivalent lends itself to much more "intentionality" rather than chasing interaction. 
+With people leaving for greener pastures, I took it as an opportunity to re-evaluate my position within the social media world. I was first told about [Micro.blog](https://micro.blog) by [Robb Knight](https://rknight.me/), we discussed it a few times before I gave it a go, and I'm glad I did. The community is friendlier, and the lack of likes and a retweeting equivalent lends itself to much more "intentionality" rather than chasing interaction.
 
 As [Robb](https://rknight.me/thoughts-on-micro-blog/) put it:
+
 > Micro.blog ... has no likes, no follower counts, no retweets, and no ~~post dunking~~ quote tweets. If I post something, I don't know who saw it or who enjoyed it but it doesn't matter; I'm posting it because I want to ... but none of it is being posted to try and "go viral" or get likes.
 
 It was weird at first, posting and not getting instant likes, but posting just for yourself is fun. One of the many things that put me off posting on other platforms was it'd be shoved in people's faces, so I felt the need to perform. Here, I post what I like and only know if someone enjoyed or even saw it if they take the time to reply.
@@ -141,9 +142,10 @@ At first, I was trying to figure out what to do with it. I'd got my replacements
 ### So what now?
 
 This is what I found myself asking towards the end of the year. What I settled on was:
-- [zoeaubert.me](https://zoeaubert,me) for long posts
-- [geekyaubergine.com](https://geekyaubergine.com) for almost a ledger of my life
-- [Mastodon](https://social.lol/@geekyaubergine) for "shorts"
+
+-   [zoeaubert.me](https://zoeaubert,me) for long posts
+-   [geekyaubergine.com](https://geekyaubergine.com) for almost a ledger of my life
+-   [Mastodon](https://social.lol/@geekyaubergine) for "shorts"
 
 I like this system for now, but I still have some concerns about Mastodon, but I'll try it for now.
 

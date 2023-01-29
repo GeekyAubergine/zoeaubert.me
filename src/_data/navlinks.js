@@ -1,9 +1,9 @@
 module.exports = [
     {
-        name: 'MicroBlog',
-        target: '_blank',
-        rel: 'noopener',
-        url: 'https://geekyaubergine.com',
+        name: 'Timeline',
+        target: '',
+        rel: '',
+        url: '/timeline',
     },
     {
         name: 'Blog',

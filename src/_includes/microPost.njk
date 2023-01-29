@@ -1,0 +1,12 @@
+---
+layout: base
+---
+<div class="width-control mx-auto">
+    <h2 class="pageTitle mb-1">{{title}}</h2>
+    <div class="flex flex-row mb-4">
+        <time class="text secondary" datetime="{{date}}">{{ date | formatDate }}</time>
+    </div>
+    <div class="w-full content">
+        {{ content | safe }}
+    </div>
+</div>

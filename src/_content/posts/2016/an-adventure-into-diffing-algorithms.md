@@ -1,5 +1,5 @@
 ---
-layout: post
+
 permalink: /blog/an-adventure-into-diffing-algorithms/index.html
 title: An Adventure Into Diffing Algorithms
 date: 2016-11-01

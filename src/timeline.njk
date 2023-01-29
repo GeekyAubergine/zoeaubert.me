@@ -1,0 +1,12 @@
+---
+layout: page
+title: Timeline
+description: My timeline
+---
+{%- for post in collections.timelinePosts %}
+    {% include "timelinePost.njk" %}
+{% endfor %}
+
+{# {%- for post in microblog %}
+    {% include 'microblogPost.njk' %}
+{% endfor %} #}
