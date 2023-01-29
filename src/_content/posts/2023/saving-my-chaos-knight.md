@@ -5,6 +5,7 @@ date: 2023-01-29
 title: Saving my Chaos Knight
 description: How I saved my broken Chaos Knight model with some stressful drilling
 tags: ['warhammer']
+image: "/assets/img/saving-my-chaos-knight/IMG_2656.JPG"
 ---
 
 Packing for my recent house move was a stressful process. Not only was it time-consuming, but some models required extra attention. I've always been worried about the structural integrity of the lances on the [Chaos Knights](https://www.games-workshop.com/en-GB/slaves-to-darkness-chaos-knights-2023) (slightly different set to mine, but you'll hopefully get my points). This concern was justified.
