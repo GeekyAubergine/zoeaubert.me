@@ -6,7 +6,7 @@ const marked = require('marked')
 
 const POSTS_GLOB = './src/_content/posts/**/*.md'
 const MICROS_GLOB = './src/_content/micros/**/**/**/*.md'
-const MB_TAGS_TO_IGNORE = ['selfLink']
+const MB_TAGS_TO_IGNORE = ['selfLink', 'status']
 
 // https://www.11ty.dev/docs/plugins/image/
 function renderPhotoShortcut(photo, alt, classes = '') {
@@ -27,7 +27,7 @@ function renderPhotoShortcut(photo, alt, classes = '') {
         `
 }
 
-const transformBlogPostToStandardFormat = (post) => {
+function transformBlogPostToStandardFormat(post) {
     // console.log('d': post.data)
 
     return {
@@ -42,20 +42,43 @@ const transformBlogPostToStandardFormat = (post) => {
     }
 }
 
-const transformMicroBlogPostToStandardFormat = (post, stripTags = false) => ({
-    type: 'microBlog',
-    url: post.url,
-    title: post.title,
-    date: new Date(post.date),
-    tags: post.tags,
-    description: post.description,
-    content:
-        stripTags === true
-            ? () =>
-                  post.content.replace(/<img.*>/g, '').replace(/<\/?a.*?>/g, '')
-            : () => post.content,
-    headerImage: null,
-})
+function transformMicroPostToStandardFormat(post) {
+    // console.log('d': post.data)
+
+    return {
+        type: 'micro',
+        url: post.data.permalink,
+        title: post.data.title,
+        date: new Date(post.data.date),
+        tags: (post.data.tags ?? []).concat(post.data.categories ?? []),
+        description: post.data.description,
+        content: () => post.content,
+        headerImage: null,
+    }
+}
+
+function shouldKeepMicro(micro) {
+    return MB_TAGS_TO_IGNORE.every((tag) => !micro.tags.includes(tag))
+}
+
+function transformMicroBlogPostToStandardFormat(post, stripTags = false) {
+    return {
+        type: 'microBlog',
+        url: post.url,
+        title: post.title,
+        date: new Date(post.date),
+        tags: post.tags,
+        description: post.description,
+        content:
+            stripTags === true
+                ? () =>
+                      post.content
+                          .replace(/<img.*>/g, '')
+                          .replace(/<\/?a.*?>/g, '')
+                : () => post.content,
+        headerImage: null,
+    }
+}
 
 const transformAlbumToStandardFormat = (album) => ({
     type: 'album',
@@ -112,7 +135,9 @@ module.exports = function (eleventyConfig) {
         // console.log({ rawMicros })
 
         const posts = rawPosts.map(transformBlogPostToStandardFormat)
-        const micros = rawMicros.map(transformMicroBlogPostToStandardFormat)
+        const micros = rawMicros
+            .map(transformMicroPostToStandardFormat)
+            .filter(shouldKeepMicro)
 
         // const microblogPosts = data.microblog
         //     .filter((post) => post)
@@ -128,7 +153,8 @@ module.exports = function (eleventyConfig) {
         // const timeline = [...microblogPosts]
         // const timeline = [...micros]
         // const timeline = [...posts, ...albums]
-        const timeline = [...posts, ...albums, ...statuses]
+        // const timeline = [...posts, ...albums, ...statuses]
+        const timeline = [...posts, ...albums, ...statuses, ...micros]
         // const timeline = [...posts, ...micros, ...albums]
 
         // console.log({ x })

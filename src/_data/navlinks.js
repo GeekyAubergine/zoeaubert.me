@@ -1,9 +1,15 @@
 module.exports = [
     {
-        name: 'Timeline',
+        name: '/Timeline',
         target: '',
         rel: '',
         url: '/timeline',
+    },
+    {
+        name: 'MicroBlog',
+        target: '_blank',
+        rel: '',
+        url: 'https://geekyaubergine.com',
     },
     {
         name: 'Blog',
@@ -18,7 +24,7 @@ module.exports = [
         url: '/photos',
     },
     {
-        name: '/now',
+        name: '/Now',
         target: '',
         rel: '',
         url: '/now',
