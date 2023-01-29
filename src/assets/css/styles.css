@@ -116,7 +116,7 @@
         @apply link;
     }
 
-    .content img:last-of-type {
+    .content img:last-child {
         @apply mb-4;
     }
 

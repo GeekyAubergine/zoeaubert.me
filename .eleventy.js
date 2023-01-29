@@ -41,11 +41,12 @@ function transformBlogPostToStandardFormat(post) {
         type: 'blogPost',
         url: post.data.permalink,
         title: post.data.title,
-        date: post.data.date,
+        date: new Date(post.data.date),
         tags: post.data.tags,
         description: post.data.description,
         content: () => post.content,
-        headerImage: null,
+        image: post.data.image,
+        imageAlt: post.data.imageAlt,
     }
 }
 
