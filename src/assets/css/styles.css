@@ -116,7 +116,7 @@
         @apply link;
     }
 
-    .content > h2:first-of-type {
+    .content > *:first-child {
         @apply mt-0;
     }
 
