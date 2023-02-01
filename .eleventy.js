@@ -28,85 +28,12 @@ function renderPhotoShortcut(photo, alt, classes = '') {
 }
 
 function arrayIncludesShortcode(array, item) {
-    console.log({ array, item })
+    // console.log({ array, item })
     return array.includes(item)
 }
 
 function cleanTag(tag) {
     return tag.replace(/ /g, '-').toLowerCase()
-}
-
-function transformBlogPostToStandardFormat(post) {
-    return {
-        type: 'blogPost',
-        url: post.data.permalink,
-        title: post.data.title,
-        date: new Date(post.data.date),
-        tags: post.data.tags,
-        description: post.data.description,
-        content: () => post.content,
-        image: post.data.image,
-        imageAlt: post.data.imageAlt,
-    }
-}
-
-function transformMicroBlogPostToStandardFormat(post, stripTags = false) {
-    return {
-        type: 'microBlog',
-        url: post.url,
-        title: post.title,
-        date: new Date(post.date),
-        tags: post.tags ?? [],
-        content:
-            stripTags === true
-                ? post.content.replace(/<img.*>/g, '').replace(/<\/?a.*?>/g, '')
-                : post.content,
-    }
-}
-
-function shouldKeepMicroBlogPost(microBlogPost) {
-    if (MB_CONTENT_TO_IGNORE.test(microBlogPost.content)) {
-        return false
-    }
-
-    return MB_TAGS_TO_IGNORE.every((tag) => !microBlogPost.tags.includes(tag))
-}
-
-const transformAlbumToStandardFormat = (album) => ({
-    type: 'album',
-    url: album.permalink,
-    title: album.title,
-    date: new Date(album.date),
-    tags: album.tags,
-    headerImage: album.cover,
-    description: album.description,
-    content: () => null,
-})
-
-const transformStatusToStandardFormat = (status) => ({
-    type: 'status',
-    ...status,
-})
-
-function timelineFromCollectionApi(collectionApi) {
-    const rawPosts = collectionApi.getFilteredByGlob(POSTS_GLOB)
-
-    const { data } = collectionApi.items[0]
-
-    const posts = rawPosts.map(transformBlogPostToStandardFormat)
-
-    const microblogPosts = data.microblog
-        .map(transformMicroBlogPostToStandardFormat)
-        .filter(shouldKeepMicroBlogPost)
-
-    const albums = data.albums.albums.map(transformAlbumToStandardFormat)
-    const statuses = data.statuslol.map(transformStatusToStandardFormat)
-
-    const firstPost = rawPosts[0]
-
-    const timeline = [...posts, ...albums, ...statuses, ...microblogPosts]
-
-    return timeline.sort((a, b) => new Date(b.date) - new Date(a.date))
 }
 
 module.exports = function (eleventyConfig) {
@@ -124,55 +51,6 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({
         './src/_content/assets': 'assets',
     })
-
-    eleventyConfig.addCollection('timelinePosts', timelineFromCollectionApi)
-
-    eleventyConfig.addCollection('tagList', (collectionApi) => {
-        const timeline = timelineFromCollectionApi(collectionApi)
-
-        const tags = timeline.reduce((acc, post) => {
-            if (post.type !== 'blogPost' && post.type !== 'microBlog') {
-                return acc
-            }
-
-            if (!post.tags) {
-                return acc
-            }
-
-            post.tags.forEach((tag) => {
-                const cleaned = cleanTag(tag)
-                if (!acc.includes(cleaned)) {
-                    acc.push(cleaned)
-                }
-            })
-
-            return acc
-        }, [])
-
-        return tags
-    })
-
-    eleventyConfig.addCollection('posts', (collection) =>
-        collection
-            .getFilteredByGlob(POSTS_GLOB)
-            .reverse()
-            .map(transformBlogPostToStandardFormat),
-    )
-
-    eleventyConfig.addCollection('recentPosts', (collection) =>
-        collection
-            .getFilteredByGlob(POSTS_GLOB)
-            .reverse()
-            .slice(0, 5)
-            .map(transformBlogPostToStandardFormat),
-    )
-
-    eleventyConfig.addCollection('recentMicroblogPosts', (collection) =>
-        collection.items[0].data.microblog
-            .map(transformMicroBlogPostToStandardFormat)
-            .filter(shouldKeepMicroBlogPost)
-            .slice(0, 5),
-    )
 
     eleventyConfig.addFilter('linkifyMarkdown', (text) => {
         return text.replace(
@@ -239,6 +117,10 @@ module.exports = function (eleventyConfig) {
     })
 
     eleventyConfig.setWatchThrottleWaitTime(100)
+
+    eleventyConfig.setServerOptions({
+        showAllHosts: true,
+    })
 
     return {
         dir: {

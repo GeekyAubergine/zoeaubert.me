@@ -1,6 +1,7 @@
 ---
 layout: page
 ---
+{# {{ collections | log }} #}
 <div class="content mt-4">
     {{ about | mdToHtml | safe}}
 </div>
@@ -21,9 +22,10 @@ layout: page
 {# <p class="secondary">See previous status' at <a href="https://geekyaubergine.status.lol" target="_blank" rel="noopener" class="secondary">status.lol</a> #}
 </p>
 <a href="/blog" class="link">
-    <h2 class="mainPageHeading">Blog Posts</h2>
+<h2 class="mainPageHeading">Blog Posts</h2>
 </a>
-{%- for post in collections.recentPosts %}
+{%- for postId in blogposts.recentPostsOrder %}
+{% set post = blogposts.posts[postId] %}
 {% include "blogpost.njk" %}
 {% endfor %}
 <a href="https://geekyaubergine.com" target="_blank" rel="noopener" class="link">
@@ -34,11 +36,11 @@ layout: page
 {% endfor %} #}
 <h2 class="mainPageHeading">Socials</h2>
 <div class="mt-4">
-{% for social in socials %}
-    <div class="flex mb-3 last-of-type:mb-0">
-        <a class="link text-x" href="{{ social.link }}" target="_blank" rel="me">{{ social.name }}</a>
-        <span class="text ml-1 sm:ml-2">-</span>
-        <span class="text ml-1 sm:ml-2">{{ social.description }}</span>
-    </div>
-{% endfor %}
+    {% for social in socials %}
+        <div class="flex mb-1 last-of-type:mb-0">
+            <a class="link text-x" href="{{ social.link }}" target="_blank" rel="me">{{ social.name }}</a>
+            <span class="text mb-0 ml-1 sm:ml-2">-</span>
+            <span class="text mb-0 ml-1 sm:ml-2">{{ social.description }}</span>
+        </div>
+    {% endfor %}
 </div>

@@ -76,4 +76,5 @@ res/photos/cache/
 _site
 _cache
 .cache
-.config.json
+
+config.js

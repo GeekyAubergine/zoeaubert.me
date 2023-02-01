@@ -23,7 +23,7 @@ async function fetchFromMicroBlog() {
     const response = await EleventyFetch(
         'https://geekyaubergine.com/feed.json',
         {
-            duration: '1m',
+            duration: '6h',
             type: 'json',
         },
     )

@@ -4,8 +4,8 @@ title: Timeline
 description: My timeline
 ---
 
-{% set filter = "lego" %}
-{%- for post in collections.timelinePosts %}
+{%- for entityId in timeline.entityOrder %}
+    {% set post = timeline.entities[entityId] %}
     {% include "timelinepost.njk" %}
 {% endfor %}
 

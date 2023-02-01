@@ -2,6 +2,7 @@
 layout: page
 title: Blog Posts
 ---
-{%- for post in collections.posts %}
+{%- for postId in blogposts.postOrder %}
+{% set post = blogposts.posts[postId] %}
     {% include "blogPost.njk" %}
 {% endfor %}

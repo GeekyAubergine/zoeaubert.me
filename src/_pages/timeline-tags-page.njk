@@ -1,8 +1,14 @@
 ---
+layout: page
 pagination:
-  data: collections.tagList
+  data: timeline.allTags
   size: 1
   alias: tag
-permalink: /tags/{{ tag }}/
+permalink: "/tags/{{ tag }}/index.html"
 ---
-<h1>Tagged “{{ tag }}”</h1>
+<h1>#{{tag | cleanTag}}</h1>
+
+{%- for entityId in timeline.entitiesByTag[tag] %}
+  {%- set post = timeline.entities[entityId] %}
+  {% include "timelinepost.njk" %}
+{% endfor %}

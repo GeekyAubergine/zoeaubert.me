@@ -1,0 +1,23 @@
+---
+layout: base
+pagination:
+  data: blogposts.postOrder
+  size: 1
+  alias: postId
+permalink: "{{ blogposts.posts[postId].url }}"
+eleventyComputed: 
+  title: "{{ blogposts.posts[postId].title }}"
+  description: "{{ blogposts.posts[postId].description }}"
+---
+{% set post = blogposts.posts[postId] %}
+<div class="width-control mx-auto">
+  <h1 class="pageTitle mb-1">{{post.title}}</h1>
+  <div class="flex flex-row">
+    <time class="secondary" datetime="{{date}}">{{ post.date | formatDate }}</time>
+    <p class="secondary mx-1">-</p>
+    <p class="secondary">{{post.content | timeToRead}}</p>
+  </div>
+  <div class="w-full content">
+    {{ post.content | mdToHtml | safe }}
+  </div>
+</div>
