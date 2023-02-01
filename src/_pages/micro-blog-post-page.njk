@@ -1,0 +1,23 @@
+---
+layout: base
+pagination:
+  data: blogposts.postOrder
+  size: 1
+  alias: postId
+permalink: "{{ microblogs.posts[postId].url }}"
+eleventyComputed: 
+  title: "{{ microblogs.posts[postId].date }}"
+  description: "{{ microblogs.posts[postId].title }}"
+---
+{% set post = microblogs.posts[postId] %}
+<div class="width-control mx-auto">
+  <h1 class="pageTitle mb-1">{{post.title}}</h1>
+  <div class="flex flex-row">
+    <time class="secondary" datetime="{{date}}">{{ post.date | formatDate }}</time>
+    <p class="secondary mx-1">-</p>
+    <p class="secondary">{{post.content | timeToRead}}</p>
+  </div>
+  <div class="w-full content">
+    {{ post.content | mdToHtml | safe }}
+  </div>
+</div>

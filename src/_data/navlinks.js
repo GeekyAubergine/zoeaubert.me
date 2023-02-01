@@ -5,12 +5,12 @@ module.exports = [
         rel: '',
         url: '/timeline',
     },
-    {
-        name: 'MicroBlog',
-        target: '_blank',
-        rel: '',
-        url: 'https://geekyaubergine.com',
-    },
+    // {
+    //     name: 'MicroBlog',
+    //     target: '_blank',
+    //     rel: '',
+    //     url: 'https://geekyaubergine.com',
+    // },
     {
         name: 'Blog',
         target: '',
