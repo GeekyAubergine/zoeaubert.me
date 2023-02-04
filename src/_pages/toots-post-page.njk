@@ -1,15 +1,15 @@
 ---
 layout: base
 pagination:
-  data: microblogs.postOrder
+  data: toots.postOrder
   size: 1
   alias: postId
-permalink: "/micros/{{ microblogs.posts[postId].slug }}/index.html"
+permalink: "/micros/{{ toots.posts[postId].slug }}/index.html"
 eleventyComputed: 
-  title: "{{ microblogs.posts[postId].date }}"
-  description: "{{ microblogs.posts[postId].title }}"
+  title: "{{ toots.posts[postId].date }}"
+  description: "{{ toots.posts[postId].title }}"
 ---
-{% set post = microblogs.posts[postId] %}
+{% set post = toots.posts[postId] %}
 <div class="width-control mx-auto">
   <h1 class="flex flex-row">
     <time class="secondary pageTitle" datetime="{{date}}">{{ post.date | formatDateTime }}</time>

@@ -1,5 +1,10 @@
 module.exports = [
     {
+        name: "omg.lol",
+        description: "Fun collection of web tools + Mastodon instance",
+        url: "https://home.omg.lol/referred-by/geekyaubergine",
+    },
+    {
         name: 'DigitalOcean',
         description: 'Cloud hosting',
         url: 'https://m.do.co/c/3348c10a29d3',

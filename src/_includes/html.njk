@@ -29,7 +29,10 @@
         <meta property="og:url" content="{{ site.url }}{{ page.url }}"/>
         <meta property="twitter:url" content="{{ site.url }}{{ page.url }}"/>
 
-        {% if image %}
+        {% if image and "http" in image %}
+            <meta property="twitter:image" content="{{ image }}"/>
+            <meta property="og:image" content="{{ image  }}"/>
+        {% elif image %}
             <meta property="twitter:image" content="{{ site.url }}{{ image }}"/>
             <meta property="og:image" content="{{ site.url }}{{ image  }}"/>
         {% else %}

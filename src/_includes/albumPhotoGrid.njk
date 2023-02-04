@@ -1,16 +1,22 @@
 <div class="wide mx-auto">
     <div class="photo-grid grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-48 sm:px-2">
-        {% for photo in photos %}
+        {% for photoId in photoIds %}
+            {% set photo = albums.photos[photoId] %}
+            {# {{ photoId | dump }} #}
+            {# {{ photo | dump }} #}
             {% if photo.orientation == "landscape" %}
                 {% set span = "col-span-2" %}
             {% else %}
                 {% set span = "col-span-1" %}
             {% endif %}
-            <a href="{{ photo.permalink | stripIndex }}" class="flex justify-center items-center {{ span }}">
+            {# {{ photo.thumbnailSmall | dump }} #}
+            <a href="{{ photo.slug }}" class="flex justify-center items-center {{ span }}">
                 {% renderPhoto photo.thumbnailSmall,
                 photo.alt,
                 "" %}
+                {# {% renderPhoto photo.thumbnailSmall, photo.alt, "max-h-[16rem]" %} #}
             </a>
+            {# <p>{{ photo.slug }}</p> #}
         {% endfor %}
     </div>
 </div>

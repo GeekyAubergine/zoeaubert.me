@@ -3,6 +3,7 @@ const Image = require('@11ty/eleventy-img')
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const pluginRss = require('@11ty/eleventy-plugin-rss')
 const marked = require('marked')
+const config = require('./config')
 
 const POSTS_GLOB = './src/_content/posts/**/*.md'
 const MB_TAGS_TO_IGNORE = ['selfLink', 'status']
@@ -10,6 +11,10 @@ const MB_CONTENT_TO_IGNORE = /https?:\/\/zoeaubert\.me/
 
 // https://www.11ty.dev/docs/plugins/image/
 function renderPhotoShortcut(photo, alt, classes = '') {
+    if (!photo) {
+        throw new Error('Missing photo')
+    }
+
     const { url, width, height } = photo
 
     if (alt === undefined) {
@@ -20,8 +25,10 @@ function renderPhotoShortcut(photo, alt, classes = '') {
     return `
           <img
             class="${classes}"
-            src="${url}"
+            src="https://cdn.geekyaubergine.com${url}"
             alt="${alt}"
+            width="${width}"
+            height="${height}"
             loading="lazy"
             decoding="async" />
         `
@@ -43,7 +50,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(syntaxHighlight)
     eleventyConfig.addPlugin(pluginRss)
 
-    eleventyConfig.setQuietMode(true)
+    // eleventyConfig.setQuietMode(true)
 
     eleventyConfig.addWatchTarget('./albums')
 
@@ -105,6 +112,10 @@ module.exports = function (eleventyConfig) {
 
     eleventyConfig.addFilter('mdToHtml', function (content = '') {
         return marked.parse(content)
+    })
+
+    eleventyConfig.addFilter('prefixCDN', function (slug) {
+        return `${config.cdnUrl}${slug}`
     })
 
     eleventyConfig.addFilter('cleanTag', cleanTag)

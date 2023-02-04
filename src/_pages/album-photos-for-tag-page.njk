@@ -4,22 +4,23 @@ pagination:
     data: albums.tags
     size: 1
     alias: tag
-permalink: "/photos/tags/{{ tag.tag }}/index.html"
+permalink: "/albums/tags/{{ tag.tag }}/index.html"
 eleventyComputed:
     title: "#{{ tag.tag }} Photos"
     description: "Photos tagged with #{{ tag.tag }}"
-    image: "{{ tag.albums[0].photos[0].thumbnailSmall.url }}"
+    image: "{{ albums.photos[tag.albums[0].photoOrder[0]].thumbnailSmall.url | prefixCDN }}"
 ---
 <div class="width-control mx-auto pb-4">
     <h1 class="pageTitle text-red-500">#{{tag.tag}} Photos</h1>
 </div>
-{%- for album in tag.albums %}
+{%- for albumData in tag.albums %}
+    {% set album = albums.albums[albumData.albumId] %}
     <div class="mb-4 mx-auto mt-2 sm:mt-4">
         <h2 class="text-lg my-0 pb-2 sm:ml-2">
-            <a href="{{ album.permalink | stripIndex }}" class="link">{{ album.date }} - {{ album.title }}
+            <a href="{{ album.slug | stripIndex }}" class="link">{{ album.date }} - {{ album.title }}
             </a>
         </h2>
-        {% set photos = album.photos %}
-        {% include 'photoGrid.njk' %}
+        {% set photoIds = albumData.photoOrder %}
+        {% include 'albumPhotoGrid.njk' %}
     </div>
 {% endfor %}

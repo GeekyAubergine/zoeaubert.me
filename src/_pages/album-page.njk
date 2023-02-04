@@ -1,18 +1,19 @@
 ---
 layout: base
 pagination:
-    data: albums.albums
+    data: albums.albumOrder
     size: 1
-    alias: album
-permalink: "{{ album.permalink }}"
+    alias: albumId
+permalink: "/{{ albums.albums[albumId].slug }}/index.html"
 eleventyComputed:
-    title: "{{ album.title }}"
-    description: "{{ album.date }}"
-    image: "{{ album.cover[0].thumbnailSmall.url }}"
+    title: "{{ albums.albums[albumId].title }}"
+    description: "{{ albums.albums[albumId].date }}"
+    image: "{{ albums.photos[albums.albums[albumId].coverPhotos[0]].thumbnailSmall.url | prefixCDN }}"
 ---
+{% set album = albums.albums[albumId] %}
 <div class="width-control mx-auto pb-4">
     {% if title %}
-        <h1 class="pageTitle text-red-500">{{ title }}</h1>
+        <h1 class="pageTitle text-red-500">{{ title | safe }}</h1>
         <time class="text secondary" datetime={{album.date}}>
             {{album.date}}
         </time>
@@ -23,5 +24,5 @@ eleventyComputed:
         <p class="text-secondary">{{ album.description }}</p>
     </div>
 {% endif %}
-{% set photos = album.photos %}
-{% include 'photoGrid.njk' %}
+{% set photoIds = album.photoOrder %}
+{% include 'albumPhotoGrid.njk' %}

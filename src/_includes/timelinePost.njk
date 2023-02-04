@@ -1,6 +1,5 @@
-{{ post.type | dump }}
 <div class="flex flex-col my-10 sm:flex-row">
-    <a href="{{ post.url }}" class="flex mb-2 backdrop:link min-w-[12rem] sm:mb-0" rel="noopener">
+    <a href="{{ post.slug }}" class="flex mb-2 backdrop:link min-w-[12rem] sm:mb-0" rel="noopener">
         <time class="secondary under" datetime="{{ post.date }}">
             {{ post.date | formatDateTime }}
         </time>
@@ -30,7 +29,7 @@
                     <h3 class="text-lg link font-normal my-0">{{ post.title }}</h3>
                 </a>
                 <div class="flex flex-col flex-1 justify-center mt-1">
-                    {% if post.headerImage | length > 1 %}
+                    {% if post.headerImage && post.headerImage | length > 1 %}
                         <div class="grid gap-x-1 grid-cols-2 overflow-hidden items-center">
                             {% for photo in post.headerImage %}
                                 {% renderPhoto photo.thumbnailSmall,

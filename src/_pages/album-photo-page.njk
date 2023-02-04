@@ -1,15 +1,16 @@
 ---
 layout: html
 pagination:
-    data: albums.photos
+    data: albums.photoIds
     size: 1
-    alias: photo
-permalink: "{{ photo.permalink }}"
+    alias: photoId
+permalink: "{{ albums.photos[photoId].slug }}/index.html"
 eleventyComputed:
-    title: "{{ photo.description }}"
-    description: "{{ photo.date }} - {{ photo.albumTitle }}"
-    image: "{{ photo.thumbnailSmall.url }}"
+    title: "{{ albums.photos[photoId].description }}"
+    description: "{{ albums.photos[photoId].date }} - {{ albums.photos[photoId].albumTitle }}"
+    image: "{{ albums.photos[photoId].thumbnailSmall.url | prefixCDN }}"
 ---
+{% set photo = albums.photos[photoId] %}
 <main class="flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8 h-screen max-h-screen justify-between">
     <nav class="flex flex-row width-control mx-auto justify-between items-center mb-4">
         <div class="flex flex- 1 flex-row items-center justify-start my-2">
@@ -33,7 +34,7 @@ eleventyComputed:
             <div class="flex w-full flex-wrap justify-center">
                 {% for tag in photo.tags %}
                     <a
-                        href="/photos/tags/{{ tag }}/"
+                        href="/albums/tags/{{ tag }}/"
                         class="link mr-2 mb-2"
                     >
                         #{{ tag }}
@@ -53,7 +54,7 @@ eleventyComputed:
             {% else %}
                 <div class="flex flex-1"></div>
             {% endif %}
-            <p class="flex flex-1 justify-center tabular-nums">{{photo.indexString}} / {{ photo.totalPhotos }}</p>
+            <p class="flex flex-1 justify-center tabular-nums">{{photo.indexString}} / {{ photo.albumTotalPhotos }}</p>
             {% if photo.next %}
                 <button
                     type="button"
@@ -69,7 +70,7 @@ eleventyComputed:
         <div class="flex w-full justify-between items-center">
             <div class="flex w-full justify-center items-baseline">
                 <a
-                        href="{{ photo.albumPermalink | stripIndex }}"
+                        href="{{ photo.albumSlug | stripIndex }}"
                         class="text-center link mt-2"
                     >
                         Rest of Album
@@ -94,13 +95,13 @@ eleventyComputed:
     function goToPreviousPhoto() {
         window
             .history
-            .replaceState(null, '', '{{ photo.previous.permalink | d(' ') | stripIndex }}')
+            .replaceState(null, '', '{{ albums.photos[photo.previous].slug | d(' ') }}/')
         location.reload()
     }
 
     function goToNextPhoto() {
         console.log("goToNextPhoto")
-        history.replaceState(null, '', '{{ photo.next.permalink | d(' ') | stripIndex }}')
+        history.replaceState(null, '', '{{ albums.photos[photo.next].slug | d(' ') }}/')
         location.reload()
     }
 

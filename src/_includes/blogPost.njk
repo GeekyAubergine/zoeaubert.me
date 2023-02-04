@@ -1,5 +1,5 @@
 <div class="flex flex-col mt-2 mb-2 no-underline text">
-    <a href="{{ post.url | stripIndex }}" class="flex flex-col no-underline">
+    <a href="{{ post.slug | stripIndex }}" class="flex flex-col no-underline">
         <h3 class="text-lg link font-normal mt-0 mb-1">{{ post.title }}</h3>
     </a>
     <p class="mb-0">{{ post.description }}</p>

@@ -18,10 +18,10 @@ module.exports = [
         url: '/blog',
     },
     {
-        name: 'Photos',
+        name: 'Albums',
         target: '',
         rel: '',
-        url: '/photos',
+        url: '/albums',
     },
     {
         name: '/Now',
