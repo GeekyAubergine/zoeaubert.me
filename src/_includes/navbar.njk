@@ -1,14 +1,30 @@
-<nav class="flex flex-1 flex-col width-control mx-auto justify-center items-baseline mb-4 md:flex-row md:justify-between">
-    <div class="flex w-full flex-row items-center justify-between my-2 md:justify-start">
-        <a class="text-3xl h-full text-left md:text-4xl" href="/">
-            <p>Zoe Aubert</p>
-        </a>
-        {% include "themeToggle.njk" %}
+<nav class="flex flex-1 flex-col width-control mx-auto justify-center items-baseline mb-4">
+    <div class="flex w-full flex-col width-control mx-auto justify-center items-baseline md:flex-row md:justify-between">
+        <div class="flex w-full flex-row items-center justify-between my-2 md:justify-start">
+            <a class="text-3xl h-full text-left md:text-4xl" href="/">
+                <p class="m-0">Zoe Aubert</p>
+            </a>
+            {% include "themeToggle.njk" %}
+        </div>
+        <div class="flex w-full justify-around mt-2 md:justify-end">
+            {% for link in socials %}
+                {% if link.showInTopNav %}
+                    <a
+                class="link no-underline md:ml-4"
+                href="{{ link.url }}"
+                target="{{ link.target }}"
+                rel="{{ link.rel }}"
+            >
+                        {{ link.name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
-    <div class="flex w-full justify-between mt-2 md:justify-end">
+    <div class="flex flex-wrap w-full justify-around md:mt-2 md:justify-between">
         {% for link in navlinks %}
             <a
-                class="link no-underline md:ml-2"
+                class="link no-underline text-center w-[8ch] md:w-auto"
                 href="{{ link.url }}"
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"

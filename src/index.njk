@@ -33,7 +33,7 @@ layout: page
 </a>
 {%- for postId in micros.recentPostsOrder %}
 {% set post = micros.posts[postId] %}
-<article class="mt-2 mb-8">
+<article class="my-2">
     <a href="{{ post.slug }}">
         <time class="link" datetime="{{ post.date }}">
             {{ post.date | formatDateTime }}

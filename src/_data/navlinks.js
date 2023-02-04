@@ -18,6 +18,12 @@ module.exports = [
     //     url: 'https://geekyaubergine.com',
     // },
     {
+        name: 'photos',
+        target: '',
+        rel: '',
+        url: '/photos',
+    },
+    {
         name: 'blog',
         target: '',
         rel: '',
@@ -35,10 +41,28 @@ module.exports = [
         rel: '',
         url: '/albums',
     },
+    // {
+    //     name: 'categories',
+    //     target: '',
+    //     rel: '',
+    //     url: '/categories',
+    // },
     {
-        name: 'GitHub',
-        target: '_blank',
-        rel: 'noopener',
-        url: 'https://github.com/geekyaubergine',
+        name: 'tags',
+        target: '',
+        rel: '',
+        url: '/tags',
+    },
+    // {
+    //     name: 'links',
+    //     target: '',
+    //     rel: '',
+    //     url: '/links',
+    // },
+    {
+        name: 'faq',
+        target: '',
+        rel: '',
+        url: '/faq',
     },
 ]

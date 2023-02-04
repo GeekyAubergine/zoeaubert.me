@@ -54,8 +54,8 @@
         {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' %}
             <div class="flex flex-wrap">
                 {% for tag in post.tags %}
-                    <a href="/tags/{{ tag | slugify }}" class="link secondary mr-2">
-                    #{{ tag | cleanTag }}
+                    <a href="/tags/{{ tag | slug }}" class="link secondary mr-2">
+                    #{{ tag }}
                     </a>
                 {% endfor %}
             </div>
@@ -63,8 +63,8 @@
         {# {% if post.type == 'album' %}
             <div class="flex flex-wrap mt-2">
                 {% for tag in post.tags %}
-                    <a href="/photos/tags/{{ tag | slugify }}" class="link secondary mr-2">
-                    #{{ tag | cleanTag }}
+                    <a href="/photos/tags/{{ tag | slug }}" class="link secondary mr-2">
+                    #{{ tag }}
                     </a>
                 {% endfor %}
             </div>

@@ -1,0 +1,9 @@
+---
+layout: page
+title: Tags
+---
+<ul>
+    {%- for tag in taggedPosts.allTags %}
+        <li><a href="/tags/{{ tag | slug }}">{{ tag }}</a></li>
+    {% endfor %}
+</ul>

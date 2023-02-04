@@ -8,11 +8,13 @@ module.exports = [
         name: 'Mastodon',
         description: 'Cross-posts and occasional funnies',
         link: 'https://social.lol/@geekyaubergine',
+        showInTopNav: true,
     },
     {
         name: 'GitHub',
         description: 'My open source projects',
         link: 'https://github.com/geekyaubergine',
+        showInTopNav: true,
     },
     // {
     //     name: 'Twitter',

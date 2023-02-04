@@ -22,10 +22,14 @@ function renderPhotoShortcut(photo, alt, classes = '') {
         throw new Error(`Missing \`alt\` on responsiveimage from: ${url}`)
     }
 
+    const url2 = url.startsWith('https://cdn.geekyaubergine.com')
+        ? url
+        : `https://cdn.geekyaubergine.com${url}`
+
     return `
           <img
             class="${classes}"
-            src="https://cdn.geekyaubergine.com${url}"
+            src="${url2}"
             alt="${alt}"
             width="${width}"
             height="${height}"
@@ -37,10 +41,6 @@ function renderPhotoShortcut(photo, alt, classes = '') {
 function arrayIncludesShortcode(array, item) {
     // console.log({ array, item })
     return array.includes(item)
-}
-
-function cleanTag(tag) {
-    return tag.replace(/ /g, '-').toLowerCase()
 }
 
 module.exports = function (eleventyConfig) {
@@ -118,7 +118,18 @@ module.exports = function (eleventyConfig) {
         return `${config.cdnUrl}${slug}`
     })
 
-    eleventyConfig.addFilter('cleanTag', cleanTag)
+    eleventyConfig.addFilter('slug', function (slug) {
+        if (slug === 'F1') {
+            return 'f1'
+        }
+
+        return slug
+            .replace(
+                /([A-Z][a-z]+)|(\d+)/g,
+                (letter) => `-${letter.toLowerCase()}`,
+            )
+            .replace(/^-/, '')
+    })
 
     eleventyConfig.addShortcode('renderPhoto', renderPhotoShortcut)
     eleventyConfig.addShortcode('arrayIncludes', arrayIncludesShortcode)

@@ -1,0 +1,14 @@
+---
+layout: page
+pagination:
+  data: taggedPosts.allTags
+  size: 1
+  alias: tag
+permalink: "/tags/{{ tag | slug }}/index.html"
+eleventyComputed:
+    title: "#{{ tag }} posts"
+---
+{%- for entityId in taggedPosts.entitiesByTag[tag] %}
+  {%- set post = all.entities[entityId] %}
+  {% include "timelinepost.njk" %}
+{% endfor %}
