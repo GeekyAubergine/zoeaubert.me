@@ -13,7 +13,7 @@ eleventyComputed:
 {% set album = albums.albums[albumId] %}
 <div class="width-control mx-auto pb-4">
     {% if title %}
-        <h1 class="pageTitle text-red-500">{{ title | safe }}</h1>
+        <h1 class="pageTitle">{{ title | safe }}</h1>
         <time class="text secondary" datetime={{album.date}}>
             {{album.date}}
         </time>

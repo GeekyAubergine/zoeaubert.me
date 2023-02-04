@@ -4,7 +4,7 @@
 
 @layer components {
     html {
-        font-size: 17px;
+        font-size: 18px;
         font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
@@ -13,7 +13,7 @@
     }
 
     .width-control {
-        @apply w-[60ch] max-w-[100%];
+        @apply w-[55ch] max-w-[100%];
     }
 
     .text {
@@ -80,7 +80,7 @@
     h4,
     h5,
     h6 {
-        @apply mt-8 mb-2 text-headings dark:text-headings-dark sm:mt-12;
+        @apply mt-8 mb-2 font-bold text-headings dark:text-headings-dark sm:mt-12;
     }
 
     h1 {
@@ -237,15 +237,14 @@
     .header-link-icon {
         @apply mt-9 h-5 flex items-center;
     }
-    /* 
+
     .photogrid {
-        @apply w-full grid grid-cols-3 gap-x-2 gap-y-2  sm:gap-x-4 sm:gap-y-4 my-1 sm:my-2;
+        @apply w-full grid grid-cols-3 gap-x-1 gap-y-1  sm:gap-x-4 sm:gap-y-4 my-1 sm:my-2;
     }
 
-    .photogrid > .gatsby-resp-image-image {
-        @apply m-0 my-auto h-8;
-    } */
-
+    .photogrid > img {
+        @apply m-0;
+    }
     .statuslol_container {
         @apply flex;
     }

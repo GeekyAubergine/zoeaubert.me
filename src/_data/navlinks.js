@@ -1,6 +1,6 @@
 module.exports = [
     {
-        name: '/Timeline',
+        name: '/timeline',
         target: '',
         rel: '',
         url: '/timeline',
@@ -12,19 +12,19 @@ module.exports = [
     //     url: 'https://geekyaubergine.com',
     // },
     {
-        name: 'Blog',
+        name: 'blog',
         target: '',
         rel: '',
         url: '/blog',
     },
     {
-        name: 'Albums',
+        name: 'albums',
         target: '',
         rel: '',
         url: '/albums',
     },
     {
-        name: '/Now',
+        name: '/now',
         target: '',
         rel: '',
         url: '/now',

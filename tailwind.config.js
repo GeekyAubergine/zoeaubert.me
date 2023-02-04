@@ -26,7 +26,7 @@ module.exports = {
         extend: {
             colors: {
                 background: {
-                    DEFAULT: '#F9F8F3',
+                    DEFAULT: '#FFFFFD',
                     dark: '#202022',
                 },
                 headings: {
@@ -46,8 +46,8 @@ module.exports = {
                     dark: '#181D27',
                 },
                 accent: {
-                    DEFAULT: '#B40000', //"#05614F",//00645C//794A00
-                    dark: '#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
+                    DEFAULT: '#89249F', //'#8F26A6', //'#9607B5',//'#843795', //'#733A9E', //'#6E3FAA',//'#B40000', //"#05614F",//00645C//794A00
+                    dark: '#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
                 },
                 code: {
                     DEFAULT: '#F6FAF9',

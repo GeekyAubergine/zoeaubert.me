@@ -1,9 +1,9 @@
 module.exports = [
-    {
-        name: 'Micro.blog',
-        description: 'Replacement for Twitter and Instagram',
-        link: 'https://geekyaubergine.com',
-    },
+    // {
+    //     name: 'Micro.blog',
+    //     description: 'Replacement for Twitter and Instagram',
+    //     link: 'https://geekyaubergine.com',
+    // },
     {
         name: 'Mastodon',
         description: 'Cross-posts and occasional funnies',
@@ -14,11 +14,11 @@ module.exports = [
         description: 'My open source projects',
         link: 'https://github.com/geekyaubergine',
     },
-    {
-        name: 'Twitter',
-        description: 'Old tweets and occasional retweets',
-        link: 'https://twitter.com/geekyaubergine',
-    },
+    // {
+    //     name: 'Twitter',
+    //     description: 'Old tweets and occasional retweets',
+    //     link: 'https://twitter.com/geekyaubergine',
+    // },
     {
         name: 'LinkedIn',
         description: 'Professional things',

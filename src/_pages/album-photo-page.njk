@@ -99,7 +99,7 @@ eleventyComputed:
         location.reload()
     }
 
-    function goToNextPhoto() {
+    function goToNextPhoto() {s
         console.log("goToNextPhoto")
         history.replaceState(null, '', '{{ albums.photos[photo.next].slug | d(' ') }}/')
         location.reload()

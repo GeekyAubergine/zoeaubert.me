@@ -4,15 +4,15 @@ pagination:
   data: toots.postOrder
   size: 1
   alias: postId
-permalink: "/micros/{{ toots.posts[postId].slug }}/index.html"
+permalink: "{{ toots.posts[postId].slug }}/index.html"
 eleventyComputed: 
-  title: "{{ toots.posts[postId].date }}"
+  title: "{{ toots.posts[postId].date | formatDateTime }}"
   description: "{{ toots.posts[postId].title }}"
 ---
 {% set post = toots.posts[postId] %}
 <div class="width-control mx-auto">
   <h1 class="flex flex-row">
-    <time class="secondary pageTitle" datetime="{{date}}">{{ post.date | formatDateTime }}</time>
+    <time class="secondary pageTitle text-xl" datetime="{{date}}">{{ post.date | formatDateTime }}</time>
   </h1>
   <div class="w-full content">
     {{ post.content | mdToHtml | safe }}
@@ -20,8 +20,10 @@ eleventyComputed:
   <div class="flex flex-wrap">
     {% for tag in post.tags %}
       <a href="/tags/{{ tag | slugify }}" class="link secondary mr-2">
-                    #{{ tag | cleanTag }}
+         #{{ tag | cleanTag }}
       </a>
     {% endfor %}
   </div>
+  <p class="mt-6 mb-0">See original post on <a href="{{ post.originalUrl }}" class="link" target="_blank" rel="me">Mastodon</a>
+  </p>
 </div>

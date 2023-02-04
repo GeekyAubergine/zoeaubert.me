@@ -11,7 +11,7 @@ eleventyComputed:
     image: "{{ albums.photos[tag.albums[0].photoOrder[0]].thumbnailSmall.url | prefixCDN }}"
 ---
 <div class="width-control mx-auto pb-4">
-    <h1 class="pageTitle text-red-500">#{{tag.tag}} Photos</h1>
+    <h1 class="pageTitle">#{{tag.tag}} Photos</h1>
 </div>
 {%- for albumData in tag.albums %}
     {% set album = albums.albums[albumData.albumId] %}

@@ -6,7 +6,7 @@ description: My timeline
 
 {%- for entityId in timeline.entityOrder %}
     {% set post = timeline.entities[entityId] %}
-    {% include "timelinepost.njk" %}
+    {% include "timelinePost.njk" %}
 {% endfor %}
 
 {# {%- for post in microblog %}

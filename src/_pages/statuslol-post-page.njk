@@ -1,0 +1,23 @@
+---
+layout: base
+pagination:
+  data: statuslol.postOrder
+  size: 1
+  alias: postId
+permalink: "{{ statuslol.posts[postId].slug }}/index.html"
+eleventyComputed: 
+  title: "{{ statuslol.posts[postId].date | formatDateTime }}"
+  description: "{{ statuslol.posts[postId].title }}"
+---
+{% set post = statuslol.posts[postId] %}
+<div class="width-control mx-auto">
+  <h1 class="flex flex-row">
+    <time class="secondary pageTitle text-xl" datetime="{{date}}">{{ post.date | formatDateTime }}</time>
+  </h1>
+  <div class="flex items-start">
+    <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
+    <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
+  </div>
+  <p class="mt-4 mb-0">See original post on <a href="{{ post.originalUrl }}" class="link" target="_blank" rel="me">status.lol</a>
+  </p>
+</div>

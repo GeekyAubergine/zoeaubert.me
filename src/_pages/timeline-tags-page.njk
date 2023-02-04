@@ -5,9 +5,9 @@ pagination:
   size: 1
   alias: tag
 permalink: "/tags/{{ tag }}/index.html"
+eleventyComputed:
+    title: "#{{ tag }} posts"
 ---
-<h1>#{{tag | cleanTag}}</h1>
-
 {%- for entityId in timeline.entitiesByTag[tag] %}
   {%- set post = timeline.entities[entityId] %}
   {% include "timelinepost.njk" %}
