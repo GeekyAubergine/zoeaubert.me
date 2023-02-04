@@ -35,10 +35,6 @@
         @apply text-lg no-underline py-[.2rem] px-2 border-2 text-accent dark:text-accent-dark border-accent dark:border-accent-dark rounded-md hover:text-background hover:dark:text-background-dark hover:bg-accent hover:dark:bg-accent-dark transition-colors;
     }
 
-    .navbarLink {
-        @apply link no-underline sm:ml-3;
-    }
-
     .secondary {
         @apply text-secondary dark:text-secondary-dark;
     }

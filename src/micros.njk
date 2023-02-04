@@ -1,0 +1,14 @@
+---
+layout: page
+title: Micro Posts
+---
+
+{%- for entityId in micros.postOrder %}
+    {% set post = micros.posts[entityId] %}
+    {% include "microPost.njk" %}
+    <hr />
+{% endfor %}
+
+{# {%- for post in microblog %}
+    {% include 'microblogPost.njk' %}
+{% endfor %} #}

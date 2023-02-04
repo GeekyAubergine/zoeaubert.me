@@ -14,14 +14,11 @@
                     <img src="{{ post.hero.url }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2"/>
                 {% endif %}
                 <p class="my-2">{{ post.description }}</p>
-                <div class="flex flex-row">
+                <div class="flex flex-row mb-1">
                     <p class="secondary my-0">{{ post.content | timeToRead }}</p>
                 </div>
             {% endif %}
-            {% if post.type == 'microblog' %}
-                {{ post.content | mdToHtml | safe }}
-            {% endif %}
-            {% if post.type == 'mastodon' %}
+            {% if post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
                 {{ post.content | mdToHtml | safe }}
             {% endif %}
             {% if post.type == 'album' %}

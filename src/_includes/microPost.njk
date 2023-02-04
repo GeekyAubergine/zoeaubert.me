@@ -1,12 +1,27 @@
----
-layout: base
----
-<div class="width-control mx-auto">
-    <h2 class="pageTitle mb-1">{{title}}</h2>
-    <div class="flex flex-row mb-4">
-        <time class="text secondary" datetime="{{date}}">{{ date | formatDate }}</time>
+<article class="mt-2 mb-8">
+    <a href="{{ post.slug }}">
+        <time class="secondary under" datetime="{{ post.date }}">
+            {{ post.date | formatDateTime }}
+        </time>
+    </a>
+    <div class="content mt-2">
+        {% if post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
+            {{ post.content | mdToHtml | safe }}
+        {% endif %}
+        {% if post.type == 'statuslol' %}
+            <div class="flex items-start">
+                <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
+                <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
+            </div>
+        {% endif %}
     </div>
-    <div class="w-full content">
-        {{ content | safe }}
-    </div>
-</div>
+    {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' %}
+        <div class="flex flex-wrap">
+            {% for tag in post.tags %}
+                <a href="/tags/{{ tag | slugify }}" class="link secondary mr-2">
+                    #{{ tag | cleanTag }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</article>

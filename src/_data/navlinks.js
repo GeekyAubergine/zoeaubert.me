@@ -1,5 +1,11 @@
 module.exports = [
     {
+        name: '/now',
+        target: '',
+        rel: '',
+        url: '/now',
+    },
+    {
         name: '/timeline',
         target: '',
         rel: '',
@@ -18,16 +24,16 @@ module.exports = [
         url: '/blog',
     },
     {
+        name: 'micros',
+        target: '',
+        rel: '',
+        url: '/micros',
+    },
+    {
         name: 'albums',
         target: '',
         rel: '',
         url: '/albums',
-    },
-    {
-        name: '/now',
-        target: '',
-        rel: '',
-        url: '/now',
     },
     {
         name: 'GitHub',
