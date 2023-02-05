@@ -1,6 +1,9 @@
 ---
 layout: base
 title: "All Albums"
+eleventyComputed:
+    image: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].thumbnailSmall.url | prefixCDN }}"
+    imageAlt: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].alt }}"
 ---
 <div class="width-control mx-auto pb-4">
     <h1 class="pageTitle">All Albums</h1>

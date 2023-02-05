@@ -8,6 +8,8 @@ permalink: "/{{ blogposts.posts[postId].slug }}/index.html"
 eleventyComputed: 
   title: "{{ blogposts.posts[postId].title }}"
   description: "{{ blogposts.posts[postId].description }}"
+  image: "{{ blogposts.posts[postId].hero.url }}"
+  imageAlt: "{{ blogposts.posts[postId].hero.alt }}"
 ---
 {% set post = blogposts.posts[postId] %}
 <div class="width-control mx-auto">

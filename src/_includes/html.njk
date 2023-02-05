@@ -43,6 +43,11 @@
             <meta property="og:image" content="{{ site.url }}{{ site.image }}"/>
         {% endif %}
 
+        {% if imageAlt %}
+            <meta property="twitter:image:alt" content="{{ imageAlt }}"/>
+            <meta property="og:image:alt" content="{{ imageAlt }}"/>
+        {% endif %}
+
         {% if noIndex %}
             <meta name="robots" content="noindex"/>
         {% endif %}

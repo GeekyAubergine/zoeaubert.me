@@ -7,8 +7,9 @@ pagination:
 permalink: "{{ albums.photos[photoId].slug }}/index.html"
 eleventyComputed:
     title: "{{ albums.photos[photoId].description }}"
-    description: "{{ albums.photos[photoId].date }} - {{ albums.photos[photoId].albumTitle }}"
+    description: "{{ albums.photos[photoId].date | formatDate }} - {{ albums.photos[photoId].albumTitle }}"
     image: "{{ albums.photos[photoId].thumbnailSmall.url | prefixCDN }}"
+    imageAlt: "{{ albums.photos[photoId].alt }}"
 ---
 {% set photo = albums.photos[photoId] %}
 <main class="flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8 h-screen max-h-screen justify-between">

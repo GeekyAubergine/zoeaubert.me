@@ -4,6 +4,7 @@ title: Albums
 description: My photo albums
 eleventyComputed:
     image: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].thumbnailSmall.url | prefixCDN }}"
+    imageAlt: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].alt }}"
 ---
 <div class="width-control mx-auto flex justify-between items-baseline">
     {% if title %}
