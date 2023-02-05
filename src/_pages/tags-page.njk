@@ -16,6 +16,6 @@ eleventyComputed:
   <div class="my-8"/>
   {%- for entityId in taggedPosts.entitiesByTag[tag] %}
     {%- set post = all.entities[entityId] %}
-    {% include "timelinepost.njk" %}
+    {% include "timelinePost.njk" %}
   {% endfor %}
 </div>
