@@ -1,10 +1,18 @@
 ---
-layout: page
+layout: base
 title: Timeline
 description: My timeline
 ---
-<div class="my-8"/>
-{%- for entityId in timeline.entityOrder %}
-    {% set post = timeline.entities[entityId] %}
-    {% include "timelinePost.njk" %}
-{% endfor %}
+<div class="width-control mx-auto">
+    <div class="flex justify-between items-baseline">
+        <h1 class="pageTitle">{{ title }}</h1>
+        <div class="flex gap-x-3">
+            <a href="/tags/" class="link">All tags</a>
+            <a href="/photos/" class="link">All Photos</a>
+        </div>
+    </div>
+    {%- for entityId in timeline.entityOrder %}
+        {% set post = timeline.entities[entityId] %}
+        {% include "timelinePost.njk" %}
+    {% endfor %}
+</div>
