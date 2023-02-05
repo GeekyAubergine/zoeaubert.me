@@ -14,9 +14,7 @@ title: "All Photos"
                 {% set span = "col-span-1" %}
             {% endif %}
             <a href="{{ photo.postSlug }}" class="flex justify-center items-center {{ span }}">
-                {% renderPhoto photo,
-                photo.alt,
-                "" %}
+                {% renderMedia photo %}
             </a>
         {% endfor %}
     </div>
