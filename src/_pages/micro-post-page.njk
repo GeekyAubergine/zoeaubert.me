@@ -7,7 +7,9 @@ pagination:
 permalink: "{{ micros.posts[postId].slug }}/index.html"
 eleventyComputed: 
   title: "{{ micros.posts[postId].date | formatDateTime }}"
-  description: "{{ micros.posts[postId].title }}"
+  description: "{{ micros.posts[postId].excerpt | mdToHtml | safe }}"
+  image: "{{ micros.posts[postId].media[0].url }}"
+  imageAlt: "{{ micros.posts[postId].media[0].alt }}"
 ---
 {% set post = micros.posts[postId] %}
 <div class="width-control mx-auto">
