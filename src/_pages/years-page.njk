@@ -10,5 +10,5 @@ eleventyComputed:
 ---
 {%- for entityId in years.entitiesByYear[year] %}
   {%- set post = all.entities[entityId] %}
-  {% include "timelinepost.njk" %}
+  {% include "timelinePost.njk" %}
 {% endfor %}
