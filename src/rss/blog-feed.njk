@@ -21,13 +21,14 @@
     <atom:link href="{{ permalink | absoluteUrl(site.url) }}" rel="self" type="application/rss+xml"/>
     <description>{{ site.description }}</description>
     <language>{{ site.language }}</language>
-    {%- for post in collections.posts %}
-      {%- set absolutePostUrl = post.data.permalink | absoluteUrl(site.url) %}
+    {%- for postId in blogposts.postOrder %}
+      {% set post = blogposts.posts[postId] %}
+      {%- set absolutePostUrl = post.slug | absoluteUrl(site.url) %}
       <item>
-        <title>{{ post.data.title }}</title>
+        <title>{{ post.title }}</title>
         <link>{{ absolutePostUrl }}</link>
-        <description>{{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) }}</description>
-        <pubDate>{{ post.date | dateToRfc822 }}</pubDate>
+        <description>{{ post.content | mdToHtml | htmlToAbsoluteUrls(absolutePostUrl) }}</description>
+        <pubDate>{{ post.date | toActualDate | dateToRfc822 }}</pubDate>
         <dc:creator>{{ site.author }}</dc:creator>
         <guid>{{ absolutePostUrl }}</guid>
       </item>

@@ -3,6 +3,8 @@ const Image = require('@11ty/eleventy-img')
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const pluginRss = require('@11ty/eleventy-plugin-rss')
 const marked = require('marked')
+const posthtml = require('posthtml')
+
 const config = require('./config')
 
 const POSTS_GLOB = './src/_content/posts/**/*.md'
@@ -145,6 +147,10 @@ module.exports = function (eleventyConfig) {
         return date.toISOString()
     })
 
+    eleventyConfig.addFilter('toActualDate', (date) => {
+        return new Date(date)
+    })
+
     eleventyConfig.addFilter('debug', (...args) => {
         console.log(...args)
         debugger
@@ -179,6 +185,46 @@ module.exports = function (eleventyConfig) {
                 (letter) => `-${letter.toLowerCase()}`,
             )
             .replace(/^-/, '')
+    })
+
+    eleventyConfig.addFilter('albumPhotoToRss', (photo) => {
+        if (!photo) {
+            throw new Error('Missing photo')
+        }
+
+        const { alt, thumbnailLarge } = photo
+
+        const { url, width, height } = thumbnailLarge
+
+        if (alt === undefined) {
+            // You bet we throw an error on missing alt (alt="" works okay)
+            throw new Error(`Missing \`alt\` on responsiveimage from: ${url}`)
+        }
+
+        const url2 = url.startsWith('https://cdn.geekyaubergine.com')
+            ? url
+            : `https://cdn.geekyaubergine.com${url}`
+
+        return `
+                  <img
+                    src="${url2}"
+                    alt="${alt}"
+                    width="${width}"
+                    height="${height}"
+                    loading="lazy"
+                    decoding="async" />
+                `
+    })
+
+    eleventyConfig.addShortcode('albumPhotosToRss', (photoOrder, photos) => {
+        return marked.parse(
+            photoOrder
+                .map((id) => {
+                    const photo = photos[id]
+                    return `![${photo.alt}](${photo.thumbnailLarge.url})`
+                })
+                .join(''),
+        )
     })
 
     eleventyConfig.addShortcode('renderPhoto', renderPhotoShortcut)
