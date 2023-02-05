@@ -1,9 +1,11 @@
 const timeToRead = require('eleventy-plugin-time-to-read')
-const Image = require('@11ty/eleventy-img')
-const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const pluginRss = require('@11ty/eleventy-plugin-rss')
-const marked = require('marked')
-const posthtml = require('posthtml')
+const MarkdownIt = require('markdown-it')
+const prism = require('markdown-it-prism')
+
+const md = new MarkdownIt()
+
+md.use(prism, {})
 
 const config = require('./config')
 
@@ -49,7 +51,6 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(timeToRead, {
         style: 'short',
     })
-    eleventyConfig.addPlugin(syntaxHighlight)
     eleventyConfig.addPlugin(pluginRss)
 
     eleventyConfig.setQuietMode(true)
@@ -167,7 +168,7 @@ module.exports = function (eleventyConfig) {
     })
 
     eleventyConfig.addFilter('mdToHtml', function (content = '') {
-        return marked.parse(content)
+        return md.render(content)
     })
 
     eleventyConfig.addFilter('prefixCDN', function (slug) {
@@ -217,7 +218,7 @@ module.exports = function (eleventyConfig) {
     })
 
     eleventyConfig.addShortcode('albumPhotosToRss', (photoOrder, photos) => {
-        return marked.parse(
+        return md.render(
             photoOrder
                 .map((id) => {
                     const photo = photos[id]
