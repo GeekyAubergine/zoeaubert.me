@@ -26,7 +26,7 @@ module.exports = {
         extend: {
             colors: {
                 background: {
-                    DEFAULT: '#FFFFFD',
+                    DEFAULT: '#F9F8F3',
                     dark: '#202022',
                 },
                 headings: {
@@ -38,7 +38,7 @@ module.exports = {
                     dark: '#F4F3F7',
                 },
                 secondary: {
-                    DEFAULT: '#505050',
+                    DEFAULT: '#56554F',
                     dark: '#ABA9B0',
                 },
                 tag: {
@@ -46,7 +46,7 @@ module.exports = {
                     dark: '#181D27',
                 },
                 accent: {
-                    DEFAULT: '#89249F', //'#8F26A6', //'#9607B5',//'#843795', //'#733A9E', //'#6E3FAA',//'#B40000', //"#05614F",//00645C//794A00
+                    DEFAULT: '#92009C', //'#89249F', //'#8F26A6', //'#9607B5',//'#843795', //'#733A9E', //'#6E3FAA',//'#B40000', //"#05614F",//00645C//794A00
                     dark: '#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
                 },
                 code: {
@@ -56,8 +56,8 @@ module.exports = {
                     textDark: '#1DF8EA',
                 },
                 border: {
-                    DEFAULT: '#505050',
-                    dark: '#A3A1A8',
+                    DEFAULT: '#929292',
+                    dark: '#6E6B74',
                 },
                 middleGray: '#888888',
             },

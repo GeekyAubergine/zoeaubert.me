@@ -17,7 +17,7 @@
     }
 
     .text {
-        @apply text-text dark:text-text-dark tabular-nums transition-colors duration-500 my-1 leading-[1.6rem] sm:leading-6 sm:mb-4;
+        @apply text-text dark:text-text-dark tabular-nums break-words transition-colors duration-500 mt-3 mb-3 leading-[1.5rem] sm:mb-3;
         font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
@@ -51,8 +51,12 @@
         @apply text-lg mt-6 font-bold sm:mt-10 sm:mb-0 sm:text-2xl;
     }
 
+    .borderColor {
+        @apply border-border dark:border-border-dark;
+    }
+
     hr {
-        @apply border-border dark:border-border-dark my-6 mx-[30%];
+        @apply borderColor my-6 mx-[30%];
     }
 
     h1,
@@ -67,9 +71,9 @@
         @apply text;
     }
 
-    :not(div) + p {
+    /* :not(div) + p {
         @apply mt-0;
-    }
+    } */
 
     h2,
     h3,
@@ -110,6 +114,10 @@
 
     .content a {
         @apply link;
+    }
+
+    .content img {
+        @apply mx-auto;   
     }
 
     .content img:last-child {

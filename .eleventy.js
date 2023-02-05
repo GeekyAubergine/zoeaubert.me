@@ -50,7 +50,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPlugin(syntaxHighlight)
     eleventyConfig.addPlugin(pluginRss)
 
-    // eleventyConfig.setQuietMode(true)
+    eleventyConfig.setQuietMode(true)
 
     eleventyConfig.addWatchTarget('./albums')
 
@@ -93,6 +93,56 @@ module.exports = function (eleventyConfig) {
         }
 
         return `${ymd} ${hm}`
+    })
+
+    eleventyConfig.addFilter('relativeDate', (d) => {
+        const date = new Date(d)
+        const now = new Date()
+        const diff = now.getTime() - date.getTime()
+
+        const seconds = Math.floor(diff / 1000)
+
+        const years = Math.floor(seconds / 31536000)
+
+        if (years > 0) {
+            return `${years} year${years === 1 ? '' : 's'} ago`
+        }
+
+        const months = Math.floor(seconds / 2592000)
+
+        if (months > 0) {
+            return `${months} month${months === 1 ? '' : 's'} ago`
+        }
+
+        const weeks = Math.floor(seconds / 604800)
+
+        if (weeks > 0) {
+            return `${weeks} week${weeks === 1 ? '' : 's'} ago`
+        }
+
+        const days = Math.floor(seconds / 86400)
+
+        if (days > 0) {
+            return `${days} day${days === 1 ? '' : 's'} ago`
+        }
+
+        const hours = Math.floor(seconds / 3600)
+
+        if (hours > 0) {
+            return `${hours} hour${hours === 1 ? '' : 's'} ago`
+        }
+
+        const minutes = Math.floor(seconds / 60)
+
+        if (minutes > 0) {
+            return `${minutes} minute${minutes === 1 ? '' : 's'} ago`
+        }
+
+        if (seconds < 60) {
+            return 'just now'
+        }
+
+        return date.toISOString()
     })
 
     eleventyConfig.addFilter('debug', (...args) => {

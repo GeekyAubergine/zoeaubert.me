@@ -3,12 +3,8 @@ layout: page
 title: Timeline
 description: My timeline
 ---
-
+<div class="my-8"/>
 {%- for entityId in timeline.entityOrder %}
     {% set post = timeline.entities[entityId] %}
     {% include "timelinePost.njk" %}
 {% endfor %}
-
-{# {%- for post in microblog %}
-    {% include 'microblogPost.njk' %}
-{% endfor %} #}
