@@ -1,9 +1,11 @@
 const config = require('../../config')
 
+const RECENT_POSTS_COUNT = 5
+
 module.exports = async function () {
     const { apiUrl } = config
 
-    const request = await fetch(`${apiUrl}/statuslol.json`)
+    const request = await fetch(`${apiUrl}/blog-posts.json`)
 
     const json = await request.json()
 
@@ -12,5 +14,6 @@ module.exports = async function () {
     return {
         posts: entities,
         postOrder: entityOrder,
+        recentPostsOrder: entityOrder.slice(0, RECENT_POSTS_COUNT),
     }
 }

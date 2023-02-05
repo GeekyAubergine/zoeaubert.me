@@ -1,0 +1,69 @@
+---json
+{
+  "permalink": "rss-timeline.xml",
+  "eleventyExcludeFromCollections": true,
+  "metadata": {
+    "title": "{{site.title}}",
+    "subtitle": "{{site.description}}",
+    "language": "{{side.language}}",
+    "url": "{{site.url}}",
+    "author": {
+      "name": "{{site.author}}"
+    }
+  }
+}
+---
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="{{ site.url }}" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ site.title }}</title>
+    <link>{{ site.url }}</link>
+    <atom:link href="{{ permalink | absoluteUrl(site.url) }}" rel="self" type="application/rss+xml"/>
+    <description>{{ site.description }}</description>
+    <language>{{ site.language }}</language>
+    {%- for entityId in timeline.entityOrder %}
+      {% set post = timeline.entities[entityId] %}
+      {%- set absolutePostUrl = post.slug | absoluteUrl(site.url) %}
+      <item>
+        {% if post.type == "blogPost" or post.type == 'album' %}
+          <title>{{ post.title }}</title>
+        {% else %}
+          <title>{{ post.date | formatDateTime }}</title>
+        {% endif %}
+        <link>{{ absolutePostUrl }}</link>
+        <description>
+          {% if post.type == "blogPost" or post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
+            {{ post.content | mdToHtml | htmlToAbsoluteUrls(absolutePostUrl) }}
+          {% endif %}
+          {% if post.type == 'statuslol' %}
+            {{ post.emoji }}
+            {{ post.content | mdToHtml | htmlToAbsoluteUrls(absolutePostUrl) }}
+          {% endif %}
+          {% if post.type == 'album' %}
+            {{ post.description | mdToHtml | htmlToAbsoluteUrls(absolutePostUrl) }}
+            {# {% albumPhotosToRss post.photoOrder,
+            albums.photos %} #}
+            {# {{ albumPhotosToMarkdown post.photoOrder, albums.photos | mdToHtml | htmlToAbsoluteUrls(absolutePostUrl)}} #}
+            {% for photoId in post.photoOrder %}
+              {% set photo = albums.photos[photoId] %}
+              {# {{ "<img src='{{ photo.thumbnailSmall.url | prefixCDN }}' alt='{{ photo.description }}' width='{{ photo.thumbnailSmall.width }}' height='{{ photo.thumbnailSmall.height }}' />" |htmlToAbsoluteUrls(absolutePostUrl) }} #}
+              {{ photo.description | mdToHtml | htmlToAbsoluteUrls(absolutePostUrl) }}
+              {{ photo | albumPhotoToRss | htmlToAbsoluteUrls(absolutePostUrl) }}
+              {# {{ "lt;img src=&quot;{{ photo.thumbnailSmall.url }}&quot; alt=&quot;{{ photo.description }}&quot; width=&quot;{{ photo.thumbnailSmall.width }}&quot; height=&quot;{{ photo.thumbnailSmall.height }}&quot;/&gt " |htmlToAbsoluteUrls(absolutePostUrl) }} #}
+              {# <image>
+                <url>{{ photo.thumbnailSmall.url }}</url>
+                <title>{{ photo.description }}</title>
+                <link>{{ absolutePostUrl }}</link>
+                <width>{{ photo.thumbnailSmall.width }}</width>
+                <height>{{ photo.thumbnailSmall.height }}</height>
+              </image> #}
+            {% endfor %}
+          {% endif %}
+        </description>
+        <pubDate>{{ post.date | toActualDate | dateToRfc822 }}</pubDate>
+        <dc:creator>{{ site.author }}</dc:creator>
+        <guid>{{ absolutePostUrl }}</guid>
+      </item>
+    {%- endfor %}
+  </channel>
+</rss>

@@ -1,0 +1,23 @@
+---
+layout: base
+title: "All Photos"
+---
+<div class="width-control mx-auto pb-4">
+    <h1 class="pageTitle">All Photos</h1>
+</div>
+<div class="wide mx-auto">
+    <div class="photo-grid grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-48 sm:px-2">
+        {% for photo in photos %}
+            {% if photo.width * 1.2 > photo.height %}
+                {% set span = "col-span-2" %}
+            {% else %}
+                {% set span = "col-span-1" %}
+            {% endif %}
+            <a href="{{ photo.postSlug }}" class="flex justify-center items-center {{ span }}">
+                {% renderPhoto photo,
+                photo.alt,
+                "" %}
+            </a>
+        {% endfor %}
+    </div>
+</div>

@@ -1,44 +1,39 @@
 ---
 layout: page
 ---
-<div class="content mt-4">
+<div class="content">
     {{ about | mdToHtml | safe}}
 </div>
-{# <h2 class="mainPageHeading">Status</h2> #}
-{# <div class="flex my-4">
-    {% if statuslol.fluentEmoji %}
-        <img src="{{ statuslol.fluentEmoji.src }}" alt="{{ statuslol.fluentEmoji.alt }}" class="w-12 h-12 mr-2 m-0 p-0"/>
-    {% else %}
-        <div class="flex w-12 h-12 mr-2 m-0 p-0 justify-center items-center">
-            <p class="text-4xl">{{ statuslol.emoji }}</p>
-        </div>
-    {% endif %}
-    <div class="flex flex-col h-12 justify-center">
-        <p>{{ statuslol.content | linkifyMarkdown | safe }}</p>
-        <a href="{{ statuslol.link }}" class="secondary underline_custom" target="_blank" rel="noopener">{{statuslol.relativeTime}}</a>
-    </div>
-</div> #}
-{# <p class="secondary">See previous status' at <a href="https://geekyaubergine.status.lol" target="_blank" rel="noopener" class="secondary">status.lol</a> #}
-</p>
 <a href="/blog" class="link">
-    <h2 class="mainPageHeading">Macro Blogs</h2>
+<h2 class="mainPageHeading">Macro Posts</h2>
 </a>
-{%- for blogPost in collections.recentPosts %}
-{% include "blogPost.njk" %}
+{%- for postId in blogposts.recentPostsOrder %}
+{% set post = blogposts.posts[postId] %}
+{% include "blogpost.njk" %}
 {% endfor %}
-<a href="https://geekyaubergine.com" target="_blank" rel="noopener" class="link">
-<h2 class="mainPageHeading">Micro Blogs</h2>
+<a href="/micros" class="link">
+<h2 class="mainPageHeading">Micro Posts</h2>
 </a>
-{%- for post in microblog %}
-{% include 'microblogPost.njk' %}
+{%- for postId in micros.recentPostsOrder %}
+{% set post = micros.posts[postId] %}
+<article class="my-2">
+    <a href="{{ post.slug }}">
+        <time class="link" datetime="{{ post.date }}">
+            {{ post.date | formatDateTime }}
+        </time>
+    </a>
+    <div class="content">
+        {{ post.excerpt | mdToHtml | safe }}
+    </div>
+</article>
 {% endfor %}
 <h2 class="mainPageHeading">Socials</h2>
 <div class="mt-4">
 {% for social in socials %}
-    <div class="flex mb-3 last-of-type:mb-0">
-        <a class="link text-x" href="{{ social.link }}" target="_blank" rel="me">{{ social.name }}</a>
-        <span class="text ml-1 sm:ml-2">-</span>
-        <span class="text ml-1 sm:ml-2">{{ social.description }}</span>
+    <div class="flex mb-1 last-of-type:mb-0">
+        <a class="link" href="{{ social.link }}" target="_blank" rel="me">{{ social.name }}</a>
+        <span class="text mt-0 mb-0 ml-1 sm:ml-2">-</span>
+        <span class="text mt-0 mb-0 ml-1 sm:ml-2">{{ social.description }}</span>
     </div>
 {% endfor %}
 </div>

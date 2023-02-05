@@ -1,6 +1,9 @@
+const utils = require('./utils')
 const fs = require('fs')
 const yaml = require('js-yaml')
 const Image = require('@11ty/eleventy-img')
+
+const config = require('../../config')
 
 const FILE_NAME_REGEX = /([\w,\s-]+)\.[A-Za-z]{3}$/
 
@@ -47,23 +50,8 @@ function photoPermalink(albumPermalink, photo) {
     return `${albumPermalink.replace('/index.html', '')}/${fileName}/index.html`
 }
 
-async function getFilesRecursive(path, ext) {
-    const files = await fs.promises.readdir(path)
-    const result = []
-    for (const file of files) {
-        const filePath = `${path}/${file}`
-        const stats = await fs.promises.stat(filePath)
-        if (stats.isDirectory()) {
-            result.push(...(await getFilesRecursive(filePath, ext)))
-        } else if (stats.isFile() && filePath.endsWith(ext)) {
-            result.push(filePath)
-        }
-    }
-    return result
-}
-
 async function loadYamlFile() {
-    const files = await getFilesRecursive(ALBUMS_DATA_PATH, 'yml')
+    const files = await utils.getFilesRecursive(ALBUMS_DATA_PATH, 'yml')
 
     return Promise.all(
         files.map(async (path) => {
@@ -187,6 +175,15 @@ async function buildAlbum(album) {
         date: date,
     }))
 
+    const albumTags = photos.reduce((acc, photo) => {
+        photo.tags.forEach((tag) => {
+            if (!acc.includes(tag)) {
+                acc.push(tag)
+            }
+        })
+        return acc
+    }, [])
+
     return {
         title,
         description,
@@ -194,6 +191,7 @@ async function buildAlbum(album) {
         permalink: albumPermalink,
         photos,
         cover: calculateAlbumCover(photos),
+        tags: albumTags,
     }
 }
 
@@ -230,48 +228,49 @@ function buildAlbumsByYear(albums) {
 }
 
 module.exports = async function () {
-    const albums = await buildAlbums()
+    // const albums = await buildAlbums()
 
-    const albumsByYear = buildAlbumsByYear(albums)
+    // const albumsByYear = buildAlbumsByYear(albums)
 
-    const photos = albums.reduce((acc, album) => {
-        acc.push(...album.photos)
-        return acc
-    }, [])
+    // const photos = albums.reduce((acc, album) => {
+    //     acc.push(...album.photos)
+    //     return acc
+    // }, [])
 
-    const tagsCounts = photos.reduce((acc, photo) => {
-        photo.tags.forEach((tag) => {
-            if (!acc[tag]) {
-                acc[tag] = 0
-            }
-            acc[tag]++
-        })
-        return acc
-    }, {})
+    // const tagsCounts = photos.reduce((acc, photo) => {
+    //     photo.tags.forEach((tag) => {
+    //         if (!acc[tag]) {
+    //             acc[tag] = 0
+    //         }
+    //         acc[tag]++
+    //     })
+    //     return acc
+    // }, {})
 
-    const tags = Object.entries(tagsCounts)
-        .map(([tag, count]) => ({
-            tag,
-            count,
-            permalink: `/photos/tags/${tag}/index.html`,
-            photos: photos.filter((photo) => photo.tags.includes(tag)),
-            albums: albums
-                .filter((album) =>
-                    album.photos.some((photo) => photo.tags.includes(tag)),
-                )
-                .map((album) => ({
-                    ...album,
-                    photos: album.photos.filter((photo) =>
-                        photo.tags.includes(tag),
-                    ),
-                })),
-        }))
-        .sort((a, b) => b.count - a.count)
+    // const tags = Object.entries(tagsCounts)
+    //     .map(([tag, count]) => ({
+    //         tag,
+    //         count,
+    //         permalink: `/photos/tags/${tag}/index.html`,
+    //         photos: photos.filter((photo) => photo.tags.includes(tag)),
+    //         albums: albums
+    //             .filter((album) =>
+    //                 album.photos.some((photo) => photo.tags.includes(tag)),
+    //             )
+    //             .map((album) => ({
+    //                 ...album,
+    //                 photos: album.photos.filter((photo) =>
+    //                     photo.tags.includes(tag),
+    //                 ),
+    //             })),
+    //     }))
+    //     .sort((a, b) => b.count - a.count)
 
-    return {
-        albums,
-        albumsByYear,
-        photos,
-        tags,
-    }
+    const { apiUrl } = config
+
+    const request = await fetch(`${apiUrl}/albums.json`)
+
+    const json = await request.json()
+
+    return json
 }
