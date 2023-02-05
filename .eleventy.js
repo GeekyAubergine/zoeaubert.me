@@ -3,7 +3,9 @@ const pluginRss = require('@11ty/eleventy-plugin-rss')
 const MarkdownIt = require('markdown-it')
 const prism = require('markdown-it-prism')
 
-const md = new MarkdownIt()
+const md = new MarkdownIt({
+    html: true,
+})
 
 md.use(prism, {})
 
