@@ -9,7 +9,7 @@ layout: page
 </a>
 {%- for postId in blogposts.recentPostsOrder %}
 {% set post = blogposts.posts[postId] %}
-{% include "blogpost.njk" %}
+{% include "blogPost.njk" %}
 {% endfor %}
 <a href="/micros" class="link">
 <h2 class="mainPageHeading">Micro Posts</h2>
