@@ -1,5 +1,5 @@
 <div class="wide mx-auto sm:px-2">
-    <div class="photo-grid grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-48 sm:px-2">
+    <div class="photo-grid grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 sm:px-2">
         {% for photoId in photoIds %}
             {% set photo = albums.photos[photoId] %}
             {% if photo.orientation == "landscape" %}
