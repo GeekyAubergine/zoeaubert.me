@@ -5,12 +5,6 @@ module.exports = [
     //     rel: '',
     //     url: 'https://geekyaubergine.com',
     // },
-    // {
-    //     name: 'photos',
-    //     target: '',
-    //     rel: '',
-    //     url: '/photos',
-    // },
     {
         name: 'blog',
         target: '',
@@ -30,6 +24,12 @@ module.exports = [
         url: '/timeline',
     },
     // {
+    //     name: 'photos',
+    //     target: '',
+    //     rel: '',
+    //     url: '/photos',
+    // },
+     // {
     //     name: 'micros',
     //     target: '',
     //     rel: '',
