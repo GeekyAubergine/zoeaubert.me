@@ -23,12 +23,12 @@ module.exports = [
         rel: '',
         url: '/timeline',
     },
-    // {
-    //     name: 'photos',
-    //     target: '',
-    //     rel: '',
-    //     url: '/photos',
-    // },
+    {
+        name: 'photos',
+        target: '',
+        rel: '',
+        url: '/photos',
+    },
      // {
     //     name: 'micros',
     //     target: '',
