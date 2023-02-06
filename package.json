@@ -16,7 +16,7 @@
     "start": "eleventy --serve",
     "dev:css": "tailwindcss -i src/assets/css/styles.css -o _site/assets/css/tw.css --watch --postcss",
     "build:11ty": "eleventy",
-    "build:css": "tailwindcss -i src/assets/css/styles.css -o _site/assets/css/tw.css --postcss"
+    "build:css": "tailwindcss -i src/assets/css/styles.css -o _site/assets/css/tw.css --postcss --minify"
   },
   "dependencies": {
     "@11ty/eleventy": "^2.0.0-beta.2",
