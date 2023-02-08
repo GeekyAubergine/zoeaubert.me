@@ -120,6 +120,10 @@
         @apply mx-auto;   
     }
 
+    .content img + img {
+        @apply mt-4;
+    }
+
     .content img:last-child {
         @apply mb-4;
     }
