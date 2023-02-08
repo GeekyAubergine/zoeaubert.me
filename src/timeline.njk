@@ -1,4 +1,9 @@
 ---
+pagination:
+    data: timeline.entityOrder
+    size: 25
+    alias: entityId
+permalink: '/timeline/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}/index.html'
 layout: base
 title: Timeline
 description: My timeline
@@ -11,8 +16,9 @@ description: My timeline
             <a href="/photos/" class="link">All Photos</a>
         </div>
     </div>
-    {%- for entityId in timeline.entityOrder %}
+    {%- for entityId in pagination.items %}
         {% set post = timeline.entities[entityId] %}
         {% include "timelinePost.njk" %}
     {% endfor %}
+    {% include "pagination.njk" %}
 </div>

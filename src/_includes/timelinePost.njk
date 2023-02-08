@@ -18,7 +18,7 @@
                 {{ post.content | mdToHtml | safe }}
                 <div class="grid grid-cols-2 gap-x-2 gap-y-2 mt-4">
                     {% for media in post.media %}
-                        {% renderMedia media %}
+                        {% renderMedia media, "!my-0" %}
                     {% endfor %}
                 </div>
             {% endif %}
@@ -28,16 +28,16 @@
                 </a>
                 <div class="flex flex-col flex-1 justify-center mt-4">
                     {% if post.coverPhotos | length > 1 %}
-                        <div class="grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem]">
+                        <div class="grid gap-x-1 grid-cols-2 overflow-hidden">
                             {% for photoId in post.coverPhotos %}
                                 {% set photo = albums.photos[photoId] %}
-                                {% renderPhoto photo.thumbnailSmall, photo.alt, "max-h-[16rem]" %}
+                                {% renderPhoto photo.thumbnailSmall, photo.alt, "w-half !my-0" %}
                             {% endfor %}
                         </div>
                     {% else %}
                         <div class="flex flex-col justify-between my-2">
                             {% set photo = albums.photos[post.coverPhotos[0]] %}
-                            {% renderPhoto photo.thumbnailSmall, photo.alt, "max-h-[16rem] !mb-0" %}
+                            {% renderPhoto photo.thumbnailSmall, photo.alt, "!mb-0 w-full" %}
                         </div>
                     {% endif %}
                 </div>
@@ -53,7 +53,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="flex mt-4 justify-between">
+    <div class="flex mt-6 justify-between">
         <div class="flex flex-wrap">
             {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
                 {% for tag in post.tags %}
