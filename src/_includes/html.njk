@@ -10,11 +10,11 @@
 
         <link rel="icon" type="image/x-icon" href="/assets/img/icon.png">
 
-        {% if title %}
+        {%- if title %}
             {% set pageTitle = title + " | " + site.title %}
-        {% else %}
+        {%- else %}
             {% set pageTitle = site.title %}
-        {% endif %}
+        {%- endif %}
 
         <title>{{ pageTitle }}</title>
 
@@ -32,29 +32,35 @@
         <meta property="og:url" content="{{ site.url }}{{ page.url }}"/>
         <meta property="twitter:url" content="{{ site.url }}{{ page.url }}"/>
 
-        {% if image and "http" in image %}
+        {%- if image and "http" in image %}
             <meta property="twitter:image" content="{{ image }}"/>
             <meta property="og:image" content="{{ image  }}"/>
-        {% elif image %}
+        {%- elif image %}
             <meta property="twitter:image" content="{{ site.url }}{{ image }}"/>
             <meta property="og:image" content="{{ site.url }}{{ image  }}"/>
-        {% else %}
+        {%- else %}
             <meta property="twitter:image" content="{{ site.url }}{{ site.image }}"/>
             <meta property="og:image" content="{{ site.url }}{{ site.image }}"/>
-        {% endif %}
+        {%- endif %}
 
-        {% if imageAlt %}
+        {%- if imageAlt %}
             <meta property="twitter:image:alt" content="{{ imageAlt }}"/>
             <meta property="og:image:alt" content="{{ imageAlt }}"/>
-        {% endif %}
+        {%- endif %}
 
-        {% if noIndex %}
+        {%- if noIndex %}
             <meta name="robots" content="noindex"/>
-        {% endif %}
+        {%- endif %}
+
+        {%- if buildinfo.isProduction %}
+            <link rel="stylesheet" href="/assets/css/tw-{{ buildinfo.buildHash }}.css'">
+        {%- else %}
+            <link rel="stylesheet" href="/assets/css/tw.css">
+        {%- endif %}
 
         <link href="https://fonts.bunny.net/css?family=atkinson-hyperlegible:400,400i,700,700i" rel="stylesheet"/>
-        <link rel="stylesheet" href="{{ '/assets/css/tw.css' | url }}">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-a11y-dark.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/
+        prism-a11y-dark.min.css" rel="stylesheet">
         <script src="https://laugh-learned.zoeaubert.me/script.js" data-site="XPKVFMEO" defer></script>
     </head>
     <body class="hidden">

@@ -16,11 +16,15 @@
             {% endif %}
             {% if post.type == 'mastodon' %}
                 {{ post.content | mdToHtml | safe }}
-                <div class="grid grid-cols-2 gap-x-2 gap-y-2 mt-4">
-                    {% for media in post.media %}
-                        {% renderMedia media, "!my-0" %}
-                    {% endfor %}
-                </div>
+                {% if post.media | length > 1 %}
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-2 mt-4">
+                        {% for media in post.media %}
+                            {% renderMedia media, "!my-0" %}
+                        {% endfor %}
+                    </div>
+                {% elif post.media | length > 0 %}
+                    {% renderMedia post.media[0] %}
+                {% endif %}
             {% endif %}
             {% if post.type == 'album' %}
                 <a href="{{ post.slug | stripIndex }}" class="flex no-underline">
