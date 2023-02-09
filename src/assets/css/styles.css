@@ -117,7 +117,7 @@
     }
 
     .content img {
-        @apply mx-auto;   
+        @apply mx-auto my-4;   
     }
 
     .content img + img {
