@@ -210,6 +210,18 @@ module.exports = function (eleventyConfig) {
             return 'f1'
         }
 
+        if (slug === 'F2') {
+            return 'f2'
+        }
+
+        if (slug === 'F3') {
+            return 'f3'
+        }
+
+        if (slug === 'WIPWednesday') {
+            return 'wip-wednesday'
+        }
+
         return slug
             .replace(
                 /([A-Z][a-z]+)|(\d+)/g,
