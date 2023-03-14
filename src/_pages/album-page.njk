@@ -16,7 +16,7 @@ eleventyComputed:
     {% if title %}
         <h1 class="pageTitle">{{ title | safe }}</h1>
         <time class="text secondary" datetime={{album.date}}>
-            {{album.date}}
+            {{album.date | formatDate }}
         </time>
     {% endif %}
 </div>

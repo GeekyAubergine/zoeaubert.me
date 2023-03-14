@@ -1,17 +1,22 @@
 ---
 layout: base
+pagination:
+    data: photos
+    size: 25
+    alias: photoGroup
+permalink: '/photos/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}/index.html'
+eleventyComputed:
+    image: "{{ photoGroup[0].url }}"
+    imageAlt: "{{ photoGroup[0].alt }}"
 title: "All Photos"
 description: "All my photos"
-eleventyComputed:
-    image: "{{ photos[0].url }}"
-    imageAlt: "{{ photos[0].alt }}"
 ---
 <div class="width-control mx-auto pb-4">
     <h1 class="pageTitle">All Photos</h1>
 </div>
 <div class="wide mx-auto">
     <div class="photo-grid grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 sm:px-2">
-        {% for photo in photos %}
+        {% for photo in photoGroup %}
             {% if photo.width * 1.2 > photo.height %}
                 {% set span = "col-span-2" %}
             {% else %}
@@ -22,4 +27,7 @@ eleventyComputed:
             </a>
         {% endfor %}
     </div>
+</div>
+<div class="width-control mx-auto">
+    {% include "pagination.njk" %}
 </div>

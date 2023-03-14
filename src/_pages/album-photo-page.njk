@@ -26,17 +26,6 @@ eleventyComputed:
             </div>
         </div>
     </nav>
-    {# <nav class="flex flex-row width-control mx-auto justify-between items-center mb-4">
-        <div class="flex flex- 1 flex-row items-center justify-start my-2">
-            <a class="text-4xl h-full text-left" href="/">
-                <h1>Zoe Aubert</h1>
-            </a>
-            {% include "themeToggle.njk" %}
-        </div>
-        <div class="flex justify-end mt-2">
-            <a class="navbarLink" href="javascript:history.back()">Back</a>
-        </div>
-    </nav> #}
     <div class="flex flex-1 justify-center object-contain overflow-hidden my-4 sm:mx-4">
         {% renderPhoto photo.thumbnailLarge, photo.alt, "flex max-h-full max-w-full" %}
     </div>
@@ -92,7 +81,7 @@ eleventyComputed:
                 <p class="mx-2"> - </p>
                 <a
                         class="link"
-                        href="{{ photo.url }}"
+                        href="{{ photo.fullSize.url | prefixCDN }}"
                         target="_blank"
                         rel="noopener"
                     >
