@@ -85,8 +85,6 @@ module.exports = function (eleventyConfig) {
 
     eleventyConfig.setQuietMode(true)
 
-    eleventyConfig.addWatchTarget('./albums')
-
     eleventyConfig.addPassthroughCopy('./src/assets')
     eleventyConfig.addPassthroughCopy({
         './src/_content/assets': 'assets',
