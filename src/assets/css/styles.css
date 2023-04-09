@@ -5,7 +5,12 @@
 @layer components {
     html {
         font-size: 18px;
-        font-family: 'Atkinson Hyperlegible', sans-serif;
+        font-family: 'Atkinson Hyperlegible', sans-serif, ui-sans-serif,
+            system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+            'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+        font-display: swap;
     }
 
     body {
@@ -28,7 +33,7 @@
     }
 
     .link {
-        @apply under text-accent ;
+        @apply under text-accent;
     }
 
     .button {
@@ -36,7 +41,7 @@
     }
 
     .secondary {
-        @apply text-secondary ;
+        @apply text-secondary;
     }
 
     .pageTitle {
@@ -52,7 +57,7 @@
     }
 
     .borderColor {
-        @apply border-border ;
+        @apply border-border;
     }
 
     hr {
@@ -84,7 +89,7 @@
     }
 
     h1 {
-        @apply text-headings ;
+        @apply text-headings;
     }
 
     h2 {
@@ -121,7 +126,7 @@
     }
 
     .content img {
-        @apply mx-auto my-4;   
+        @apply mx-auto my-4;
     }
 
     .content img + img {
@@ -224,7 +229,7 @@
     }
 
     blockquote {
-        @apply bg-tag flex flex-col border-l-4 border-l-accent ;
+        @apply bg-tag flex flex-col border-l-4 border-l-accent;
         margin: 0.5rem 0 1.5rem;
         padding: 0.75em 1.25em;
     }

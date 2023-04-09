@@ -11,7 +11,7 @@
                     <h2 class="text-lg text-text no-underline font-normal mt-0 mb-1">{{ post.title }}</h2>
                 </a>
                 {% if post.hero %}
-                    <img src="{{ post.hero.url }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2"/>
+                    <img src="{{ post.hero.url }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2" width="{{ post.hero.width }}" height="{{ post.hero.height }}"/>
                 {% endif %}
                 <p class="my-2">{{ post.description }}</p>
             {% endif %}
