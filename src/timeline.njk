@@ -16,6 +16,7 @@ description: My timeline
             <a href="/photos/" class="link">All Photos</a>
         </div>
     </div>
+    <hr class="mx-0">
     {%- for entityId in pagination.items %}
         {% set post = timeline.entities[entityId] %}
         {% include "timelinePost.njk" %}
