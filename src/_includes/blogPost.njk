@@ -1,11 +1,33 @@
-<article class="flex flex-col my-2 no-underline text">
+<article class="flex flex-col mt-2 mb-8 no-underline text">
     <a href="{{ post.slug | stripIndex }}" class="flex flex-col no-underline">
         <h3 class="text-lg link font-normal mt-0 mb-0">{{ post.title }}</h3>
     </a>
-    <p class="mt-0 mb-0">{{ post.description }}</p>
+    {# {% if post.hero %}
+        <img src="{{ post.hero.url }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2 max-w-half"/>
+    {% endif %} #}
+    <p class="my-1">{{ post.description }}</p>
     <div class="flex flex-row mt-0">
         <time class="secondary" dateTime="{{post.date }}">{{post.date | formatDate}}</time>
-        <p class="secondary mx-1 mt-0">-</p>
-        <p class="secondary mt-0">{{ post.content | timeToRead }}</p>
+        <p class="secondary mx-1 my-0">-</p>
+        <p class="secondary my-0">{{ post.content | timeToRead }}</p>
+        <p class="hidden sm:flex secondary mx-1 my-0">-</p>
+        <div class="hidden sm:flex flex-wrap">
+            {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
+                {% for tag in post.tags %}
+                    <a href="/tags/{{ tag | slug }}" class="link secondary mr-2 my-0 py-0">
+                    #{{ tag }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="flex flex-wrap sm:hidden">
+        {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
+            {% for tag in post.tags %}
+                <a href="/tags/{{ tag | slug }}" class="link secondary mr-2 my-0 py-0">
+                    #{{ tag }}
+                </a>
+            {% endfor %}
+        {% endif %}
     </div>
 </article>

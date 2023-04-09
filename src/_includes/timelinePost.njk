@@ -1,10 +1,14 @@
-<hr class="mx-0">
-<article class="flex flex-col my-6">
+<article class="flex flex-col mt-6 mb-7">
     <div class="flex flex-col">
-        <div class="flex flex-col content">
+        <a href="{{ post.slug }}" class="flex backdrop:link items-end" rel="noopener">
+            <time class="link" datetime="{{ post.date }}">
+                {{ post.date | formatDateTime }}
+            </time>
+        </a>
+        <div class="content mt-4">
             {% if post.type == 'blogPost' %}
-                <a href="{{ post.slug | stripIndex }}" class="no-underline">
-                    <h2 class="text-lg link font-normal mt-0 mb-1">{{ post.title }}</h2>
+                <a href="{{ post.slug | stripIndex }}" class="!no-underline">
+                    <h2 class="text-lg text-text no-underline font-normal mt-0 mb-1">{{ post.title }}</h2>
                 </a>
                 {% if post.hero %}
                     <img src="{{ post.hero.url }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2"/>
@@ -19,7 +23,8 @@
                 {% if post.media | length > 1 %}
                     <div class="grid grid-cols-2 gap-x-2 gap-y-2 mt-4">
                         {% for media in post.media %}
-                            {% renderMedia media, "!my-0" %}
+                            {% renderMedia media,
+                            "!my-0" %}
                         {% endfor %}
                     </div>
                 {% elif post.media | length > 0 %}
@@ -50,16 +55,16 @@
                 {% endif %}
             {% endif %}
             {% if post.type == 'statuslol' %}
-                <div class="flex items-start">
+                <div class="flex items-start mb-4">
                     <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
                     <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
                 </div>
             {% endif %}
         </div>
     </div>
-    <div class="flex mt-6 justify-between">
+    <div class="flex justify-between">
         <div class="flex flex-wrap">
-            {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
+            {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' or post.type == 'statuslol' %}
                 {% for tag in post.tags %}
                     <a href="/tags/{{ tag | slug }}" class="link secondary mr-2">
                     #{{ tag }}
@@ -67,10 +72,6 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <a href="{{ post.slug }}" class="flex backdrop:link items-end" rel="noopener">
-            <time class="secondary under min-w-[10ch] text-right" datetime="{{ post.date }}">
-                {{ post.date | relativeDate }}
-            </time>
-        </a>
     </div>
 </article>
+<hr class="mx-0 last-of-type:hidden">

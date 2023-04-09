@@ -18,13 +18,14 @@ eleventyComputed:
     <time class="secondary" datetime="{{date}}">{{ post.date | formatDate }}</time>
     <p class="secondary mx-1 my-0">-</p>
     <p class="secondary my-0">{{post.content | timeToRead}}</p>
-  </div>
-  <div class="flex flex-wrap mt-1 mb-6">
-    {% for tag in post.tags %}
-      <a href="/tags/{{ tag | slug }}" class="link secondary mr-2">
+    <p class="secondary mx-1 my-0">-</p>
+    <div class="flex flex-wrap">
+      {% for tag in post.tags %}
+        <a href="/tags/{{ tag | slug }}" class="link secondary mr-2">
         #{{ tag }}
-      </a>
-    {% endfor %}
+        </a>
+      {% endfor %}
+    </div>
   </div>
   <div class="w-full content">
     {{ post.content | mdToHtml | safe }}

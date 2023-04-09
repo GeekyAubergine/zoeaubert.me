@@ -1,5 +1,5 @@
 module.exports = {
-    darkMode: 'class',
+    darkMode: 'media',
     content: ['./src/**/**/*.{njk,md}'],
     safelist: [
         'gatsby-highlight',
@@ -25,40 +25,17 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                background: {
-                    DEFAULT: '#FFFFFF', //'#F9F8F3',
-                    dark: '#202022',
-                },
-                headings: {
-                    DEFAULT: '#252527',
-                    dark: '#E4E3E7',
-                },
-                text: {
-                    DEFAULT: '#252527',
-                    dark: '#F4F3F7',
-                },
-                secondary: {
-                    DEFAULT: '#56554F',
-                    dark: '#ABA9B0',
-                },
-                tag: {
-                    DEFAULT: '#F6FAF9',
-                    dark: '#181D27',
-                },
-                accent: {
-                    DEFAULT: '#92009C', //'#89249F', //'#8F26A6', //'#9607B5',//'#843795', //'#733A9E', //'#6E3FAA',//'#B40000', //"#05614F",//00645C//794A00
-                    dark: '#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
-                },
+                background: '#202022',
+                headings: '#E4E3E7',
+                text: '#F4F3F7',
+                secondary: '#ABA9B0',
+                tag: '#181D27',
+                accent: '#FEB847', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
                 code: {
-                    DEFAULT: '#F6FAF9',
-                    dark: '#181D27',
-                    text: '#00645C',
-                    textDark: '#1DF8EA',
+                    DEFAULT: '#181D27',
+                    text: '#0061DF8EA45C',
                 },
-                border: {
-                    DEFAULT: '#929292',
-                    dark: '#6E6B74',
-                },
+                border: '#514F55',
                 middleGray: '#888888',
             },
             height: (theme) => ({
