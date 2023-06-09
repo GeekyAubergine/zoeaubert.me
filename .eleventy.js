@@ -220,6 +220,10 @@ module.exports = function (eleventyConfig) {
             return 'wip-wednesday'
         }
 
+        if (slug.toLowerCase() === 'tv') {
+            return 'tv'
+        }
+
         return slug
             .replace(
                 /([A-Z][a-z]+)|(\d+)/g,
