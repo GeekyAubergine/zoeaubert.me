@@ -78,6 +78,7 @@ _cache
 .cache
 
 config.js
+config.json
 
 # Added by cargo
 
