@@ -1,0 +1,52 @@
+---
+layout: base
+title: Albums
+description: My photo albums
+eleventyComputed:
+    image: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].thumbnailSmall.url | prefixCDN }}"
+    imageAlt: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].alt }}"
+---
+<div class="width-control mx-auto flex justify-between items-baseline">
+    {% if title %}
+        <h1 class="pageTitle mb-4">{{ title }}</h1>
+    {% endif %}
+    <div>
+        <a href="tags" class="link mr-4">Tags</a>
+        <a href="all" class="link">All Album Photos</a>
+    </div>
+</div>
+<div class="width-control mx-auto">
+    {% for year in albums.albumsByYear %}
+        <div class="my-2">
+            <h2 class="mt-0">{{ year.year }}</h2>
+            <div class="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8">
+                {% for albumId in year.ids %}
+                    {% set album = albums.albums[albumId] %}
+                    <a href="{{ album.slug | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2">
+                        <div class="flex flex-col flex-1 justify-center">
+                            {% if album.coverPhotos | length > 1 %}
+                                <div class="grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem]">
+                                    {% for photoId in album.coverPhotos %}
+                                        {% set photo = albums.photos[photoId] %}
+                                        {% renderPhoto photo.thumbnailSmall, photo.alt, "max-h-[16rem]" %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="flex flex-col justify-between my-2">
+                                    {% set photo = albums.photos[album.coverPhotos[0]] %}
+                                    {% renderPhoto photo.thumbnailSmall, photo.alt, "max-h-[16rem]" %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex flex-col justify-center items-center">
+                            <h3 class="link text-lg text-center mt-0">{{ album.title }}</h3>
+                            <date datetime="{{ album.date }}" class="secondary no-underline text-sm">
+                                {{ album.date | formatDate }}
+                            </date>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

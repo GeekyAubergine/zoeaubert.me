@@ -4,12 +4,13 @@ layout: page
 <div class="content">
     {{ about | mdToHtml | safe}}
 </div>
-<h2 class="mainPageHeading">Blog</h2>
+<a href="/blog" class="link">
+    <h2 class="mainPageHeading">Blog Posts</h2>
+</a>
 {%- for postId in blogposts.recentPostsOrder %}
     {% set post = blogposts.posts[postId] %}
-    {% include "blogPostListItem.njk" %}
+    {% include "blogPost.njk" %}
 {% endfor %}
-<a href="/blog" class="link">View All Blog Posts</a>
 <a href="/timeline" class="link">
     <h2 class="mainPageHeading mt-12">Recent Posts</h2>
 </a>

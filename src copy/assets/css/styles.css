@@ -34,7 +34,6 @@
 
     .link {
         @apply under text-accent;
-        /* @apply under; */
     }
 
     .button {

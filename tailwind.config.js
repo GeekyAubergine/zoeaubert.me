@@ -25,12 +25,12 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                background: '#202022',
+                background: '#121212',
                 headings: '#E4E3E7',
-                text: '#F4F3F7',
+                text: '#EDEDED',
                 secondary: '#ABA9B0',
                 tag: '#181D27',
-                accent: '#FEB847', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
+                accent: '#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
                 code: {
                     DEFAULT: '#181D27',
                     text: '#0061DF8EA45C',

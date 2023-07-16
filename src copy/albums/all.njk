@@ -1,0 +1,21 @@
+---
+layout: base
+title: "All Albums"
+eleventyComputed:
+    image: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].thumbnailSmall.url | prefixCDN }}"
+    imageAlt: "{{ albums.photos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].alt }}"
+---
+<div class="width-control mx-auto pb-4">
+    <h1 class="pageTitle">All Albums</h1>
+</div>
+{%- for albumId in albums.albumOrder %}
+    {% set album = albums.albums[albumId] %}
+    <div class="mb-4 mx-auto mt-2 sm:mt-4">
+        <h2 class="text-lg my-0 pb-2 sm:ml-2">
+            <a href="{{ album.slug | stripIndex }}" class="link">{{ album.date }} - {{ album.title }}
+            </a>
+        </h2>
+        {% set photoIds = album.photoOrder %}
+        {% include 'albumPhotoGrid.njk' %}z
+    </div>
+{% endfor %}

@@ -1,0 +1,21 @@
+<article class="flex flex-col mt-2 mb-8 no-underline text last-of-type:mb-6">
+    <a href="{{ post.permalink | stripIndex }}" class="flex flex-col link">
+        <h3 class="text-lg font-normal mt-0 mb-0">{{ post.title }}</h3>
+    </a>
+    {# {% if post.hero %}
+        <img src="{{ post.hero.url }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2 max-w-half"/>
+    {% endif %} #}
+    <p class="my-1 secondary">{{ post.description }}</p>
+    <div class="flex flex-row mt-0">
+        <time class="secondary" dateTime="{{post.date }}">{{post.date | formatDate}}</time>
+        <p class="secondary mx-1 my-0">-</p>
+        <p class="secondary my-0">{{ post.content | timeToRead }}</p>
+        <p class="hidden sm:flex secondary mx-1 my-0">-</p>
+        <div class="hidden sm:flex flex-wrap">
+           {% include "tagsList.njk" %}
+        </div>
+    </div>
+    <div class="flex flex-wrap sm:hidden">
+        {% include "tagsList.njk" %}
+    </div>
+</article>
