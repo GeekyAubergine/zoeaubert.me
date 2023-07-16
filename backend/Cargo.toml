@@ -13,10 +13,14 @@ opt-level = 3
 
 [dependencies]
 axum = "0.6.18"
-dioxus = "0.3.2"
-dioxus-ssr = "0.3.0"
+dioxus = { git = "https://github.com/dioxuslabs/dioxus.git" }
+dioxus-ssr = { git = "https://github.com/dioxuslabs/dioxus.git" }
+dioxus-fullstack = { git = "https://github.com/dioxuslabs/dioxus.git", features = [
+    "axum",
+] }
 thiserror = "1.0.43"
 tokio = { version = "1.29.1", features = ["full"] }
+common = { path = "../common" }
 
 [dev-dependencies]
 httpc-test = "0.1.5"

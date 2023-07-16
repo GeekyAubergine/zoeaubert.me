@@ -5,18 +5,5 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[profile.dev]
-opt-level = 0
-
-[profile.dev.package."*"]
-opt-level = 3
-
-[dependencies]
-axum = "0.6.18"
-dioxus = "0.3.2"
-dioxus-ssr = "0.3.0"
-thiserror = "1.0.43"
-tokio = { version = "1.29.1", features = ["full"] }
-
-[dev-dependencies]
-httpc-test = "0.1.5"
+[workspace]
+members = ['backend', 'frontend', 'common']

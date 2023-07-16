@@ -1,3 +1,7 @@
+use common::app;
+use dioxus::prelude::*;
+use dioxus_fullstack::prelude::*;
+
 use std::net::SocketAddr;
 
 use axum::{
@@ -8,14 +12,13 @@ use axum::{
 use web::ssr::ssr_routes;
 
 mod error;
+mod model;
 mod prelude;
 mod web;
-mod model;
 
 #[tokio::main]
 async fn main() {
-    let routes = Router::new().merge(ssr_routes());
-
+    let routes = Router::new().serve_dioxus_application("", ServeConfigBuilder::new(app, ()));
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
 
     axum::Server::bind(&addr)
