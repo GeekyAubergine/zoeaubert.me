@@ -25,12 +25,12 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                background: '#121212',
+                background: '#181818',
                 headings: '#E4E3E7',
                 text: '#EDEDED',
                 secondary: '#ABA9B0',
                 tag: '#181D27',
-                accent: '#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
+                accent: '#FEB847', //'#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
                 code: {
                     DEFAULT: '#181D27',
                     text: '#0061DF8EA45C',
@@ -38,13 +38,6 @@ module.exports = {
                 border: '#514F55',
                 middleGray: '#888888',
             },
-            height: (theme) => ({
-                'screen/2': '50vh',
-                'screen/3': 'calc(100vh / 3)',
-                'screen2/3': 'calc(200vh / 3)',
-                'screen/4': 'calc(100vh / 4)',
-                'screen/5': 'calc(100vh / 5)',
-            }),
         },
         fontFamily: {
             sans: ['Helvetica', 'Arial', 'sans-serif'],

@@ -5,10 +5,10 @@ descrption: 'All my referral links'
 ---
 {% for referral in referrals %}
     <div class="mb-8">
-        <div class="flex flex-row items-baseline text my-0">
+        <div class="flex-row items-baseline text my-0">
             <h3 class="mr-1 my-0 text-xl font-normal">{{referral.name}}</h3> - 
             <a href={{referral.url}} target="_blank" rel="nofollow">
-                <span class="ml-1 link my-0">{{referral.url}}</span>
+                <span class="ml-1 my-0">{{referral.url}}</span>
             </a>
         </div>
         <p class="secondary mt-0">{{ referral.description }}</p>

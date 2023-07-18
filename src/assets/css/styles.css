@@ -4,7 +4,7 @@
 
 @layer components {
     html {
-        font-size: 18px;
+        font-size: 16px;
         font-family: 'Atkinson Hyperlegible', sans-serif, ui-sans-serif,
             system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
             'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
@@ -18,7 +18,7 @@
     }
 
     .width-control {
-        @apply w-[60ch] max-w-[100%];
+        @apply w-[72ch] max-w-[100%];
     }
 
     .text {
@@ -26,15 +26,19 @@
         font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
+    .accent {
+        @apply text-accent decoration-accent;
+    }
+
     .under {
-        @apply underline;
-        text-underline-offset: 0.175rem;
+        @apply underline decoration-secondary;
+        text-underline-offset: 0.4rem;
+        /* text-underline-offset: 0.21rem; */
         /* text-underline-offset: 0.175rem; */
     }
 
     .link {
-        @apply under text-accent;
-        /* @apply under; */
+        @apply text under accent;
     }
 
     .button {
@@ -53,16 +57,12 @@
         @apply mx-auto sm:max-w-[80rem] sm:mx-8;
     }
 
-    .mainPageHeading {
-        @apply text-lg mt-6 font-bold sm:mt-10 sm:mb-0 sm:text-2xl;
-    }
-
     .borderColor {
         @apply border-border;
     }
 
     hr {
-        @apply borderColor my-6 mx-[30%];
+        @apply borderColor my-6 mx-0 last-of-type:hidden;
     }
 
     h1,
@@ -80,14 +80,6 @@
     /* :not(div) + p {
         @apply mt-0;
     } */
-
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply mt-8 mb-2 font-bold text-headings;
-    }
 
     h1 {
         @apply text-headings;
@@ -110,20 +102,28 @@
     }
 
     a {
-        @apply m-0;
+        @apply m-0 link;
+        text-underline-offset: 0.4rem;
+    }
+
+    div {
+        @apply flex flex-col;
+    }
+
+    .mainPageHeading {
+        @apply text-3xl sm:text-4xl mt-6;
+    }
+
+    .mainPageBlock {
+        @apply my-6;
+    }
+
+    .about > p:last-of-type {
+        @apply mb-0;
     }
 
     .content {
         @apply block;
-    }
-
-    /* .content > img {
-        @apply block max-w-full h-auto my-4 mx-auto !object-contain;
-        margin-block-end: 1em;
-    } */
-
-    .content a {
-        @apply link;
     }
 
     .content img {
@@ -140,6 +140,14 @@
 
     .content > *:first-child {
         @apply mt-0;
+    }
+
+    .content h2,
+    .content h3,
+    .content h4,
+    .content h5,
+    .content h6 {
+        @apply mt-8 mb-2 text-headings;
     }
 
     p a,
@@ -168,7 +176,9 @@
         @apply list-disc;
     }
 
-    ul,ol > li > ul, ol{
+    ul,
+    ol > li > ul,
+    ol {
         @apply my-0;
     }
 
@@ -189,21 +199,9 @@
     }
 
     pre > code {
-        @apply  !text-[10pt];
+        @apply !text-[10pt];
     }
-
-    .gatsby-highlight {
-        @apply mb-4;
-    }
-
-    .gatsby-highlight pre {
-        @apply !border-b-0;
-    }
-
-    .gatsby-highlight code {
-        @apply mb-4;
-    }
-
+    
     table {
         table-layout: fixed;
         width: 100%;

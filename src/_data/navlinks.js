@@ -6,25 +6,25 @@ module.exports = [
     //     url: 'https://geekyaubergine.com',
     // },
     {
-        name: 'blog',
+        name: 'Blog',
         target: '',
         rel: '',
         url: '/blog',
     },
+    // {
+    //     name: 'albums',
+    //     target: '',
+    //     rel: '',
+    //     url: '/albums',
+    // },
     {
-        name: 'albums',
-        target: '',
-        rel: '',
-        url: '/albums',
-    },
-    {
-        name: 'timeline',
+        name: 'Timeline',
         target: '',
         rel: '',
         url: '/timeline',
     },
     {
-        name: 'photos',
+        name: 'Photos',
         target: '',
         rel: '',
         url: '/photos',
@@ -53,12 +53,12 @@ module.exports = [
     //     rel: '',
     //     url: '/tags',
     // },
-    {
-        name: 'links',
-        target: '',
-        rel: '',
-        url: '/links',
-    },
+    // {
+    //     name: 'links',
+    //     target: '',
+    //     rel: '',
+    //     url: '/links',
+    // },
     // {
     //     name: 'faq',
     //     target: '',
