@@ -32,7 +32,7 @@
 
     .under {
         @apply underline;
-        text-underline-offset: 0.4rem;
+        text-underline-offset: 0.25rem;
         /* text-underline-offset: 0.21rem; */
         /* text-underline-offset: 0.175rem; */
     }
@@ -129,7 +129,7 @@
         @apply mx-auto my-4;
     }
 
-    .content img + img {
+    .content :not(.photogrid) img + img {
         @apply mt-4;
     }
 

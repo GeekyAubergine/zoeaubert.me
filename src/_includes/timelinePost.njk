@@ -1,12 +1,14 @@
 <article>
-    <a href="{{ post.slug }}" rel="noopener" class="no-underline accent">
+    <a href="{{ post.permalink }}" rel="noopener" class="no-underline accent">
         <time class="accent" datetime="{{ post.date }}">
             {{ post.date | formatDateTime }}
         </time>
     </a>
-    <div class="content mt-2">
+    <div class="content mt-4">
         {% if post.type == 'blogPost' %}
-            <h2 class="">{{ post.title }}</h2>
+            <a href="{{ post.permalink }}" rel="noopener" class="no-underline  m-0">
+                <h2 class="!mt-0">{{ post.title }}</h2>
+            </a>
             {% if post.hero %}
                 <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
             {% endif %}
@@ -37,7 +39,9 @@
             </div>
         {% endif %}
         {% if post.type == 'album' %}
-            <h3 class="">{{ post.title }}</h3>
+            <a href="{{ post.permalink }}" rel="noopener" class="no-underline  m-0">
+                <h2 class="!mt-0">{{ post.title }}</h2>
+            </a>
             <div class="flex-col justify-center my-4">
                 {% if post.coverPhotos | length > 1 %}
                     <div class="grid gap-x-1 grid-cols-2 overflow-hidden">
@@ -49,7 +53,7 @@
                 {% else %}
                     <div class="justify-between my-2">
                         {% set photo = albums.albumPhotos[post.coverPhotos[0]] %}
-                        {% renderImage photo.thumbnailSmall, "!my-0 w-full" %}
+                        {% renderImage photo.thumbnailLarge, "!my-0 w-full" %}
                     </div>
                 {% endif %}
             </div>

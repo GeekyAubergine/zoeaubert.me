@@ -219,6 +219,10 @@ module.exports = function (eleventyConfig) {
         if (slug === 'WIPWednesday') {
             return 'wip-wednesday'
         }
+        
+        if (slug.endsWith("GP")) {
+            return slug.toLowerCase().replace("gp", "-gp")
+        }
 
         if (slug.toLowerCase() === 'tv') {
             return 'tv'

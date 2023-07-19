@@ -1,0 +1,52 @@
+---
+layout: base
+pagination:
+  data: micros.postOrder
+  size: 1
+  alias: postKey
+permalink: "{{ micros.posts[postKey].permalink }}/index.html"
+eleventyComputed: 
+  title: "{{ micros.posts[postKey].date | formatDateTime }}"
+  description: "{{ micros.posts[postKey].excerpt | mdToHtml | safe }}"
+  image: "{{ micros.posts[postKey].media[0].url }}"
+  imageAlt: "{{ micros.posts[postKey].media[0].alt }}"
+---
+{% set post = micros.posts[postKey] %}
+<div class="width-control mx-auto">
+  <h1 class="pageTitle mb-4">
+    <time datetime="{{date}}">{{ post.date | formatDateTime }}</time>
+  </h1>
+  <div class="content">
+    {% if post.type == 'microBlog' or post.type == 'microPost' %}
+      {{ post.content | mdToHtml | safe }}
+    {% endif %}
+    {% if post.type == 'mastodon' %}
+      {{ post.content | mdToHtml | safe }}
+      {% if post.media | length > 1 %}
+        <div class="grid grid-cols-2 gap-x-2 gap-y-2 my-6">
+          {% for media in post.media %}
+            {% renderImage media.image,
+            "!my-0" %}
+          {% endfor %}
+        </div>
+      {% elif post.media | length > 0 %}
+        {% renderImage post
+          .media[0]
+          .image %}
+      {% endif %}
+    {% endif %}
+    {% if post.type == 'statusLol' %}
+      <div class="flex-row items-start mb-4">
+        <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
+        <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
+      </div>
+    {% endif %}
+    <div class="flex-row flex-wrap">
+        {% include "tagsList.njk" %}
+    </div>
+    {% if post.originalUrl %}
+      <p class="mt-4 mb-0">See original <a href="{{ post.originalUrl }}" class="link" target="_blank" rel="me">{{ post.originalUrl }}</a>
+      </p>
+    {% endif %}
+  </div>
+</div>
