@@ -44,21 +44,21 @@ function renderPhotoShortcut(photo, alt, classes = '') {
         `
 }
 
-function renderMediaShortcut(media, classes = '') {
-    if (!media || media.type !== 'image') {
-        throw new Error('Missing photo')
+function renderImageShortcut(image, classes = '') {
+    if (!image) {
+        throw new Error('Missing image')
     }
 
-    const { url, width, height, alt } = media
+    const { src, width, height, alt } = image
 
     if (alt === undefined) {
         // You bet we throw an error on missing alt (alt="" works okay)
-        throw new Error(`Missing \`alt\` on responsiveimage from: ${url}`)
+        throw new Error(`Missing \`alt\` on responsiveimage from: ${src}`)
     }
 
-    const url2 = url.startsWith('https://')
-        ? url
-        : `https://cdn.geekyaubergine.com${url}`
+    const url2 = src.startsWith('https://')
+        ? src
+        : `https://cdn.geekyaubergine.com${src}`
 
     return `
           <img
@@ -289,7 +289,7 @@ module.exports = function (eleventyConfig) {
     })
 
     eleventyConfig.addShortcode('renderPhoto', renderPhotoShortcut)
-    eleventyConfig.addShortcode('renderMedia', renderMediaShortcut)
+    eleventyConfig.addShortcode('renderImage', renderImageShortcut)
     eleventyConfig.addShortcode('arrayIncludes', arrayIncludesShortcode)
 
     eleventyConfig.addShortcode('currentTimestamp', () => {

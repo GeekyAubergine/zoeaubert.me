@@ -1,0 +1,25 @@
+---
+pagination:
+    data: timeline.postOrder
+    size: 25
+    alias: postKey
+permalink: '/timeline/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}/index.html'
+layout: base
+title: Timeline
+description: My timeline
+---
+<div class="width-control mx-auto">
+    <div class="flex-row justify-between items-baseline">
+        <h1 class="pageTitle">{{ title }}</h1>
+        <div class="flex-row gap-x-3">
+            <a href="/tags/" class="accent no-underline">All tags</a>
+            <a href="/photos/" class="accent no-underline">All Photos</a>
+        </div>
+    </div>
+    <hr />
+    {%- for postKey in pagination.items %}
+        {% set post = timeline.posts[postKey] %}
+        {% include "timelinePost.njk" %}
+    {% endfor %}
+    {% include "pagination.njk" %}
+</div>

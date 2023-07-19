@@ -4,7 +4,7 @@
 
 @layer components {
     html {
-        font-size: 16px;
+        font-size: 17px;
         font-family: 'Atkinson Hyperlegible', sans-serif, ui-sans-serif,
             system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
             'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
@@ -18,7 +18,7 @@
     }
 
     .width-control {
-        @apply w-[72ch] max-w-[100%];
+        @apply w-[68ch] max-w-[100%];
     }
 
     .text {
@@ -31,14 +31,14 @@
     }
 
     .under {
-        @apply underline decoration-secondary;
+        @apply underline;
         text-underline-offset: 0.4rem;
         /* text-underline-offset: 0.21rem; */
         /* text-underline-offset: 0.175rem; */
     }
 
     .link {
-        @apply text under accent;
+        @apply text under hover:underline hover:text-accent hover:decoration-accent transition-colors;
     }
 
     .button {
@@ -103,7 +103,6 @@
 
     a {
         @apply m-0 link;
-        text-underline-offset: 0.4rem;
     }
 
     div {
