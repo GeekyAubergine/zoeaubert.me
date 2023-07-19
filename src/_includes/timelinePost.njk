@@ -61,6 +61,31 @@
                 <p class="mt-2">{{ post.description }}</p>
             {% endif %}
         {% endif %}
+        {% if post.type == 'albumPhoto' %}
+            <div class="justify-center my-2">
+                {% renderImage post.thumbnailLarge, "!my-0 w-full" %}
+            </div>
+            {% if post.description %}
+                <p class="my-1">{{ post.description }}</p>
+            {% endif %}
+            <div class="flex-row items-baseline mt-0 mb-2">
+                <a
+                    class="text-center link m-0"
+                    href="{{ post.albumPermalink | stripIndex }}"
+                >
+                    Rest of Album
+                </a>
+                <p class="mx-2 my-0">-</p>
+                <a
+                    class="link m-0"
+                    href="{{ post.fullSize.src | prefixCDN }}"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Original
+                </a>
+            </div>
+        {% endif %}
     </div>
     <div class="flex-row flex-wrap">
         {% include "tagsList.njk" %}

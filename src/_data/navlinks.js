@@ -29,6 +29,12 @@ module.exports = [
         rel: '',
         url: '/photos',
     },
+    {
+        name: 'Tags',
+        target: '',
+        rel: '',
+        url: '/tags',
+    },
      // {
     //     name: 'micros',
     //     target: '',
@@ -46,12 +52,6 @@ module.exports = [
     //     target: '',
     //     rel: '',
     //     url: '/categories',
-    // },
-    // {
-    //     name: 'tags',
-    //     target: '',
-    //     rel: '',
-    //     url: '/tags',
     // },
     // {
     //     name: 'links',

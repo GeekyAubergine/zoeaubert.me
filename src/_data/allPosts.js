@@ -3,14 +3,14 @@ const config = require('../../config')
 module.exports = async function () {
     const { apiUrl } = config
 
-    const request = await fetch(`${apiUrl}/tags.json`)
+    const request = await fetch(`${apiUrl}/all-posts.json`)
 
     const json = await request.json()
 
-    const { entitiesByTag, allTags } = json
+    const { entities, entityOrder } = json
 
     return {
-        entitiesByTag,
-        allTags,
+        posts: entities,
+        postOrder: entityOrder,
     }
 }

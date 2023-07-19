@@ -4,30 +4,8 @@ layout: page
 <div class="content about">
     {{ about | mdToHtml | safe}}
 </div>
-<div class="mainPageBlock mt-8">
+<div class="mainPageBlock">
     <h2 class="mainPageHeading">Recent Posts</h2>
-    {# {%- for postKey in micros.recentPostsOrder %}
-        {% set post = micros.posts[postKey] %}
-        <article class="my-2">
-            <a href="{{ post.slug }}">
-                <time datetime="{{ post.date }}">
-                    {{ post.date | formatDateTime }}
-                </time>
-            </a>
-            <div class="my-1">
-                {{ post.excerpt | mdToHtml | safe }}
-            </div>
-            <div class="flex-row flex-wrap my-0 py-0">
-                {% if post.type == 'blogPost' or post.type == 'microblog' or post.type == 'mastodon' or post.type == 'micro' %}
-                    {% for tag in post.tags %}
-                        <a href="/tags/{{ tag | slug }}" class="secondary mr-2 my-0 py-0">
-                        #{{ tag }}
-                        </a>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </article>
-    {% endfor %} #}
     {%- for postKey in timeline.recentPostsOrder %}
         {% set post = timeline.posts[postKey] %}
         {% include "timelinePost.njk" %}
