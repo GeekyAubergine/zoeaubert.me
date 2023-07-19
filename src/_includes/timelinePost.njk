@@ -42,7 +42,7 @@
             <a href="{{ post.permalink }}" rel="noopener" class="no-underline  m-0">
                 <h2 class="!mt-0">{{ post.title }}</h2>
             </a>
-            <div class="flex-col justify-center my-4">
+            <div class="justify-center my-4">
                 {% if post.coverPhotos | length > 1 %}
                     <div class="grid gap-x-1 grid-cols-2 overflow-hidden">
                         {% for photoId in post.coverPhotos %}

@@ -4,10 +4,10 @@ layout: page
 <div class="content about">
     {{ about | mdToHtml | safe}}
 </div>
-<div class="mainPageBlock mt-0">
-    <h2 class="mainPageHeading">Recents</h2>
-    {# {%- for postId in micros.recentPostsOrder %}
-        {% set post = micros.posts[postId] %}
+<div class="mainPageBlock mt-8">
+    <h2 class="mainPageHeading">Recent Posts</h2>
+    {# {%- for postKey in micros.recentPostsOrder %}
+        {% set post = micros.posts[postKey] %}
         <article class="my-2">
             <a href="{{ post.slug }}">
                 <time datetime="{{ post.date }}">
@@ -28,16 +28,16 @@ layout: page
             </div>
         </article>
     {% endfor %} #}
-    {%- for entityId in timeline.recentEntityOrder %}
-        {% set post = timeline.entities[entityId] %}
+    {%- for postKey in timeline.recentPostsOrder %}
+        {% set post = timeline.posts[postKey] %}
         {% include "timelinePost.njk" %}
     {% endfor %}
     <a class="mt-6" href="/timeline">See Timeline</a>
 </div>
 <div class="mainPageBlock">
     <h2 class="mainPageHeading">Blog Posts</h2>
-    {%- for postId in blogposts.recentPostsOrder %}
-        {% set post = blogposts.posts[postId] %}
+    {%- for postKey in blogposts.recentPostsOrder %}
+        {% set post = blogposts.posts[postKey] %}
         {% include "blogPostListItem.njk" %}
     {% endfor %}
     <a class="mt-6" href="/blog">See All Blog Posts</a>

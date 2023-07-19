@@ -1,0 +1,28 @@
+---
+layout: base
+pagination:
+  data: blogposts.postOrder
+  size: 1
+  alias: postKey
+permalink: "/{{ blogposts.posts[postKey].permalink }}/index.html"
+eleventyComputed: 
+  title: "{{ blogposts.posts[postKey].title }}"
+  description: "{{ blogposts.posts[postKey].description }}"
+  image: "{{ blogposts.posts[postKey].hero.url }}"
+  imageAlt: "{{ blogposts.posts[postKey].hero.alt }}"
+---
+{% set post = blogposts.posts[postKey] %}
+<div class="width-control mx-auto">
+  <h1 class="pageTitle mb-1">{{post.title}}</h1>
+  <div class="flex-row">
+    <time class="secondary" datetime="{{date}}">{{ post.date | formatDate }}</time>
+    <p class="secondary mx-1 my-0">-</p>
+    <p class="secondary my-0">{{post.content | timeToRead}}</p>
+  </div>
+  <div class="flex-row flex-wrap">
+    {% include "tagsList.njk" %}
+  </div>
+  <div class="w-full content mt-8">
+    {{ post.content | mdToHtml | safe }}
+  </div>
+</div>
