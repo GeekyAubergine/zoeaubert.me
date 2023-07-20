@@ -10,7 +10,7 @@
                 <h2 class="!mt-0">{{ post.title }}</h2>
             </a>
             {% if post.hero %}
-                <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
+                <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2 max-h-[18rem]" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
             {% endif %}
             <p class="my-2">{{ post.description }}</p>
         {% endif %}
@@ -19,18 +19,20 @@
         {% endif %}
         {% if post.type == 'mastodon' %}
             {{ post.content | mdToHtml | safe }}
-            {% if post.media | length > 1 %}
-                <div class="grid grid-cols-2 gap-x-2 gap-y-2 my-6">
+            <div class="flex flex-row justify-start my-6">
+                {% if post.media | length > 1 %}
                     {% for media in post.media %}
-                        {% renderImage media.image,
-                        "!my-0" %}
+                        <div class="ml-2 first-of-type:ml-0">
+                            {% renderImage media.image,
+                        "!m-auto max-h-[30rem]" %}
+                        </div>
                     {% endfor %}
-                </div>
-            {% elif post.media | length > 0 %}
-                {% renderImage post
+                {% elif post.media | length > 0 %}
+                    {% renderImage post
                     .media[0]
-                    .image %}
-            {% endif %}
+                    .image, "max-h-[30rem]" %}
+                {% endif %}
+            </div>
         {% endif %}
         {% if post.type == 'statusLol' %}
             <div class="flex-row items-start mb-4">

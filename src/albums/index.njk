@@ -15,38 +15,36 @@ eleventyComputed:
         <a href="/albums/all" class="link">All Album Photos</a>
     </div>
 </div>
-<div class="width-control mx-auto">
-    {% for year in albums.albumsByYear %}
-        <div class="my-2">
-            <h2 class="mt-0">{{ year.year }}</h2>
-            <div class="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8">
-                {% for albumId in year.albums %}
-                    {% set album = albums.albums[albumId] %}
-                    <a href="{{ album.permalink | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2 !no-underline">
-                        <div class="flex flex-col flex-1 justify-center">
-                            {% if album.coverPhotos | length > 1 %}
-                                <div class="grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem]">
-                                    {% for photoId in album.coverPhotos %}
-                                        {% set photo = albums.albumPhotos[photoId] %}
-                                        {% renderImage photo.thumbnailSmall, "max-h-[16rem]" %}
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                <div class="flex flex-col justify-between my-2">
-                                    {% set photo = albums.albumPhotos[album.coverPhotos[0]] %}
+{% for year in albums.albumsByYear %}
+    <div class="my-2">
+        <h2 class="mt-0">{{ year.year }}</h2>
+        <div class="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8">
+            {% for albumId in year.albums %}
+                {% set album = albums.albums[albumId] %}
+                <a href="{{ album.permalink | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2 !no-underline">
+                    <div class="flex flex-col flex-1 justify-center">
+                        {% if album.coverPhotos | length > 1 %}
+                            <div class="grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem]">
+                                {% for photoId in album.coverPhotos %}
+                                    {% set photo = albums.albumPhotos[photoId] %}
                                     {% renderImage photo.thumbnailSmall, "max-h-[16rem]" %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col justify-center items-center">
-                            <h3 class="accent text-lg text-center mt-2 mb-0">{{ album.title }}</h3>
-                            <date datetime="{{ album.date }}" class="secondary text-sm !no-underline">
-                                {{ album.date | formatDate }}
-                            </date>
-                        </div>
-                    </a>
-                {% endfor %}
-            </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="flex flex-col justify-between my-2">
+                                {% set photo = albums.albumPhotos[album.coverPhotos[0]] %}
+                                {% renderImage photo.thumbnailSmall, "max-h-[16rem]" %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-col justify-center items-center">
+                        <h3 class="accent text-lg text-center mt-2 mb-0">{{ album.title }}</h3>
+                        <date datetime="{{ album.date }}" class="secondary text-sm !no-underline">
+                            {{ album.date | formatDate }}
+                        </date>
+                    </div>
+                </a>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
+    </div>
+{% endfor %}

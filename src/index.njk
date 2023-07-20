@@ -4,14 +4,14 @@ layout: page
 <div class="content about">
     {{ about | mdToHtml | safe}}
 </div>
-<div class="mainPageBlock">
+{# <div class="mainPageBlock">
     <h2 class="mainPageHeading">Recent Posts</h2>
     {%- for postKey in timeline.recentPostsOrder %}
         {% set post = timeline.posts[postKey] %}
         {% include "timelinePost.njk" %}
     {% endfor %}
     <a class="mt-6" href="/timeline">See Timeline</a>
-</div>
+</div> #}
 <div class="mainPageBlock">
     <h2 class="mainPageHeading">Blog Posts</h2>
     {%- for postKey in blogposts.recentPostsOrder %}

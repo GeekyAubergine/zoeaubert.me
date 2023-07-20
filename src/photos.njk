@@ -1,37 +1,38 @@
 ---
-layout: base
+layout: html
 pagination:
     data: photos
     size: 25
-    alias: photoGroup
+    alias: photos
 permalink: '/photos/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}/index.html'
 eleventyComputed:
-    image: "{{ photoGroup[0].src }}"
-    imageAlt: "{{ photoGroup[0].alt }}"
+    image: "{{ photos[0].src }}"
+    imageAlt: "{{ photos[0].alt }}"
 title: "All Photos"
 description: "All my photos"
 ---
-<div class="flex-row width-control mx-auto pb-4 justify-between items-baseline">
-    <h1 class="pageTitle">All Photos</h1>
-    <div class="flex-row justify-end">
-        <a href="/tags" class="link mr-4">Tags</a>
-        <a href="/albums" class="link">View Albums</a>
+<main class="main">
+    <div class="width-control mx-auto">
+        {% include "navbar.njk" %}
     </div>
-</div>
-<div class="wide mx-auto">
-    <div class="photo-grid grid gap-x-2 gap-y-2 mx-auto px-0 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 sm:px-2">
-        {% for photo in photoGroup %}
-            {% if photo.image.width * 1.2 > photo.image.height %}
-                {% set span = "col-span-2" %}
-            {% else %}
-                {% set span = "col-span-1" %}
-            {% endif %}
-            <a href="{{ photo.parentPermalink }}" class="flex justify-center items-center {{ span }}">
-                {% renderImage photo.image %}
-            </a>
-        {% endfor %}
+    <div class="wide">
+        <div class="flex-row pb-4 justify-between items-baseline">
+            <h1 class="pageTitle">All Photos</h1>
+            <div class="flex-row justify-end">
+                <a href="/tags" class="link mr-4">Tags</a>
+                <a href="/albums" class="link">View Albums</a>
+            </div>
+        </div>
+        <div class="photogrid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+            {% for photo in photos %}
+                <a href="{{ photo.parentPermalink }}" class="flex justify-center items-center col-span-1">
+                    {% renderImage photo.image %}
+                </a>
+            {% endfor %}
+        </div>
+        {% include "pagination.njk" %}
     </div>
-</div>
-<div class="width-control mx-auto">
-    {% include "pagination.njk" %}
-</div>
+    <div class="width-control mx-auto">
+        {% include "footer.njk" %}
+    </div>
+</main>

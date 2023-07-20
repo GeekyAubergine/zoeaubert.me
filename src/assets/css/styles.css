@@ -54,11 +54,15 @@
     }
 
     .wide {
-        @apply mx-auto sm:max-w-[80rem] sm:mx-8;
+        @apply mx-auto p-2 max-w-[102ch];
     }
 
     .borderColor {
         @apply border-border;
+    }
+
+    .main {
+        @apply flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8;
     }
 
     hr {
@@ -148,7 +152,7 @@
     .content h6 {
         @apply mt-8 mb-2 text-headings;
     }
-
+    
     p a,
     li a {
         @apply link;
@@ -245,7 +249,7 @@
     }
 
     img {
-        @apply max-w-full h-auto object-contain;
+        @apply max-w-full max-h-full w-auto h-auto object-contain;
     }
 
     .image-wrapper {
@@ -258,12 +262,22 @@
     }
 
     .photogrid {
-        @apply w-full grid grid-cols-3 gap-x-1 gap-y-1  sm:gap-x-4 sm:gap-y-4 my-1 sm:my-2;
+        @apply w-full grid gap-x-2 gap-y-4 mx-auto px-0 grid-cols-2 sm:grid-cols-4 sm:gap-y-2 md:grid-cols-6;
     }
 
     .photogrid > img {
         @apply m-0;
     }
+
+    .albumPhotoPageContainer {
+        /* max-height: 40rem; */
+    }
+
+    .albumPhotoPageContainer img {
+        max-height: calc(100vh - 15rem);
+        max-width: 100%;
+    }
+
     .statuslol_container {
         @apply flex;
     }
