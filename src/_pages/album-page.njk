@@ -4,12 +4,12 @@ pagination:
     data: albums.albumOrder
     size: 1
     alias: albumId
-permalink: "/{{ albums.albums[albumId].slug }}/index.html"
+permalink: "/{{ albums.albums[albumId].permalink }}/index.html"
 eleventyComputed:
     title: "{{ albums.albums[albumId].title }}"
     description: "{{ albums.albums[albumId].date | formatDate }}"
-    image: "{{ albums.photos[albums.albums[albumId].coverPhotos[0]].thumbnailSmall.url | prefixCDN }}"
-    imageAkt: "{{ albums.photos[albums.albums[albumId].coverPhotos[0]].alt | prefixCDN }}"
+    image: "{{ albums.albumPhotos[albums.albums[albumId].coverPhotos[0]].thumbnailSmall.url | prefixCDN }}"
+    imageAkt: "{{ albums.albumPhotos[albums.albums[albumId].coverPhotos[0]].alt | prefixCDN }}"
 ---
 {% set album = albums.albums[albumId] %}
 <div class="width-control mx-auto">

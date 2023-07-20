@@ -23,7 +23,7 @@
     <language>{{ site.language }}</language>
     {%- for entityId in timeline.entityOrder %}
       {% set post = timeline.entities[entityId] %}
-      {%- set absolutePostUrl = post.slug | absoluteUrl(site.url) %}
+      {%- set absolutePostUrl = post.permalink | absoluteUrl(site.url) %}
       <item>
         {% if post.type == "blogPost" or post.type == 'album' %}
           <title>{{ post.title }}</title>
@@ -32,7 +32,7 @@
         {% endif %}
         <link>{{ absolutePostUrl }}</link>
         <description>
-          {% if post.type == "blogPost" or post.type == 'microblog' or post.type == 'micro' %}
+          {% if post.type == "blogPost" or post.type == 'microblog' or post.type == 'microPost' %}
             {{ post.content | mdToHtml | htmlToAbsoluteUrls(absolutePostUrl) }}
           {% endif %}
           {% if  post.type == 'mastodon' %}

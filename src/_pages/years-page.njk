@@ -8,7 +8,7 @@ permalink: "/years/{{ year }}/index.html"
 eleventyComputed:
     title: "{{ year }} posts"
 ---
-{%- for entityId in years.entitiesByYear[year] %}
-  {%- set post = all.entities[entityId] %}
+{%- for entityKey in years.entitiesByYear[year] %}
+  {%- set post = allPosts.posts[entityKey] %}
   {% include "timelinePost.njk" %}
 {% endfor %}

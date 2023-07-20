@@ -23,7 +23,7 @@
     <language>{{ site.language }}</language>
     {%- for postId in blogposts.postOrder %}
       {% set post = blogposts.posts[postId] %}
-      {%- set absolutePostUrl = post.slug | absoluteUrl(site.url) %}
+      {%- set absolutePostUrl = post.permalink | absoluteUrl(site.url) %}
       <item>
         <title>{{ post.title }}</title>
         <link>{{ absolutePostUrl }}</link>
