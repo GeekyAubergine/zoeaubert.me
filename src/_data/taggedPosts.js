@@ -7,10 +7,11 @@ module.exports = async function () {
 
     const json = await request.json()
 
-    const { entitiesByTag, allTags } = json
+    const { postsByTag, allTags, tagCounts } = json
 
     return {
-        entitiesByTag,
+        postsByTag,
         allTags,
+        tagCounts,
     }
 }

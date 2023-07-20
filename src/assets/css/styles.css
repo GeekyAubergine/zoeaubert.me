@@ -4,7 +4,7 @@
 
 @layer components {
     html {
-        font-size: 18px;
+        font-size: 17px;
         font-family: 'Atkinson Hyperlegible', sans-serif, ui-sans-serif,
             system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
             'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
@@ -18,7 +18,7 @@
     }
 
     .width-control {
-        @apply w-[60ch] max-w-[100%];
+        @apply w-[68ch] max-w-[100%];
     }
 
     .text {
@@ -26,14 +26,19 @@
         font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
+    .accent {
+        @apply text-accent decoration-accent;
+    }
+
     .under {
         @apply underline;
-        text-underline-offset: 0.175rem;
+        text-underline-offset: 0.25rem;
+        /* text-underline-offset: 0.21rem; */
         /* text-underline-offset: 0.175rem; */
     }
 
     .link {
-        @apply under text-accent;
+        @apply text under hover:underline hover:text-accent hover:decoration-accent transition-colors;
     }
 
     .button {
@@ -49,19 +54,19 @@
     }
 
     .wide {
-        @apply mx-auto sm:max-w-[80rem] sm:mx-8;
-    }
-
-    .mainPageHeading {
-        @apply text-lg mt-6 font-bold sm:mt-10 sm:mb-0 sm:text-2xl;
+        @apply mx-auto p-2 max-w-[102ch];
     }
 
     .borderColor {
         @apply border-border;
     }
 
+    .main {
+        @apply flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8;
+    }
+
     hr {
-        @apply borderColor my-6 mx-[30%];
+        @apply borderColor my-6 mx-0 last-of-type:hidden;
     }
 
     h1,
@@ -79,14 +84,6 @@
     /* :not(div) + p {
         @apply mt-0;
     } */
-
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply mt-8 mb-2 font-bold text-headings;
-    }
 
     h1 {
         @apply text-headings;
@@ -109,27 +106,34 @@
     }
 
     a {
-        @apply m-0;
+        @apply m-0 link;
+    }
+
+    div {
+        @apply flex flex-col;
+    }
+
+    .mainPageHeading {
+        @apply text-3xl mt-6;
+    }
+
+    .mainPageBlock {
+        @apply my-6;
+    }
+
+    .about > p:last-of-type {
+        @apply mb-0;
     }
 
     .content {
         @apply block;
     }
 
-    /* .content > img {
-        @apply block max-w-full h-auto my-4 mx-auto !object-contain;
-        margin-block-end: 1em;
-    } */
-
-    .content a {
-        @apply link;
-    }
-
     .content img {
         @apply mx-auto my-4;
     }
 
-    .content img + img {
+    .content :not(.photogrid) img + img {
         @apply mt-4;
     }
 
@@ -141,6 +145,14 @@
         @apply mt-0;
     }
 
+    .content h2,
+    .content h3,
+    .content h4,
+    .content h5,
+    .content h6 {
+        @apply mt-8 mb-2 text-headings;
+    }
+    
     p a,
     li a {
         @apply link;
@@ -167,7 +179,9 @@
         @apply list-disc;
     }
 
-    ul,ol > li > ul, ol{
+    ul,
+    ol > li > ul,
+    ol {
         @apply my-0;
     }
 
@@ -188,21 +202,9 @@
     }
 
     pre > code {
-        @apply  !text-[10pt];
+        @apply !text-[10pt];
     }
-
-    .gatsby-highlight {
-        @apply mb-4;
-    }
-
-    .gatsby-highlight pre {
-        @apply !border-b-0;
-    }
-
-    .gatsby-highlight code {
-        @apply mb-4;
-    }
-
+    
     table {
         table-layout: fixed;
         width: 100%;
@@ -247,7 +249,7 @@
     }
 
     img {
-        @apply max-w-full h-auto object-contain;
+        @apply max-w-full max-h-full w-auto h-auto object-contain;
     }
 
     .image-wrapper {
@@ -260,12 +262,22 @@
     }
 
     .photogrid {
-        @apply w-full grid grid-cols-3 gap-x-1 gap-y-1  sm:gap-x-4 sm:gap-y-4 my-1 sm:my-2;
+        @apply w-full grid gap-x-2 gap-y-4 mx-auto px-0 grid-cols-2 sm:grid-cols-4 sm:gap-y-2 md:grid-cols-6;
     }
 
     .photogrid > img {
         @apply m-0;
     }
+
+    .albumPhotoPageContainer {
+        /* max-height: 40rem; */
+    }
+
+    .albumPhotoPageContainer img {
+        max-height: calc(100vh - 15rem);
+        max-width: 100%;
+    }
+
     .statuslol_container {
         @apply flex;
     }

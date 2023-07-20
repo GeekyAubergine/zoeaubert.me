@@ -6,7 +6,7 @@ module.exports = [
     // },
     {
         name: 'Mastodon',
-        description: 'Cross-posts and occasional funnies',
+        description: 'Toots',
         link: 'https://social.lol/@geekyaubergine',
         showInTopNav: true,
     },
@@ -15,6 +15,7 @@ module.exports = [
         description: 'My open source projects',
         link: 'https://github.com/geekyaubergine',
         showInTopNav: true,
+        showInFooter: true,
     },
     // {
     //     name: 'Twitter',
@@ -25,5 +26,6 @@ module.exports = [
         name: 'LinkedIn',
         description: 'Professional things',
         link: 'https://www.linkedin.com/in/zoeaubert/',
+        showInFooter: true,
     },
 ]

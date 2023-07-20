@@ -1,9 +1,18 @@
-<footer class="flex flex-col width-control mt-12 mb-4 p-4 mx-auto items-center border-t border-t-border content">
-    <p class="w-full text-center">Enjoyed what you've seen? Tell me about it on <a class="link" href="https://social.lol/@geekyaubergine" target="_blank" rel="me">Mastodon</a> 😊
+<footer class="width-control mt-12 p-4 mx-auto items-center border-t border-t-border content">
+    <div class="flex-row flex-wrap justify-center">
+        <p class="mx-0.5 my-0">Enjoyed what you've seen?</p>
+        <p class="mx-0.5 my-0">Tell me about it on <a href="https://social.lol/@geekyaubergine" target="_blank" rel="me" class="accent">Mastodon</a> 😊
     </p>
-    <div class="flex flex-row">
-        <a href="/referrals" class="link text-center">Referrals</a>
+    </div>
+    <div class="flex-row justify-center mt-6 sm:mt-2">
+        {% for social in socials %}
+            {% if social.showInFooter %}
+                <a href="{{ social.link }}" target="_blank" rel="me" class="accent">{{ social.name }}</a>
+                <span class="text mx-2 my-0">-</span>
+            {% endif %}
+        {% endfor %}
+        <a href="/referrals" class="accent">Referrals</a>
         <span class="text mx-2 my-0">-</span>
-        <a class="link text-center"  href="/subscribe">RSS</a>
+        <a href="/subscribe" class="accent">RSS</a>
     </div>
 </footer>

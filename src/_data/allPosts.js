@@ -3,7 +3,7 @@ const config = require('../../config')
 module.exports = async function () {
     const { apiUrl } = config
 
-    const request = await fetch(`${apiUrl}/statuslol.json`)
+    const request = await fetch(`${apiUrl}/all-posts.json`)
 
     const json = await request.json()
 

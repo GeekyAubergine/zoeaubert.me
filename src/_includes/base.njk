@@ -1,8 +1,10 @@
 ---
 layout: html
 ---
-<main class="flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8">
+<main class="main">
     {% include "navbar.njk" %}
-    {{ content | safe }}
+    <div class="width-control mx-auto">
+        {{ content | safe }}
+    </div>
     {% include "footer.njk" %}
 </main>

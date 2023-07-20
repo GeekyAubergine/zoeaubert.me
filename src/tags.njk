@@ -4,6 +4,6 @@ title: Tags
 ---
 <ul>
     {%- for tag in taggedPosts.allTags %}
-        <li><a href="/tags/{{ tag | slug }}">{{ tag }}</a></li>
+        <li><a href="/tags/{{ tag | slug }}">{{ tag }}</a> - {{ taggedPosts.tagCounts[tag] }}</li>
     {% endfor %}
 </ul>

@@ -1,16 +1,15 @@
-<div class='flex w-full justify-between mt-11'>
+<div class='flex-row w-full justify-between mt-11'>
     <div>
         {% if pagination.href.previous %}
-            <a href="{{ pagination.href.previous }}" class="secondary flex items-center">
-                <span class="mr-1">←</span>
-                <span class="under mb-1">newer</span></a>
+            <a href="{{ pagination.href.previous }}" class="secondary items-center">
+                Newer Posts</a>
         {% endif %}
     </div>
     <div>
         {% if pagination.href.next %}
-            <a href="{{ pagination.href.next }}" class="secondary flex items-center">
-                <span class="under mb-1">older</span>
-                <span class="ml-1">→</span></a>
+            <a href="{{ pagination.href.next }}" class="secondary items-center">
+                Older Posts
+                </a>
         {% endif %}
     </div>
 </div>

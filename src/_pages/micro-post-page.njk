@@ -3,52 +3,54 @@ layout: base
 pagination:
   data: micros.postOrder
   size: 1
-  alias: postId
-permalink: "{{ micros.posts[postId].slug }}/index.html"
+  alias: postKey
+permalink: "{{ micros.posts[postKey].permalink }}/index.html"
 eleventyComputed: 
-  title: "{{ micros.posts[postId].date | formatDateTime }}"
-  description: "{{ micros.posts[postId].excerpt | mdToHtml | safe }}"
-  image: "{{ micros.posts[postId].media[0].url }}"
-  imageAlt: "{{ micros.posts[postId].media[0].alt }}"
+  title: "{{ micros.posts[postKey].date | formatDateTime }}"
+  description: "{{ micros.posts[postKey].excerpt | mdToHtml | safe }}"
+  image: "{{ micros.posts[postKey].media[0].src }}"
+  imageAlt: "{{ micros.posts[postKey].media[0].alt }}"
 ---
-{% set post = micros.posts[postId] %}
-<div class="width-control mx-auto">
-  <h1 class="flex flex-row mb-4 pageTitle text-lg secondary">
-    <time class="pageTitle text-lg secondary" datetime="{{date}}">{{ post.date | formatDateTime }}</time>
-  </h1>
-  {% if post.type == 'microblog' or post.type == 'micro' %}
-    <div class="w-full content">
-      {{ post.content | mdToHtml | safe }}
-    </div>
-    <div class="flex flex-wrap mt-12">
-      {% for tag in post.tags %}
-        <a href="/tags/{{ tag | slug }}" class="link secondary mr-2">
-         #{{ tag }}
-        </a>
-      {% endfor %}
-    </div>
+{% set post = micros.posts[postKey] %}
+<h1 class="pageTitle mb-4">
+  <time datetime="{{date}}">{{ post.date | formatDateTime }}</time>
+</h1>
+<div class="content">
+  {% if post.type == 'microBlog' or post.type == 'microPost' %}
+    {{ post.content | mdToHtml | safe }}
   {% endif %}
   {% if post.type == 'mastodon' %}
-    <div class="w-full content">
-      {{ post.content | mdToHtml | safe }}
-      {% for media in post.media %}
-        {% renderMedia media, "my-4" %}
-      {% endfor %}
-    </div>
-    <div class="flex flex-wrap mt-12">
-      {% for tag in post.tags %}
-        <a href="/tags/{{ tag | slug }}" class="link secondary mr-2">
-         #{{ tag }}
-        </a>
-      {% endfor %}
-    </div>
+    {{ post.content | mdToHtml | safe }}
+    {% if post.media | length > 1 %}
+      <div class="flex flex-row justify-start my-6">
+        {% if post.media | length > 1 %}
+          {% for media in post.media %}
+            <div class="ml-2 first-of-type:ml-0">
+              {% renderImage media.image,
+                        "!m-auto max-h-[30rem]" %}
+            </div>
+          {% endfor %}
+        {% elif post.media | length > 0 %}
+          {% renderImage post
+                    .media[0]
+                    .image, "max-h-[30rem]" %}
+        {% endif %}
+      </div>
+    {% elif post.media | length > 0 %}
+      {% renderImage post
+        .media[0]
+        .image %}
+    {% endif %}
   {% endif %}
-  {% if post.type == 'statuslol' %}
-    <div class="flex items-start mb-12">
+  {% if post.type == 'statusLol' %}
+    <div class="flex-row items-start mb-4">
       <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
       <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
     </div>
   {% endif %}
+  <div class="flex-row flex-wrap">
+    {% include "tagsList.njk" %}
+  </div>
   {% if post.originalUrl %}
     <p class="mt-4 mb-0">See original <a href="{{ post.originalUrl }}" class="link" target="_blank" rel="me">{{ post.originalUrl }}</a>
     </p>
