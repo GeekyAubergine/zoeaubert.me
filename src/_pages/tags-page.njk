@@ -9,10 +9,10 @@ eleventyComputed:
     title: "#{{ tag }} posts"
 ---
 <div class="flex-row justify-between items-baseline">
-  <h1 class="pageTitle mb-4">{{ title }}</h1>
-  <a href="/tags/" class="link sm:hidden">All tags</a>
+  <h1 class="pageTitle">{{ title }}</h1>
 </div>
 <div/>
+<hr/>
 {%- for postKey in taggedPosts.postsByTag[tag] %}
   {%- set post = allPosts.posts[postKey] %}
   {% include "timelinePost.njk" %}

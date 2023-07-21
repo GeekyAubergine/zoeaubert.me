@@ -38,7 +38,7 @@
     }
 
     .link {
-        @apply text under hover:underline hover:text-accent hover:decoration-accent transition-colors;
+        @apply text under accent hover:underline hover:text-accent hover:decoration-accent transition-colors;
     }
 
     .button {
@@ -152,7 +152,7 @@
     .content h6 {
         @apply mt-8 mb-2 text-headings;
     }
-    
+
     p a,
     li a {
         @apply link;
@@ -186,7 +186,11 @@
     }
 
     li {
-        @apply ml-1.5 my-2;
+        @apply ml-1.5 mb-3;
+    }
+
+    li p {
+        @apply my-0;
     }
 
     code {
@@ -204,7 +208,7 @@
     pre > code {
         @apply !text-[10pt];
     }
-    
+
     table {
         table-layout: fixed;
         width: 100%;

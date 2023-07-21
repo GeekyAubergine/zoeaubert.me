@@ -219,9 +219,9 @@ module.exports = function (eleventyConfig) {
         if (slug === 'WIPWednesday') {
             return 'wip-wednesday'
         }
-        
-        if (slug.endsWith("GP")) {
-            return slug.toLowerCase().replace("gp", "-gp")
+
+        if (slug.endsWith('GP')) {
+            return slug.toLowerCase().replace('gp', '-gp')
         }
 
         if (slug.toLowerCase() === 'tv') {
@@ -234,6 +234,10 @@ module.exports = function (eleventyConfig) {
                 (letter) => `-${letter.toLowerCase()}`,
             )
             .replace(/^-/, '')
+    })
+
+    eleventyConfig.addFilter('formatNumber', function (number) {
+        return number.toLocaleString()
     })
 
     eleventyConfig.addFilter('albumPhotoToRss', (photo) => {

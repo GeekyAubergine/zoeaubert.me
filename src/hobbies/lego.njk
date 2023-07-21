@@ -1,0 +1,26 @@
+---
+layout: page
+title: Lego
+description: My Lego Collection
+---
+<p>I own {{ lego.setKeys | length }} sets with total of {{ lego.totalPieces | formatNumber }} pieces. See my <a href="/tags/lego">Lego related posts</a>.</p>
+
+<h2>Lego Sets</h2>
+<ul>
+    {% for setKey in lego.setKeys %}
+        {% set legoSet = lego.sets[setKey] %}
+        <li>
+            <p class="my-0">
+                {{ legoSet.name }} - 
+                <a href="{{ legoSet.bricksetUrl }}">{{ legoSet.number }}
+                </a>
+            </p>
+            <p class="secondary">
+                {{ legoSet.pieces}} pieces
+                {%- if legoSet.quantity > 1 %}
+                    x {{ legoSet.quantity }}
+                {% endif %}
+            </p>
+        </li>
+    {% endfor %}
+</ul>

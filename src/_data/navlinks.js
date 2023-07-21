@@ -11,12 +11,6 @@ module.exports = [
         rel: '',
         url: '/blog',
     },
-    // {
-    //     name: 'albums',
-    //     target: '',
-    //     rel: '',
-    //     url: '/albums',
-    // },
     {
         name: 'Timeline',
         target: '',
@@ -29,13 +23,14 @@ module.exports = [
         rel: '',
         url: '/photos',
     },
+    { name: 'Hobbies', target: '', rel: '', url: '/hobbies' },
     {
         name: 'Tags',
         target: '',
         rel: '',
         url: '/tags',
     },
-     // {
+    // {
     //     name: 'micros',
     //     target: '',
     //     rel: '',

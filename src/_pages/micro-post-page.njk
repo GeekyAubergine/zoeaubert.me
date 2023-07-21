@@ -8,8 +8,8 @@ permalink: "{{ micros.posts[postKey].permalink }}/index.html"
 eleventyComputed: 
   title: "{{ micros.posts[postKey].date | formatDateTime }}"
   description: "{{ micros.posts[postKey].excerpt | mdToHtml | safe }}"
-  image: "{{ micros.posts[postKey].media[0].src }}"
-  imageAlt: "{{ micros.posts[postKey].media[0].alt }}"
+  image: "{{ micros.posts[postKey].media[0].image.src }}"
+  imageAlt: "{{ micros.posts[postKey].media[0].image.alt }}"
 ---
 {% set post = micros.posts[postKey] %}
 <h1 class="pageTitle mb-4">
