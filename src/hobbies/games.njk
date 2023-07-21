@@ -8,7 +8,7 @@ description: Games I've played
 <div class="grid gap-x-4 gap-y-6 mx-auto px-0 mt-4 grid-cols-2 sm:grid-cols-3">
     {% for gameKey in games.keysByLastPlayed %}
         {% set game = games.games[gameKey] %}
-        <div class="justify-end items-center last-of-type:hidden sm:!flex">
+        <div class="justify-start items-center last-of-type:hidden sm:!flex">
             <a class="my-0" href="{{ game.bricksetUrl }}">
                 <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full">
                 <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
@@ -23,7 +23,7 @@ description: Games I've played
 <div class="grid gap-x-4 gap-y-6 mx-auto px-0 mt-4 grid-cols-2 sm:grid-cols-3">
     {% for gameKey in games.keysByPlaytime %}
         {% set game = games.games[gameKey] %}
-        <div class="justify-end items-center">
+        <div class="justify-start items-center">
             <a class="my-0" href="{{ game.bricksetUrl }}">
                 <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full">
                 <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
