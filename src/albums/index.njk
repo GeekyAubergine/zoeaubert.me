@@ -21,7 +21,7 @@ eleventyComputed:
         <div class="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8">
             {% for albumId in year.albums %}
                 {% set album = albums.albums[albumId] %}
-                <a href="{{ album.permalink | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2 !no-underline">
+                <a href="{{ album.permalink | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2">
                     <div class="flex flex-col flex-1 justify-center">
                         {% if album.coverPhotos | length > 1 %}
                             <div class="grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem]">

@@ -1,7 +1,7 @@
 <nav class="width-control mx-auto justify-center items-baseline mb-8">
     <div class="w-full flex-row width-control mx-auto justify-center items-baseline md:flex-row md:justify-between">
         <div class="w-full flex-row items-center justify-start my-2 md:justify-start">
-            <a class="text-2xl h-full text-left mr-2 sm:mr-4 sm:text-4xl no-underline" href="/">
+            <a class="text-2xl h-full text-left mr-2 sm:mr-4 sm:text-4xl" href="/">
                 <p class="m-0">Zoe Aubert</p>
             </a>
         </div>
@@ -9,7 +9,7 @@
             {% for link in socials %}
                 {% if link.showInTopNav %}
                     <a
-                class="accent no-underline ml-2 sm:ml-4"
+                class="ml-2 sm:ml-4"
                 href="{{ link.link }}"
                 target="_blank"
                 rel="me"
@@ -23,7 +23,7 @@
     <div class="flex-row flex-wrap w-full justify-between mt-1 sm:mt-2">
         {% for link in navlinks %}
             <a
-                class="accent no-underline text-center md:w-auto"
+                class="text-center md:w-auto"
                 href="{{ link.url }}"
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"

@@ -17,7 +17,7 @@ eleventyComputed:
             {% set album = albums.albums[albumId] %}
             <div class="mb-4 mx-auto mt-2 sm:mt-4">
                 <h2 class="text-lg my-0 pb-2">
-                    <a href="{{ album.permalink | stripIndex }}" class="no-underline accent">{{ album.date }} - {{ album.title }}
+                    <a href="{{ album.permalink | stripIndex }}">{{ album.date }} - {{ album.title }}
                     </a>
                 </h2>
                 {% set photoIds = album.photoOrder %}

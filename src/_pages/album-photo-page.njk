@@ -13,19 +13,19 @@ eleventyComputed:
 ---
 {% set photo = albums.albumPhotos[photoId] %}
 {% set post = albums.albumPhotos[photoId] %}
-<main class="main w-screen h-screen">
+<main class="main w-full h-screen">
     <div class="width-control mx-auto h-[3rem]">
         <nav class="width-control mx-auto justify-center items-baseline mb-8">
             <div class="w-full flex-row width-control mx-auto justify-center items-baseline md:flex-row md:justify-between">
                 <div class="w-full flex-row justify-between items-baseline">
-                    <a class="text-2xl no-underline" href="/">
+                    <a class="text-2xl" href="/">
                         <p class="m-0">Zoe Aubert</p>
                     </a>
                     <div class="flex-row">
-                        <a class="no-underline mr-4" href="/">
+                        <a class="mr-4" href="/">
                             <p class="m-0 accent">Home</p>
                         </a>
-                        <a class="no-underline" href="javascript:history.back()">
+                        <a href="javascript:history.back()">
                             <p class="accent m-0">Back</p>
                         </a>
                     </div>
@@ -49,7 +49,7 @@ eleventyComputed:
                 {% if photo.previous %}
                     <button
                     type="button"
-                    class="flex flex-1 link no-underline h-8 items-center  text-lg m-0"
+                    class="flex flex-1 link no-underline h-8 items-center  text-lg m-0 pr-4"
                     id="previousPhotoButton"
                 >
                     ←
@@ -61,7 +61,7 @@ eleventyComputed:
                 {% if photo.next %}
                     <button
                     type="button"
-                    class="flex flex-1 justify-end link no-underline h-8 items-cente text-lg m-0"
+                    class="flex flex-1 justify-end link no-underline h-8 pl-4 items-cente text-lg m-0"
                     id="nextPhotoButton"
                 >
                     →
@@ -73,9 +73,9 @@ eleventyComputed:
             <div class="flex-row w-full justify-center items-baseline">
                 <a
                         href="{{ photo.albumPermalink | stripIndex }}"
-                        class="text-center link m-0"
+                        class="text-center link m-0 ml-2"
                     >
-                        Rest of Album
+                        Album
                     </a>
                 <p class="mx-2 my-0">-</p>
                 <a

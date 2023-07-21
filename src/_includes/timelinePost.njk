@@ -1,12 +1,11 @@
 <article>
-    <a href="{{ post.permalink }}" rel="noopener" class="no-underline accent">
-        <time class="accent" datetime="{{ post.date }}">
-            {{ post.date | formatDateTime }}
+    <a href="{{ post.permalink }}" rel="noopener">
+        <time class="accent" datetime="{{ post.date }}">            {{ post.date | formatDateTime }}
         </time>
     </a>
     <div class="content mt-4">
         {% if post.type == 'blogPost' %}
-            <a href="{{ post.permalink }}" rel="noopener" class="no-underline  m-0">
+            <a href="{{ post.permalink }}" rel="noopener" class="!no-underline  m-0">
                 <h2 class="!mt-0">{{ post.title }}</h2>
             </a>
             {% if post.hero %}
@@ -41,7 +40,7 @@
             </div>
         {% endif %}
         {% if post.type == 'album' %}
-            <a href="{{ post.permalink }}" rel="noopener" class="no-underline  m-0">
+            <a href="{{ post.permalink }}" rel="noopener" class="!no-underline  m-0">
                 <h2 class="!mt-0">{{ post.title }}</h2>
             </a>
             <div class="justify-center my-4">
