@@ -5,7 +5,7 @@ description: My Lego Collection
 ---
 <p>I own {{ lego.setKeys | length }} sets with total of {{ lego.totalPieces | formatNumber }} pieces. See my <a href="/tags/lego">Lego related posts</a>.</p>
 
-<h2>Lego Sets</h2>
+{# <h2>Lego Sets</h2>
 <ul>
     {% for setKey in lego.setKeys %}
         {% set legoSet = lego.sets[setKey] %}
@@ -23,4 +23,26 @@ description: My Lego Collection
             </p>
         </li>
     {% endfor %}
-</ul>
+</ul> #}
+<div class="grid gap-x-4 gap-y-4 mx-auto px-0 mt-4 grid-cols-2 sm:grid-cols-3">
+    {% for setKey in lego.setKeys %}
+        {% set legoSet = lego.sets[setKey] %}
+        <div class="justify-end items-center">
+            <div class="h-[12rem] justify-center">
+                <img src="{{ legoSet.image.src }}" alt="{{ legoSet.name }}" class="w-full max-h-[12rem]">
+            </div>
+            <div class="h-[3.5rem] justify-end">
+                <p class="my-0 text-center">{{ legoSet.name }}</p>
+            </div>
+            <a class="my-0" href="{{ legoSet.bricksetUrl }}">{{ legoSet.number }}
+            </a>
+            <p class="secondary my-0">
+                {{ legoSet.pieces}} pieces
+                {%- if legoSet.quantity > 1 %}
+                    x {{ legoSet.quantity }}
+                {% endif %}
+            </p>
+            {# </div> #}
+        </div>
+    {% endfor %}
+</div>

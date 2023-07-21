@@ -20,10 +20,10 @@
             {% endfor %}
         </div>
     </div>
-    <div class="flex-row flex-wrap w-full justify-between mt-1 sm:mt-2">
+    <div class="flex-row flex-wrap w-full justify-between">
         {% for link in navlinks %}
             <a
-                class="text-center md:w-auto"
+                class="text-center w-[33%] mt-2 sm:w-auto"
                 href="{{ link.url }}"
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"
