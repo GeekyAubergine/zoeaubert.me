@@ -73,7 +73,6 @@ function renderImageShortcut(image, classes = '') {
 }
 
 function arrayIncludesShortcode(array, item) {
-    // console.log({ array, item })
     return array.includes(item)
 }
 
@@ -237,8 +236,9 @@ module.exports = function (eleventyConfig) {
     })
 
     eleventyConfig.addFilter('formatNumber', function (number) {
-        return number.toLocaleString()
+        return parseFloat(number).toLocaleString()
     })
+
 
     eleventyConfig.addFilter('albumPhotoToRss', (photo) => {
         if (!photo) {

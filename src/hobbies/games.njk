@@ -3,9 +3,9 @@ layout: page
 title: Games
 description: Games I've played
 ---
-<p>I own {{ games.keysByPlaytime | length }} games with total playtime of {{ games.totalPlaytime }} hours. See my <a href="/tags/gaming">gaming related posts</a>.</p>
+<p>I own {{ games.keysByPlaytime | length }} games with total playtime of {{ games.totalPlaytime | formatNumber}} hours. See my <a href="/tags/gaming">gaming related posts</a>.</p>
 <h2>Recently Played</h2>
-<div class="grid gap-x-4 gap-y-6 mx-auto px-0 mt-4 grid-cols-2 sm:grid-cols-3">
+<div class="grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3">
     {% for gameKey in games.keysByLastPlayed %}
         {% set game = games.games[gameKey] %}
         <div class="justify-start items-center last-of-type:hidden sm:!flex">
@@ -14,13 +14,13 @@ description: Games I've played
                 <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
             </a>
             <p class="secondary my-0">
-                {{ game.playtime.hours}}h
+                {{ game.playtime.hours | formatNumber}}h
             </p>
         </div>
     {% endfor %}
 </div>
-<h2>All Games</h2>
-<div class="grid gap-x-4 gap-y-6 mx-auto px-0 mt-4 grid-cols-2 sm:grid-cols-3">
+<h2 class="mt-16">All Games</h2>
+<div class="grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3">
     {% for gameKey in games.keysByPlaytime %}
         {% set game = games.games[gameKey] %}
         <div class="justify-start items-center">
@@ -29,7 +29,7 @@ description: Games I've played
                 <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
             </a>
             <p class="secondary my-0">
-                {{ game.playtime.hours}}h
+                {{ game.playtime.hours | formatNumber}}h
             </p>
         </div>
     {% endfor %}

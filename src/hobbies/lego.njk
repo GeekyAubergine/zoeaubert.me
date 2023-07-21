@@ -20,7 +20,7 @@ description: My Lego Collection
             <a class="my-0" href="{{ legoSet.bricksetUrl }}">{{ legoSet.number }}
             </a>
             <p class="secondary my-0">
-                {{ legoSet.pieces}} pieces
+                {{ legoSet.pieces | formatNumber }} pieces
                 {%- if legoSet.quantity > 1 %}
                     x {{ legoSet.quantity }}
                 {% endif %}
