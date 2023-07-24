@@ -311,4 +311,8 @@
     .statuslol_time > a {
         @apply text secondary underline;
     }
+
+    .hobbyGridItemImage {
+        @apply border-[#00000000] border-2 hover:border-accent rounded-md;
+    }
 }

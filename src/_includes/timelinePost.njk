@@ -1,6 +1,7 @@
 <article>
     <a href="{{ post.permalink }}" rel="noopener">
-        <time class="accent" datetime="{{ post.date }}">            {{ post.date | formatDateTime }}
+        <time class="accent" datetime="{{ post.date }}">
+            {{ post.date | formatDateTime }}
         </time>
     </a>
     <div class="content mt-4">
@@ -18,20 +19,22 @@
         {% endif %}
         {% if post.type == 'mastodon' %}
             {{ post.content | mdToHtml | safe }}
-            <div class="flex flex-row justify-start my-6">
-                {% if post.media | length > 1 %}
-                    {% for media in post.media %}
-                        <div class="ml-2 first-of-type:ml-0">
-                            {% renderImage media.image,
+            {%- if post.media | length > 0 %}
+                <div class="flex flex-row justify-start my-6">
+                    {% if post.media | length > 1 %}
+                        {% for media in post.media %}
+                            <div class="ml-2 first-of-type:ml-0">
+                                {% renderImage media.image,
                         "!m-auto max-h-[30rem]" %}
-                        </div>
-                    {% endfor %}
-                {% elif post.media | length > 0 %}
-                    {% renderImage post
+                            </div>
+                        {% endfor %}
+                    {% elif post.media | length > 0 %}
+                        {% renderImage post
                     .media[0]
                     .image, "max-h-[30rem]" %}
-                {% endif %}
-            </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
         {% if post.type == 'statusLol' %}
             <div class="flex-row items-start mb-4">

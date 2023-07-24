@@ -8,14 +8,16 @@ description: My Lego Collection
 <div class="grid gap-x-4 gap-y-6 mx-auto px-0 mt-4 grid-cols-2 sm:grid-cols-3">
     {% for setKey in lego.setKeys %}
         {% set legoSet = lego.sets[setKey] %}
-        <div class="justify-end items-center">
-            <div class="w-full h-[12rem] justify-center bg-white">
+        <div class="justify-start items-center">
+            <div class="w-full h-[12rem] justify-center bg-white rounded-md">
                 <a class="my-0" href="{{ legoSet.bricksetUrl }}">
-                    <img src="{{ legoSet.image.src }}" alt="{{ legoSet.name }}" class="w-full max-h-[12rem]">
+                    <img src="{{ legoSet.image.src }}" alt="{{ legoSet.name }}" class="w-full max-h-[12rem] hobbyGridItemImage">
                 </a>
             </div>
-            <div class="h-[3.5rem] justify-end">
-                <p class="my-0 text-center">{{ legoSet.name }}</p>
+            <div class="justify-end">
+                <a class="my-0" href="{{ legoSet.bricksetUrl }}">
+                    <p class="my-0 text-center">{{ legoSet.name }}</p>
+                </a>
             </div>
             <a class="my-0" href="{{ legoSet.bricksetUrl }}">{{ legoSet.number }}
             </a>
@@ -25,7 +27,6 @@ description: My Lego Collection
                     x {{ legoSet.quantity }}
                 {% endif %}
             </p>
-            {# </div> #}
         </div>
     {% endfor %}
 </div>

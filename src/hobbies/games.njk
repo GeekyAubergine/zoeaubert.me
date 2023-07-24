@@ -9,8 +9,10 @@ description: Games I've played
     {% for gameKey in games.keysByLastPlayed %}
         {% set game = games.games[gameKey] %}
         <div class="justify-start items-center last-of-type:hidden sm:!flex">
+            <a class="my-0" href="{{ game.link }}">
+                <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full hobbyGridItemImage">
+            </a>
             <a class="my-0" href="{{ game.bricksetUrl }}">
-                <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full">
                 <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
             </a>
             <p class="secondary my-0">
@@ -24,8 +26,10 @@ description: Games I've played
     {% for gameKey in games.keysByPlaytime %}
         {% set game = games.games[gameKey] %}
         <div class="justify-start items-center">
+            <a class="my-0" href="{{ game.link }}">
+                <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full hobbyGridItemImage">
+            </a>
             <a class="my-0" href="{{ game.bricksetUrl }}">
-                <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full">
                 <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
             </a>
             <p class="secondary my-0">
