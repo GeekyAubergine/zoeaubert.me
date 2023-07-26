@@ -8,7 +8,7 @@ description: Movies I've watched
         {% set movie = movies.movies[movieKey] %}
         <div class="justify-start items-center">
             <div class="w-full max-h-[12rem] justify-center">
-                <a class="my-0" href="{{ movie.postPermalink }}">
+                <a class="my-0" href="{{ movie.permalink }}">
                     <img src="https://image.tmdb.org/t/p/w200{{ movie.posterUrl }}" alt="{{ movie.name }}" class="w-full max-h-[12rem] hobbyGridItemImage">
                 </a>
             </div>
@@ -16,7 +16,7 @@ description: Movies I've watched
                 <a class="my-0" href="{{ movie.postPermalink }}">
                     <p class="my-0 text-center">{{ movie.title }}</p>
                 </a>
-                <p class="my-0 text-center secondary">({{ movie.rating.score }}/{{ movie.rating.max }})</p>
+                <p class="my-0 text-center secondary">({{ movie.averageScore }}/5)</p>
             </div>
         </div>
     {% endfor %}

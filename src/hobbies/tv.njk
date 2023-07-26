@@ -1,0 +1,23 @@
+---
+layout: page
+title: TV
+description: Tv I've watched
+---
+<div class="grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-3 sm:grid-cols-5">
+    {% for tvShowKey in tv.tvShowsByWatchDate %}
+        {% set tvShow = tv.tvShows[tvShowKey] %}
+        <div class="justify-start items-center">
+            <div class="w-full max-h-[12rem] justify-center">
+                <a class="my-0" href="{{ tvShow.permalink }}">
+                    <img src="https://image.tmdb.org/t/p/w200{{ tvShow.posterUrl }}" alt="{{ tvShow.name }}" class="w-full max-h-[12rem] hobbyGridItemImage">
+                </a>
+            </div>
+            <div class="justify-start mt-2">
+                <a class="my-0" href="{{ tvShow.postPermalink }}">
+                    <p class="my-0 text-center">{{ tvShow.title }}</p>
+                </a>
+                <p class="my-0 text-center secondary">({{ tvShow.averageScore }}/5)</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>

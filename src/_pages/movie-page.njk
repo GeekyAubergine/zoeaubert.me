@@ -1,0 +1,43 @@
+---
+layout: base
+pagination:
+  data: movies.moviesByWatchDate
+  size: 1
+  alias: movieKey
+permalink: "/{{ movies.movies[movieKey].permalink }}/index.html"
+eleventyComputed: 
+  title: "{{ movies.movies[movieKey].title }}"
+  description: "{{ movies.movies[movieKey].averageScore }}/5"
+  image: "{{ movies.movies[movieKey].posterUrl }}"
+  imageAlt: "{{ movies.movies[movieKey].title }} movie poster"
+---
+{% set movie = movies.movies[movieKey] %}
+<div class="flex-row">
+  <div>
+    <a class="my-0" href="https://www.themoviedb.org/movie/{{ movie.themoviedbId }}" rel="noreferrer noopener">
+      <img src="https://image.tmdb.org/t/p/w400{{ movie.posterUrl }}" alt="{{ movie.name }}" class="max-w-[6rem] min-w-[6rem] hobbyGridItemImage sm:max-w-[16rem] sm:min-w-[16rem]">
+    </a>
+    <p class="my-2">Average: {{ movie.averageScore }}/5</p>
+  </div>
+  <div class="ml-4 justify-between w-full">
+    <div class="justify-start w-full">
+      <div class="flex-col mb-4 sm:flex-row items-baseline">
+        <h1 class="pageTitle">{{movie.title}}</h1>
+        <p class="my-0 secondary sm:ml-4">({{ movie.year }})</p>
+      </div>
+      <hr class="!flex mt-0"/>
+      <div>
+        {% for review in movie.reviews %}
+          {% if review.review %}
+            <div class="content">
+              {{ review.review | mdToHtml | safe }}
+            </div>
+          {% endif %}
+          <p class="my-0">{{ review.score }}/5</p>
+          <a href="{{ review.postPermalink }}" class="my-0 mt-4">{{ review.date | formatDateTime }}</a>
+          <hr/>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
