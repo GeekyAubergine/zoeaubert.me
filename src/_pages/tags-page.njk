@@ -11,7 +11,7 @@ eleventyComputed:
 <div class="flex-row justify-between items-baseline">
   <h1 class="pageTitle">{{ title }}</h1>
 </div>
-<div/>
+<div></div>
 <hr/>
 {%- for postKey in taggedPosts.postsByTag[tag] %}
   {%- set post = allPosts.posts[postKey] %}

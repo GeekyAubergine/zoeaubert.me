@@ -4,7 +4,7 @@
 
 @layer components {
     html {
-        font-size: 17px;
+        font-size: 18px;
         font-family: 'Atkinson Hyperlegible', sans-serif, ui-sans-serif,
             system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
             'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
@@ -13,21 +13,25 @@
         font-display: swap;
     }
 
-    body {
-        @apply bg-background transition-colors duration-500;
+    * {
+        @apply transition-colors duration-500;
     }
 
+    body {
+        @apply bg-background dark:bg-background-dark;
+    }
+    
     .width-control {
         @apply w-[68ch] max-w-[100%];
     }
 
     .text {
-        @apply text-text tabular-nums break-words transition-colors duration-500 my-4 leading-[1.6rem];
+        @apply text-text dark:text-text-dark tabular-nums break-words transition-colors duration-500 my-4 leading-[1.75rem];
         font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
     .accent {
-        @apply text-accent decoration-accent;
+        @apply text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
     }
 
     .under {
@@ -38,15 +42,11 @@
     }
 
     .link {
-        @apply text accent hover:under hover:text-accent hover:decoration-accent transition-colors;
-    }
-
-    .button {
-        @apply text-lg no-underline py-[.2rem] px-2 border-2 text-accent border-accent rounded-md hover:text-background hover:hover:bg-accent hover:transition-colors;
+        @apply text accent hover:under hover:text-accent dark:hover:text-accent-dark hover:decoration-accent dark:hover:decoration-accent-dark;
     }
 
     .secondary {
-        @apply text-secondary;
+        @apply text-secondary dark:text-secondary-dark;
     }
 
     .pageTitle {
@@ -84,10 +84,6 @@
     /* :not(div) + p {
         @apply mt-0;
     } */
-
-    h1 {
-        @apply text-headings;
-    }
 
     h2 {
         @apply text-2xl;
@@ -150,7 +146,7 @@
     .content h4,
     .content h5,
     .content h6 {
-        @apply mt-8 mb-2 text-headings;
+        @apply mt-8 mb-2 font-bold;
     }
 
     .content a {
@@ -190,7 +186,7 @@
     }
 
     li {
-        @apply ml-1.5 mb-3;
+        @apply ml-1.5 mb-1;
     }
 
     li p {
@@ -206,7 +202,7 @@
     }
 
     :not(pre) > code {
-        @apply font-bold;
+        @apply bg-code dark:bg-code-dark pt-[.1rem] pb-[.15rem] px-[.35rem] rounded;
     }
 
     pre > code {
@@ -243,7 +239,7 @@
     }
 
     blockquote {
-        @apply bg-tag flex flex-col border-l-4 border-l-accent;
+        @apply bg-code dark:bg-code-dark flex flex-col border-l-4 border-l-accent dark:border-l-accent-dark;
         margin: 0.5rem 0 1.5rem;
         padding: 0.75em 1.25em;
     }
@@ -286,33 +282,7 @@
         max-width: 100%;
     }
 
-    .statuslol_container {
-        @apply flex;
-    }
-
-    .statuslol {
-        @apply flex flex-row items-center;
-    }
-
-    .statuslol_emoji_container {
-        @apply max-h-8 aspect-square mr-2;
-    }
-
-    .statuslol_emoji {
-    }
-
-    .statuslol_content {
-    }
-
-    .statuslol_time {
-        @apply text secondary;
-    }
-
-    .statuslol_time > a {
-        @apply text secondary underline;
-    }
-
     .hobbyGridItemImage {
-        @apply border-[#00000000] border-2 hover:border-accent rounded-md;
+        @apply border-[#00000000] border-2 hover:border-accent dark:hover:border-accent-dark rounded-md;
     }
 }

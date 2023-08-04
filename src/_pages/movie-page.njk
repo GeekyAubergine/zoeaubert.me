@@ -14,7 +14,7 @@ eleventyComputed:
 {% set movie = movies.movies[movieKey] %}
 <div class="flex-row">
   <div>
-    <a class="my-0" href="https://www.themoviedb.org/movie/{{ movie.themoviedbId }}" rel="noreferrer noopener">
+    <a class="my-0" href="https://www.themoviedb.org/movie/{{ movie.themoviedbId }}" target="_blank" rel="noopener noreferrer">
       <img src="https://image.tmdb.org/t/p/w400{{ movie.posterUrl }}" alt="{{ movie.name }}" class="max-w-[6rem] min-w-[6rem] hobbyGridItemImage sm:max-w-[16rem] sm:min-w-[16rem]">
     </a>
     <p class="my-2">Average: {{ movie.averageScore }}/5</p>
