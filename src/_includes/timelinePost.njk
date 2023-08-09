@@ -4,10 +4,10 @@
             {{ post.date | formatDateTime }}
         </time>
     </a>
-    <div class="content mt-4">
+    <div class="content">
         {% if post.type == 'blogPost' %}
             <a href="{{ post.permalink }}" rel="noopener" class="!no-underline  m-0">
-                <h2 class="!mt-0">{{ post.title }}</h2>
+                <p class="text-xl">{{ post.title }}</p>
             </a>
             {% if post.hero %}
                 <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2 max-h-[18rem]" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
@@ -20,7 +20,7 @@
         {% if post.type == 'mastodon' %}
             {{ post.content | mdToHtml | safe }}
             {%- if post.media | length > 0 %}
-                <div class="flex flex-row justify-start my-6">
+                <div class="flex flex-row justify-start">
                     {% if post.media | length > 1 %}
                         {% for media in post.media %}
                             <div class="ml-2 first-of-type:ml-0">
@@ -37,16 +37,16 @@
             {% endif %}
         {% endif %}
         {% if post.type == 'statusLol' %}
-            <div class="flex-row items-start mb-4">
+            <div class="flex-row items-start">
                 <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
                 <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
             </div>
         {% endif %}
         {% if post.type == 'album' %}
             <a href="{{ post.permalink }}" rel="noopener" class="!no-underline  m-0">
-                <h2 class="!mt-0">{{ post.title }}</h2>
+                <p class="text-xl">{{ post.title }}</p>
             </a>
-            <div class="justify-center my-4">
+            <div class="justify-center">
                 {% if post.coverPhotos | length > 1 %}
                     <div class="grid gap-x-1 grid-cols-2 overflow-hidden">
                         {% for photoId in post.coverPhotos %}
@@ -91,7 +91,7 @@
             </div>
         {% endif %}
     </div>
-    <div class="flex-row flex-wrap">
+    <div class="flex-row flex-wrap mt-2">
         {% include "tagsList.njk" %}
     </div>
 </article>

@@ -12,15 +12,17 @@ eleventyComputed:
   imageAlt: "{{ blogposts.posts[postKey].hero.alt }}"
 ---
 {% set post = blogposts.posts[postKey] %}
-<h1 class="pageTitle mb-1">{{post.title}}</h1>
-<div class="flex-row">
-  <time class="secondary" datetime="{{date}}">{{ post.date | formatDate }}</time>
-  <p class="secondary mx-1 my-0">-</p>
-  <p class="secondary my-0">{{post.content | timeToRead}}</p>
-</div>
-<div class="flex-row flex-wrap">
-  {% include "tagsList.njk" %}
-</div>
-<div class="w-full content mt-8">
-  {{ post.content | mdToHtml | safe }}
+<div class="w-full content">
+  <h1 class="pageTitle mb-0">{{post.title}}</h1>
+  <div class="flex-row">
+    <time class="secondary my-2" datetime="{{date}}">{{ post.date | formatDate }}</time>
+    <p class="secondary mx-1 my-0">-</p>
+    <p class="secondary my-0">{{post.content | timeToRead}}</p>
+  </div>
+  <div class="flex-row flex-wrap">
+    {% include "tagsList.njk" %}
+  </div>
+  <article>
+    {{ post.content | mdToHtml | safe }}
+  </article>
 </div>

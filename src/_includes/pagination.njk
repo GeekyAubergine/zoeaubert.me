@@ -1,13 +1,13 @@
 <div class='flex-row w-full justify-between mt-11'>
     <div>
         {% if pagination.href.previous %}
-            <a href="{{ pagination.href.previous }}" class="secondary items-center">
+            <a href="{{ pagination.href.previous }}" class="secondary items-center under">
                 Newer Posts</a>
         {% endif %}
     </div>
     <div>
         {% if pagination.href.next %}
-            <a href="{{ pagination.href.next }}" class="secondary items-center">
+            <a href="{{ pagination.href.next }}" class="secondary items-center under">
                 Older Posts
                 </a>
         {% endif %}

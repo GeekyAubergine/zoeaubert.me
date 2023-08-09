@@ -25,7 +25,7 @@ eleventyComputed:
         <h1 class="pageTitle">{{movie.title}}</h1>
         <p class="my-0 secondary sm:ml-4">({{ movie.year }})</p>
       </div>
-      <hr class="!flex mt-0"/>
+      <hr class="!flex my-2"/>
       <div>
         {% for review in movie.reviews %}
           {% if review.review %}
@@ -34,7 +34,7 @@ eleventyComputed:
             </div>
           {% endif %}
           <p class="my-0">{{ review.score }}/5</p>
-          <a href="{{ review.postPermalink }}" class="my-0 mt-4">{{ review.date | formatDateTime }}</a>
+          <a href="{{ review.postPermalink }}" class="my-0 mt-2">{{ review.date | formatDateTime }}</a>
           <hr/>
         {% endfor %}
       </div>

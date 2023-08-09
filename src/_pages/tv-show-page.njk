@@ -26,7 +26,7 @@ eleventyComputed:
       </div>
       <div>
         {% for season in tvShow.seasons %}
-          <h2 class="text-lg my-4">Season: {{season.season}}</h2>
+          <h2 class="text-lg">Season: {{season.season}}</h2>
           {% for review in season.reviews %}
             {% if review.review %}
               <div class="content">
@@ -34,7 +34,7 @@ eleventyComputed:
               </div>
             {% endif %}
             <p class="my-0">{{ review.score }}/5</p>
-            <a href="{{ review.postPermalink }}" class="my-0 mt-4">{{ review.date | formatDateTime }}</a>
+            <a href="{{ review.postPermalink }}" class="my-0 mt-2">{{ review.date | formatDateTime }}</a>
             <hr/>
           {% endfor %}
         {% endfor %}

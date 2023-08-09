@@ -10,8 +10,8 @@ description: My Lego Collection
         {% set legoSet = lego.sets[setKey] %}
         <div class="justify-start items-center">
             <div class="w-full justify-center hobbyGridItemImage overflow-hidden">
-                <a class="my-0" href="{{ legoSet.bricksetUrl }}" target="_blank" rel="noopener noreferrer">
-                    <img src="{{ legoSet.image.src }}" alt="{{ legoSet.name }}" class="w-full h-[12rem] bg-white rounded-sm">
+                <a class="flex my-0 justify-center" href="{{ legoSet.bricksetUrl }}" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ legoSet.image.src }}" alt="{{ legoSet.name }}" class="h-[12rem] bg-white rounded-sm">
                 </a>
             </div>
             <div class="justify-end">

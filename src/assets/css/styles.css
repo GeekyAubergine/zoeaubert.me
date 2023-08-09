@@ -4,7 +4,11 @@
 
 @layer components {
     html {
-        font-size: 18px;
+        font-size: 16px;
+    }
+
+    * {
+        /* @apply transition-colors duration-500; */
         font-family: 'Atkinson Hyperlegible', sans-serif, ui-sans-serif,
             system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
             'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
@@ -13,21 +17,17 @@
         font-display: swap;
     }
 
-    * {
-        @apply transition-colors duration-500;
-    }
-
     body {
         @apply bg-background dark:bg-background-dark;
     }
-    
+
     .width-control {
         @apply w-[68ch] max-w-[100%];
     }
 
     .text {
-        @apply text-text dark:text-text-dark tabular-nums break-words transition-colors duration-500 my-4 leading-[1.75rem];
-        font-family: 'Atkinson Hyperlegible', sans-serif;
+        @apply text-text dark:text-text-dark tabular-nums break-words leading-[1.75rem];
+        /* font-family: 'Atkinson Hyperlegible', sans-serif; */
     }
 
     .accent {
@@ -36,37 +36,37 @@
 
     .under {
         @apply underline;
-        text-underline-offset: 0.25rem;
+        /* text-underline-offset: 0.25rem; */
         /* text-underline-offset: 0.21rem; */
-        /* text-underline-offset: 0.175rem; */
+        text-underline-offset: 0.1em;
     }
 
     .link {
-        @apply text accent hover:under hover:text-accent dark:hover:text-accent-dark hover:decoration-accent dark:hover:decoration-accent-dark;
+        @apply hover:under hover:text-accent dark:hover:text-accent-dark hover:decoration-accent dark:hover:decoration-accent-dark;
     }
 
     .secondary {
-        @apply text-secondary dark:text-secondary-dark;
+        @apply !text-secondary dark:!text-secondary-dark;
     }
 
     .pageTitle {
-        @apply text-2xl my-0 sm:text-3xl;
+        @apply text-2xl sm:text-4xl font-bold mb-2;
     }
 
     .wide {
-        @apply mx-auto p-2 max-w-[102ch];
+        /* @apply mx-auto p-2 max-w-[102ch]; */
     }
 
-    .borderColor {
-        @apply border-border;
+    .tag {
+        @apply secondary under link;
     }
 
     .main {
-        @apply flex flex-col max-w-full mx-auto pt-4 pb-4 px-4 sm:px-0 sm:pt-8;
+        @apply w-full px-4 py-2;
     }
 
     hr {
-        @apply borderColor my-6 mx-0 last-of-type:hidden;
+        @apply border-border dark:border-border-dark my-6 mx-0 last-of-type:hidden;
     }
 
     h1,
@@ -81,64 +81,26 @@
         @apply text;
     }
 
-    /* :not(div) + p {
-        @apply mt-0;
-    } */
-
-    h2 {
-        @apply text-2xl;
-    }
-
-    h3 {
-        @apply text-xl;
-    }
-
-    h4 {
-        @apply text-lg;
-    }
-
-    div + h3 {
-        @apply mt-0;
-    }
-
-    a {
-        @apply m-0 link;
-    }
-
-    div {
+    div,
+    nav,
+    footer,
+    article {
         @apply flex flex-col;
     }
 
     .mainPageHeading {
-        @apply text-3xl mt-6;
+        @apply text-2xl font-bold mb-2;
     }
 
     .mainPageBlock {
         @apply my-6;
     }
 
-    .about > p:last-of-type {
-        @apply mb-0;
-    }
-
     .content {
-        @apply block;
-    }
+        @apply prose prose-stone prose-zoe dark:prose-invert max-w-none;
+        @apply prose-code:rounded prose-code:pt-[.1rem] prose-code:pb-[.15rem] prose-code:px-[.35rem] prose-code:before:content-[] prose-code:after:content-[]; /** prose-code:bg-code dark:prose-code:bg-code-dark prose-pre-code:bg-none; */
+        /* @apply prose-a:text-accent dark:prose-a:text-accent-dark; */
 
-    .content img {
-        @apply mx-auto my-4;
-    }
-
-    .content :not(.photogrid) img + img {
-        @apply mt-4;
-    }
-
-    .content img:last-child {
-        @apply mb-4;
-    }
-
-    .content > *:first-child {
-        @apply mt-0;
     }
 
     .content h2,
@@ -146,123 +108,46 @@
     .content h4,
     .content h5,
     .content h6 {
-        @apply mt-8 mb-2 font-bold;
+        @apply mt-6 mb-0;
+    }
+
+    .content p {
+        @apply my-2;
+    }
+
+    .content ul,
+    .content ol {
+        @apply my-2;
     }
 
     .content a {
-        @apply under;
+        @apply under link;
     }
 
-    p a,
-    li a {
-        @apply link;
+    .content blockquote {
+        @apply my-2;
     }
 
-    em {
-        @apply italic text;
+    .content blockquote p {
+        @apply my-2;
     }
 
-    time {
-        @apply m-0 p-0;
-    }
-
-    ul,
-    ol {
-        @apply my-4 mb-8 mx-8 text;
-    }
-
-    ol {
-        @apply list-decimal text;
-    }
-
-    ul {
-        @apply list-disc;
-    }
-
-    ul,
-    ol > li > ul,
-    ol {
-        @apply my-0;
-    }
-
-    li {
-        @apply ml-1.5 mb-1;
-    }
-
-    li p {
-        @apply my-0;
-    }
-
-    code {
-        @apply my-1 !font-normal table-fixed overflow-x-scroll !border-0;
-    }
-
-    pre {
-        @apply flex-1 table-fixed !border-0;
+    .content img {
+        @apply my-2;
     }
 
     :not(pre) > code {
-        @apply bg-code dark:bg-code-dark pt-[.1rem] pb-[.15rem] px-[.35rem] rounded;
-    }
-
-    pre > code {
-        @apply !text-[10pt];
-    }
-
-    table {
-        table-layout: fixed;
-        width: 100%;
-        margin: 0.5rem auto;
-        padding: 0;
-        border: 1px solid #444;
-        border-collapse: collapse;
-    }
-
-    table > tr {
-        /* background-color: $data-background-light;
-        border: 1px solid $border-light;
-        padding: 0.25em; */
-    }
-
-    table > thead {
-        text-transform: uppercase;
-    }
-
-    table > th,
-    table > td {
-        padding: 0.5em;
-        text-align: center;
-    }
-
-    table > th {
-        font-weight: bold;
-    }
-
-    blockquote {
-        @apply bg-code dark:bg-code-dark flex flex-col border-l-4 border-l-accent dark:border-l-accent-dark;
-        margin: 0.5rem 0 1.5rem;
-        padding: 0.75em 1.25em;
-    }
-
-    blockquote > p {
-        @apply text italic font-bold;
-    }
-
-    blockquote cite {
-        @apply flex text mt-1 before:content-['-'] before:mr-1;
-    }
-
-    img {
-        @apply max-w-full max-h-full w-auto h-auto object-contain;
+        @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
+        font-size: 90%;
     }
 
     .image-wrapper {
-        @apply block max-w-full h-auto max-h-full mx-auto !object-contain;
-        margin-block-end: 1em;
+        /* @apply block max-w-full h-auto max-h-full mx-auto !object-contain; */
+        /* margin-block-end: 1em; */
     }
 
     .header-link-icon {
-        @apply mt-9 h-5 flex items-center;
+        /* @apply mt-9 h-5 flex items-center; */
     }
 
     .photogrid {
@@ -274,11 +159,11 @@
     }
 
     .albumPhotoPageContainer {
-        /* max-height: 40rem; */
+        max-height: calc(100vh - 5rem);
     }
 
     .albumPhotoPageContainer img {
-        max-height: calc(100vh - 20rem);
+        max-height: calc(100vh - 30rem);
         max-width: 100%;
     }
 
