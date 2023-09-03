@@ -1,21 +1,19 @@
-<nav class="width-control mx-auto justify-center items-baseline mb-2">
-    <div class="w-full flex-col width-control mx-auto justify-center items-baseline md:flex-row md:justify-between">
-        <div class="w-full flex-row items-center justify-between my-2">
-            <div class="flex-row justify-start">
-                <a class="text-4xl h-full text-left mr-2" href="/">
-                    <p class="m-0">Zoe Aubert</p>
+<nav>
+    <div class="name-with-side">
+        <div class="name-and-toggle">
+            <a class="name" href="/">
+                    Zoe Aubert
                 </a>
-            </div>
             {% include "themeToggle.njk" %}
-            <button type="button" id="toggleNavLinks" class="h-8 flex flex-1 justify-end items-center md:hidden">
-                <p class="text-center m-0 p-0 text-2xl mb-0.5 accent">☰</p>
-            </button>
         </div>
-        <div class="flex-row w-full justify-between hidden">
+        <button type="button" id="toggleNavLinks" class="mobile-link-toggle">
+            <p>☰</p>
+        </button>
+        <div class="side-links">
             {% for link in socials %}
                 {% if link.showInTopNav %}
                     <a
-                class="accent"
+                class="link"
                 href="{{ link.link }}"
                 target="_blank"
                 rel="me"
@@ -27,27 +25,31 @@
 
         </div>
     </div>
-    <div id="nav-links" class="flex-row flex-wrap w-full justify-evenly hidden">
-        {% for link in socials %}
-            {% if link.showInTopNav %}
-                <a
-                class="accent min-w-[33%] text-center"
+    <div id="nav-links" class="hidden">
+        <div class="mobile-links">
+            {% for link in socials %}
+                {% if link.showInTopNav %}
+                    <a
+                class="link"
                 href="{{ link.link }}"
                 target="_blank"
                 rel="me"
             >
-                    {{ link.name }}
-                </a>
-            {% endif %}
-        {% endfor %}
-        {% for link in navlinks %}
-            <a
-                class="accent min-w-[33%] text-center"
+                        {{ link.name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="mobile-links">
+            {% for link in navlinks %}
+                <a
+                class="link"
                 href="{{ link.url }}"
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"
             >{{ link.name }}</a>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </nav>
 <script>

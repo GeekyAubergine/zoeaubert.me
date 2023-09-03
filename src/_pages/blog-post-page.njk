@@ -13,13 +13,14 @@ eleventyComputed:
 ---
 {% set post = blogposts.posts[postKey] %}
 <div class="w-full content">
-  <h1 class="pageTitle mb-0">{{post.title}}</h1>
-  <div class="flex-row">
-    <time class="secondary my-2" datetime="{{date}}">{{ post.date | formatDate }}</time>
-    <p class="secondary mx-1 my-0">-</p>
-    <p class="secondary my-0">{{post.content | timeToRead}}</p>
+  <h1>{{post.title}}</h1>
+  <div class="date-and-readtime">
+    <p>
+      <time datetime="{{date}}">{{ post.date | formatDate }}</time>
+      <span>-</span>
+      {{post.content | timeToRead}}</p>
   </div>
-  <div class="flex-row flex-wrap">
+  <div class="tags-list mb-4">
     {% include "tagsList.njk" %}
   </div>
   <article>

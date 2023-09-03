@@ -78,3 +78,5 @@ _cache
 .cache
 
 config.js
+
+.vscode/

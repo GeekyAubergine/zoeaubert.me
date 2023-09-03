@@ -12,7 +12,7 @@ eleventyComputed:
     imageAkt: "{{ albums.albumPhotos[albums.albums[albumId].coverPhotos[0]].alt | prefixCDN }}"
 ---
 {% set album = albums.albums[albumId] %}
-<main class="main">
+<main>
     <div class="width-control mx-auto">
         {% include "navbar.njk" %}
     </div>

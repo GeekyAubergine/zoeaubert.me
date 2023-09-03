@@ -5,7 +5,7 @@ eleventyComputed:
     image: "{{ albums.albumPhotos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].thumbnailSmall.src | prefixCDN }}"
     imageAlt: "{{ albums.albumPhotos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].alt }}"
 ---
-<main class="main">
+<main>
     <div class="width-control mx-auto">
         {% include "navbar.njk" %}
     </div>
