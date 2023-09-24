@@ -1,6 +1,6 @@
-<article class="mb-4 flex-col sm:flex-row">
-    <a href="{{ post.permalink | stripIndex }}" class="flex flex-1">
-        <h3 class="text-lg font-normal my-0 link accent">{{ post.title }}</h3>
+<article class="blogPostItem">
+    <a href="{{ post.permalink | stripIndex }}">
+        <h3>{{ post.title }}</h3>
     </a>
-    <time class="flex secondary" dateTime="{{post.date }}">{{post.date | formatDate}}</time>
+    <time dateTime="{{post.date }}">{{post.date | formatDate}}</time>
 </article>

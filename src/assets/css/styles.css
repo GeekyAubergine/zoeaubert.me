@@ -22,6 +22,8 @@
         @apply bg-background dark:bg-background-dark;
     }
 
+    /* ----------------  Utilities ---------------- */
+
     .width-control {
         @apply w-[68ch] max-w-[100%];
     }
@@ -34,13 +36,17 @@
         @apply text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
     }
 
+    .no-accent {
+        @apply text-text dark:text-text-dark decoration-text dark:decoration-text-dark;
+    }
+
     .under {
         @apply underline;
         text-underline-offset: 0.1em;
     }
 
     .link {
-        @apply hover:under hover:text-accent dark:hover:text-accent-dark hover:decoration-accent dark:hover:decoration-accent-dark;
+        @apply under text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
     }
 
     .secondary {
@@ -59,6 +65,15 @@
         @apply border-border dark:border-border-dark my-6 mx-0 last-of-type:hidden;
     }
 
+    div,
+    nav,
+    footer,
+    article {
+        @apply flex flex-col;
+    }
+
+    /* ----------------  Typography ---------------- */
+
     h1,
     h2,
     h3,
@@ -71,63 +86,55 @@
         @apply text;
     }
 
-    div,
-    nav,
-    footer,
-    article {
-        @apply flex flex-col;
+    h1, h2, h3, h4, h5, h6, p, a, ul, ol, li, blockquote, img, pre {
+        @apply my-3;
     }
 
-    /* ---------------- Content ---------------- */
-
-    .h1 {
-        @apply text-4xl font-bold mb-0;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-bold mt-6 mb-0;
     }
 
     h1 {
-        @apply h1;
+        @apply text-2xl mt-0;
     }
 
-    .content {
-        @apply prose prose-stone prose-zoe dark:prose-invert max-w-none;
-        @apply prose-code:rounded prose-code:pt-[.1rem] prose-code:pb-[.15rem] prose-code:px-[.35rem] prose-code:before:content-[] prose-code:after:content-[];
+    h2 {
+        @apply text-xl;
+    }
 
-        & h1 {
-            @apply h1;
-        }
+    h3 {
+        @apply text-lg;
+    }
 
-        & h2,
-        & h3,
-        & h4,
-        & h5,
-        & h6 {
-            @apply mt-12 mb-0;
-        }
+    h4,
+    h5,
+    h6 {
+        @apply text-lg;
+    }
 
-        & p {
-            @apply my-4;
-        }
+    a {
+        @apply accent under;
+    }
 
-        & ul,
-        & ol {
-            @apply mt-0 mb-6;
-        }
+    ol {
+        @apply list-decimal list-inside;
+    }
 
-        & a {
-            @apply under link;
-        }
+    ul {
+        @apply list-disc list-inside;
+    }
 
-        & blockquote {
-            @apply my-4;
-        }
+    li {
+        @apply my-2;
+    }
 
-        & blockquote p {
-            @apply my-2;
-        }
-
-        & img {
-            @apply my-4;
-        }
+    blockquote {
+        @apply border-l-4 border-accent dark:border-accent-dark pl-4;
     }
 
     :not(pre) > code {
@@ -135,8 +142,13 @@
         font-size: 90%;
     }
 
+    pre {
+        @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal overflow-x-scroll;
+        font-size: 90%;
+    }
+
     /* ----------------  Common ---------------- */
-    
+
     .date-and-readtime {
         @apply secondary mt-2;
 
@@ -159,14 +171,6 @@
         & .tag {
             @apply secondary under link mr-2 my-0 py-0 last-of-type:mr-0;
         }
-    }
-
-    .mainPageHeading {
-        @apply text-2xl font-bold mb-2;
-    }
-
-    .mainPageBlock {
-        @apply my-6;
     }
 
     .image-wrapper {
@@ -195,7 +199,7 @@
                 @apply flex-row text-3xl items-center font-normal;
 
                 & .name {
-                    @apply text-4xl h-full text-left mr-4;
+                    @apply text-4xl h-full text-left my-0 mr-4 no-underline;
                 }
             }
 
@@ -205,18 +209,22 @@
 
             & .mobile-link-toggle {
                 @apply h-8 flex justify-end items-center md:hidden;
-                
+
                 & p {
                     @apply text-center m-0 p-0 text-3xl accent;
                 }
             }
         }
 
+        & .links-container {
+            @apply w-full mt-1;
+        }
+
         & .mobile-links {
-            @apply flex-row flex-wrap w-full justify-evenly mt-5;
+            @apply flex-row flex-wrap w-full justify-evenly mt-0;
 
             & .link {
-                @apply min-w-[33%] text-center;
+                @apply min-w-[33%] text-center my-1 no-underline;
             }
         }
 
@@ -226,12 +234,15 @@
     }
 
     footer {
-        @apply max-w-full width-control mt-12 p-2 mx-auto items-center border-t border-t-border content;
+        @apply max-w-full width-control mt-12 p-2 mx-auto items-center border-t border-t-border;
+
+        & a {
+            @apply my-0;
+        }
 
         & > div {
             @apply flex-row flex-wrap justify-center my-2;
         }
-
 
         & p {
             @apply mx-0.5 my-0 text-center;
@@ -255,5 +266,33 @@
 
     .hobbyGridItemImage {
         @apply border-[#00000000] border-2 hover:border-accent dark:hover:border-accent-dark rounded-md;
+    }
+
+    .homePageBlock {
+        @apply mb-6;
+
+        & h2 {
+            @apply mb-3;
+        }
+
+        & .see-more {
+            @apply mt-0;
+        }
+    }
+
+    .blogPostItem {
+        @apply mb-4 flex-col sm:flex-row;
+
+        & a {
+            @apply flex flex-1 no-underline my-0;
+        }
+
+        & h3 {
+            @apply text-lg font-normal my-0 accent;
+        }
+
+        & time {
+            @apply flex secondary;
+        }
     }
 }

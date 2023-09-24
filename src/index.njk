@@ -5,7 +5,7 @@ layout: page
     <p class="m-0">Zoe of the House Aubert, First of Her Name, Grand Marshal of the AppPocalypse, Slayer of Bugs, Herald of Strong Type Systems.</p>
 </div> #}
 
-<div class="content about prose-p:my-2">
+<div>
     {{ about | mdToHtml | safe}}
 </div>
 {# <div class="mainPageBlock">
@@ -16,11 +16,11 @@ layout: page
     {% endfor %}
     <a class="mt-6" href="/timeline">See Timeline</a>
 </div> #}
-<div class="mainPageBlock">
+<div class="homePageBlock">
     <h2 class="mainPageHeading">Blog Posts</h2>
     {%- for postKey in blogposts.recentPostsOrder %}
         {% set post = blogposts.posts[postKey] %}
         {% include "blogPostListItem.njk" %}
     {% endfor %}
-    <a class="link under" href="/blog">See All Blog Posts</a>
+    <a class="see-more" href="/blog">See All Blog Posts</a>
 </div>
