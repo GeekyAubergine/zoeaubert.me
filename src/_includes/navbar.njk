@@ -1,14 +1,14 @@
 <nav>
-    <div class="name-with-side">
+    <div class="name-and-buttons">
+        <button type="button" id="toggleNavLinks" class="mobile-nav-toggle">
+            <p id="mobile-nav-toggle-glyph">☰</p>
+        </button>
         <div class="name-and-toggle">
             <a class="name" href="/">
                     Zoe Aubert
                 </a>
             {% include "themeToggle.njk" %}
         </div>
-        <button type="button" id="toggleNavLinks" class="mobile-link-toggle">
-            <p>☰</p>
-        </button>
         <div class="side-links">
             {% for link in socials %}
                 {% if link.showInTopNav %}
@@ -25,41 +25,58 @@
 
         </div>
     </div>
-    <div id="nav-links" class="hidden links-container">
-        <div class="mobile-links">
-            {% for link in socials %}
-                {% if link.showInTopNav %}
-                    <a
+    <div id="mobile-links" class="mobile-nav-container" aria-hidden="true">
+        {% for link in socials %}
+            {% if link.showInTopNav %}
+                <a
                 class="link"
                 href="{{ link.link }}"
                 target="_blank"
                 rel="me"
             >
-                        {{ link.name }}
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </div>
-        <div class="mobile-links">
-            {% for link in navlinks %}
-                <a
+                    {{ link.name }}
+                </a>
+            {% endif %}
+        {% endfor %}
+        {% for link in navlinks %}
+            <a
                 class="link"
                 href="{{ link.url }}"
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"
             >{{ link.name }}</a>
-            {% endfor %}
-        </div>
+        {% endfor %}
     </div>
 </nav>
 <script>
-    const pageNav = document.getElementById('nav-links');
     const toggleNavLinks = document.getElementById('toggleNavLinks');
 
     toggleNavLinks
         ?.addEventListener('click', () => {
-            pageNav
-                .classList
-                .toggle('hidden');
+            const navlinks = document.getElementById('mobile-links');
+
+            if (navlinks == null) {
+                return;
+            }
+
+            const glyph = document.getElementById('mobile-nav-toggle-glyph');
+
+            if (glyph == null) {
+                return;
+            }
+
+            if (navlinks.attributes['aria-hidden'].value == "true") {
+                navlinks.setAttribute("aria-hidden", "false");
+                navlinks
+                    .classList
+                    .add('show');
+                glyph.innerHTML = "⨉";
+            } else {
+                navlinks.setAttribute("aria-hidden", "true");
+                navlinks
+                    .classList
+                    .remove('show');
+                glyph.innerHTML = "☰";
+            }
         });
 </script>

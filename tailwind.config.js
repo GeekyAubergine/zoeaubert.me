@@ -58,26 +58,12 @@ module.exports = {
                     dark: '#181818',
                 },
             },
-            typography: ({ theme }) => ({
-                zoe: {
-                    css: {
-                        '--tw-prose-quote-borders': theme(
-                            'colors.accent.DEFAULT',
-                        ),
-                        '--tw-prose-invert-quote-borders':
-                            theme('colors.accent.dark'),
-                        // '--tw-prose-code': theme('colors.red[900]'),
-                        // '--tw-prose-pre-code': theme('colors.blue[200]'),
-                    },
-                },
-            }),
         },
         fontFamily: {
             sans: ['Helvetica', 'Arial', 'sans-serif'],
         },
     },
     plugins: [
-        require('@tailwindcss/typography'),
         require('@tailwindcss/nesting')(require('postcss-nesting')),
     ],
 }

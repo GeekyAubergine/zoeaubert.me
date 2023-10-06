@@ -6,7 +6,7 @@
     /* ---------------- Core ---------------- */
 
     html {
-        font-size: 16px;
+        font-size: 17px;
     }
 
     * {
@@ -25,7 +25,7 @@
     /* ----------------  Utilities ---------------- */
 
     .width-control {
-        @apply w-[68ch] max-w-[100%];
+        @apply w-[68ch] max-w-[100%] px-4;
     }
 
     .text {
@@ -41,8 +41,8 @@
     }
 
     .under {
-        @apply underline;
-        text-underline-offset: 0.1em;
+        @apply underline hover:!underline;
+        text-underline-offset: 0.15em;
     }
 
     .link {
@@ -50,7 +50,7 @@
     }
 
     .secondary {
-        @apply !text-secondary dark:!text-secondary-dark;
+        @apply !text-secondary dark:!text-secondary-dark !decoration-secondary dark:!decoration-secondary-dark;
     }
 
     .wide {
@@ -58,7 +58,7 @@
     }
 
     main {
-        @apply w-full px-4 py-2;
+        @apply w-full;
     }
 
     hr {
@@ -82,12 +82,24 @@
     h6,
     p,
     a,
-    time {
+    time,
+    li {
         @apply text;
     }
 
-    h1, h2, h3, h4, h5, h6, p, a, ul, ol, li, blockquote, img, pre {
-        @apply my-3;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    a,
+    li,
+    blockquote,
+    img,
+    pre {
+        @apply my-2;
     }
 
     h1,
@@ -100,15 +112,15 @@
     }
 
     h1 {
-        @apply text-2xl mt-0;
+        @apply text-3xl mt-0;
     }
 
     h2 {
-        @apply text-xl;
+        @apply text-2xl;
     }
 
     h3 {
-        @apply text-lg;
+        @apply text-xl;
     }
 
     h4,
@@ -129,8 +141,9 @@
         @apply list-disc list-inside;
     }
 
-    li {
-        @apply my-2;
+    li > ul > li,
+    li > ol > li {
+        @apply ml-4;
     }
 
     blockquote {
@@ -190,42 +203,44 @@
     }
 
     nav {
-        @apply width-control mx-auto justify-center items-baseline my-2;
+        @apply relative justify-center items-baseline h-[4rem] mb-4 bg-accent;
 
-        & .name-with-side {
-            @apply w-full flex-row width-control justify-between items-center md:flex-row md:justify-between;
+        & .name-and-buttons {
+            @apply width-control flex-row justify-between items-center;
+
+            & .mobile-nav-toggle {
+                @apply w-8 h-full justify-center items-center mr-4 md:hidden;
+
+                & p {
+                    @apply text-center m-0 p-0 text-3xl !text-text-dark;
+                }
+            }
 
             & .name-and-toggle {
-                @apply flex-row text-3xl items-center font-normal;
+                @apply w-full flex-row justify-between items-center font-normal;
 
                 & .name {
-                    @apply text-4xl h-full text-left my-0 mr-4 no-underline;
+                    @apply text-4xl h-full text-left my-0 mr-4 no-underline text-text-dark;
                 }
             }
 
             & .side-links {
                 @apply flex-row w-full justify-between hidden;
             }
-
-            & .mobile-link-toggle {
-                @apply h-8 flex justify-end items-center md:hidden;
-
-                & p {
-                    @apply text-center m-0 p-0 text-3xl accent;
-                }
-            }
         }
 
-        & .links-container {
-            @apply w-full mt-1;
-        }
+        & .mobile-nav-container {
+            @apply absolute top-[4rem] left-[-7.5rem] pt-2 bg-background-dark border-r-2 border-border-dark transition-all;
 
-        & .mobile-links {
-            @apply flex-row flex-wrap w-full justify-evenly mt-0;
+            height: calc(100vh - 4rem);
 
             & .link {
-                @apply min-w-[33%] text-center my-1 no-underline;
+                @apply my-2 pl-5 w-[7.2rem];
             }
+        }
+
+        & .show {
+            @apply left-0;
         }
 
         & .link {
@@ -269,30 +284,60 @@
     }
 
     .homePageBlock {
-        @apply mb-6;
+        @apply my-2;
 
         & h2 {
-            @apply mb-3;
+            @apply mt-4;
         }
 
         & .see-more {
-            @apply mt-0;
+            @apply mt-4;
         }
     }
 
     .blogPostItem {
-        @apply mb-4 flex-col sm:flex-row;
+        @apply mt-4 flex-col sm:flex-row;
 
         & a {
-            @apply flex flex-1 no-underline my-0;
+            @apply flex flex-1 my-0;
         }
 
         & h3 {
-            @apply text-lg font-normal my-0 accent;
+            @apply accent font-normal mt-0 under;
         }
 
         & time {
             @apply flex secondary;
+        }
+    }
+
+    .timeline-post {
+        & .timestamp {
+            @apply mt-0;
+
+            & > time {
+                @apply accent;
+            }
+        }
+
+        & .media {
+            @apply flex flex-row justify-start my-2;
+
+            & > .media-grid {
+                @apply grid gap-x-1 grid-cols-2 overflow-hidden;
+
+            }
+            & img {
+                @apply w-full h-full object-contain;
+            }
+        }
+
+        .album-links {
+            @apply flex-row items-baseline mb-2;
+
+            & .dash {
+                @apply mx-2 my-0;
+            }
         }
     }
 }
