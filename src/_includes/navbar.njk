@@ -1,31 +1,26 @@
 <nav>
     <div class="name-and-buttons">
-        <button type="button" id="toggleNavLinks" class="mobile-nav-toggle">
-            <p id="mobile-nav-toggle-glyph">☰</p>
-        </button>
         <div class="name-and-toggle">
             <a class="name" href="/">
                     Zoe Aubert
                 </a>
             {% include "themeToggle.njk" %}
         </div>
-        <div class="side-links">
-            {% for link in socials %}
-                {% if link.showInTopNav %}
-                    <a
-                class="link"
-                href="{{ link.link }}"
-                target="_blank"
-                rel="me"
-            >
-                        {{ link.name }}
-                    </a>
-                {% endif %}
-            {% endfor %}
-
-        </div>
+        <button type="button" id="toggleNavLinks" class="mobile-nav-toggle">
+            <p id="mobile-nav-toggle-glyph">☰</p>
+        </button>
     </div>
-    <div id="mobile-links" class="mobile-nav-container" aria-hidden="true">
+    <div class="links">
+        {% for link in navlinks %}
+            <a
+                class="link"
+                href="{{ link.url }}"
+                target="{{ link.target }}"
+                rel="{{ link.rel }}"
+            >
+                {{ link.name }}
+            </a>
+        {% endfor %}
         {% for link in socials %}
             {% if link.showInTopNav %}
                 <a
@@ -38,6 +33,8 @@
                 </a>
             {% endif %}
         {% endfor %}
+    </div>
+    <div id="mobile-links" class="mobile-nav-container" aria-hidden="true">
         {% for link in navlinks %}
             <a
                 class="link"
@@ -45,6 +42,18 @@
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"
             >{{ link.name }}</a>
+        {% endfor %}
+        {% for link in socials %}
+            {% if link.showInTopNav %}
+                <a
+                class="link"
+                href="{{ link.link }}"
+                target="_blank"
+                rel="me"
+            >
+                    {{ link.name }}
+                </a>
+            {% endif %}
         {% endfor %}
     </div>
 </nav>

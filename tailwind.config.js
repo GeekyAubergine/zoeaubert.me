@@ -50,8 +50,8 @@ module.exports = {
                     dark: '#303030',
                 },
                 border: {
-                    DEFAULT: '#AAAAAA',
-                    dark: '#55535A',
+                    DEFAULT: '#D8D8D8',
+                    dark: '#404040',
                 },
                 middleGray: {
                     DEFAULT: '#888888',

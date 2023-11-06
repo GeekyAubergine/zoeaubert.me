@@ -43,6 +43,7 @@
     .under {
         @apply underline hover:!underline;
         text-underline-offset: 0.15em;
+        text-decoration-thickness: 1px;
     }
 
     .link {
@@ -53,8 +54,8 @@
         @apply !text-secondary dark:!text-secondary-dark !decoration-secondary dark:!decoration-secondary-dark;
     }
 
-    .wide {
-        /* @apply mx-auto p-2 max-w-[102ch]; */
+    .border-color {
+        @apply border-border dark:border-border-dark;
     }
 
     main {
@@ -116,17 +117,17 @@
     }
 
     h2 {
-        @apply text-2xl;
+        @apply text-lg;
     }
 
     h3 {
-        @apply text-xl;
+        @apply text-lg;
     }
 
     h4,
     h5,
     h6 {
-        @apply text-lg;
+        @apply text-sm;
     }
 
     a {
@@ -161,6 +162,10 @@
     }
 
     /* ----------------  Common ---------------- */
+
+    .toggle-button {
+        @apply cursor-pointer text-neutral-400 dark:text-neutral-500 rotate-180 dark:rotate-0 transition-all duration-100;
+    }
 
     .date-and-readtime {
         @apply secondary mt-2;
@@ -203,38 +208,40 @@
     }
 
     nav {
-        @apply relative justify-center items-baseline h-[4rem] mb-4 bg-accent;
+        @apply sticky top-0 justify-center items-baseline h-[3rem] mb-4 bg-background dark:bg-background-dark border-b border-color z-10 md:flex-row md:justify-between;
 
         & .name-and-buttons {
-            @apply width-control flex-row justify-between items-center;
+            @apply width-control flex-row justify-between items-center mx-auto md:w-auto md:mx-0;
 
             & .mobile-nav-toggle {
-                @apply w-8 h-full justify-center items-center mr-4 md:hidden;
+                @apply w-8 h-full justify-center items-center ml-2 md:hidden mb-1;
 
                 & p {
-                    @apply text-center m-0 p-0 text-3xl !text-text-dark;
+                    @apply text-center m-0 p-0 text-3xl accent;
                 }
             }
 
             & .name-and-toggle {
-                @apply w-full flex-row justify-between items-center font-normal;
+                @apply w-full flex-row justify-start items-center font-normal md:w-auto;
 
                 & .name {
-                    @apply text-4xl h-full text-left my-0 mr-4 no-underline text-text-dark;
+                    @apply text-3xl h-full text-left my-0 mr-4 no-underline md:my-1;
                 }
-            }
-
-            & .side-links {
-                @apply flex-row w-full justify-between hidden;
             }
         }
 
-        & .mobile-nav-container {
-            @apply absolute top-[4rem] left-[-7.5rem] pt-2 bg-background-dark border-r-2 border-border-dark transition-all;
+        & .link {
+            @apply accent !no-underline hover:!under;
+        }
 
-            height: calc(100vh - 4rem);
+        & .mobile-nav-container {
+            @apply absolute top-[3rem] pt-2 bg-background dark:bg-background-dark transition-all border-r border-color md:hidden;
+
+            left: calc(-7.5rem);
+            height: calc(100vh - 3rem);
 
             & .link {
+                @apply my-2 pl-5 w-[7.2rem];
                 @apply my-2 pl-5 w-[7.2rem];
             }
         }
@@ -243,8 +250,24 @@
             @apply left-0;
         }
 
-        & .link {
-            @apply accent;
+        & .side-links {
+            @apply flex-row w-full justify-end hidden sm:flex;
+
+            & .link {
+                @apply accent ml-4;
+            }
+        }
+
+        & .links {
+            @apply hidden md:inline-flex flex-row;
+
+            & .link {
+                @apply mt-0 mx-1 lg:mx-2;
+
+                &:last-of-type {
+                    @apply mr-4;
+                }
+            }
         }
     }
 
@@ -291,19 +314,19 @@
         }
 
         & .see-more {
-            @apply mt-4;
+            @apply mt-2;
         }
     }
 
     .blogPostItem {
-        @apply mt-4 flex-col sm:flex-row;
+        @apply mt-2 flex-col sm:flex-row;
 
         & a {
             @apply flex flex-1 my-0;
         }
 
         & h3 {
-            @apply accent font-normal mt-0 under;
+            @apply accent font-normal mt-0 under text-lg;
         }
 
         & time {
@@ -325,7 +348,6 @@
 
             & > .media-grid {
                 @apply grid gap-x-1 grid-cols-2 overflow-hidden;
-
             }
             & img {
                 @apply w-full h-full object-contain;
@@ -339,5 +361,9 @@
                 @apply mx-2 my-0;
             }
         }
+    }
+
+    .wide {
+        @apply w-[102ch] max-w-[100%] px-4 mx-auto;
     }
 }

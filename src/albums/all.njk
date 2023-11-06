@@ -6,9 +6,7 @@ eleventyComputed:
     imageAlt: "{{ albums.albumPhotos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].alt }}"
 ---
 <main>
-    <div class="width-control mx-auto">
-        {% include "navbar.njk" %}
-    </div>
+    {% include "navbar.njk" %}
     <div class="wide">
         <div class="width-control mx-auto pb-4">
             <h1 class="pageTitle">All Albums</h1>
@@ -22,10 +20,8 @@ eleventyComputed:
                 </h2>
                 {% set photoIds = album.photoOrder %}
                 {% include 'albumPhotoGrid.njk' %}
-    </div>
+            </div>
         {% endfor %}
     </div>
-    <div class="width-control mx-auto">
-        {% include "footer.njk" %}
-    </div>
+    {% include "footer.njk" %}
 </main>

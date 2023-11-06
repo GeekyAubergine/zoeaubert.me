@@ -12,9 +12,7 @@ title: "All Photos"
 description: "All my photos"
 ---
 <main>
-    <div class="width-control mx-auto">
-        {% include "navbar.njk" %}
-    </div>
+    {% include "navbar.njk" %}
     <div class="wide">
         <div class="flex-row pb-4 justify-between items-baseline">
             <h1 class="pageTitle">All Photos</h1>
@@ -32,7 +30,5 @@ description: "All my photos"
         </div>
         {% include "pagination.njk" %}
     </div>
-    <div class="width-control mx-auto">
-        {% include "footer.njk" %}
-    </div>
+    {% include "footer.njk" %}
 </main>
