@@ -23,6 +23,12 @@ module.exports = [
         rel: '',
         url: '/photos',
     },
+    // {
+    //     name: 'Albums',
+    //     target: '',
+    //     rel: '',
+    //     url: '/albums',
+    // },
     { name: 'Hobbies', target: '', rel: '', url: '/hobbies' },
     {
         name: 'Tags',
@@ -42,6 +48,18 @@ module.exports = [
         rel: '',
         url: '/now',
     },
+    {
+        name: 'faq',
+        target: '',
+        rel: '',
+        url: '/faq',
+    },
+    {
+        name: 'RSS',
+        target: '',
+        rel: '',
+        url: '/subscribe',
+    },
     // {
     //     name: 'categories',
     //     target: '',
@@ -53,11 +71,5 @@ module.exports = [
     //     target: '',
     //     rel: '',
     //     url: '/links',
-    // },
-    // {
-    //     name: 'faq',
-    //     target: '',
-    //     rel: '',
-    //     url: '/faq',
     // },
 ]

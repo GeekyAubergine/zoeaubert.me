@@ -12,47 +12,54 @@ eleventyComputed:
   imageAlt: "{{ micros.posts[postKey].media[0].image.alt }}"
 ---
 {% set post = micros.posts[postKey] %}
-<h1 class="pageTitle mb-4">
-  <time datetime="{{date}}">{{ post.date | formatDateTime }}</time>
+<h1 class="mt-8 mb-4 text-lg">
+  <time datetime="{{date}}">{{ post.date | formatDate }}</time>
 </h1>
-<div class="content">
+<article class="micro-post">
+  {% if post.type == 'blogPost' %}
+    <a href="{{ post.permalink }}" rel="noopener">
+      <p>{{ post.title }}</p>
+    </a>
+    {% if post.hero %}
+      <div class="media">
+        <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
+      </div>
+    {% endif %}
+    <p>{{ post.description }}</p>
+  {% endif %}
   {% if post.type == 'microBlog' or post.type == 'microPost' %}
     {{ post.content | mdToHtml | safe }}
   {% endif %}
   {% if post.type == 'mastodon' %}
-    {{ post.content | mdToHtml | safe }}
-    {% if post.media | length > 1 %}
-      <div class="flex flex-row justify-start my-6">
+    {%- if post.media | length > 0 %}
+      <div class="media">
         {% if post.media | length > 1 %}
-          {% for media in post.media %}
-            <div class="ml-2 first-of-type:ml-0">
-              {% renderImage media.image,
-                        "!m-auto max-h-[30rem]" %}
-            </div>
-          {% endfor %}
+          <div class="media-grid">
+            {% for media in post.media %}
+              {% renderImage media.image %}
+            {% endfor %}
+          </div>
         {% elif post.media | length > 0 %}
           {% renderImage post
-                    .media[0]
-                    .image, "max-h-[30rem]" %}
+            .media[0]
+            .image %}
         {% endif %}
       </div>
-    {% elif post.media | length > 0 %}
-      {% renderImage post
-        .media[0]
-        .image %}
     {% endif %}
+    {{ post.content | mdToHtml | safe }}
   {% endif %}
   {% if post.type == 'statusLol' %}
-    <div class="flex-row items-start mb-4">
+    <div class="flex-row items-start">
       <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
       <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
     </div>
   {% endif %}
-  <div class="flex-row flex-wrap">
+  <div class="tags-list">
+    {% set tags = post.tags %}
     {% include "tagsList.njk" %}
   </div>
   {% if post.originalUrl %}
-    <p class="mt-4 mb-0">See original <a href="{{ post.originalUrl }}" class="link" target="_blank" rel="me">{{ post.originalUrl }}</a>
+    <p class="original-link">See original <a href="{{ post.originalUrl }}" class="link" target="_blank" rel="me">{{ post.originalUrl }}</a>
     </p>
   {% endif %}
-</div>
+</article>

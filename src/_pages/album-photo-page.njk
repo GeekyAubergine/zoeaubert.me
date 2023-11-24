@@ -46,6 +46,7 @@ eleventyComputed:
                 {{photo.description}}
             </p>
             <div class="flex-row flex-wrap  justify-center mt-1">
+                {% set tags = photo.tags %}
                 {% include "tagsList.njk" %}
             </div>
             <div class="flex-row w-full justify-between items-center">

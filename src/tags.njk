@@ -2,11 +2,9 @@
 layout: page
 title: Tags
 ---
-<div class="content">
-    <ul>
-        {%- for tag in taggedPosts.allTags %}
-            <li>
-                <a href="/tags/{{ tag | slug }}">{{ tag }}</a> - {{ taggedPosts.tagCounts[tag] }}</li>
-        {% endfor %}
-    </ul>
-</div>
+<ul>
+    {%- for tag in taggedPosts.allTags %}
+        <li>
+            <a href="/tags/{{ tag | slug }}">{{ tag }}</a> - {{ taggedPosts.tagCounts[tag] }}</li>
+    {% endfor %}
+</ul>

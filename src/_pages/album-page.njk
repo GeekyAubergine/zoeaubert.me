@@ -13,11 +13,9 @@ eleventyComputed:
 ---
 {% set album = albums.albums[albumId] %}
 <main>
-    <div class="width-control mx-auto">
-        {% include "navbar.njk" %}
-    </div>
+    {% include "navbar.njk" %}
     <div class="wide">
-        <div class="pb-4 justify-between items-baseline">
+        <div class="page-header">
             <h1 class="pageTitle">{{ albums.albums[albumId].title }}</h1>
             <time class="text secondary my-0" datetime={{album.date}}>
                 {{album.date | formatDate }}
@@ -31,7 +29,5 @@ eleventyComputed:
         {% set photoIds = album.photoOrder %}
         {% include 'albumPhotoGrid.njk' %}
     </div>
-    <div class="width-control mx-auto">
-        {% include "footer.njk" %}
-    </div>
+    {% include "footer.njk" %}
 </main>

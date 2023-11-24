@@ -1,60 +1,63 @@
 <nav>
-    <div class="name-and-buttons">
-        <div class="name-and-toggle">
-            <a class="name" href="/">
-                    Zoe Aubert
+    <div class="nav-wrapper">
+        <div class="name-and-buttons">
+            <div class="name-and-toggle">
+                <a class="name" href="/">
+                    <span class="forename">Zoe</span>
+                    <span class="surname">Aubert</span>
                 </a>
-            {% include "themeToggle.njk" %}
+                {% include "themeToggle.njk" %}
+            </div>
+            <button type="button" id="toggleNavLinks" class="mobile-nav-toggle">
+                <p id="mobile-nav-toggle-glyph">☰</p>
+            </button>
         </div>
-        <button type="button" id="toggleNavLinks" class="mobile-nav-toggle">
-            <p id="mobile-nav-toggle-glyph">☰</p>
-        </button>
-    </div>
-    <div class="links">
-        {% for link in navlinks %}
-            <a
+        <div class="links">
+            {% for link in navlinks %}
+                <a
                 class="link"
                 href="{{ link.url }}"
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"
             >
-                {{ link.name }}
-            </a>
-        {% endfor %}
-        {% for link in socials %}
-            {% if link.showInTopNav %}
-                <a
+                    {{ link.name }}
+                </a>
+            {% endfor %}
+            {% for link in socials %}
+                {% if link.showInTopNav %}
+                    <a
                 class="link"
                 href="{{ link.link }}"
                 target="_blank"
                 rel="me"
             >
-                    {{ link.name }}
-                </a>
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div id="mobile-links" class="mobile-nav-container" aria-hidden="true">
-        {% for link in navlinks %}
-            <a
+                        {{ link.name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id="mobile-links" class="mobile-nav-container" aria-hidden="true">
+            {% for link in navlinks %}
+                <a
                 class="link"
                 href="{{ link.url }}"
                 target="{{ link.target }}"
                 rel="{{ link.rel }}"
             >{{ link.name }}</a>
-        {% endfor %}
-        {% for link in socials %}
-            {% if link.showInTopNav %}
-                <a
+            {% endfor %}
+            {% for link in socials %}
+                {% if link.showInTopNav %}
+                    <a
                 class="link"
                 href="{{ link.link }}"
                 target="_blank"
                 rel="me"
             >
-                    {{ link.name }}
-                </a>
-            {% endif %}
-        {% endfor %}
+                        {{ link.name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
 </nav>
 <script>

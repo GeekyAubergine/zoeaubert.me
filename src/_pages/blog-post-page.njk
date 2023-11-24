@@ -1,5 +1,5 @@
 ---
-layout: base
+layout: page
 pagination:
   data: blogposts.postOrder
   size: 1
@@ -10,20 +10,10 @@ eleventyComputed:
   description: "{{ blogposts.posts[postKey].description }}"
   image: "{{ blogposts.posts[postKey].hero.src }}"
   imageAlt: "{{ blogposts.posts[postKey].hero.alt }}"
+  date: "{{ blogposts.posts[postKey].date }}"
+  tags: "{{ blogposts.posts[postKey].tags }}"
+  readTime: "{{ blogposts.posts[postKey].content | timeToRead }}"
 ---
+
 {% set post = blogposts.posts[postKey] %}
-<div class="w-full content">
-  <h1>{{post.title}}</h1>
-  <div class="date-and-readtime">
-    <p>
-      <time datetime="{{date}}">{{ post.date | formatDate }}</time>
-      <span>-</span>
-      {{post.content | timeToRead}}</p>
-  </div>
-  <div class="tags-list mb-4">
-    {% include "tagsList.njk" %}
-  </div>
-  <article>
-    {{ post.content | mdToHtml | safe }}
-  </article>
-</div>
+{{ post.content | mdToHtml | safe }}

@@ -8,14 +8,13 @@ layout: base
 title: Timeline
 description: My timeline
 ---
-<div class="flex-row justify-between items-baseline">
+<div class="page-header">
     <h1 class="pageTitle">{{ title }}</h1>
     <div class="flex-row gap-x-3">
         <a href="/tags/">All tags</a>
         <a href="/photos/">All Photos</a>
     </div>
 </div>
-<hr/>
 {%- for postKey in pagination.items %}
     {% set post = timeline.posts[postKey] %}
     {% include "timelinePost.njk" %}

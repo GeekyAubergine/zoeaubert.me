@@ -19,7 +19,7 @@
         .classList;
     const toggleButton = document.querySelector(".toggle-button");
     const systemDarkSetting = window.matchMedia("(prefers-color-scheme: dark)");
-    const storeDarkValue = localStorage.getItem("dark");
+    const storedDarkValue = localStorage.getItem("dark");
 
     const setDark = (isDark) => {
         htmlClassList[
@@ -34,10 +34,9 @@
     };
 
     setDark(
-        storeDarkValue
-        ? storeDarkValue === "yes"
+        storedDarkValue
+        ? storedDarkValue === "yes"
         : systemDarkSetting.matches);
-    requestAnimationFrame(() => bodyClassList.remove("hidden"));
 
     toggleButton.addEventListener("click", () => setDark(!htmlClassList.contains("dark")));
     systemDarkSetting.addEventListener("change", (event) => setDark(event.matches));

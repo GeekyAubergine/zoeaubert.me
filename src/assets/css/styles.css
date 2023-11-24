@@ -2,6 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-Hyperlegible-Regular-102a.woff2')
+        format('woff2');
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-Hyperlegible-Bold-102a.woff2')
+        format('woff2');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-Hyperlegible-Italic-102a.woff2')
+        format('woff2');
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-Hyperlegible-BoldItalic-102a.woff2')
+        format('woff2');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'WilcoLoftSans';
+    src: url('/assets/fonts/WilcoLoftSans-Treble.woff2') format('woff2');
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 @layer components {
     /* ---------------- Core ---------------- */
 
@@ -25,7 +70,7 @@
     /* ----------------  Utilities ---------------- */
 
     .width-control {
-        @apply w-[68ch] max-w-[100%] px-4;
+        @apply w-[68ch] max-w-[100%] px-4 md:px-0;
     }
 
     .text {
@@ -63,7 +108,7 @@
     }
 
     hr {
-        @apply border-border dark:border-border-dark my-6 mx-0 last-of-type:hidden;
+        @apply border-border dark:border-border-dark my-4 mx-0 last-of-type:hidden;
     }
 
     div,
@@ -109,25 +154,28 @@
     h4,
     h5,
     h6 {
-        @apply font-bold mt-6 mb-0;
+        font-family: 'WilcoLoftSans';
+        font-display: swap;
+        @apply mt-8 mb-0;
+        letter-spacing: 0.025rem;
     }
 
     h1 {
-        @apply text-3xl mt-0;
+        @apply text-4xl md:text-5xl mt-0;
     }
 
     h2 {
-        @apply text-lg;
+        @apply text-2xl md:text-3xl;
     }
 
     h3 {
-        @apply text-lg;
+        @apply text-xl;
     }
 
     h4,
     h5,
     h6 {
-        @apply text-sm;
+        @apply text-lg;
     }
 
     a {
@@ -159,6 +207,14 @@
     pre {
         @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal overflow-x-scroll;
         font-size: 90%;
+    }
+
+    p:first-of-type {
+        @apply mt-0;
+    }
+
+    p > img {
+        @apply mx-auto;
     }
 
     /* ----------------  Common ---------------- */
@@ -202,13 +258,40 @@
 
     .photogrid {
         @apply w-full grid gap-x-2 gap-y-4 mx-auto px-0 grid-cols-2 sm:grid-cols-4 sm:gap-y-2 md:grid-cols-6;
-        img {
-            @apply m-0;
+        grid-auto-rows: 1fr;
+
+        & .grid-element {
+            @apply flex flex-col justify-center items-center;
+        }
+
+        & .landscape {
+            @apply col-span-2 row-span-1;
+        }
+
+        & .portrait {
+            @apply col-span-1 row-span-1 object-cover my-[-8%];
+
+            & img {
+                @apply h-[92%];
+            }
+        }
+
+        & img,
+        & a {
+            @apply m-0 p-0 max-h-full;
+        }
+
+        & a {
+            @apply flex justify-center items-center;
         }
     }
 
     nav {
-        @apply sticky top-0 justify-center items-baseline h-[3rem] mb-4 bg-background dark:bg-background-dark border-b border-color z-10 md:flex-row md:justify-between;
+        @apply sticky top-0 justify-center items-center h-[3.2rem] pt-1 bg-background dark:bg-background-dark border-b border-color z-10 md:h-[4rem];
+
+        & .nav-wrapper {
+            @apply w-full items-baseline md:flex-row md:justify-between md:px-4 md:max-w-[60rem];
+        }
 
         & .name-and-buttons {
             @apply width-control flex-row justify-between items-center mx-auto md:w-auto md:mx-0;
@@ -225,7 +308,22 @@
                 @apply w-full flex-row justify-start items-center font-normal md:w-auto;
 
                 & .name {
-                    @apply text-3xl h-full text-left my-0 mr-4 no-underline md:my-1;
+                    @apply text-3xl h-full text-left my-0 mr-2 no-underline md:my-1;
+
+                    &:hover {
+                        .forename,
+                        .surname {
+                            @apply under;
+                        }
+                    }
+
+                    & .forename {
+                        @apply no-underline;
+                    }
+
+                    & .surname {
+                        @apply md:hidden lg:inline-flex;
+                    }
                 }
             }
         }
@@ -262,7 +360,7 @@
             @apply hidden md:inline-flex flex-row;
 
             & .link {
-                @apply mt-0 mx-1 lg:mx-2;
+                @apply mt-0 mx-2;
 
                 &:last-of-type {
                     @apply mr-4;
@@ -291,6 +389,70 @@
         }
     }
 
+    .blog-posts {
+        @apply grid gap-y-4 grid-cols-1 mt-4;
+
+        & .blog-post-item {
+            @apply flex-col;
+
+            & .hero {
+                @apply w-full justify-center items-start rounded overflow-hidden mt-4 mb-2;
+
+                & img {
+                    @apply w-full h-[16rem] object-contain p-0 m-0;
+                }
+            }
+
+            & .title-and-date {
+                @apply flex-col justify-between items-baseline md:flex-row md:items-baseline;
+
+                & .date {
+                    @apply secondary;
+                }
+            }
+
+            & a {
+                @apply flex flex-1 my-0 no-underline;
+            }
+
+            & h3 {
+                @apply accent font-normal mt-0 text-2xl;
+            }
+
+            & .description {
+                @apply hidden md:inline-flex mb-0;
+            }
+
+            & .time-to-read-and-tags {
+                @apply flex-row justify-start items-baseline;
+            }
+
+            & .time-to-read {
+                @apply hidden secondary mt-0 md:inline-flex;
+            }
+
+            & .tags-list {
+                /* @apply ml-2; */
+            }
+        }
+
+        & hr {
+            @apply my-0;
+        }
+    }
+
+    .page-header {
+        @apply flex flex-col justify-center items-center w-full mt-4 mb-8 md:mt-[4rem] md:mb-[4rem] md:items-center;
+
+        & h1 {
+            @apply text-center;
+        }
+
+        & .tags-list {
+            @apply my-0 md:max-w-[24rem] md:justify-center;
+        }
+    }
+
     /* ----------------  Page specific ---------------- */
 
     .albumPhotoPageContainer {
@@ -306,7 +468,29 @@
         @apply border-[#00000000] border-2 hover:border-accent dark:hover:border-accent-dark rounded-md;
     }
 
-    .homePageBlock {
+    .home-header {
+        @apply items-center;
+
+        .name-and-cursor {
+            @apply flex-row justify-center items-baseline;
+
+            .home-name {
+                @apply text-[3rem] md:text-[5rem] mt-0 min-w-[1ch] text-center;
+            }
+
+            .name-cursor {
+                @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] border-r-2 border-text dark:border-text-dark min-w-[1px] bg-red-500;
+
+                animation: blink 800ms linear infinite;
+            }
+        }
+    }
+
+    .home-about {
+        @apply mb-8;
+    }
+
+    .home-page-block {
         @apply my-2;
 
         & h2 {
@@ -316,35 +500,25 @@
         & .see-more {
             @apply mt-2;
         }
-    }
 
-    .blogPostItem {
-        @apply mt-2 flex-col sm:flex-row;
-
-        & a {
-            @apply flex flex-1 my-0;
-        }
-
-        & h3 {
-            @apply accent font-normal mt-0 under text-lg;
-        }
-
-        & time {
-            @apply flex secondary;
+        & .blog-post-item {
+            & .hero {
+                @apply hidden;
+            }
         }
     }
 
     .timeline-post {
         & .timestamp {
-            @apply mt-0;
+            @apply mt-0 mb-4;
 
             & > time {
-                @apply accent;
+                @apply accent text-sm;
             }
         }
 
         & .media {
-            @apply flex flex-row justify-start my-2;
+            @apply flex flex-row justify-start mb-6;
 
             & > .media-grid {
                 @apply grid gap-x-1 grid-cols-2 overflow-hidden;
@@ -354,16 +528,83 @@
             }
         }
 
-        .album-links {
-            @apply flex-row items-baseline mb-2;
+        .album-photo-media {
+            @apply mb-0;
+        }
 
-            & .dash {
-                @apply mx-2 my-0;
+        .album-description {
+            @apply mt-0 text-center;
+        }
+        
+        .tags-and-timestamp {
+            @apply flex-row justify-between items-baseline mt-2;
+
+            & .tags-list {
+                @apply flex-row justify-start items-baseline;
             }
+
+            & .timestamp {
+                @apply w-[16ch] text-right;
+            }
+        }
+    }
+
+    .micro-post {
+        & .media {
+            @apply flex flex-row justify-start mb-6;
+
+            & > .media-grid {
+                @apply grid gap-x-1 grid-cols-2 overflow-hidden;
+            }
+            & img {
+                @apply w-full h-full object-contain;
+            }
+        }
+
+        .tags-list {
+            @apply mt-2;
+        }
+
+        .original-link {
+            @apply mt-6;
         }
     }
 
     .wide {
         @apply w-[102ch] max-w-[100%] px-4 mx-auto;
+    }
+
+    .album-grid {
+        @apply grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8;
+
+        & .album {
+            @apply !no-underline flex flex-col justify-between cursor-pointer my-2;
+
+            & .preview-multi {
+                @apply grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem] mb-2;
+            }
+
+            & .preview-single {
+                @apply flex flex-col justify-between my-auto;
+            }
+
+            & .title-and-date {
+                @apply flex flex-col justify-center items-center;
+
+                & .title {
+                    @apply accent mt-0 text-center;
+                }
+
+                & date {
+                    @apply secondary text-sm !no-underline;
+                }
+            }
+
+            &:hover {
+                & .title {
+                    @apply under;
+                }
+            }
+        }
     }
 }

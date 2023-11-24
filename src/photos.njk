@@ -14,7 +14,7 @@ description: "All my photos"
 <main>
     {% include "navbar.njk" %}
     <div class="wide">
-        <div class="flex-row pb-4 justify-between items-baseline">
+        <div class="page-header">
             <h1 class="pageTitle">All Photos</h1>
             <div class="flex-row justify-end">
                 <a href="/tags" class="link mr-4">Tags</a>
@@ -23,8 +23,8 @@ description: "All my photos"
         </div>
         <div class="photogrid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
             {% for photo in photos %}
-                <a href="{{ photo.parentPermalink }}" class="flex justify-center items-center col-span-1">
-                    {% renderImage photo.image %}
+                <a href="{{ photo.parentPermalink }}" class="flex justify-center items-center col-span-1 max-h-8">
+                    {% renderImage photo.image%}
                 </a>
             {% endfor %}
         </div>
