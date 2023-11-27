@@ -3,28 +3,11 @@ layout: page
 title: Games
 description: Games I've played
 ---
-<p>I own {{ games.keysByPlaytime | length }} games with total playtime of {{ games.totalPlaytime | formatNumber}} hours. </p>
-<p>Not mentioned here are untold hours in Minecraft and EVE Online</p>
-
-<p>See my <a href="/tags/gaming">gaming related posts</a>.</p>
-<h2 class="text-xl font-bold mt-4 mb-2">Recently Played</h2>
-<div class="grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3">
-    {% for gameKey in games.keysByLastPlayed %}
-        {% set game = games.games[gameKey] %}
-        <div class="justify-start items-center last-of-type:hidden sm:!flex">
-            <a class="my-0" href="{{ game.link }}" target="_blank" rel="noopener noreferrer">
-                <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full hobbyGridItemImage">
-            </a>
-            <a class="my-0" href="{{ game.bricksetUrl }}">
-                <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
-            </a>
-            <p class="secondary my-0">
-                {{ game.playtime.hours | formatNumber}}h
-            </p>
-        </div>
-    {% endfor %}
+<div class="text-lg mb-8">
+    <p>I own {{ games.keysByPlaytime | length }} games with total playtime of {{ games.totalPlaytime | formatNumber}} hours. </p>
+    <p>Not mentioned here are untold hours in Minecraft and EVE Online</p>
+    <p>See my <a href="/tags/gaming">gaming related posts</a>.</p>
 </div>
-<h2 class="text-xl font-bold mt-12 mb-2">All Games</h2>
 <div class="grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3">
     {% for gameKey in games.keysByPlaytime %}
         {% set game = games.games[gameKey] %}
@@ -32,8 +15,8 @@ description: Games I've played
             <a class="my-0" href="{{ game.link }}" target="_blank" rel="noopener noreferrer">
                 <img src="{{ game.headerImage.src }}" alt="{{ game.name }}" class="w-full hobbyGridItemImage">
             </a>
-            <a class="my-0" href="{{ game.bricksetUrl }}">
-                <p class="mt-1 mb-0 text-center">{{ game.name }}</p>
+            <a class="my-0 no-underline" href="{{ game.url }}">
+                <p class="my-0 text-center accent">{{ game.name }}</p>
             </a>
             <p class="secondary my-0">
                 {{ game.playtime.hours | formatNumber}}h

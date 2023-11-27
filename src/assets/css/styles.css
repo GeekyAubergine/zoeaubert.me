@@ -51,7 +51,7 @@
     /* ---------------- Core ---------------- */
 
     html {
-        font-size: 17px;
+        font-size: 16px;
     }
 
     * {
@@ -161,7 +161,7 @@
     }
 
     h1 {
-        @apply text-4xl md:text-5xl mt-0;
+        @apply text-4xl md:text-6xl mt-0;
     }
 
     h2 {
@@ -336,7 +336,7 @@
             @apply absolute top-[3rem] pt-2 bg-background dark:bg-background-dark transition-all border-r border-color md:hidden;
 
             left: calc(-7.5rem);
-            height: calc(100vh - 3rem);
+            height: calc(100svh - 3rem);
 
             & .link {
                 @apply my-2 pl-5 w-[7.2rem];
@@ -442,7 +442,7 @@
     }
 
     .page-header {
-        @apply flex flex-col justify-center items-center w-full mt-4 mb-8 md:mt-[4rem] md:mb-[4rem] md:items-center;
+        @apply flex flex-col justify-center items-center w-full mt-6 mb-6 md:mt-[4rem] md:mb-[4rem] md:items-center;
 
         & h1 {
             @apply text-center;
@@ -469,17 +469,17 @@
     }
 
     .home-header {
-        @apply items-center;
+        @apply items-center md:mb-[4.5rem];
 
         .name-and-cursor {
             @apply flex-row justify-center items-baseline;
 
             .home-name {
-                @apply text-[3rem] md:text-[5rem] mt-0 min-w-[1ch] text-center;
+                @apply text-[3rem] md:text-[5rem] mt-0 text-center;
             }
 
             .name-cursor {
-                @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] border-r-2 border-text dark:border-text-dark min-w-[1px] bg-red-500;
+                @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] mt-4 md:mt-6 border-r-2 border-text dark:border-text-dark min-w-[1px] bg-red-500;
 
                 animation: blink 800ms linear infinite;
             }
@@ -487,7 +487,7 @@
     }
 
     .home-about {
-        @apply mb-8;
+        @apply mb-8 text-lg;
     }
 
     .home-page-block {
@@ -535,7 +535,7 @@
         .album-description {
             @apply mt-0 text-center;
         }
-        
+
         .tags-and-timestamp {
             @apply flex-row justify-between items-baseline mt-2;
 
@@ -603,6 +603,122 @@
             &:hover {
                 & .title {
                     @apply under;
+                }
+            }
+        }
+    }
+
+    .tv-movie-header {
+        & h1 {
+            @apply my-2;
+        }
+
+        & a {
+            @apply my-0 no-underline;
+        }
+
+        & img {
+            @apply max-w-[50%] min-w-[6rem] hobbyGridItemImage mx-auto my-0;
+        }
+
+        & .score {
+            @apply text-center my-0;
+        }
+
+
+        & .year {
+            @apply secondary my-0;
+        }
+    }
+
+    & .tv-movie-header-image {
+        @apply flex-col justify-center items-center mb-4 md:mb-12;
+
+        & a {
+            @apply my-0;
+        }
+
+        & .average {
+            @apply text-center;
+        }
+    }
+
+    .tv-movie-reviews {
+        @apply flex-col;
+
+        & .reviews {
+            @apply mt-1 justify-between w-full;
+
+            & .review {
+                @apply justify-start w-full;
+
+                & h2 {
+                    @apply text-lg mt-0 mb-2;
+                }
+
+                & .score-and-date {
+                    @apply flex-row justify-between items-baseline;
+
+                    & a {
+                        @apply text-sm;
+                    }
+                }
+            }
+        }
+
+        & hr {
+            @apply !flex my-4;
+        }
+    }
+
+    .photo-page {
+        @apply justify-center items-center p-0 m-0;
+
+        & nav {
+            @apply absolute top-0 left-0 right-0;
+        }
+
+        & .img-container {
+            @apply absolute top-[3rem] md:top-[4rem] bottom-[11rem] left-0 right-0 flex-1 justify-center items-center w-full p-2 pt-4 md:p-8 overflow-hidden;
+
+            & img {
+                @apply w-full h-full object-contain p-0 m-0;
+            }
+        }
+
+        & .buttons-and-text {
+            @apply absolute bottom-4 left-0 right-0 flex mx-auto justify-end items-center width-control h-[10rem];
+
+            & .description {
+                @apply w-full text-center mt-4 mb-0;
+            }
+
+            & .tags-list {
+                @apply my-1;
+            }
+
+            & .tag {
+                @apply !text-accent dark:!text-accent-dark !decoration-accent dark:!decoration-accent-dark;
+            }
+
+        
+            & .nav {
+                @apply flex-row w-full justify-between items-center my-0;
+
+                & .arrow-left {
+                    @apply flex-1 link no-underline h-8 items-center text-lg m-0 mr-4;
+                }
+
+                & .arrow-right {
+                    @apply flex-1 justify-end link no-underline h-8 pl-4 items-center text-lg m-0;
+                }
+            }
+
+            & .links {
+                @apply flex-row w-full justify-center items-baseline;
+
+                & a {
+                    @apply mx-0 my-0;
                 }
             }
         }

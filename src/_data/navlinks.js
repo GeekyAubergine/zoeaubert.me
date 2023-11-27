@@ -49,7 +49,7 @@ module.exports = [
         url: '/now',
     },
     {
-        name: 'faq',
+        name: '/faq',
         target: '',
         rel: '',
         url: '/faq',

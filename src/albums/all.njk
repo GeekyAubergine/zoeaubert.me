@@ -8,16 +8,17 @@ eleventyComputed:
 <main>
     {% include "navbar.njk" %}
     <div class="wide">
-        <div class="width-control mx-auto pb-4">
+        <div class="page-header">
             <h1 class="pageTitle">All Albums</h1>
         </div>
         {%- for albumId in albums.albumOrder %}
             {% set album = albums.albums[albumId] %}
             <div class="mb-4 mx-auto mt-2 sm:mt-4">
-                <h2 class="text-lg my-0 pb-2">
-                    <a href="{{ album.permalink | stripIndex }}">{{ album.date | formatDate }} - {{ album.title }}
-                    </a>
-                </h2>
+                <a href="{{ album.permalink | stripIndex }}" class="no-underline mb-4">
+                    <h2 class="accent">
+                        {{ album.date | formatDate }} - {{ album.title }}
+                    </h2>
+                </a>
                 {% set photoIds = album.photoOrder %}
                 {% include 'albumPhotoGrid.njk' %}
             </div>

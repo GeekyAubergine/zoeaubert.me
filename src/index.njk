@@ -32,6 +32,7 @@ layout: page
 
 <script type="text/javascript">
     const TIME_BETWEEN_NAME_CHANGES = 5000;
+    const MEMORY_SIZE = 4;
 
     const TYPING_DELAY_MAX = 200;
     const TYPING_DELAY_MIN = 80;
@@ -41,7 +42,8 @@ layout: page
 
     // Cursor, split first and last names
 
-    const names = [{%- for name in sillyNames %} "{{ name }}",{%- endfor %}]
+    const names = [{%- for name in sillyNames %}"{{ name }}",{%- endfor %}]
+    let memory = ['Zoe Aubert'];
 
     function typingDelay() {
         return Math.floor(Math.random() * (TYPING_DELAY_MAX - TYPING_DELAY_MIN)) + TYPING_DELAY_MIN;
@@ -50,9 +52,11 @@ layout: page
     function pickNewName() {
         let next = names[Math.floor(Math.random() * names.length)];
 
-        while (next === nameElement.innerHTML) {
+        while (memory.includes(next)) {
             next = names[Math.floor(Math.random() * names.length)];
         }
+
+        memory = memory.slice(-MEMORY_SIZE);
 
         return next;
     }
@@ -62,17 +66,16 @@ layout: page
             return
         }
 
-        while (nameElement.innerHTML.length > 1) {
+        while (nameElement.innerHTML.length > 0) {
             nameElement.innerHTML = nameElement
                 .innerHTML
                 .substring(0, nameElement.innerHTML.length - 1);
             await new Promise(resolve => setTimeout(resolve, typingDelay()));
         }
 
-        nameElement.innerHTML = nextName.substring(0, 1);
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        for (let i = 1; i < nextName.length; i++) {
+        for (let i = 0; i < nextName.length; i++) {
             nameElement.innerHTML = nextName.substring(0, i + 1);
 
             await new Promise(resolve => setTimeout(resolve, typingDelay()));

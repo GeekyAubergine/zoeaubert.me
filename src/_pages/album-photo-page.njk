@@ -13,84 +13,62 @@ eleventyComputed:
 ---
 {% set photo = albums.albumPhotos[photoId] %}
 {% set post = albums.albumPhotos[photoId] %}
-<main class="main w-full h-screen">
-    <div class="width-control mx-auto h-[3rem]">
-        <nav class="width-control mx-auto justify-center items-baseline mb-8">
-            <div class="w-full flex-row width-control mx-auto justify-center items-baseline md:flex-row md:justify-between">
-                <div class="w-full flex-row justify-between items-center">
-                    <div class="flex-row justify-start items-center">
-                        <a class="text-4xl h-full text-left mr-2" href="/">
-                            <p class="m-0">Zoe Aubert</p>
-                        </a>
-                        {% include "themeToggle.njk" %}
-                    </div>
-                    <div class="flex-row">
-                        <a class="mr-4" href="/">
-                            <p class="m-0 accent">Home</p>
-                        </a>
-                        <a href="javascript:history.back()">
-                            <p class="accent m-0">Back</p>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+<main class="photo-page">
+    {% include "navbar.njk" %}
+    {# <a href="javascript:history.back()">
+        <p class="accent m-0">Back</p>
+    </a> #}
+    <div class="img-container">
+        {% renderImage photo.thumbnailLarge, "flex max-w-full" %}
     </div>
-    <div class="flex-1 justify-between w-full h-full albumPhotoPageContainer">
-        <div></div>
-        <div class="albumPhotoPageContainer">
-            {% renderImage photo.thumbnailLarge, "flex max-w-full" %}
+    
+    <div class="buttons-and-text">
+        <p class="description">
+            {{photo.description}}
+        </p>
+        <div class="tags-list">
+            {% set tags = photo.tags %}
+            {% include "tagsList.njk" %}
         </div>
-        <div class="flex mx-auto justify-end items-center width-control h-[12rem]">
-            <p class="w-full text-center mt-4 mb-0">
-                {{photo.description}}
-            </p>
-            <div class="flex-row flex-wrap  justify-center mt-1">
-                {% set tags = photo.tags %}
-                {% include "tagsList.njk" %}
-            </div>
-            <div class="flex-row w-full justify-between items-center">
-                {% if photo.previous %}
-                    <button
+        <div class="nav">
+            {% if photo.previous %}
+                <button
                     type="button"
-                    class="flex flex-1 link no-underline h-8 items-center  text-lg m-0 pr-4"
+                    class="arrow-left"
                     id="previousPhotoButton"
                 >
                     ←
                 </button>
-                {% else %}
-                    <div class="flex flex-1"></div>
-                {% endif %}
-                <p class="flex flex-1 justify-center tabular-nums m-0">{{photo.indexString}} / {{ photo.albumTotalPhotos }}</p>
-                {% if photo.next %}
-                    <button
+            {% else %}
+                <div class="flex flex-1"></div>
+            {% endif %}
+            <p class="flex flex-1 justify-center tabular-nums m-0">{{photo.indexString}} / {{ photo.albumTotalPhotos }}</p>
+            {% if photo.next %}
+                <button
                     type="button"
-                    class="flex flex-1 justify-end link no-underline h-8 pl-4 items-cente text-lg m-0"
+                    class="arrow-right"
                     id="nextPhotoButton"
                 >
                     →
                 </a>
-                {% else %}
-                    <div class="flex flex-1"></div>
-                {% endif %}
-            </div>
-            <div class="flex-row w-full justify-center items-baseline">
-                <a
+            {% else %}
+                <div class="flex flex-1"></div>
+            {% endif %}
+        </div>
+        <div class="links">
+            <a
                         href="{{ photo.albumPermalink | stripIndex }}"
-                        class="text-center link m-0 ml-2"
                     >
                         Album
                     </a>
-                <p class="mx-2 my-0">-</p>
-                <a
-                        class="link m-0"
+            <p class="mx-2 my-0">-</p>
+            <a
                         href="{{ photo.fullSize.src | prefixCDN }}"
                         target="_blank"
                         rel="noopener"
                     >
                         Original
                     </a>
-            </div>
         </div>
     </div>
 </main>

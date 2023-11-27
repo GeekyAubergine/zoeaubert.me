@@ -70,11 +70,6 @@
             <p class="album-description">{{ post.description }}
             </p>
         {% endif %}
-        {# <p class="album-links">
-            <a href="{{ post.albumPermalink | stripIndex }}" >
-                {{ post.albumTitle }} - {{ post.date | formatDate }}
-            </a>
-        </p> #}
     {% endif %}
     <div class="tags-and-timestamp">
         <div class="tags-list">
@@ -83,7 +78,7 @@
         </div>
         <a href="{{ post.permalink }}" rel="noopener" class="timestamp">
             <time datetime="{{ post.date }}">
-                ∞ {{ post.date | formatDate }}
+                {{ post.date | formatDate }}
             </time>
         </a>
     </div>
