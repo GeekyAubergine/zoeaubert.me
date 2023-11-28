@@ -483,7 +483,7 @@
             }
 
             .name-cursor {
-                @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] mt-4 md:mt-6 border-r-2 border-text dark:border-text-dark min-w-[1px] bg-red-500;
+                @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] mt-4 md:mt-6 border-r-2 border-text dark:border-text-dark min-w-[1px];
 
                 animation: blink 800ms linear infinite;
             }
