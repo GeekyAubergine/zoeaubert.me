@@ -9,7 +9,7 @@ layout: base
             <h1>{{title}}</h1>
         {% endif %}
         {% if date %}
-            <div class="date-and-readtime">
+            <div class="date-and-readtime" data-pagefind-ignore>
                 <p>
                     <time datetime="{{date}}">{{ date | formatDate }}</time>
                     {% if readTime %}

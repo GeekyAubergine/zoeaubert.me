@@ -72,4 +72,10 @@ module.exports = [
     //     rel: '',
     //     url: '/links',
     // },
+        {
+        name: 'Search',
+        target: '',
+        rel: '',
+        url: '/search',
+    },
 ]

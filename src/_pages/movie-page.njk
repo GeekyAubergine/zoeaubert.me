@@ -39,34 +39,6 @@ eleventyComputed:
           </div>
         </div>
       {% endfor %}
-      {% for review in movie.reviews %}
-        <hr />
-        <div class="review">
-          {% if review.review %}
-            <div class="content">
-              {{ review.review | mdToHtml | safe }}
-            </div>
-          {% endif %}
-          <div class="score-and-date">
-            <p class="my-0">{{ review.score }}/5</p>
-            <a href="{{ review.postPermalink }}" class="my-0 mt-2">{{ review.date | formatDateTime }}</a>
-          </div>
-        </div>
-      {% endfor %}
-      {% for review in movie.reviews %}
-        <hr />
-        <div class="review">
-          {% if review.review %}
-            <div class="content">
-              {{ review.review | mdToHtml | safe }}
-            </div>
-          {% endif %}
-          <div class="score-and-date">
-            <p class="my-0">{{ review.score }}/5</p>
-            <a href="{{ review.postPermalink }}" class="my-0 mt-2">{{ review.date | formatDateTime }}</a>
-          </div>
-        </div>
-      {% endfor %}
     </div>
   </div>
 </div>

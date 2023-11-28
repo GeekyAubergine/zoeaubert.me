@@ -5,6 +5,7 @@ pagination:
   size: 1
   alias: tag
 permalink: "/tags/{{ tag | slug }}/index.html"
+disableFind: true
 eleventyComputed:
     title: "#{{ tag }} posts"
     headerTitle: "{{ tag | spaceTag}} Posts"

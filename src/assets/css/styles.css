@@ -217,6 +217,10 @@
         @apply mx-auto;
     }
 
+    img {
+        @apply text-text dark:text-text-dark;
+    }
+
     /* ----------------  Common ---------------- */
 
     .toggle-button {
@@ -370,7 +374,7 @@
     }
 
     footer {
-        @apply max-w-full width-control mt-12 p-2 mx-auto items-center border-t border-t-border;
+        @apply max-w-full width-control mt-12 p-2 mx-auto items-center border-t border-t-border dark:border-t-border-dark;
 
         & a {
             @apply my-0;
@@ -458,7 +462,7 @@
     .albumPhotoPageContainer {
         max-height: calc(100vh - 5rem);
 
-        img {
+        & img {
             max-height: calc(100vh - 30rem);
             max-width: 100%;
         }
@@ -472,7 +476,7 @@
         @apply items-center md:mb-[4.5rem];
 
         .name-and-cursor {
-            @apply flex-row justify-center items-baseline;
+            @apply flex-row justify-center items-baseline h-[6rem];
 
             .home-name {
                 @apply text-[3rem] md:text-[5rem] mt-0 text-center;
@@ -625,7 +629,6 @@
             @apply text-center my-0;
         }
 
-
         & .year {
             @apply secondary my-0;
         }
@@ -701,7 +704,6 @@
                 @apply !text-accent dark:!text-accent-dark !decoration-accent dark:!decoration-accent-dark;
             }
 
-        
             & .nav {
                 @apply flex-row w-full justify-between items-center my-0;
 
@@ -721,6 +723,52 @@
                     @apply mx-0 my-0;
                 }
             }
+        }
+    }
+
+    #search {
+        & .pagefind-ui {
+            @apply block relative mt-8;
+        }
+
+        & .pagefind-ui__form {
+            @apply flex flex-col w-full;
+        }
+
+        & .pagefind-ui__search-input {
+            @apply absolute top-0 left-0 w-full bg-[#FCFCFC] dark:bg-[#030303] text-text dark:text-text-dark border-border border-2 dark:border-border-dark rounded-lg px-4 h-16;
+
+            &::placeholder {
+                @apply text-text dark:text-text-dark;
+            }
+        }
+
+        & .pagefind-ui__search-clear {
+            @apply absolute right-4 h-16 secondary;
+        }
+
+        & .pagefind-ui__drawer {
+            @apply mt-[4.5rem] mx-2 left-0 w-full;
+        }
+
+        & .pagefind-ui__message {
+            @apply my-2;
+        }
+
+        & .pagefind-ui__results {
+            @apply flex flex-col list-none;
+        }
+
+        & .pagefind-ui__result {
+            @apply border-border dark:border-border-dark border-t-2 mt-2 pt-4 mb-4;
+        }
+
+        & .pagefind-ui__result-link {
+            @apply text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark under;
+        }
+
+        & .pagefind-ui__result-image {
+            @apply max-h-[24rem] w-full object-contain;
         }
     }
 }

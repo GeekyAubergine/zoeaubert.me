@@ -2,6 +2,7 @@ const timeToRead = require('eleventy-plugin-time-to-read')
 const pluginRss = require('@11ty/eleventy-plugin-rss')
 const MarkdownIt = require('markdown-it')
 const prism = require('markdown-it-prism')
+const { execSync } = require('child_process')
 
 const md = new MarkdownIt({
     html: true,
@@ -319,6 +320,12 @@ module.exports = function (eleventyConfig) {
 
     eleventyConfig.setServerOptions({
         showAllHosts: true,
+    })
+
+    eleventyConfig.on('eleventy.after', () => {
+        execSync(`npx pagefind --source _site --glob \"**/*.html\"`, {
+            encoding: 'utf-8',
+        })
     })
 
     return {
