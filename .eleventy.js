@@ -89,6 +89,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({
         './src/_content/assets': 'assets',
     })
+    eleventyConfig.addPassthroughCopy('robots.txt')
 
     eleventyConfig.addFilter('linkifyMarkdown', (text) => {
         return text.replace(
