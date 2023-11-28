@@ -86,8 +86,6 @@ layout: page
     async function changeName() {
         const nextName = pickNewName();
 
-        console.log(nextName);
-
         await typeName(nextName);
 
         setTimeout(changeName, TIME_BETWEEN_NAME_CHANGES);
