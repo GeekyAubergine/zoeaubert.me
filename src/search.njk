@@ -1,0 +1,54 @@
+---
+layout: page
+disableFind: true
+---
+<div id="search" class="search"></div>
+<script src="/_pagefind/pagefind-ui.js" onload="initPagefind()" defer></script>
+
+<script>
+    let pagefind = null;
+
+    let input = null;
+
+    function processResult(result) {
+        console.log(result);
+
+        result.excerpt = result
+            .excerpt
+            .replace(/^(.*)(<mark>)? ?\#.*$/g, '$1');
+
+        return result;
+    }
+
+    function initPagefind() {
+        pagefind = new PagefindUI({
+            index: '/_pagefind/index.json',
+            search: '/_pagefind/search.json',
+            element: '#search',
+            showImages: true,
+            pageSize: 5,
+            resetStyles: true,
+            processResult: processResult,
+            highlightParam: "highlight"
+        });
+
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has('q')) {
+            pagefind
+                ._pfs
+                .$$set({trigger_search_term: params.get('q')})
+        }
+
+        input = document.querySelector('#search input');
+
+        // On input, change query string without reloading
+        input.addEventListener('input', function (e) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('q', e.target.value);
+            window
+                .history
+                .replaceState({}, '', `${window.location.pathname}?${params}`);
+        });
+    }
+</script>

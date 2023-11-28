@@ -1,10 +1,14 @@
 ---
 layout: html
 ---
-<main class="main">
-    {% include "navbar.njk" %}
-    <div class="width-control mx-auto">
-        {{ content | safe }}
-    </div>
-    {% include "footer.njk" %}
-</main>
+{% if disableFind %}
+    <main>
+    {% else %}
+        <main data-pagefind-body>
+        {% endif %}
+        {% include "navbar.njk" %}
+        <div class="width-control mx-auto">
+            {{ content | safe }}
+        </div>
+        {% include "footer.njk" %}
+    </main>

@@ -1,7 +1,28 @@
 ---
 layout: base
 ---
-{% if title %}
-    <h1 class="pageTitle mb-4">{{ title }}</h1>
+{% if title or headerTitle %}
+    <div class="page-header">
+        {% if headerTitle %}
+            <h1>{{headerTitle}}</h1>
+        {% else %}
+            <h1>{{title}}</h1>
+        {% endif %}
+        {% if date %}
+            <div class="date-and-readtime" data-pagefind-ignore>
+                <p>
+                    <time datetime="{{date}}">{{ date | formatDate }}</time>
+                    {% if readTime %}
+                        <span>-</span>
+                        {{readTime}}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if tags %}
+            <div class="tags-list mb-4">
+                {% include "tagsList.njk" %}
+            </div>
+        {% endif %}
+    </div>
 {% endif %}
 {{ content | safe }}

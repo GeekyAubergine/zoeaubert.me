@@ -1,18 +1,22 @@
-<article>
-    {# {% if post.hero %}
-        <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2 max-w-half"/>
-    {% endif %} #}
-    <a href="{{ post.permalink | stripIndex }}">
-        <h3 class="accent text-xl font-normal my-0">{{ post.title }}</h3>
-    </a>
-    <p class="my-1">{{ post.description }}</p>
-    <div class="flex-row">
-        <time class="secondary" dateTime="{{post.date }}">{{post.date | formatDate}}</time>
-        <p class="secondary mx-1 my-0">-</p>
-        <p class="secondary my-0">{{ post.content | timeToRead }}</p>
+<article class="blog-post-item" data-pagefind-ignore>
+    <div class="title-and-date">
+        <a href="{{ post.permalink | stripIndex }}">
+            <h3>{{ post.title }}</h3>
+        </a>
+        <time class="date" dateTime="{{ post.date }}">{{post.date | formatDate}}</time>
     </div>
-    <div class="flex-row flex-wrap mt-1">
-        {% include "tagsList.njk" %}
+    {# {% if post.hero %}
+        <div class="hero">
+            <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
+        </div>
+    {% endif %} #}
+    <p class="description">{{ post.description }}</p>
+    <div class="time-to-read-and-tags">
+        {# <p class="time-to-read">{{ post.content | timeToRead }} read</p> #}
+        <div class="tags-list">
+            {% set tags = post.tags %}
+            {% include "tagsList.njk" %}
+        </div>
     </div>
 </article>
 <hr/>

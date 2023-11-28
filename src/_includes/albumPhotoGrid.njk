@@ -1,13 +1,10 @@
 <div class="photogrid">
     {% for photoId in photoIds %}
         {% set photo = albums.albumPhotos[photoId] %}
-        {% if photo.fullSize.orientation == "landscape" %}
-            {% set span = "col-span-2" %}
-        {% else %}
-            {% set span = "col-span-1" %}
-        {% endif %}
-        <a href="{{ photo.permalink }}" class="flex justify-center items-center {{ span }}">
-            {% renderImage photo.thumbnailSmall %}
-        </a>
+        <div class="grid-element {{ photo.fullSize.orientation }}">
+            <a href="{{ photo.permalink }}">
+                {% renderImage photo.thumbnailSmall %}
+            </a>
+        </div>
     {% endfor %}
 </div>

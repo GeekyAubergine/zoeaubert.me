@@ -2,7 +2,9 @@
 layout: page
 title: Blog Posts
 ---
-{%- for postKey in blogposts.postOrder %}
-    {% set post = blogposts.posts[postKey] %}
-    {% include "blogPostListItem.njk" %}
-{% endfor %}
+<div class="blog-posts">
+    {%- for postKey in blogposts.postOrder %}
+        {% set post = blogposts.posts[postKey] %}
+        {% include "blogPostListItem.njk" %}
+    {% endfor %}
+</div>

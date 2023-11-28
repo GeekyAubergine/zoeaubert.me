@@ -12,32 +12,33 @@ eleventyComputed:
   imageAlt: "{{ movies.movies[movieKey].title }} movie poster"
 ---
 {% set movie = movies.movies[movieKey] %}
-<div class="flex-row">
-  <div>
-    <a class="my-0" href="https://www.themoviedb.org/movie/{{ movie.themoviedbId }}" rel="noreferrer noopener">
-      <img src="https://image.tmdb.org/t/p/w400{{ movie.posterUrl }}" alt="{{ movie.name }}" class="max-w-[6rem] min-w-[6rem] hobbyGridItemImage sm:max-w-[16rem] sm:min-w-[16rem]">
-    </a>
-    <p class="my-2">Average: {{ movie.averageScore }}/5</p>
-  </div>
-  <div class="ml-4 justify-between w-full">
+<div class="page-header tv-movie-header">
+  {# <div class="tv-move-image-and-average"> #}
+  <a href="https://www.themoviedb.org/movie/{{ movie.themoviedbId }}" target="_blank" rel="noopener noreferrer">
+    <img src="https://image.tmdb.org/t/p/w400{{ movie.posterUrl }}" alt="{{ movie.name }}">
+    <h1>{{movie.title}}</h1>
+  </a>
+  <p class="year">({{ movie.year }})</p>
+
+  <p>{{ movie.averageScore }}/5</p>
+</div>
+<div class="tv-movie-reviews">
+  <div class="reviews">
     <div class="justify-start w-full">
-      <div class="flex-col mb-4 sm:flex-row items-baseline">
-        <h1 class="pageTitle">{{movie.title}}</h1>
-        <p class="my-0 secondary sm:ml-4">({{ movie.year }})</p>
-      </div>
-      <hr class="!flex mt-0"/>
-      <div>
-        {% for review in movie.reviews %}
+      {% for review in movie.reviews %}
+        <hr />
+        <div class="review">
           {% if review.review %}
             <div class="content">
               {{ review.review | mdToHtml | safe }}
             </div>
           {% endif %}
-          <p class="my-0">{{ review.score }}/5</p>
-          <a href="{{ review.postPermalink }}" class="my-0 mt-4">{{ review.date | formatDateTime }}</a>
-          <hr/>
-        {% endfor %}
-      </div>
+          <div class="score-and-date">
+            <p class="my-0">{{ review.score }}/5</p>
+            <a href="{{ review.postPermalink }}" class="my-0 mt-2">{{ review.date | formatDateTime }}</a>
+          </div>
+        </div>
+      {% endfor %}
     </div>
   </div>
 </div>

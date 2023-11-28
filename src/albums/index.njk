@@ -6,7 +6,7 @@ eleventyComputed:
     image: "{{ albums.albumPhotos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].thumbnailSmall.src | prefixCDN }}"
     imageAlt: "{{ albums.albumPhotos[albums.albums[albums.albumOrder[0]].coverPhotos[0]].alt }}"
 ---
-<div class="width-control mx-auto flex-row justify-between items-baseline">
+<div class="page-header">
     {% if title %}
         <h1 class="pageTitle mb-4">{{ title }}</h1>
     {% endif %}
@@ -17,29 +17,27 @@ eleventyComputed:
 </div>
 {% for year in albums.albumsByYear %}
     <div class="my-2">
-        <h2 class="mt-0">{{ year.year }}</h2>
-        <div class="grid gap-x-2 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8">
+        <h2>{{ year.year }}</h2>
+        <div class="album-grid">
             {% for albumId in year.albums %}
                 {% set album = albums.albums[albumId] %}
-                <a href="{{ album.permalink | stripIndex }}" class="flex flex-col justify-between cursor-pointer my-2">
-                    <div class="flex flex-col flex-1 justify-center">
-                        {% if album.coverPhotos | length > 1 %}
-                            <div class="grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem]">
-                                {% for photoId in album.coverPhotos %}
-                                    {% set photo = albums.albumPhotos[photoId] %}
-                                    {% renderImage photo.thumbnailSmall, "max-h-[16rem]" %}
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="flex flex-col justify-between my-2">
-                                {% set photo = albums.albumPhotos[album.coverPhotos[0]] %}
+                <a href="{{ album.permalink | stripIndex }}" class="album">
+                    {% if album.coverPhotos | length > 1 %}
+                        <div class="preview-multi">
+                            {% for photoId in album.coverPhotos %}
+                                {% set photo = albums.albumPhotos[photoId] %}
                                 {% renderImage photo.thumbnailSmall, "max-h-[16rem]" %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="flex flex-col justify-center items-center">
-                        <h3 class="accent text-lg text-center mt-2 mb-0">{{ album.title }}</h3>
-                        <date datetime="{{ album.date }}" class="secondary text-sm !no-underline">
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="preview-single">
+                            {% set photo = albums.albumPhotos[album.coverPhotos[0]] %}
+                            {% renderImage photo.thumbnailSmall, "max-h-[16rem]" %}
+                        </div>
+                    {% endif %}
+                    <div class="title-and-date">
+                        <h3 class="title">{{ album.title }}</h3>
+                        <date datetime="{{ album.date }}">
                             {{ album.date | formatDate }}
                         </date>
                     </div>

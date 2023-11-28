@@ -2,8 +2,9 @@
 layout: page
 title: Movies
 description: Movies I've watched
+disableFind: true
 ---
-<div class="grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-3 sm:grid-cols-5">
+<div class="grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-3 sm:grid-cols-5" data-pagefind-ignore>
     {% for movieKey in movies.moviesByWatchDate %}
         {% set movie = movies.movies[movieKey] %}
         <div class="justify-start items-center">
@@ -13,8 +14,8 @@ description: Movies I've watched
                 </a>
             </div>
             <div class="justify-start mt-2">
-                <a class="my-0" href="{{ movie.postPermalink }}">
-                    <p class="my-0 text-center">{{ movie.title }}</p>
+                <a class="my-0 no-underline" href="{{ movie.permalink }}">
+                    <p class="mt-0 accent text-center">{{ movie.title }}</p>
                 </a>
                 <p class="my-0 text-center secondary">({{ movie.averageScore }}/5)</p>
             </div>

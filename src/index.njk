@@ -1,7 +1,14 @@
 ---
 layout: page
 ---
-<div class="content about">
+<div class="page-header home-header">
+    <div class="name-and-cursor">
+        <h1 class="home-name">Zoe Aubert</h1>
+        <p class="name-cursor !opacity-0" ></p>
+    </div>
+    <p>zo-e o-bear</p>
+</div>
+<div class="home-about">
     {{ about | mdToHtml | safe}}
 </div>
 {# <div class="mainPageBlock">
@@ -12,11 +19,91 @@ layout: page
     {% endfor %}
     <a class="mt-6" href="/timeline">See Timeline</a>
 </div> #}
-<div class="mainPageBlock">
+<div class="home-page-block">
     <h2 class="mainPageHeading">Blog Posts</h2>
-    {%- for postKey in blogposts.recentPostsOrder %}
-        {% set post = blogposts.posts[postKey] %}
-        {% include "blogPostListItem.njk" %}
-    {% endfor %}
-    <a class="mt-6" href="/blog">See All Blog Posts</a>
+    <div class="blog-posts">
+        {%- for postKey in blogposts.recentPostsOrder %}
+            {% set post = blogposts.posts[postKey] %}
+            {% include "blogPostListItem.njk" %}
+        {% endfor %}
+    </div>
+    <a class="see-more" href="/blog">See All Blog Posts</a>
 </div>
+
+<script type="text/javascript">
+    const TIME_BETWEEN_NAME_CHANGES = 5000;
+    const MEMORY_SIZE = 4;
+
+    const TYPING_DELAY_MAX = 200;
+    const TYPING_DELAY_MIN = 80;
+
+    const nameElement = document.querySelector('.home-name');
+    const cursorElement = document.querySelector('.name-cursor');
+
+    // Cursor, split first and last names
+
+    const names = [{%- for name in sillyNames %}"{{ name }}",{%- endfor %}]
+    let memory = ['Zoe Aubert'];
+
+    function typingDelay() {
+        return Math.floor(Math.random() * (TYPING_DELAY_MAX - TYPING_DELAY_MIN)) + TYPING_DELAY_MIN;
+    }
+
+    function pickNewName() {
+        let next = names[Math.floor(Math.random() * names.length)];
+
+        while (memory.includes(next)) {
+            next = names[Math.floor(Math.random() * names.length)];
+        }
+
+        memory = memory.slice(-MEMORY_SIZE);
+
+        return next;
+    }
+
+    async function typeName(nextName) {
+        if (!nameElement) {
+            return
+        }
+
+        while (nameElement.innerHTML.length > 0) {
+            nameElement.innerHTML = nameElement
+                .innerHTML
+                .substring(0, nameElement.innerHTML.length - 1);
+            await new Promise(resolve => setTimeout(resolve, typingDelay()));
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        for (let i = 0; i < nextName.length; i++) {
+            nameElement.innerHTML = nextName.substring(0, i + 1);
+
+            await new Promise(resolve => setTimeout(resolve, typingDelay()));
+        }
+
+    }
+
+    async function changeName() {
+        const nextName = pickNewName();
+
+        console.log(nextName);
+
+        await typeName(nextName);
+
+        setTimeout(changeName, TIME_BETWEEN_NAME_CHANGES);
+    }
+
+    async function main() {
+        if (nameElement && cursorElement) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            cursorElement
+                .classList
+                .remove('!opacity-0')
+
+            setTimeout(changeName, 1500);
+        }
+    }
+
+    main();
+</script>

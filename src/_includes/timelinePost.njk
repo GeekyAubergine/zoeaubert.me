@@ -1,98 +1,86 @@
-<article>
-    <a href="{{ post.permalink }}" rel="noopener">
-        <time class="accent" datetime="{{ post.date }}">
-            {{ post.date | formatDateTime }}
-        </time>
-    </a>
-    <div class="content mt-4">
-        {% if post.type == 'blogPost' %}
-            <a href="{{ post.permalink }}" rel="noopener" class="!no-underline  m-0">
-                <h2 class="!mt-0">{{ post.title }}</h2>
-            </a>
-            {% if post.hero %}
-                <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" class="mt-4 mb-2 max-h-[18rem]" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
-            {% endif %}
-            <p class="my-2">{{ post.description }}</p>
-        {% endif %}
-        {% if post.type == 'microBlog' or post.type == 'microPost' %}
-            {{ post.content | mdToHtml | safe }}
-        {% endif %}
-        {% if post.type == 'mastodon' %}
-            {{ post.content | mdToHtml | safe }}
-            {%- if post.media | length > 0 %}
-                <div class="flex flex-row justify-start my-6">
-                    {% if post.media | length > 1 %}
-                        {% for media in post.media %}
-                            <div class="ml-2 first-of-type:ml-0">
-                                {% renderImage media.image,
-                        "!m-auto max-h-[30rem]" %}
-                            </div>
-                        {% endfor %}
-                    {% elif post.media | length > 0 %}
-                        {% renderImage post
-                    .media[0]
-                    .image, "max-h-[30rem]" %}
-                    {% endif %}
-                </div>
-            {% endif %}
-        {% endif %}
-        {% if post.type == 'statusLol' %}
-            <div class="flex-row items-start mb-4">
-                <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
-                <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
+<article class="timeline-post" data-pagefind-ignore>
+    {% if post.type == 'blogPost' %}
+        <a href="{{ post.permalink }}" rel="noopener">
+            <p>{{ post.title }}</p>
+        </a>
+        {% if post.hero %}
+            <div class="media">
+                <img src="{{ post.hero.src }}" alt="{{ post.hero.alt }}" width="{{ post.hero.width }}" height="{{ post.hero.height }}" title="{{ post.hero.title }}"/>
             </div>
         {% endif %}
-        {% if post.type == 'album' %}
-            <a href="{{ post.permalink }}" rel="noopener" class="!no-underline  m-0">
-                <h2 class="!mt-0">{{ post.title }}</h2>
-            </a>
-            <div class="justify-center my-4">
-                {% if post.coverPhotos | length > 1 %}
-                    <div class="grid gap-x-1 grid-cols-2 overflow-hidden">
-                        {% for photoId in post.coverPhotos %}
-                            {% set photo = albums.albumPhotos[photoId] %}
-                            {% renderImage photo.thumbnailSmall, "w-half !my-0" %}
+        <p>{{ post.description }}</p>
+    {% endif %}
+    {% if post.type == 'microBlog' or post.type == 'microPost' %}
+        {{ post.content | mdToHtml | safe }}
+    {% endif %}
+    {% if post.type == 'mastodon' %}
+        {%- if post.media | length > 0 %}
+            <div class="media">
+                {% if post.media | length > 1 %}
+                    <div class="media-grid">
+                        {% for media in post.media %}
+                            {% renderImage media.image %}
                         {% endfor %}
                     </div>
-                {% else %}
-                    <div class="justify-between my-2">
-                        {% set photo = albums.albumPhotos[post.coverPhotos[0]] %}
-                        {% renderImage photo.thumbnailLarge, "!my-0 w-full" %}
-                    </div>
+                {% elif post.media | length > 0 %}
+                    {% renderImage post
+                        .media[0]
+                        .image %}
                 {% endif %}
             </div>
-            {% if post.description %}
-                <p class="mt-2">{{ post.description }}</p>
-            {% endif %}
         {% endif %}
-        {% if post.type == 'albumPhoto' %}
-            <div class="justify-center my-2">
-                {% renderImage post.thumbnailLarge, "!my-0 w-full" %}
-            </div>
-            {% if post.description %}
-                <p class="my-1">{{ post.description }}</p>
+        {{ post.content | mdToHtml | safe }}
+    {% endif %}
+    {% if post.type == 'statusLol' %}
+        <div class="flex-row items-start">
+            <p class="my-0 mr-4 mt-[-.25rem] w-5 h-5 text-2xl text-left">{{ post.emoji }}</p>
+            <p class='my-0'>{{ post.content | linkifyMarkdown | safe }}</p>
+        </div>
+    {% endif %}
+    {% if post.type == 'album' %}
+        <a href="{{ post.permalink }}" rel="noopener" class="!no-underline  m-0">
+            <p class="text-xl">{{ post.title }}</p>
+        </a>
+        <div class="media">
+            {% if post.coverPhotos | length > 1 %}
+                <div class="media-grid">
+                    {% for photoId in post.coverPhotos %}
+                        {% set photo = albums.albumPhotos[photoId] %}
+                        {% renderImage photo.thumbnailSmall %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="justify-between my-2">
+                    {% set photo = albums.albumPhotos[post.coverPhotos[0]] %}
+                    {% renderImage photo.thumbnailLarge %}
+                </div>
             {% endif %}
-            <div class="flex-row items-baseline mt-0 mb-2">
-                <a
-                    class="text-center link m-0"
-                    href="{{ post.albumPermalink | stripIndex }}"
-                >
-                    Rest of Album
-                </a>
-                <p class="mx-2 my-0">-</p>
-                <a
-                    class="link m-0"
-                    href="{{ post.fullSize.src | prefixCDN }}"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    Original
-                </a>
-            </div>
+        </div>
+        {% if post.description %}
+            <p class="mt-2">{{ post.description }}</p>
         {% endif %}
-    </div>
-    <div class="flex-row flex-wrap">
-        {% include "tagsList.njk" %}
+    {% endif %}
+    {% if post.type == 'albumPhoto' %}
+        <a href="{{ post.permalink | stripIndex }}" >
+            <div class="media album-photo-media">
+                {% renderImage post.thumbnailLarge %}
+            </div>
+        </a>
+        {% if post.description %}
+            <p class="album-description">{{ post.description }}
+            </p>
+        {% endif %}
+    {% endif %}
+    <div class="tags-and-timestamp">
+        <div class="tags-list">
+            {% set tags = post.tags %}
+            {% include "tagsList.njk" %}
+        </div>
+        <a href="{{ post.permalink }}" rel="noopener" class="timestamp">
+            <time datetime="{{ post.date }}">
+                {{ post.date | formatDate }}
+            </time>
+        </a>
     </div>
 </article>
 <hr/>

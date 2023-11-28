@@ -2,7 +2,7 @@
 layout: html
 pagination:
     data: photos
-    size: 25
+    size: 48
     alias: photos
 permalink: '/photos/{% if pagination.pageNumber > 0 %}page-{{ pagination.pageNumber + 1 }}/{% endif %}/index.html'
 eleventyComputed:
@@ -11,12 +11,10 @@ eleventyComputed:
 title: "All Photos"
 description: "All my photos"
 ---
-<main class="main">
-    <div class="width-control mx-auto">
-        {% include "navbar.njk" %}
-    </div>
+<main>
+    {% include "navbar.njk" %}
     <div class="wide">
-        <div class="flex-row pb-4 justify-between items-baseline">
+        <div class="page-header">
             <h1 class="pageTitle">All Photos</h1>
             <div class="flex-row justify-end">
                 <a href="/tags" class="link mr-4">Tags</a>
@@ -25,14 +23,12 @@ description: "All my photos"
         </div>
         <div class="photogrid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
             {% for photo in photos %}
-                <a href="{{ photo.parentPermalink }}" class="flex justify-center items-center col-span-1">
-                    {% renderImage photo.image %}
+                <a href="{{ photo.parentPermalink }}" class="flex justify-center items-center col-span-1 max-h-8">
+                    {% renderImage photo.image%}
                 </a>
             {% endfor %}
         </div>
         {% include "pagination.njk" %}
     </div>
-    <div class="width-control mx-auto">
-        {% include "footer.njk" %}
-    </div>
+    {% include "footer.njk" %}
 </main>

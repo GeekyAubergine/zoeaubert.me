@@ -1,5 +1,5 @@
 module.exports = {
-    darkMode: 'media',
+    darkMode: 'class',
     content: ['./src/**/**/*.{njk,md}'],
     safelist: [
         'gatsby-highlight',
@@ -25,23 +25,50 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                background: '#181818',
-                headings: '#E4E3E7',
-                text: '#EDEDED',
-                secondary: '#ABA9B0',
-                tag: '#181D27',
-                accent: '#FEB847', //'#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
-                code: {
-                    DEFAULT: '#181D27',
-                    text: '#0061DF8EA45C',
+                background: {
+                    DEFAULT: '#FFFFFF',
+                    dark: '#181818',
                 },
-                border: '#514F55',
-                middleGray: '#888888',
+                headings: {
+                    DEFAULT: '#080808',
+                    dark: '#EDEDED',
+                },
+                text: {
+                    DEFAULT: '#080808',
+                    dark: '#EDEDED',
+                },
+                secondary: {
+                    DEFAULT: '#5A585F',
+                    dark: '#ABA9B0',
+                },
+                accent: {
+                    DEFAULT: '#842A87', //'#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
+                    dark: '#ED95E6',
+                },
+                code: {
+                    DEFAULT: '#D4D4D4',
+                    dark: '#303030',
+                },
+                border: {
+                    DEFAULT: '#D8D8D8',
+                    dark: '#404040',
+                },
+                middleGray: {
+                    DEFAULT: '#888888',
+                    dark: '#181818',
+                },
+            },
+            gridTemplateColumns: {
+                // Simple 8 row grid
+                8: 'repeat(8, minmax(0, 1fr))',
+                24: 'repeat(24, minmax(0, 1fr))',
+                36: 'repeat(36, minmax(0, 1fr))',
+                45: 'repeat(45, minmax(0, 1fr))',
             },
         },
         fontFamily: {
             sans: ['Helvetica', 'Arial', 'sans-serif'],
         },
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/nesting')(require('postcss-nesting'))],
 }

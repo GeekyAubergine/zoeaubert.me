@@ -2,6 +2,7 @@ const timeToRead = require('eleventy-plugin-time-to-read')
 const pluginRss = require('@11ty/eleventy-plugin-rss')
 const MarkdownIt = require('markdown-it')
 const prism = require('markdown-it-prism')
+const { execSync } = require('child_process')
 
 const md = new MarkdownIt({
     html: true,
@@ -88,6 +89,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({
         './src/_content/assets': 'assets',
     })
+    eleventyConfig.addPassthroughCopy('robots.txt')
 
     eleventyConfig.addFilter('linkifyMarkdown', (text) => {
         return text.replace(
@@ -179,11 +181,6 @@ module.exports = function (eleventyConfig) {
         return new Date(date)
     })
 
-    eleventyConfig.addFilter('debug', (...args) => {
-        console.log(...args)
-        debugger
-    })
-
     eleventyConfig.addFilter('stripIndex', function (path) {
         return path.replace('/index.html', '/')
     })
@@ -235,10 +232,13 @@ module.exports = function (eleventyConfig) {
             .replace(/^-/, '')
     })
 
+    eleventyConfig.addFilter('spaceTag', function (tag) {
+        return tag.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    })
+
     eleventyConfig.addFilter('formatNumber', function (number) {
         return parseFloat(number).toLocaleString()
     })
-
 
     eleventyConfig.addFilter('albumPhotoToRss', (photo) => {
         if (!photo) {
@@ -304,10 +304,29 @@ module.exports = function (eleventyConfig) {
         return new Date().toISOString()
     })
 
-    eleventyConfig.setWatchThrottleWaitTime(100)
+    eleventyConfig.addFilter('toArray', (input) => {
+        if (input != null && typeof input === 'string') {
+            return input.split(',')
+        }
+
+        return input
+    })
+
+    eleventyConfig.setBrowserSyncConfig({
+        notify: true,
+        reloadDelay: 2000,
+    })
+
+    eleventyConfig.setWatchThrottleWaitTime(250)
 
     eleventyConfig.setServerOptions({
         showAllHosts: true,
+    })
+
+    eleventyConfig.on('eleventy.after', () => {
+        execSync(`npx pagefind --source _site --glob \"**/*.html\"`, {
+            encoding: 'utf-8',
+        })
     })
 
     return {

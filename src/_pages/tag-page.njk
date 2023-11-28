@@ -1,18 +1,15 @@
 ---
-layout: base
+layout: page
 pagination:
   data: taggedPosts.allTags
   size: 1
   alias: tag
 permalink: "/tags/{{ tag | slug }}/index.html"
+disableFind: true
 eleventyComputed:
     title: "#{{ tag }} posts"
+    headerTitle: "{{ tag | spaceTag}} Posts"
 ---
-<div class="flex-row justify-between items-baseline">
-  <h1 class="pageTitle">{{ title }}</h1>
-</div>
-<div/>
-<hr/>
 {%- for postKey in taggedPosts.postsByTag[tag] %}
   {%- set post = allPosts.posts[postKey] %}
   {% include "timelinePost.njk" %}
