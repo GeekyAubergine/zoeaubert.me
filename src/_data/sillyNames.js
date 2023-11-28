@@ -14,5 +14,6 @@ module.exports = [
     "Zo Zo",
     "Zozzy",
     "Zozzers", // Lewis Newton https://github.com/lewisknewton
-    "Zoi Bear"
+    "Zoi Bear",
+    "Zoinator" // Charlie https://github.com/TLDRQwerty
 ]

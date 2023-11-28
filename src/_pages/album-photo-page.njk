@@ -13,7 +13,7 @@ eleventyComputed:
 ---
 {% set photo = albums.albumPhotos[photoId] %}
 {% set post = albums.albumPhotos[photoId] %}
-<main class="photo-page">
+<main class="photo-page" data-pagefind-body>
     {% include "navbar.njk" %}
     {# <a href="javascript:history.back()">
         <p class="accent m-0">Back</p>

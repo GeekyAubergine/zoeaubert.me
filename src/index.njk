@@ -32,7 +32,6 @@ layout: page
 
 <script type="text/javascript">
     const TIME_BETWEEN_NAME_CHANGES = 5000;
-    const MEMORY_SIZE = 4;
 
     const TYPING_DELAY_MAX = 200;
     const TYPING_DELAY_MIN = 80;
@@ -45,6 +44,8 @@ layout: page
     const names = [{%- for name in sillyNames %}"{{ name }}",{%- endfor %}]
     let memory = ['Zoe Aubert'];
 
+    const MEMORY_SIZE = Math.floor(names.length / 2);
+
     function typingDelay() {
         return Math.floor(Math.random() * (TYPING_DELAY_MAX - TYPING_DELAY_MIN)) + TYPING_DELAY_MIN;
     }
@@ -55,6 +56,8 @@ layout: page
         while (memory.includes(next)) {
             next = names[Math.floor(Math.random() * names.length)];
         }
+
+        memory.push(next);
 
         memory = memory.slice(-MEMORY_SIZE);
 
