@@ -221,6 +221,10 @@
         @apply text-text dark:text-text-dark;
     }
 
+    pre > code {
+        @apply text-text dark:text-text-dark;
+    }
+
     /* ----------------  Common ---------------- */
 
     .toggle-button {
