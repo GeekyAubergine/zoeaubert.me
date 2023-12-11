@@ -1,7 +1,7 @@
 <article class="timeline-post" data-pagefind-ignore>
     {% if post.type == 'blogPost' %}
-        <a href="{{ post.permalink }}" rel="noopener">
-            <p>{{ post.title }}</p>
+        <a href="{{ post.permalink }}" rel="noopener" class="no-underline">
+            <p class="post-title">{{ post.title }}</p>
         </a>
         {% if post.hero %}
             <div class="media">

@@ -525,6 +525,14 @@
             }
         }
 
+        & .post-title {
+            @apply text-2xl mt-0 mb-2 accent no-underline;
+            font-family: 'WilcoLoftSans';
+            font-display: swap;
+            @apply mt-8 mb-0;
+            letter-spacing: 0.025rem;
+        }
+
         & .media {
             @apply flex flex-row justify-start mb-6;
 
