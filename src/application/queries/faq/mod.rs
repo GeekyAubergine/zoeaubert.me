@@ -1,0 +1,1 @@
+pub mod get_faq_data_query;

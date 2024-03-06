@@ -78,5 +78,11 @@ _cache
 .cache
 
 config.js
+config.json
+config.json
 
 .vscode/
+
+# Added by cargo
+
+/target

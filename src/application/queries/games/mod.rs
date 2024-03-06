@@ -1,0 +1,1 @@
+pub mod get_all_games_data_query;
