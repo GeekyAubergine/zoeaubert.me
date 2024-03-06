@@ -161,7 +161,7 @@
     }
 
     h1 {
-        @apply text-4xl md:text-6xl mt-0;
+        @apply text-4xl md:text-6xl mt-0 text-center mx-auto;
     }
 
     h2 {
@@ -297,8 +297,8 @@
     nav {
         @apply sticky top-0 justify-center items-center h-[3.2rem] pt-1 bg-background dark:bg-background-dark border-b border-color z-10 md:h-[4rem];
 
-        & .nav-wrapper {
-            @apply w-full items-baseline md:flex-row md:justify-between md:px-4 md:max-w-[60rem];
+        & .row {
+            @apply w-full items-baseline;
         }
 
         & .name-and-buttons {
