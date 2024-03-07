@@ -20,6 +20,15 @@ jobs:
           toolchain: nightly
           override: true
           components: rustfmt, clippy
+
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '19'
+        
+      - name: Node dependencies
+        run: npm install
+
       - name: Build
         run: cargo build
       - name: Run tests
