@@ -6,7 +6,7 @@ use axum::{
     Router,
 };
 
-use crate::infrastructure::app_state::AppState;
+use crate::{build_data, infrastructure::app_state::AppState};
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))
@@ -17,12 +17,14 @@ pub fn router() -> Router<AppState> {
 pub struct HelloTemplate<'a> {
     name: &'a str,
     charlie: &'a str,
+    build_date: &'a str,
 }
 
 async fn index() -> impl IntoResponse {
     let template = HelloTemplate {
         name: "world",
         charlie: "Charlie",
+        build_date: build_data::BUILD_DATE,
     };
     render_template(template)
 }

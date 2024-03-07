@@ -53,6 +53,10 @@ pub const FAQ_ARCHIVE_FILENAME: &str = "faq.json";
 
 pub const ONE_HOUR_CACHE_PERIOD: Duration = Duration::from_secs(58 * 60);
 
+pub mod build_data {
+    include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
+}
+
 async fn load_config() -> Result<Config> {
     let contents = tokio::fs::read_to_string("./config.json")
         .await
@@ -108,11 +112,13 @@ async fn main() -> Result<()> {
         .allow_credentials(true)
         .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE]);
 
-    let static_files = ServeDir::new("./assets");
+    let static_files = ServeDir::new("./static");
+    let asset_files = ServeDir::new("./_assets");
 
     let app = router()
         .with_state(state)
         .nest_service("/static", static_files)
+        .nest_service("/assets", asset_files)
         .layer(cors);
 
     // match cdn
