@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="{{ page.language() }}">
+    <head>
+        <link rel="preconnect" href="https://cdn.geekyaubergine.com">
+        <link rel="preconnect" href="https://fonts.bunny.net">
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <link rel="icon" type="image/x-icon" href="/assets/img/icon.png">
+
+        {% let pageTitle = page.title() %}
+
+        {# {% let pageTitle = site.make_title(title) %} #}
+
+        <title>{{ pageTitle }}</title>
+
+        <meta name="title" content="{{ pageTitle }}"/>
+        <meta property="og:title" content="{{ pageTitle }}"/>
+        <meta property="twitter:title" content="{{ pageTitle }}"/>
+
+        {% let pageDescription = page.description() %}
+
+        <meta name="description" content="{{ pageDescription }}"/>
+        <meta property="og:description" content="{{ pageDescription }}"/>
+        <meta property="twitter:description" content="{{ pageDescription }}"/>
+
+        <meta property="og:url" content="{{ page.url() }}"/>
+        <meta property="twitter:url" content="{{ page.url() }}"/>
+
+        <link rel="stylesheet" href="/assets/css/styles-{{ build_date }}.css">
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-a11y-dark.min.css" rel="stylesheet" defer>
+        <script src="https://cdn.usefathom.com/script.js" data-site="XPKVFMEO" defer></script>
+
+        <meta property="twitter:image" content="{{ page.image_url() }}"/>
+        <meta property="og:image" content="{{  page.image_url() }}"/>
+
+         <meta property="twitter:image:alt" content="{{ page.image_alt() }}"/>
+        <meta property="og:image:alt" content="{{  page.image_alt() }}"/>
+
+        {%- if page.no_index() %}
+            <meta name="robots" content="noindex"/>
+        {%- endif %}
+
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+    </body>
+</html>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{%- block body %}
+    {%- if page.disable_search() %}
+        <main>
+    {% else %}
+        <main data-pagefind-body>
+    {% endif %}
+    {% include "partials/navbar.html" %}
+    {% block content %}
+    {% endblock %}
+    {# {% include "pagefind.html" %}
+    {% include "footer.html" %} #}
+{% endblock %}

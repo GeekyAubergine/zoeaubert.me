@@ -3,7 +3,8 @@ use chrono::prelude::*;
 const ASSETS_DIR: &str = "_assets";
 
 const TAILWIND_COMMAND: &str = "ENVIRONMENT=production node_modules/.bin/tailwindcss -i assets/css/styles.css -o _assets/css/tw.css --postcss";
-const LIGHTNING_CSS_COMMAND: &str = "node_modules/.bin/lightningcss --minify --bundle --targets '>= 0.25%' _assets/css/tw.css -o _assets/css/styles";
+// const LIGHTNING_CSS_COMMAND: &str = "node_modules/.bin/lightningcss --minify --bundle --targets '>= 0.25%' _assets/css/tw.css -o _assets/css/styles";
+const LIGHTNING_CSS_COMMAND: &str = "cp _assets/css/tw.css _assets/css/styles";
 
 fn main() {
     let build_date = make_build_date_string();

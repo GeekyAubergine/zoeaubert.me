@@ -1,5 +1,6 @@
-use crate::{error::Error, prelude::*};
+use crate::{domain::models::image::Image, error::Error, prelude::*};
 
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -12,24 +13,6 @@ pub struct ConfigMastodon {
     client_secret: String,
     #[serde(rename = "accessToken")]
     access_token: String,
-}
-
-impl ConfigMastodon {
-    pub fn account_id(&self) -> &str {
-        &self.account_id
-    }
-
-    pub fn client_key(&self) -> &str {
-        &self.client_key
-    }
-
-    pub fn client_secret(&self) -> &str {
-        &self.client_secret
-    }
-
-    pub fn access_token(&self) -> &str {
-        &self.access_token
-    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -120,6 +103,144 @@ impl ConfigSteam {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+pub struct SiteImage {
+    url: String,
+    alt: String,
+    width: u32,
+    height: u32,
+    date: i64,
+}
+
+impl SiteImage {
+    pub fn url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn alt(&self) -> &str {
+        &self.alt
+    }
+
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+
+    pub fn height(&self) -> u32 {
+        self.height
+    }
+
+    pub fn date(&self) -> i64 {
+        self.date
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SiteConfigNavLink {
+    name: String,
+    url: String,
+    target: String,
+    rel: String,
+}
+
+impl SiteConfigNavLink {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn target(&self) -> &str {
+        &self.target
+    }
+
+    pub fn rel(&self) -> &str {
+        &self.rel
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SiteConfigSocialNetworkLink {
+    name: String,
+    url: String,
+    show_in_top_nav: bool,
+    show_in_footer: bool,
+}
+
+impl SiteConfigSocialNetworkLink {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn show_in_top_nav(&self) -> bool {
+        self.show_in_top_nav
+    }
+
+    pub fn show_in_footer(&self) -> bool {
+        self.show_in_footer
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SiteConfig {
+    url: String,
+    title: String,
+    description: String,
+    author: String,
+    image: SiteImage,
+    language: String,
+    nav_links: Vec<SiteConfigNavLink>,
+    social_links: Vec<SiteConfigSocialNetworkLink>,
+}
+
+impl SiteConfig {
+    pub fn url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn title(&self) -> &str {
+        &self.title
+    }
+
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+
+    pub fn author(&self) -> &str {
+        &self.author
+    }
+
+    pub fn image(&self) -> Image {
+        Image::new(
+            self.image.url(),
+            self.image.alt(),
+            self.image.width(),
+            self.image.height(),
+            None,
+            None,
+            DateTime::from_timestamp(self.image.date(), 0).unwrap(),
+            None,
+        )
+    }
+
+    pub fn language(&self) -> &str {
+        &self.language
+    }
+
+    pub fn nav_links(&self) -> &[SiteConfigNavLink] {
+        &self.nav_links
+    }
+
+    pub fn social_links(&self) -> &[SiteConfigSocialNetworkLink] {
+        &self.social_links
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     #[serde(rename = "cacheDir")]
     cache_dir: String,
@@ -131,6 +252,7 @@ pub struct Config {
     brickset: ConfigBrickset,
     r2: ConfigR2,
     steam: ConfigSteam,
+    site: SiteConfig,
 }
 
 impl Config {
@@ -164,5 +286,9 @@ impl Config {
 
     pub fn steam(&self) -> &ConfigSteam {
         &self.steam
+    }
+
+    pub fn site(&self) -> &SiteConfig {
+        &self.site
     }
 }

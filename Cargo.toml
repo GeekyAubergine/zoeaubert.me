@@ -4,10 +4,12 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.dev.package.askama_derive]
+opt-level = 3
 
 [dependencies]
-askama = "0.12.1"
+askama = { version = "0.12.1" }
+askama_axum = "0.4.0"
 async-trait = "0.1.77"
 aws-config = { version = "1.1.2", features = ["behavior-version-latest"] }
 aws-credential-types = { version = "1.1.2", features = ["hardcoded-credentials"] }

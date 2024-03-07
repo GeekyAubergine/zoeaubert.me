@@ -1,12 +1,13 @@
 use askama::Template;
 use axum::{
+    extract::State,
     http::StatusCode,
     response::{Html, IntoResponse, Response},
     routing::get,
     Router,
 };
 
-use crate::{build_data, infrastructure::app_state::AppState};
+use crate::{build_data, domain::models::page::Page, infrastructure::app_state::AppState};
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))
@@ -18,15 +19,18 @@ pub struct HelloTemplate<'a> {
     name: &'a str,
     charlie: &'a str,
     build_date: &'a str,
+    page: Page,
 }
 
-async fn index() -> impl IntoResponse {
-    let template = HelloTemplate {
+async fn index(State(state): State<AppState>) -> HelloTemplate<'static> {
+    let page = Page::new(state.site(), "/", Some("Home"), None, None);
+
+    HelloTemplate {
         name: "world",
         charlie: "Charlie",
         build_date: build_data::BUILD_DATE,
-    };
-    render_template(template)
+        page,
+    }
 }
 
 async fn handler_404() -> impl IntoResponse {
@@ -34,15 +38,4 @@ async fn handler_404() -> impl IntoResponse {
         StatusCode::NOT_FOUND,
         "The requested resource was not found",
     )
-}
-
-fn render_template<T: Template>(template: T) -> impl IntoResponse {
-    match template.render() {
-        Ok(html) => Html(html).into_response(),
-        Err(err) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Failed to render template. Error: {}", err), // TODO Proper error handling
-        )
-            .into_response(),
-    }
 }

@@ -1,4 +1,9 @@
-use std::{collections::HashMap, sync::Arc, time::{Duration, UNIX_EPOCH}, vec};
+use std::{
+    collections::HashMap,
+    sync::Arc,
+    time::{Duration, UNIX_EPOCH},
+    vec,
+};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -8,10 +13,11 @@ use crate::{
     domain::models::game::{Game, GameAchievement},
     get_json,
     infrastructure::config::Config,
-    prelude::*, ONE_HOUR_CACHE_PERIOD,
+    prelude::*,
+    ONE_DAY_CACHE_PERIOD, ONE_HOUR_CACHE_PERIOD,
 };
 
-const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
+const NO_REFETCH_DURATION: Duration = ONE_DAY_CACHE_PERIOD;
 
 const STEAM_OWNED_GAMES_URL: &str =
   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?format=json&include_appinfo=true";

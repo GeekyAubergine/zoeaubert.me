@@ -78,7 +78,7 @@ _cache
 
 config.js
 config.json
-config.json
+config copy.json
 
 .vscode/
 

@@ -10,3 +10,5 @@ pub mod about;
 pub mod now;
 pub mod faq;
 pub mod archive;
+pub mod image;
+pub mod page;

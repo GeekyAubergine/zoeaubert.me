@@ -51,7 +51,8 @@ pub const STATUS_LOL_ARCHIVE_FILENAME: &str = "status_lol.json";
 pub const ABOUT_ARCHIVE_FILENAME: &str = "about.json";
 pub const FAQ_ARCHIVE_FILENAME: &str = "faq.json";
 
-pub const ONE_HOUR_CACHE_PERIOD: Duration = Duration::from_secs(58 * 60);
+pub const ONE_HOUR_CACHE_PERIOD: Duration = Duration::from_mins(59);
+pub const ONE_DAY_CACHE_PERIOD: Duration = Duration::from_mins(60 * 23 + 59);
 
 pub mod build_data {
     include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
@@ -92,7 +93,12 @@ async fn main() -> Result<()> {
     let (job_sender, job_receiver) = make_job_channel();
     let (event_sender, event_receiver) = make_event_channel();
 
-    let mut state = AppStateData::new(&config, job_sender, event_sender).await;
+    let mut state = AppStateData::new(
+        &config,
+        job_sender,
+        event_sender,
+    )
+    .await;
 
     state.load_from_archive().await?;
 

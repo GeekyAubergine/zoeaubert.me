@@ -17,7 +17,7 @@ use crate::{
 };
 
 use super::{
-    bus::job_runner::Job, cache::Cache, cdn::Cdn, repositories::{about_repo::AboutRepo, faq_repo::FaqRepo}
+    bus::job_runner::Job, cache::Cache, cdn::Cdn, config::SiteConfig, repositories::{about_repo::AboutRepo, faq_repo::FaqRepo}
 };
 
 #[derive(Debug, Clone)]
@@ -87,6 +87,10 @@ impl AppStateData {
             .send(event)
             .await
             .map_err(Error::DispatchEvent)
+    }
+
+    pub fn site(&self) -> &SiteConfig {
+        &self.config.site()
     }
 
     pub fn config(&self) -> &Config {
