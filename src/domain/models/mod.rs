@@ -12,3 +12,4 @@ pub mod faq;
 pub mod archive;
 pub mod image;
 pub mod page;
+pub mod tag;

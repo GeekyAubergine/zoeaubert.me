@@ -18,6 +18,7 @@ use axum::{
         header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
         HeaderValue, Method, StatusCode,
     },
+    middleware,
     routing::{get, post},
     Json, Router,
 };
@@ -35,7 +36,9 @@ use tokio::{
     sync::{mpsc::channel, RwLock},
     task,
 };
-use tower_http::{cors::CorsLayer, services::ServeDir};
+use tower::{Service, ServiceBuilder, ServiceExt};
+use tower_http::ServiceBuilderExt;
+use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer, services::ServeDir};
 use tracing::{debug, info, Level};
 
 mod application;
@@ -93,12 +96,7 @@ async fn main() -> Result<()> {
     let (job_sender, job_receiver) = make_job_channel();
     let (event_sender, event_receiver) = make_event_channel();
 
-    let mut state = AppStateData::new(
-        &config,
-        job_sender,
-        event_sender,
-    )
-    .await;
+    let mut state = AppStateData::new(&config, job_sender, event_sender).await;
 
     state.load_from_archive().await?;
 
@@ -118,6 +116,10 @@ async fn main() -> Result<()> {
         .allow_credentials(true)
         .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE]);
 
+    let services = ServiceBuilder::new()
+        .layer(NormalizePathLayer::trim_trailing_slash())
+        .layer(cors);
+
     let static_files = ServeDir::new("./static");
     let asset_files = ServeDir::new("./_assets");
 
@@ -125,7 +127,7 @@ async fn main() -> Result<()> {
         .with_state(state)
         .nest_service("/static", static_files)
         .nest_service("/assets", asset_files)
-        .layer(cors);
+        .layer(services);
 
     // match cdn
     //     .file_exists(CndPath::new(

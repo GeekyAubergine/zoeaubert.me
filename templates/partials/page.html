@@ -7,8 +7,38 @@
         <main data-pagefind-body>
     {% endif %}
     {% include "partials/navbar.html" %}
-    {% block content %}
-    {% endblock %}
-    {# {% include "pagefind.html" %}
-    {% include "footer.html" %} #}
+    <div class="width-control mx-auto">
+        {%- match page.heading() %}
+            {%- when Some with (heading) %}
+                <div class="page-header">
+                    <h1>{{ heading }}</h1>
+                    {%- match page.date_as_string() %}
+                        {%- when Some with (date) %}
+                            <div class="date-and-readtime" data-pagefind-ignore>
+                            <p>
+                                <time datetime="{{date}}">{{ date }}</time>
+                                {%- match page.read_time() %}
+                                    {%- when Some with (read_time) %}
+                                        <span>-</span>
+                                        {{read_time}}
+                                    {%- when None %}
+                                {%- endmatch %}
+                            </p>
+                            </div>
+                        {%- when None %}
+                    {%- endmatch %}
+
+                    {%- if page.tags().len() > 0 %}
+                        <div class="tags-list mb-4">
+                            {% let tags = page.tags() %}
+                            {% include "partials/tags_list.html" %}
+                        </div>
+                    {%- endif %}
+                </div>
+            {% when None %}
+        {% endmatch %}
+        {% block content %}
+        {% endblock %}
+    </div>
+    {% include "partials/footer.html" %}
 {% endblock %}

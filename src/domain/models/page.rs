@@ -1,11 +1,11 @@
-use chrono::format;
+use chrono::{format, DateTime, Utc};
 
 use crate::{
     build_data::BUILD_DATE,
     infrastructure::config::{SiteConfig, SiteConfigNavLink, SiteConfigSocialNetworkLink},
 };
 
-use super::image::Image;
+use super::{image::Image, tag::Tag};
 
 pub struct NavigationLink {
     name: String,
@@ -91,6 +91,10 @@ pub struct Page {
     disable_search: bool,
     navigation_links: Vec<NavigationLink>,
     social_links: Vec<SocialNetworkLink>,
+    heading: Option<String>,
+    date: Option<DateTime<Utc>>,
+    read_time: Option<String>,
+    tags: Vec<Tag>,
 }
 
 impl Page {
@@ -100,7 +104,15 @@ impl Page {
         title: Option<&str>,
         description: Option<&str>,
         image: Option<Image>,
+        date: Option<DateTime<Utc>>,
+        read_time: Option<String>,
+        tags: Vec<Tag>,
     ) -> Self {
+        let heading = match title {
+            Some(t) => Some(t.to_owned()),
+            None => None,
+        };
+
         let title = match title {
             Some(t) => format!("{} | {}", t, site.title()),
             None => site.title().to_owned(),
@@ -141,6 +153,10 @@ impl Page {
                 .iter()
                 .map(|link| SocialNetworkLink::from(link.clone()))
                 .collect(),
+            heading,
+            date,
+            read_time,
+            tags,
         }
     }
 
@@ -150,6 +166,10 @@ impl Page {
 
     pub fn set_no_search(&mut self) {
         self.disable_search = false;
+    }
+
+    pub fn hide_heading(&mut self) {
+        self.heading = None;
     }
 
     pub fn url(&self) -> &str {
@@ -206,5 +226,28 @@ impl Page {
 
     pub fn social_links(&self) -> &[SocialNetworkLink] {
         &self.social_links
+    }
+
+    pub fn hide_header(&self) -> bool {
+        self.heading.is_none()
+    }
+
+    pub fn heading(&self) -> Option<&str> {
+        self.heading.as_deref()
+    }
+
+    pub fn date_as_string(&self) -> Option<String> {
+        match self.date {
+            Some(date) => Some(date.format("%B %e, %Y").to_string()),
+            None => None,
+        }
+    }
+
+    pub fn read_time(&self) -> Option<&str> {
+        self.read_time.as_deref()
+    }
+
+    pub fn tags(&self) -> &[Tag] {
+        &self.tags
     }
 }

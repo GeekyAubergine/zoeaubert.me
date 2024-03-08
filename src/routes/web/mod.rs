@@ -9,8 +9,12 @@ use axum::{
 
 use crate::{build_data, domain::models::page::Page, infrastructure::app_state::AppState};
 
+pub mod hobbies;
+
 pub fn router() -> Router<AppState> {
-    Router::new().route("/", get(index))
+    Router::new()
+        .route("/", get(index))
+        .nest("/hobbies", hobbies::router())
 }
 
 #[derive(Template)]
@@ -23,7 +27,16 @@ pub struct HelloTemplate<'a> {
 }
 
 async fn index(State(state): State<AppState>) -> HelloTemplate<'static> {
-    let page = Page::new(state.site(), "/", Some("Home"), None, None);
+    let page = Page::new(
+        state.site(),
+        "/",
+        Some("Home"),
+        None,
+        None,
+        None,
+        None,
+        vec![],
+    );
 
     HelloTemplate {
         name: "world",
