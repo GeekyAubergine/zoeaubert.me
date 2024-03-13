@@ -160,12 +160,14 @@ impl Page {
         }
     }
 
-    pub fn set_no_index(&mut self) {
-        self.no_index = false;
+    pub fn set_no_index(mut self) -> Self {
+        self.no_index = true;
+        self
     }
 
-    pub fn set_no_search(&mut self) {
-        self.disable_search = false;
+    pub fn set_no_search(mut self) -> Self {
+        self.disable_search = true;
+        self
     }
 
     pub fn hide_heading(&mut self) {

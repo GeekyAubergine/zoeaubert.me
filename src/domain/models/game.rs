@@ -3,33 +3,30 @@ use std::collections::HashMap;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::prelude::*;
+use crate::{prelude::*, utils::{FormatDate, FormatNumber}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GameAchievement {
+pub struct GameAchievementUnlocked {
     id: String,
     display_name: String,
     description: String,
     image_unlocked_url: String,
-    image_locked_url: String,
-    unlocked_date: Option<DateTime<Utc>>,
+    unlocked_date: DateTime<Utc>,
 }
 
-impl GameAchievement {
+impl GameAchievementUnlocked {
     pub fn new(
         id: String,
         display_name: String,
         description: String,
         image_unlocked_url: String,
-        image_locked_url: String,
-        unlocked_date: Option<DateTime<Utc>>,
+        unlocked_date: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
             display_name,
             description,
             image_unlocked_url,
-            image_locked_url,
             unlocked_date,
         }
     }
@@ -50,16 +47,84 @@ impl GameAchievement {
         &self.image_unlocked_url
     }
 
+    pub fn unlocked_date(&self) -> &DateTime<Utc> {
+        &self.unlocked_date
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GameAchievementLocked {
+    id: String,
+    display_name: String,
+    description: String,
+    image_locked_url: String,
+}
+
+impl GameAchievementLocked {
+    pub fn new(
+        id: String,
+        display_name: String,
+        description: String,
+        image_locked_url: String,
+    ) -> Self {
+        Self {
+            id,
+            display_name,
+            description,
+            image_locked_url,
+        }
+    }
+
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+
+    pub fn display_name(&self) -> &str {
+        &self.display_name
+    }
+
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+
     pub fn image_locked_url(&self) -> &str {
         &self.image_locked_url
     }
+}
 
-    pub fn unlocked_date(&self) -> Option<&DateTime<Utc>> {
-        self.unlocked_date.as_ref()
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum GameAchievement {
+    #[serde(rename = "unlocked")]
+    Unlocked(GameAchievementUnlocked),
+    #[serde(rename = "locked")]
+    Locked(GameAchievementLocked),
+}
+
+impl GameAchievement {
+    pub fn id(&self) -> &str {
+        match self {
+            Self::Unlocked(achievement) => achievement.id(),
+            Self::Locked(achievement) => achievement.id(),
+        }
+    }
+
+    pub fn display_name(&self) -> &str {
+        match self {
+            Self::Unlocked(achievement) => achievement.display_name(),
+            Self::Locked(achievement) => achievement.display_name(),
+        }
+    }
+
+    pub fn description(&self) -> &str {
+        match self {
+            Self::Unlocked(achievement) => achievement.description(),
+            Self::Locked(achievement) => achievement.description(),
+        }
     }
 
     pub fn is_unlocked(&self) -> bool {
-        self.unlocked_date.is_some()
+        matches!(self, Self::Unlocked(_))
     }
 }
 
@@ -116,6 +181,10 @@ impl Game {
         self.playtime
     }
 
+    pub fn playtime_hours(&self) -> f32 {
+        self.playtime() as f32 / 60.0
+    }
+
     pub fn last_played(&self) -> &DateTime<Utc> {
         &self.last_played
     }
@@ -130,6 +199,14 @@ impl Game {
 
     pub fn achievements_count(&self) -> usize {
         self.achievements.len()
+    }
+
+    pub fn achievement_progress_formatted(&self) -> String {
+        format!(
+            "{} / {}",
+            self.achievements_unlocked_count(),
+            self.achievements_count()
+        )
     }
 
     pub fn achievements_unlocked_count(&self) -> usize {
@@ -159,18 +236,28 @@ impl Game {
             .collect()
     }
 
-    pub fn achievements_by_unlocked_date(&self) -> Vec<String> {
+    pub fn achievements_by_unlocked_date(&self) -> Vec<GameAchievementUnlocked> {
         let mut achievements = self
             .achievements
-            .iter()
-            .filter(|achievement| achievement.1.is_unlocked())
-            .collect::<Vec<(&String, &GameAchievement)>>();
+            .values()
+            .filter_map(|achievement| match achievement {
+                GameAchievement::Unlocked(achievement) => Some(achievement.clone()),
+                _ => None,
+            })
+            .collect::<Vec<GameAchievementUnlocked>>();
 
-        achievements.sort_by(|a, b| a.1.unlocked_date().cmp(&b.1.unlocked_date()));
+        achievements.sort_by(|a, b| b.unlocked_date().cmp(&a.unlocked_date()));
 
         achievements
-            .iter()
-            .map(|achievement| achievement.0.clone())
+    }
+
+    pub fn achievments_locked(&self) -> Vec<GameAchievementLocked> {
+        self.achievements
+            .values()
+            .filter_map(|achievement| match achievement {
+                GameAchievement::Locked(achievement) => Some(achievement.clone()),
+                _ => None,
+            })
             .collect()
     }
 

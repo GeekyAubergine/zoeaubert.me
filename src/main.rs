@@ -47,6 +47,7 @@ mod error;
 mod infrastructure;
 mod prelude;
 mod routes;
+pub mod utils;
 
 pub const GAMES_ARCHIVE_FILENAME: &str = "games.json";
 pub const LEGO_ARCHIVE_FILENAME: &str = "lego.json";

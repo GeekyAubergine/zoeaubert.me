@@ -222,7 +222,7 @@ impl SiteConfig {
             self.image.height(),
             None,
             None,
-            DateTime::from_timestamp(self.image.date(), 0).unwrap(),
+            None,
             None,
         )
     }

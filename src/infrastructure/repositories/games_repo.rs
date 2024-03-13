@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use tokio::{sync::RwLock, task::JoinSet};
 
 use crate::{
-    domain::models::game::{Game, GameAchievement},
+    domain::models::game::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
     get_json,
     infrastructure::config::Config,
     prelude::*,
@@ -202,17 +202,23 @@ async fn load_data_for_steam_game(steam_game: SteamOwnedGame, config: Config) ->
                     None => None,
                 };
 
-                achievements.insert(
-                    achievement.name.clone(),
-                    GameAchievement::new(
+                let mapped_achievement = match unlocked_date {
+                    Some(unlocked_date) => GameAchievement::Unlocked(GameAchievementUnlocked::new(
                         achievement.name.clone(),
                         achievement.display_name,
                         achievement.description,
                         achievement.icon,
-                        achievement.icon_gray,
                         unlocked_date,
-                    ),
-                );
+                    )),
+                    None => GameAchievement::Locked(GameAchievementLocked::new(
+                        achievement.name.clone(),
+                        achievement.display_name,
+                        achievement.description,
+                        achievement.icon_gray,
+                    )),
+                };
+
+                achievements.insert(achievement.name.clone(), mapped_achievement.clone());
             }
 
             game.set_achievements(achievements);
@@ -309,29 +315,32 @@ impl GamesRepo {
         }
     }
 
+    pub async fn get_game(&self, id: u32) -> Option<Game> {
+        let games = self.games.read().await;
+
+        games.get(&id).cloned()
+    }
+
     pub async fn get_all_games(&self) -> HashMap<u32, Game> {
         let games = self.games.read().await;
 
         games
             .iter()
-            .map(|(key, game)| (*key, game.clone().into()))
+            .map(|(key, game)| (*key, game.clone()))
             .collect()
     }
 
-    pub async fn get_games_by_most_recently_played(&self) -> Vec<u32> {
+    pub async fn get_games_by_most_recently_played(&self) -> Vec<Game> {
         let games = self.games.read().await;
 
         let mut games_array = games.values().cloned().collect::<Vec<Game>>();
 
-        games_array.sort_by(|a, b| b.last_played().cmp(&a.last_played()));
+        games_array.sort_by(|a, b| b.last_played().cmp(a.last_played()));
 
         games_array
-            .iter()
-            .map(|game| game.id())
-            .collect::<Vec<u32>>()
     }
 
-    pub async fn get_games_by_most_played(&self) -> Vec<u32> {
+    pub async fn get_games_by_most_played(&self) -> Vec<Game> {
         let games = self.games.read().await;
 
         let mut games_array = games.values().cloned().collect::<Vec<Game>>();
@@ -339,12 +348,9 @@ impl GamesRepo {
         games_array.sort_by(|a, b| b.playtime().cmp(&a.playtime()));
 
         games_array
-            .iter()
-            .map(|game| game.id())
-            .collect::<Vec<u32>>()
     }
 
-    pub async fn get_games_by_most_completed_achievements(&self) -> Vec<u32> {
+    pub async fn get_games_by_most_completed_achievements(&self) -> Vec<Game> {
         let games = self.games.read().await;
 
         let mut games_array = games.values().cloned().collect::<Vec<Game>>();
@@ -355,15 +361,18 @@ impl GamesRepo {
         });
 
         games_array
-            .iter()
-            .map(|game| game.id())
-            .collect::<Vec<u32>>()
     }
 
     pub async fn get_total_play_time(&self) -> u32 {
         let games = self.games.read().await;
 
         games.values().map(|game| game.playtime()).sum()
+    }
+
+    pub async fn get_total_play_time_hours(&self) -> f32 {
+        let total_playtime = self.get_total_play_time().await;
+
+        total_playtime as f32 / 60.0
     }
 }
 

@@ -27,7 +27,7 @@ pub struct Image {
     orientation: ImageOrientation,
     title: Option<String>,
     description: Option<String>,
-    date: DateTime<Utc>,
+    date: Option<DateTime<Utc>>,
     parent_permalink: Option<String>,
 }
 
@@ -39,7 +39,7 @@ impl Image {
         height: u32,
         title: Option<String>,
         description: Option<String>,
-        date: DateTime<Utc>,
+        date: Option<DateTime<Utc>>,
         parent_permalink: Option<String>,
     ) -> Self {
         Self {
@@ -83,8 +83,8 @@ impl Image {
         self.description.as_deref()
     }
 
-    pub fn date(&self) -> &DateTime<Utc> {
-        &self.date
+    pub fn date(&self) -> Option<&DateTime<Utc>> {
+        self.date.as_ref()
     }
 
     pub fn parent_permalink(&self) -> Option<&str> {

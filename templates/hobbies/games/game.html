@@ -1,0 +1,58 @@
+{% extends "partials/page.html" %}
+
+{%- block content %}
+    <article>
+        <img src="{{ game.header_image_url() }}" alt="{{ game.name() }} steam header image">
+
+        <div class="game-page-data">
+            <a href="{{ game.link_url() }}" rel="noopener noreferrer">Store Page</a>
+            <div class="game-stats">
+                <div class="game-stat">
+                    <p class="numbers">{{ game.playtime_hours().format(1, true) }}h</p>
+                    <p class="label">Playtime</p>
+                </div>
+                {%- if game.achievements_count() > 0 %}
+                    <div class="game-stat">
+                        <p class="numbers">{{ game.achievements_unlocked_count() }}<span class="mx-[0.15rem]">/</span>{{ game.achievements_count() }}</p>
+                        <p class="label">Achievements</p>
+                    </div>
+                {%- endif %}
+            </div>
+        </div>
+
+        {%- if game.achievements_count() > 0 %}
+            <h2>Unlocked Achievements</h2>
+            {% for achievement in game.achievements_by_unlocked_date() %}
+                <div class="game-achievement">
+                    <div class="image-container">
+                        <img src="{{ achievement.image_unlocked_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                    </div>
+                    <div class="data">
+                        <div class="name-and-date">
+                            <h3>{{ achievement.display_name() }}</h3>
+                            <time datetime="{{ achievement.unlocked_date().to_rfc3339() }}">{{ achievement.unlocked_date().format_date() }}</time>
+                        </div>
+                        <p>{{ achievement.description() }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {%- if game.achievements_count() > 0 %}
+            <h2>Locked Achievements</h2>
+            {% for achievement in game.achievments_locked() %}
+                <div class="game-achievement">
+                    <div class="image-container">
+                        <img src="{{ achievement.image_locked_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                    </div>
+                    <div class="data">
+                        <div class="name-and-date">
+                            <h3>{{ achievement.display_name() }}</h3>
+                        </div>
+                        <p>{{ achievement.description() }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </article>
+{% endblock %}

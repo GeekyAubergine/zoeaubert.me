@@ -738,6 +738,66 @@
         }
     }
 
+    .game-stats {
+        @apply flex-row justify-around items-center w-full;
+
+        .game-stat {
+            @apply flex-col justify-center items-center;
+
+            p {
+                @apply text-center my-0;
+            }
+
+            .numbers {
+                @apply text-4xl md:text-5xl;
+            }
+
+            .label {
+                @apply text-lg leading-4;
+            }
+        }
+    }
+
+    .games-grid {
+        @apply grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3 mt-2;
+    }
+
+    .game-page-data {
+        @apply flex-col justify-center items-center;
+
+        a {
+            @apply my-4;
+        }
+        
+        .game-stats {
+            @apply my-6;
+        }
+    }
+
+    .game-achievement {
+        @apply flex flex-row my-2;
+
+        .image-container {
+            @apply flex-1 max-w-[4rem] md:max-w-[6rem];
+        }
+
+        .data {
+            @apply flex-1 flex-col justify-start ml-4 py-2;
+
+            .name-and-date {
+                @apply flex-row justify-between items-baseline;
+
+                h3 {
+                    @apply my-0;
+                }
+
+                time {
+                    @apply secondary min-w-[10ch] text-right;
+                }
+            }
+        }
+    }
+
     #search {
         & .pagefind-ui {
             @apply block relative mt-8;

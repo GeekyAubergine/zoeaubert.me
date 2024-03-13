@@ -12,7 +12,9 @@ use crate::{build_data, domain::models::page::Page, infrastructure::app_state::A
 pub mod games;
 
 pub fn router() -> Router<AppState> {
-    Router::new().route("/", get(index))
+    Router::new()
+        .route("/", get(index))
+        .nest("/games", games::router())
 }
 
 #[derive(Template)]
