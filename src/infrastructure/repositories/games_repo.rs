@@ -28,6 +28,9 @@ const STEAM_PLAYER_ACHEIVEMENTS_URL: &str =
 const STEAM_GAME_DATA_URL: &str =
     "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?format=json";
 
+const STEAM_GAME_GLOBAL_ACHIEMENT_PERCENTAGE_URL: &str =
+    "http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?format=json";
+
 // ---- Steam Game
 
 fn make_get_games_url(config: &Config) -> String {
@@ -157,6 +160,47 @@ async fn get_steam_player_achievements(
     Ok(response.playerstats.achievements)
 }
 
+// ---- Steam Game Global Achievement Percentage
+
+fn make_get_global_achievement_percentage_url(appid: u32, config: &Config) -> String {
+    format!(
+        "{}&key={}&gameid={}",
+        STEAM_GAME_GLOBAL_ACHIEMENT_PERCENTAGE_URL,
+        config.steam().api_key(),
+        appid
+    )
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct SteamGameGlobalAchievement {
+    name: String,
+    percent: f32,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+struct SteamGetGlobalAchievementPercentagesResponseInner {
+    achievements: Vec<SteamGameGlobalAchievement>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+struct SteamGetGlobalAchievementPercentagesResponse {
+    achievementpercentages: SteamGetGlobalAchievementPercentagesResponseInner,
+}
+
+async fn get_steam_global_achievement_percentage(
+    appid: u32,
+    config: &Config,
+) -> Result<Vec<SteamGameGlobalAchievement>> {
+    let response = get_json::<SteamGetGlobalAchievementPercentagesResponse>(
+        &make_get_global_achievement_percentage_url(appid, config),
+    )
+    .await?;
+
+    Ok(response.achievementpercentages.achievements)
+}
+
+// ----
+
 async fn load_data_for_steam_game(steam_game: SteamOwnedGame, config: Config) -> Result<Game> {
     let game_link = format!(
         "https://store.steampowered.com/app/{}/{}",
@@ -184,6 +228,9 @@ async fn load_data_for_steam_game(steam_game: SteamOwnedGame, config: Config) ->
             let player_achievements =
                 get_steam_player_achievements(steam_game.appid, &config).await?;
 
+            let global_achievement_percentage =
+                get_steam_global_achievement_percentage(steam_game.appid, &config).await?;
+
             let mut achievements = HashMap::new();
 
             for achievement in game_data {
@@ -202,6 +249,15 @@ async fn load_data_for_steam_game(steam_game: SteamOwnedGame, config: Config) ->
                     None => None,
                 };
 
+                let global_achievement = global_achievement_percentage
+                    .iter()
+                    .find(|global_achievement| global_achievement.name == achievement.name);
+
+                let global_percentage = match global_achievement {
+                    Some(global_achievement) => global_achievement.percent,
+                    None => 0.0,
+                };
+
                 let mapped_achievement = match unlocked_date {
                     Some(unlocked_date) => GameAchievement::Unlocked(GameAchievementUnlocked::new(
                         achievement.name.clone(),
@@ -209,12 +265,14 @@ async fn load_data_for_steam_game(steam_game: SteamOwnedGame, config: Config) ->
                         achievement.description,
                         achievement.icon,
                         unlocked_date,
+                        global_percentage,
                     )),
                     None => GameAchievement::Locked(GameAchievementLocked::new(
                         achievement.name.clone(),
                         achievement.display_name,
                         achievement.description,
                         achievement.icon_gray,
+                        global_percentage,
                     )),
                 };
 

@@ -13,32 +13,36 @@
                 </div>
                 {%- if game.achievements_count() > 0 %}
                     <div class="game-stat">
-                        <p class="numbers">{{ game.achievements_unlocked_count() }}<span class="mx-[0.15rem]">/</span>{{ game.achievements_count() }}</p>
+                        <p class="numbers">{{ game.achievements_unlocked_count() }}
+                            <span class="mx-[0.15rem]">/</span>{{ game.achievements_count() }}</p>
                         <p class="label">Achievements</p>
                     </div>
                 {%- endif %}
             </div>
         </div>
 
-        {%- if game.achievements_count() > 0 %}
+        {%- if game.achievements_by_unlocked_date().len() > 0 %}
             <h2>Unlocked Achievements</h2>
             {% for achievement in game.achievements_by_unlocked_date() %}
                 <div class="game-achievement">
                     <div class="image-container">
                         <img src="{{ achievement.image_unlocked_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
                     </div>
-                    <div class="data">
-                        <div class="name-and-date">
+                    <div class="left">
+                        <div class="name-and-description">
                             <h3>{{ achievement.display_name() }}</h3>
-                            <time datetime="{{ achievement.unlocked_date().datetime() }}">{{ achievement.unlocked_date().short_iso() }}</time>
+                            <p>{{ achievement.description() }}</p>
                         </div>
-                        <p>{{ achievement.description() }}</p>
+                        <p class="secondary">{{ achievement.global_unlocked_percentage().format(1, false) }}% of players have this acheivement</p>
+                    </div>
+                    <div class="right">
+                        <time datetime="{{ achievement.unlocked_date().datetime() }}">{{ achievement.unlocked_date().short_iso() }}</time>
                     </div>
                 </div>
             {% endfor %}
         {% endif %}
 
-        {%- if game.achievements_count() > 0 %}
+        {%- if game.achievments_locked().len() > 0 %}
             <h2>Locked Achievements</h2>
             {% for achievement in game.achievments_locked() %}
                 <div class="game-achievement">

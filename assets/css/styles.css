@@ -768,7 +768,7 @@
         a {
             @apply my-4;
         }
-        
+
         .game-stats {
             @apply my-6;
         }
@@ -781,20 +781,24 @@
             @apply flex-1 max-w-[4rem] md:max-w-[6rem];
         }
 
-        .data {
-            @apply flex-1 flex-col justify-start ml-4 py-2;
+        h3, p {
+            @apply my-0;
+        }
 
-            .name-and-date {
-                @apply flex-row justify-between items-baseline;
+        time {
+            @apply secondary min-w-[10ch] text-right;
+        }
 
-                h3 {
-                    @apply my-0;
-                }
+        .left {
+            @apply flex-1 flex-col justify-between ml-4 py-2;
+        }
 
-                time {
-                    @apply secondary min-w-[10ch] text-right;
-                }
-            }
+        .name-and-description {
+            @apply flex-1 flex-col justify-start;
+        }
+
+        .right {
+            @apply flex-1 flex-col justify-between items-end;
         }
     }
 

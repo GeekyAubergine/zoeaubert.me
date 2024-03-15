@@ -12,6 +12,7 @@ pub struct GameAchievementUnlocked {
     description: String,
     image_unlocked_url: String,
     unlocked_date: DateTime<Utc>,
+    global_unlocked_percentage: f32,
 }
 
 impl GameAchievementUnlocked {
@@ -21,6 +22,7 @@ impl GameAchievementUnlocked {
         description: String,
         image_unlocked_url: String,
         unlocked_date: DateTime<Utc>,
+        global_unlocked_percentage: f32,
     ) -> Self {
         Self {
             id,
@@ -28,6 +30,7 @@ impl GameAchievementUnlocked {
             description,
             image_unlocked_url,
             unlocked_date,
+            global_unlocked_percentage,
         }
     }
 
@@ -50,6 +53,10 @@ impl GameAchievementUnlocked {
     pub fn unlocked_date(&self) -> &DateTime<Utc> {
         &self.unlocked_date
     }
+
+    pub fn global_unlocked_percentage(&self) -> f32 {
+        self.global_unlocked_percentage
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -58,6 +65,7 @@ pub struct GameAchievementLocked {
     display_name: String,
     description: String,
     image_locked_url: String,
+    global_unlocked_percentage: f32,
 }
 
 impl GameAchievementLocked {
@@ -66,12 +74,14 @@ impl GameAchievementLocked {
         display_name: String,
         description: String,
         image_locked_url: String,
+        global_unlocked_percentage: f32,
     ) -> Self {
         Self {
             id,
             display_name,
             description,
             image_locked_url,
+            global_unlocked_percentage,
         }
     }
 
@@ -89,6 +99,10 @@ impl GameAchievementLocked {
 
     pub fn image_locked_url(&self) -> &str {
         &self.image_locked_url
+    }
+
+    pub fn global_unlocked_percentage(&self) -> f32 {
+        self.global_unlocked_percentage
     }
 }
 
