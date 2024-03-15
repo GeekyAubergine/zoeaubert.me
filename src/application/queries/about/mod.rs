@@ -1,1 +1,0 @@
-pub mod get_about_data_query;

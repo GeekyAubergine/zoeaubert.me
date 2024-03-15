@@ -1,6 +1,7 @@
 User-agent: *
 Disallow: /albums
 Disallow: /hobbies/games
+Disallow: /timeline
 
 User-agent: CCBot
 Disallow: /

@@ -1,5 +1,7 @@
 #![allow(unused)]
 #![feature(duration_constructors)]
+#[macro_use]
+extern crate lazy_static;
 
 use std::{path::Path, sync::Arc, thread::sleep, time::Duration};
 
@@ -85,7 +87,7 @@ async fn prepare_folders(config: &Config) -> Result<()> {
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt()
-        .with_max_level(Level::DEBUG)
+        .with_max_level(Level::INFO)
         .init();
 
     info!("Starting up...");

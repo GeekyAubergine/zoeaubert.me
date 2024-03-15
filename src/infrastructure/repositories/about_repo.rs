@@ -1,51 +1,45 @@
 use std::sync::Arc;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::{prelude::*, infrastructure::{cache::Cache, config::Config}, domain::models::about::About};
+use crate::{
+    domain::models::about::About,
+    infrastructure::{
+        cache::Cache,
+        config::Config,
+        content_dir::{self, ContentDir},
+    },
+    prelude::*,
+};
 
-const FILE_NAME: &str = "about.md";
+const FILE_NAME_SHORT: &str = "about_short.md";
+const FILE_NAME_LONG: &str = "about_long.md";
 
 #[derive(Debug, Clone)]
 pub struct AboutRepo {
-    about_text: Arc<RwLock<String>>,
+    about: Arc<RwLock<About>>,
 }
 
 impl AboutRepo {
     pub fn new() -> Self {
-        Self { about_text: Arc::new(RwLock::new(String::new())) }
+        Self {
+            about: Arc::new(RwLock::new(About::default())),
+        }
     }
 
-    pub fn from_archive(archive: AboutRepoArchive) -> Self {
-        Self { about_text: Arc::new(RwLock::new(archive.about_text)) }
-    }
+    pub async fn reload(&self, config: &Config, content_dir: &ContentDir) -> Result<()> {
+        if let Some(short_about) = content_dir.read_file(FILE_NAME_SHORT, config).await? {
+            if let Some(long_about) = content_dir.read_file(FILE_NAME_LONG, config).await? {
+                let mut about_ref = self.about.write().await;
 
-    pub async fn reload(&self, config: &Config, cache: &Cache) -> Result<()> {
-        if let Some(about_text) = cache.read_cached_file(FILE_NAME, config).await? {
-            let mut about_text_ref = self.about_text.write().await;
-
-            *about_text_ref = about_text;
+                *about_ref = About::new(short_about, long_about);
+            }
         }
         Ok(())
     }
 
-    pub async fn get_archived(&self) -> Result<AboutRepoArchive> {
-        let about_text = self.about_text.read().await;
-
-        Ok(AboutRepoArchive {
-            about_text: about_text.clone(),
-        })
+    pub async fn get(&self) -> About {
+        self.about.read().await.clone()
     }
-
-    pub async fn get_about(&self) -> About {
-        let about_text = self.about_text.read().await;
-
-        About::new(about_text.clone())
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AboutRepoArchive {
-    about_text: String,
 }

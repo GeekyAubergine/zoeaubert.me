@@ -6,6 +6,7 @@ pub enum Event {
     StatusLolRepoUpdated,
     AboutRepoUpdated,
     FaqRepoUpdated,
+    SillyNamesRepoUpdated,
 
     GamesRepoArchived,
     LegoRepoArchived,
@@ -21,6 +22,7 @@ impl Event {
             Event::StatusLolRepoUpdated => "status_lol_repo.updated",
             Event::AboutRepoUpdated => "about_repo.updated",
             Event::FaqRepoUpdated => "faq_repo.updated",
+            Event::SillyNamesRepoUpdated => "silly_names_repo.updated",
 
             Event::GamesRepoArchived => "games_report.archived",
             Event::LegoRepoArchived => "lego_repo.archived",
@@ -62,5 +64,9 @@ impl Event {
 
     pub fn status_lol_repo_archived() -> Self {
         Self::StatusLolRepoArchived
+    }
+
+    pub fn silly_names_repo_updated() -> Self {
+        Self::SillyNamesRepoUpdated
     }
 }

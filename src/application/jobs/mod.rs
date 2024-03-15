@@ -84,6 +84,9 @@ impl Job for ReloadAllDataJob {
             .await?;
         app_state.dispatch_job(ReloadAboutDataJob::new()).await?;
         app_state.dispatch_job(ReloadFaqDataJob::new()).await?;
+        app_state
+            .dispatch_job(ReloadSillyNamesDataJob::new())
+            .await?;
 
         Ok(())
     }
@@ -186,7 +189,7 @@ impl Job for ReloadAboutDataJob {
     async fn run(&self, app_state: &AppState) -> Result<()> {
         app_state
             .about_repo()
-            .reload(app_state.config(), app_state.cache())
+            .reload(app_state.config(), app_state.content_dir())
             .await?;
 
         app_state
@@ -215,10 +218,39 @@ impl Job for ReloadFaqDataJob {
     async fn run(&self, app_state: &AppState) -> Result<()> {
         app_state
             .faq_repo()
-            .reload(app_state.config(), app_state.cache())
+            .reload(app_state.config(), app_state.content_dir())
             .await?;
 
         app_state.dispatch_event(Event::faq_repo_updated()).await?;
+
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub struct ReloadSillyNamesDataJob;
+
+impl ReloadSillyNamesDataJob {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+#[async_trait]
+impl Job for ReloadSillyNamesDataJob {
+    fn name(&self) -> &str {
+        "ReloadSillyNamesDataJob"
+    }
+
+    async fn run(&self, app_state: &AppState) -> Result<()> {
+        app_state
+            .silly_names_repo()
+            .reload(app_state.config(), app_state.content_dir())
+            .await?;
+
+        app_state
+            .dispatch_event(Event::silly_names_repo_updated())
+            .await?;
 
         Ok(())
     }

@@ -242,10 +242,9 @@ impl SiteConfig {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
-    #[serde(rename = "cacheDir")]
     cache_dir: String,
-    #[serde(rename = "archiveDir")]
     archive_dir: String,
+    content_dir: String,
     mastodon: ConfigMastodon,
     #[serde(rename = "statusLol")]
     status_lol: ConfigStatusLol,
@@ -266,6 +265,10 @@ impl Config {
 
     pub fn archive_dir(&self) -> &str {
         &self.archive_dir
+    }
+
+    pub fn content_dir(&self) -> &str {
+        &self.content_dir
     }
 
     pub fn mastodon(&self) -> &ConfigMastodon {

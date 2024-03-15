@@ -14,3 +14,9 @@ impl Faq {
         &self.text
     }
 }
+
+impl Default for Faq {
+    fn default() -> Self {
+        Self { text: String::new() }
+    }
+}

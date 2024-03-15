@@ -45,7 +45,8 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
         None,
         None,
         vec![],
-    );
+    )
+    .set_no_index();
 
     let games_by_recently_played = state
         .games_repo()

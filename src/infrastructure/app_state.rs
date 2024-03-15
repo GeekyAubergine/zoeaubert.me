@@ -17,7 +17,12 @@ use crate::{
 };
 
 use super::{
-    bus::job_runner::Job, cache::Cache, cdn::Cdn, config::SiteConfig, repositories::{about_repo::AboutRepo, faq_repo::FaqRepo}
+    bus::job_runner::Job,
+    cache::Cache,
+    cdn::Cdn,
+    config::SiteConfig,
+    content_dir::ContentDir,
+    repositories::{about_repo::AboutRepo, faq_repo::FaqRepo, silly_names_repo::SillyNamesRepo},
 };
 
 #[derive(Debug, Clone)]
@@ -25,11 +30,13 @@ pub struct AppStateData {
     config: Config,
     cdn: Cdn,
     cache: Cache,
+    content_dir: ContentDir,
     games_repo: GamesRepo,
     lego_repo: LegoRepo,
     status_lol_repo: StatusLolRepo,
     about_repo: AboutRepo,
     faq_repo: FaqRepo,
+    silly_names_repo: SillyNamesRepo,
     job_sender: Sender<Box<dyn Job>>,
     event_sender: Sender<Event>,
 }
@@ -44,11 +51,13 @@ impl AppStateData {
             config: config.clone(),
             cdn: Cdn::new(config).await,
             cache: Cache::new(),
+            content_dir: ContentDir::new(),
             games_repo: GamesRepo::new(),
             lego_repo: LegoRepo::new(),
             status_lol_repo: StatusLolRepo::new(),
             about_repo: AboutRepo::new(),
             faq_repo: FaqRepo::new(),
+            silly_names_repo: SillyNamesRepo::new(),
             job_sender,
             event_sender,
         }
@@ -105,6 +114,10 @@ impl AppStateData {
         &self.cache
     }
 
+    pub fn content_dir(&self) -> &ContentDir {
+        &self.content_dir
+    }
+
     pub fn games_repo(&self) -> &GamesRepo {
         &self.games_repo
     }
@@ -123,6 +136,10 @@ impl AppStateData {
 
     pub fn faq_repo(&self) -> &FaqRepo {
         &self.faq_repo
+    }
+
+    pub fn silly_names_repo(&self) -> &SillyNamesRepo {
+        &self.silly_names_repo
     }
 }
 
