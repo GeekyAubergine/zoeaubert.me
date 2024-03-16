@@ -22,11 +22,13 @@ use super::{
     cdn::Cdn,
     config::SiteConfig,
     content_dir::ContentDir,
-    repositories::{about_repo::AboutRepo, faq_repo::FaqRepo, silly_names_repo::SillyNamesRepo},
+    repositories::{about_repo::AboutRepo, blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo, silly_names_repo::SillyNamesRepo},
 };
 
 #[derive(Debug, Clone)]
 pub struct AppStateData {
+    job_sender: Sender<Box<dyn Job>>,
+    event_sender: Sender<Event>,
     config: Config,
     cdn: Cdn,
     cache: Cache,
@@ -37,8 +39,7 @@ pub struct AppStateData {
     about_repo: AboutRepo,
     faq_repo: FaqRepo,
     silly_names_repo: SillyNamesRepo,
-    job_sender: Sender<Box<dyn Job>>,
-    event_sender: Sender<Event>,
+    blog_posts_repo: BlogPostsRepo,
 }
 
 impl AppStateData {
@@ -48,6 +49,8 @@ impl AppStateData {
         event_sender: Sender<Event>,
     ) -> Self {
         Self {
+            job_sender,
+            event_sender,
             config: config.clone(),
             cdn: Cdn::new(config).await,
             cache: Cache::new(),
@@ -58,8 +61,7 @@ impl AppStateData {
             about_repo: AboutRepo::new(),
             faq_repo: FaqRepo::new(),
             silly_names_repo: SillyNamesRepo::new(),
-            job_sender,
-            event_sender,
+            blog_posts_repo: BlogPostsRepo::new(),
         }
     }
 
@@ -140,6 +142,10 @@ impl AppStateData {
 
     pub fn silly_names_repo(&self) -> &SillyNamesRepo {
         &self.silly_names_repo
+    }
+
+    pub fn blog_posts_repo(&self) -> &BlogPostsRepo {
+        &self.blog_posts_repo
     }
 }
 

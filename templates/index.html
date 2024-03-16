@@ -15,6 +15,16 @@
         <div class="home-about">
             {{ about_text.to_html()|safe }}
         </div>
+
+        <div class="home-page-block">
+            <h2 class="mainPageHeading">Blog Posts</h2>
+            <div class="blog-posts">
+                {%- for post in recent_blog_posts %}
+                    {% include "partials/blog_post_list_item.html" %}
+                {% endfor %}
+            </div>
+            <a class="see-more" href="/blog">See All Blog Posts</a>
+        </div>
     </div>
 
     {% include "partials/footer.html" %}

@@ -6,10 +6,14 @@ use axum::{
     routing::get,
     Router,
 };
+use tracing::info;
 
-use crate::utils::FormatMarkdown;
 use crate::{build_data, domain::models::page::Page, infrastructure::app_state::AppState};
+use crate::{domain::models::blog_post::BlogPost, utils::{FormatMarkdown, FormatDate}};
 
+const RECENT_POSTS_COUNT: usize = 5;
+
+pub mod blog;
 pub mod hobbies;
 
 pub fn router() -> Router<AppState> {
@@ -17,6 +21,7 @@ pub fn router() -> Router<AppState> {
         .route("/", get(index))
         .route("/faq", get(faq))
         .nest("/hobbies", hobbies::router())
+        .nest("/blog", blog::router())
 }
 
 #[derive(Template)]
@@ -25,28 +30,30 @@ pub struct IndexTemplate {
     page: Page,
     about_text: String,
     silly_names: Vec<String>,
+    recent_blog_posts: Vec<BlogPost>,
 }
 
 async fn index(State(state): State<AppState>) -> IndexTemplate {
-    let page = Page::new(
-        state.site(),
-        "/",
-        Some("Home"),
-        None,
-        None,
-        None,
-        None,
-        vec![],
-    );
+    let page = Page::new(state.site(), "/", None, None, None, None, None, vec![]);
 
     let about_text = state.about_repo().get().await.short().to_owned();
 
     let silly_names = state.silly_names_repo().get().await;
 
+    let recent_blog_posts = state
+        .blog_posts_repo()
+        .get_all_by_published_date()
+        .await
+        .iter()
+        .take(RECENT_POSTS_COUNT)
+        .cloned()
+        .collect::<Vec<_>>();
+
     IndexTemplate {
         page,
         silly_names,
         about_text,
+        recent_blog_posts,
     }
 }
 

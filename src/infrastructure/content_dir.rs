@@ -1,6 +1,6 @@
-use std::path::Path;
+use std::{fs, path::Path};
 
-use tracing::info;
+use tracing::{debug, info};
 
 use crate::{error::Error, prelude::*};
 
@@ -15,10 +15,13 @@ impl ContentDir {
     }
 
     pub async fn read_file(&self, path: &str, config: &Config) -> Result<Option<String>> {
-        let path = format!("{}/{}", config.content_dir(), path);
+        let path = match path.starts_with(config.content_dir()) {
+            true => path.to_string(),
+            false => format!("{}/{}", config.content_dir(), path),
+        };
         let path = Path::new(&path);
 
-        info!("Reading file: {:?}", path);
+        debug!("Reading file: {:?}", path);
 
         match tokio::fs::read_to_string(path).await {
             Ok(content) => Ok(Some(content)),

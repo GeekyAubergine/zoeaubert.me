@@ -9,58 +9,6 @@ use crate::{
 
 use super::events::Event;
 
-// #[derive(Debug)]
-// pub struct LoadAllDataFromArchiveJob;
-
-// impl LoadAllDataFromArchiveJob {
-//     pub fn new() -> Self {
-//         Self
-//     }
-// }
-
-// #[async_trait]
-// impl Job for LoadAllDataFromArchiveJob {
-//     fn name(&self) -> &str {
-//         "LoadAllDataFromArchiveJob"
-//     }
-
-//     async fn run(&self, app_state: &AppState) -> Result<()> {
-//         app_state
-//             .dispatch_job(LoadGamesDataFromArchiveJob::new())
-//             .await?;
-
-//         Ok(())
-//     }
-// }
-
-// #[derive(Debug)]
-// pub struct LoadGamesDataFromArchiveJob;
-
-// impl LoadGamesDataFromArchiveJob {
-//     pub fn new() -> Self {
-//         Self
-//     }
-// }
-
-// #[async_trait]
-// impl Job for LoadGamesDataFromArchiveJob {
-//     fn name(&self) -> &str {
-//         "LoadGamesDataFromArchiveJob"
-//     }
-
-//     async fn run(&self, app_state: &AppState) -> Result<()> {
-//         // let archive = load_archive_file(app_state.config(), GAMES_ARCHIVE_FILENAME).await?;
-
-//         // app_state.games_repo()
-
-//         // app_state
-//         //     .dispatch_event(Event::LoadedGamesFromArchive)
-//         //     .await?;
-
-//         Ok(())
-//     }
-// }
-
 #[derive(Debug)]
 pub struct ReloadAllDataJob;
 
@@ -87,6 +35,7 @@ impl Job for ReloadAllDataJob {
         app_state
             .dispatch_job(ReloadSillyNamesDataJob::new())
             .await?;
+        app_state.dispatch_job(ReloadBlogPostsJob::new()).await?;
 
         Ok(())
     }
@@ -250,6 +199,35 @@ impl Job for ReloadSillyNamesDataJob {
 
         app_state
             .dispatch_event(Event::silly_names_repo_updated())
+            .await?;
+
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub struct ReloadBlogPostsJob;
+
+impl ReloadBlogPostsJob {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+#[async_trait]
+impl Job for ReloadBlogPostsJob {
+    fn name(&self) -> &str {
+        "ReloadBlogPostsJob"
+    }
+
+    async fn run(&self, app_state: &AppState) -> Result<()> {
+        app_state
+            .blog_posts_repo()
+            .reload(app_state.config(), app_state.content_dir())
+            .await?;
+
+        app_state
+            .dispatch_event(Event::blog_posts_repo_updated())
             .await?;
 
         Ok(())

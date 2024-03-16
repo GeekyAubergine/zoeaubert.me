@@ -403,7 +403,7 @@ impl GamesRepo {
 
         let mut games_array = games.values().cloned().collect::<Vec<Game>>();
 
-        games_array.sort_by(|a, b| b.playtime().cmp(&a.playtime()));
+        games_array.sort_by_key(|b| std::cmp::Reverse(b.playtime()));
 
         games_array
     }

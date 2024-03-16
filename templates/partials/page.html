@@ -12,11 +12,11 @@
             {%- when Some with (heading) %}
                 <div class="page-header">
                     <h1>{{ heading }}</h1>
-                    {%- match page.date_as_string() %}
+                    {%- match page.date() %}
                         {%- when Some with (date) %}
                             <div class="date-and-readtime" data-pagefind-ignore>
                             <p>
-                                <time datetime="{{date}}">{{ date }}</time>
+                                <time datetime="{{date.datetime()}}">{{ date.short_iso() }}</time>
                                 {%- match page.read_time() %}
                                     {%- when Some with (read_time) %}
                                         <span>-</span>

@@ -238,11 +238,8 @@ impl Page {
         self.heading.as_deref()
     }
 
-    pub fn date_as_string(&self) -> Option<String> {
-        match self.date {
-            Some(date) => Some(date.format("%B %e, %Y").to_string()),
-            None => None,
-        }
+    pub fn date(&self) -> Option<&DateTime<Utc>> {
+        self.date.as_ref()
     }
 
     pub fn read_time(&self) -> Option<&str> {

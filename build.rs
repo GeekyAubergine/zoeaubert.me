@@ -46,17 +46,17 @@ fn build_data(build_date: &str) {
 fn compile_assets(build_date: &str) {
     // Clear _assets directory
 
-    match std::fs::remove_dir_all(ASSETS_DIR) {
-        Ok(_) => println!("Removed assets directory"),
-        Err(e) => {
-            if e.kind() == std::io::ErrorKind::NotFound {
-                println!("No assets directory to remove");
-            } else {
-                println!("Failed to remove assets directory: {}", e);
-                std::process::exit(1);
-            }
-        }
-    }
+    // match std::fs::remove_dir_all(ASSETS_DIR) {
+    //     Ok(_) => println!("Removed assets directory"),
+    //     Err(e) => {
+    //         if e.kind() == std::io::ErrorKind::NotFound {
+    //             println!("No assets directory to remove");
+    //         } else {
+    //             println!("Failed to remove assets directory: {}", e);
+    //             std::process::exit(1);
+    //         }
+    //     }
+    // }
 
     // Make _assets directory
     match std::fs::create_dir_all(ASSETS_DIR) {

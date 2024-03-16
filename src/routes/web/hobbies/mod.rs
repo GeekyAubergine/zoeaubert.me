@@ -9,6 +9,8 @@ use axum::{
 
 use crate::{build_data, domain::models::page::Page, infrastructure::app_state::AppState};
 
+use crate::utils::{FormatDate, FormatNumber};
+
 pub mod games;
 
 pub fn router() -> Router<AppState> {

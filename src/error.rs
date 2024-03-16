@@ -4,6 +4,8 @@ use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("Couldn't read dir {0}")]
+    ReadDir(std::io::Error),
     #[error("Couldn't read config file {0}")]
     ReadConfigFile(std::io::Error),
     #[error("Couldn't parse config file {0}")]
@@ -31,4 +33,10 @@ pub enum Error {
     SerializeArchive(serde_json::Error),
     #[error("Couldn't deserialize archive {0}")]
     DeserializeArchive(serde_json::Error),
+    #[error("Couldn't parse blog front matter {0}")]
+    ParseBlogFrontMatter(serde_yaml::Error),
+    #[error("Couldn't parse blog post {0}")]
+    ParseBlogPost(String),
+    #[error("Could not parse date {0}")]
+    ParseDate(String),
 }

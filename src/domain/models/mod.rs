@@ -12,3 +12,4 @@ pub mod faq;
 pub mod image;
 pub mod page;
 pub mod tag;
+pub mod blog_post;
