@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /albums
+Disallow: /hobbies/games
+Disallow: /timeline
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /

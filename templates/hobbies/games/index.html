@@ -1,0 +1,30 @@
+{% extends "partials/page.html" %}
+
+{%- block content %}
+    <div class="game-stats">
+        <div class="game-stat">
+            <p class="numbers">{{ total_games.format(0, true) }}</p>
+            <p class="label">Games</p>
+        </div>
+        <div class="game-stat">
+            <p class="numbers">{{ total_playtime.format(1, true) }}h</p>
+            <p class="label">Playtime</p>
+        </div>
+    </div>
+    <div class="text-lg my-8 items-center">
+        {# <p>Not mentioned here are untold hours in Minecraft and EVE Online</p> #}
+        <p>See my <a href="/tags/gaming">#gaming</a> posts</p>
+    </div>
+    <h2>Recently Played</h2>
+    <div class="games-grid" data-pagefind-ignore>
+        {% for game in games_by_recently_played %}
+            {% include "partials/games_list_game.html" %}
+        {% endfor %}
+    </div>
+    <h2 class="mt-16">All Games</h2>
+    <div class="games-grid" data-pagefind-ignore>
+        {% for game in games_by_most_played %}
+            {% include "partials/games_list_game.html" %}
+        {% endfor %}
+    </div>
+{% endblock %}

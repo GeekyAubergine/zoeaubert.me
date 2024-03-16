@@ -1,0 +1,19 @@
+<article class="blog-post-item" data-pagefind-ignore>
+    <div class="title-and-date">
+        <a href="{{ post.permalink() }}">
+            <h3>{{ post.title() }}</h3>
+        </a>
+        <time class="date" dateTime="{{ post.date().datetime() }}">{{ post.date().short_iso() }}</time>
+    </div>
+
+    <p class="description">{{ post.description() }}</p>
+    <div class="time-to-read-and-tags">
+        {# <p class="time-to-read">{{ post.content | timeToRead }} read</p> #}
+        <div class="tags-list">
+            {% set tags = post.tags() %}
+            {% include "partials/tags_list.html" %}
+
+        </div>
+    </div>
+</article>
+<hr/>

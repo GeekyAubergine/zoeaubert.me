@@ -1,0 +1,18 @@
+<footer data-pagefind-ignore>
+    <div>
+        <p>Enjoyed what you've seen?</p>
+        <p>Tell me about it on <a href="https://social.lol/@geekyaubergine" target="_blank" rel="me">Mastodon</a> 😊
+    </p>
+    </div>
+    <div>
+        {% for social in page.social_links() %}
+            {% if social.show_in_footer() %}
+                <a href="{{ social.url() }}" target="_blank" rel="me">{{ social.name() }}</a>
+                <span>-</span>
+            {% endif %}
+        {% endfor %}
+        <a href="/referrals">Referrals</a>
+        <span>-</span>
+        <a href="/subscribe">RSS</a>
+    </div>
+</footer>
