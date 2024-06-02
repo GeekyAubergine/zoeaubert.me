@@ -310,38 +310,24 @@ impl GamesRepo {
     }
 
     pub async fn reload(&self, config: &Config) -> Result<()> {
-        return Ok(());
-
         let last_updated = *self.last_updated.read().await;
 
         if last_updated + NO_REFETCH_DURATION > Utc::now() {
             return Ok(());
         }
 
+        let last_updated_as_rtime = last_updated.timestamp() as u32;
+
         let steam_owned_games_response =
             get_json::<SteamGetOwnedGamesResponse>(&make_get_games_url(config)).await?;
 
-        // let mut steam_game_data_tasks = JoinSet::new();
-
-        // for game in steam_owned_games_response.response.games {
-        //     let game_with_achievements = load_data_for_steam_game(game, config.clone());
-
-        //     steam_game_data_tasks.spawn(game_with_achievements);
-        // }
-
         let mut steam_games = HashMap::new();
 
-        // while let Some(game) = steam_game_data_tasks.join_next().await {
-        //     if let Ok(Ok(game)) = game {
-        //         steam_games.insert(game.id(), game);
-        //     } else {
-        //         println!("Error loading game data");
-        //         // TODO log
-        //     }
-        // }
-
-        // TODO Check last updated time and only fetch if it's updated
         for game in steam_owned_games_response.response.games {
+            println!("Loading game: {}", game.name);
+            if game.rtime_last_played < last_updated_as_rtime {
+                continue;
+            }
             let game_with_achievements = load_data_for_steam_game(game, config.clone()).await;
 
             match game_with_achievements {

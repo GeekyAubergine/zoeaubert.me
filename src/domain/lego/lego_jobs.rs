@@ -1,10 +1,12 @@
 use async_trait::async_trait;
+use tracing::warn;
 
 use crate::{
     application::events::Event,
     infrastructure::{app_state::AppState, bus::job_runner::Job},
     load_archive_file,
-    prelude::Result, save_archive_file, LEGO_ARCHIVE_FILENAME,
+    prelude::Result,
+    save_archive_file, LEGO_ARCHIVE_FILENAME,
 };
 
 #[derive(Debug)]
@@ -20,16 +22,19 @@ impl Job for LoadLegoDataFromArchiveJob {
         "LoadLegoDataFromArchiveJob"
     }
     async fn run(&self, app_state: &AppState) -> Result<()> {
-        let lego_archive =
-            load_archive_file(app_state.config(), LEGO_ARCHIVE_FILENAME).await?;
+        match load_archive_file(app_state.config(), LEGO_ARCHIVE_FILENAME).await {
+            Ok(lego_archive) => {
+                app_state.lego_repo().load_from_archive(lego_archive).await;
 
-        app_state.lego_repo().load_from_archive(lego_archive).await;
-
-        app_state
-            .dispatch_event(Event::LegoRepoLoadedFromArchive)
-            .await?;
-
-        Ok(())
+                app_state
+                    .dispatch_event(Event::LegoRepoLoadedFromArchive)
+                    .await
+            }
+            Err(err) => {
+                warn!("Failed to load lego archive: {:?}", err);
+                app_state.dispatch_job(RealoadLegoDataJob::new()).await
+            }
+        }
     }
 }
 

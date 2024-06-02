@@ -201,12 +201,14 @@
 
     :not(pre) > code {
         @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
-        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro', 'Courier New', monospace;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+            'Courier New', monospace;
     }
 
     pre {
         @apply bg-code dark:bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
-        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro', 'Courier New', monospace;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+            'Courier New', monospace;
     }
 
     p:first-of-type {
@@ -781,7 +783,8 @@
             @apply flex-1 max-w-[4rem] md:max-w-[6rem];
         }
 
-        h3, p {
+        h3,
+        p {
             @apply my-0;
         }
 
@@ -790,7 +793,7 @@
         }
 
         .left {
-            @apply flex-1 flex-col justify-between ml-4 py-2;
+            @apply flex-1 flex-col justify-between mx-4 py-2;
         }
 
         .name-and-description {
@@ -798,7 +801,15 @@
         }
 
         .right {
-            @apply flex-1 flex-col justify-between items-end;
+            @apply flex-col justify-between items-end;
+        }
+
+        .secondary {
+            @apply w-full;
+        }
+
+        .special {
+            @apply ml-2;
         }
     }
 

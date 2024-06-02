@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use tracing::warn;
 
 use crate::{
     application::events::Event,
@@ -22,15 +23,22 @@ impl Job for LoadStatusLolDataFromArchiveJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
-        let data = load_archive_file(app_state.config(), STATUS_LOL_ARCHIVE_FILENAME).await?;
+        match load_archive_file(app_state.config(), STATUS_LOL_ARCHIVE_FILENAME).await {
+            Ok(status_lol_archive) => {
+                app_state
+                    .status_lol_repo()
+                    .load_from_archive(status_lol_archive)
+                    .await;
 
-        app_state.status_lol_repo().load_from_archive(data).await;
-
-        app_state
-            .dispatch_event(Event::StatusLolRepoLoadedFromArchive)
-            .await?;
-
-        Ok(())
+                app_state
+                    .dispatch_event(Event::StatusLolRepoLoadedFromArchive)
+                    .await
+            }
+            Err(err) => {
+                warn!("Failed to load status_lol archive: {:?}", err);
+                app_state.dispatch_job(ReloadStatusLolDataJob::new()).await
+            }
+        }
     }
 }
 

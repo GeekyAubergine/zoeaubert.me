@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::status_lol_jobs::{LoadStatusLolDataFromArchiveJob, SaveStatusLolDataToArchiveJob};
+use super::status_lol_jobs::{LoadStatusLolDataFromArchiveJob, ReloadStatusLolDataJob, SaveStatusLolDataToArchiveJob};
 
 pub struct StatusLolListener;
 
@@ -27,6 +27,11 @@ impl EventListener for StatusLolListener {
             Event::ServerBooted => {
                 app_state
                     .dispatch_job(LoadStatusLolDataFromArchiveJob::new())
+                    .await?;
+            }
+            Event::StatusLolRepoLoadedFromArchive => {
+                app_state
+                    .dispatch_job(ReloadStatusLolDataJob::new())
                     .await?;
             }
             Event::StatusLolRepoUpdated => {
