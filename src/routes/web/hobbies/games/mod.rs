@@ -9,7 +9,7 @@ use axum::{
 
 use crate::{
     build_data,
-    domain::models::{game::Game, image::Image, page::Page},
+    domain::{games::games_models::Game, models::{image::Image, page::Page}},
     infrastructure::app_state::AppState,
 };
 

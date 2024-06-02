@@ -6,11 +6,7 @@ extern crate lazy_static;
 use std::{path::Path, sync::Arc, thread::sleep, time::Duration};
 
 use crate::{
-    application::jobs::ReloadAllDataJob,
-    infrastructure::{
-        bus::{event_queue::make_event_channel, job_runner::make_job_channel, Bus},
-        listeners::{archive_listener::ArchiveListener, logger_listener::LoggerListener},
-    },
+    infrastructure::bus::{event_queue::make_event_channel, job_runner::make_job_channel, Bus},
     prelude::*,
 };
 
@@ -25,9 +21,16 @@ use axum::{
     Json, Router,
 };
 use chrono::{DateTime, Utc};
+use domain::{
+    about::about_listener::AboutListener, blog_posts::blog_posts_listener::BlogPostsListener,
+    faq::faq_listener::FaqListener, games::games_listener::GamesListener,
+    lego::lego_listener::LegoListener, silly_names::silly_names_listener::SillyNamesListener,
+    status_lol::status_lol_listener::StatusLolListener,
+};
 use error::Error;
 use infrastructure::{
     app_state::{AppState, AppStateData},
+    bus::logger_listener::LoggerListener,
     cdn::Cdn,
     config::Config,
 };
@@ -86,9 +89,7 @@ async fn prepare_folders(config: &Config) -> Result<()> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt()
-        .with_max_level(Level::INFO)
-        .init();
+    tracing_subscriber::fmt().with_max_level(Level::INFO).init();
 
     info!("Starting up...");
 
@@ -101,17 +102,20 @@ async fn main() -> Result<()> {
 
     let mut state = AppStateData::new(&config, job_sender, event_sender).await;
 
-    state.load_from_archive().await?;
-
     let state = Arc::new(state);
 
     let mut queue = Bus::new(state.clone(), job_receiver, event_receiver);
 
     queue.add_event_listener(Box::new(LoggerListener::new()));
-    queue.add_event_listener(Box::new(ArchiveListener::new()));
+    queue.add_event_listener(Box::new(GamesListener::new()));
+    queue.add_event_listener(Box::new(StatusLolListener::new()));
+    queue.add_event_listener(Box::new(AboutListener::new()));
+    queue.add_event_listener(Box::new(FaqListener::new()));
+    queue.add_event_listener(Box::new(SillyNamesListener::new()));
+    queue.add_event_listener(Box::new(BlogPostsListener::new()));
 
     println!("Starting jobs...");
-    state.dispatch_job(ReloadAllDataJob::new()).await?;
+    state.dispatch_event(Event::ServerBooted).await?;
 
     let cors = CorsLayer::new()
         .allow_origin("http://localhost:3000".parse::<HeaderValue>().unwrap())

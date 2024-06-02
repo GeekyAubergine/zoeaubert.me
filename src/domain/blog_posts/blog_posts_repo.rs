@@ -13,7 +13,9 @@ use serde::Deserialize;
 use tokio::sync::RwLock;
 use tracing::info;
 
-use crate::domain::models::{blog_post::BlogPost, image::Image};
+use crate::domain::models::image::Image;
+
+use super::blog_post_models::BlogPost;
 
 const BLOG_POSTS_DIR: &str = "blogPosts";
 

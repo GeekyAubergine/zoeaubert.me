@@ -1,5 +1,6 @@
 pub mod event_queue;
 pub mod job_runner;
+pub mod logger_listener;
 
 use crate::application::events::Event;
 

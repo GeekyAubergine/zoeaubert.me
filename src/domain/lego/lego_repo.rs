@@ -5,11 +5,12 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
 use crate::{
-    domain::models::lego::{LegoMinifig, LegoSet},
     get_json,
     infrastructure::config::Config,
     prelude::*, ONE_HOUR_CACHE_PERIOD,
 };
+
+use super::lego_models::{LegoMinifig, LegoSet};
 
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
 
@@ -155,11 +156,14 @@ impl LegoRepo {
         }
     }
 
-    pub fn from_archive(archive: LegoRepoArchive) -> Self {
-        Self {
-            brickset: Arc::new(RwLock::new(archive.brickset)),
-            last_updated: Arc::new(RwLock::new(archive.last_updated)),
-        }
+    pub async fn load_from_archive(&self, archive: LegoRepoArchive) {
+        let mut brickset_ref = self.brickset.write().await;
+
+        *brickset_ref = archive.brickset;
+
+        let mut last_updated = self.last_updated.write().await;
+
+        *last_updated = archive.last_updated;
     }
 
     pub async fn reload(&self, config: &Config) -> Result<()> {

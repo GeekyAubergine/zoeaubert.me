@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
 use crate::{
-    domain::models::{about::About, faq::Faq},
     infrastructure::{
         cache::Cache,
         config::Config,
@@ -12,6 +11,8 @@ use crate::{
     },
     prelude::*,
 };
+
+use super::faq_models::Faq;
 
 const FILE_NAME: &str = "faq.md";
 

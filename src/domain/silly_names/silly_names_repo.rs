@@ -5,7 +5,6 @@ use tokio::sync::RwLock;
 use tracing::info;
 
 use crate::{
-    domain::models::about::About,
     infrastructure::{
         cache::Cache,
         config::Config,

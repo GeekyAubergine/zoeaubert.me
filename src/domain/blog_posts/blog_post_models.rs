@@ -1,9 +1,7 @@
-use crate::{error::Error, prelude::*};
+use crate::{domain::models::{image::Image, tag::Tag}, error::Error, prelude::*};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-
-use super::{image::Image, tag::Tag};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BlogPost {

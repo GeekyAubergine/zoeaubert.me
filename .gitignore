@@ -89,3 +89,5 @@ _static
 # Added by cargo
 
 /target
+
+test.js

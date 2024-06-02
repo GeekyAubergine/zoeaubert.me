@@ -8,8 +8,8 @@ use axum::{
 };
 use tracing::info;
 
-use crate::{build_data, domain::models::page::Page, infrastructure::app_state::AppState};
-use crate::{domain::models::blog_post::BlogPost, utils::{FormatMarkdown, FormatDate}};
+use crate::{build_data, domain::{blog_posts::blog_post_models::BlogPost, models::page::Page}, infrastructure::app_state::AppState};
+use crate::{utils::{FormatMarkdown, FormatDate}};
 
 const RECENT_POSTS_COUNT: usize = 5;
 

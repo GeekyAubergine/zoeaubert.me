@@ -7,10 +7,9 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::{
-    domain::models::status_lol::StatusLolPost, get_json, infrastructure::config::Config,
-    prelude::*, ONE_HOUR_CACHE_PERIOD,
-};
+use crate::{get_json, infrastructure::config::Config, prelude::*, ONE_HOUR_CACHE_PERIOD};
+
+use super::status_lol_models::StatusLolPost;
 
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
 
@@ -75,11 +74,12 @@ impl StatusLolRepo {
         }
     }
 
-    pub fn from_archive(archive: StatusLolRepoArchive) -> Self {
-        Self {
-            posts: Arc::new(RwLock::new(archive.posts)),
-            last_updated: Arc::new(RwLock::new(archive.last_updated)),
-        }
+    pub async fn load_from_archive(&self, archive: StatusLolRepoArchive) {
+        let mut posts = self.posts.write().await;
+        *posts = archive.posts;
+
+        let mut last_updated = self.last_updated.write().await;
+        *last_updated = archive.last_updated;
     }
 
     pub async fn reload(&self, config: &Config) -> Result<()> {

@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
 use crate::{
-    domain::models::about::About,
     infrastructure::{
         cache::Cache,
         config::Config,
@@ -12,6 +11,8 @@ use crate::{
     },
     prelude::*,
 };
+
+use super::about_models::About;
 
 const FILE_NAME_SHORT: &str = "about_short.md";
 const FILE_NAME_LONG: &str = "about_long.md";

@@ -39,4 +39,8 @@ pub enum Error {
     ParseBlogPost(String),
     #[error("Could not parse date {0}")]
     ParseDate(String),
+    #[error("Could not find langauge for code block")]
+    CouldNotFindLangaugeForCodeBlock(),
+    #[error("Could not find body for code block")]
+    CouldNotFindBodyForCodeBlock(),
 }

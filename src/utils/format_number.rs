@@ -94,6 +94,7 @@ mod tests {
 
     #[test]
     fn test_format_number() {
+        assert_eq!(1000.5.format(0, true), "1,000");
         assert_eq!(format(1000.5, 0, true), "1,000");
         assert_eq!(format(1000.5, 1, true), "1,000.5");
         assert_eq!(format(1000.5, 2, true), "1,000.50");

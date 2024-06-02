@@ -10,12 +10,11 @@ use serde::{Deserialize, Serialize};
 use tokio::{sync::RwLock, task::JoinSet};
 
 use crate::{
-    domain::models::game::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
-    get_json,
-    infrastructure::config::Config,
-    prelude::*,
-    ONE_DAY_CACHE_PERIOD, ONE_HOUR_CACHE_PERIOD,
+    get_json, infrastructure::config::Config, prelude::*, ONE_DAY_CACHE_PERIOD,
+    ONE_HOUR_CACHE_PERIOD,
 };
+
+use super::games_models::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked};
 
 const NO_REFETCH_DURATION: Duration = ONE_DAY_CACHE_PERIOD;
 
@@ -302,14 +301,17 @@ impl GamesRepo {
         }
     }
 
-    pub fn from_archive(archive: GameRepoArchive) -> Self {
-        Self {
-            games: Arc::new(RwLock::new(archive.games)),
-            last_updated: Arc::new(RwLock::new(archive.last_updated)),
-        }
+    pub async fn load_from_archive(&self, archive: GameRepoArchive) {
+        let mut games = self.games.write().await;
+        let mut last_updated = self.last_updated.write().await;
+
+        *games = archive.games;
+        *last_updated = archive.last_updated;
     }
 
     pub async fn reload(&self, config: &Config) -> Result<()> {
+        return Ok(());
+
         let last_updated = *self.last_updated.read().await;
 
         if last_updated + NO_REFETCH_DURATION > Utc::now() {
@@ -338,6 +340,7 @@ impl GamesRepo {
         //     }
         // }
 
+        // TODO Check last updated time and only fetch if it's updated
         for game in steam_owned_games_response.response.games {
             let game_with_achievements = load_data_for_steam_game(game, config.clone()).await;
 

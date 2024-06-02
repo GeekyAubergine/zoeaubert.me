@@ -4,13 +4,9 @@ use tokio::sync::{mpsc::Sender, RwLock};
 
 use crate::{
     application::events::Event,
+    domain::{about::about_repo::AboutRepo, blog_posts::blog_posts_repo::BlogPostsRepo, faq::faq_repo::FaqRepo, games::games_repo::GamesRepo, lego::lego_repo::LegoRepo, silly_names::silly_names_repo::SillyNamesRepo, status_lol::status_lol_repo::StatusLolRepo},
     error::Error,
-    infrastructure::{
-        config::Config,
-        repositories::{
-            games_repo::GamesRepo, lego_repo::LegoRepo, status_lol_repo::StatusLolRepo,
-        },
-    },
+    infrastructure::config::Config,
     load_archive_file,
     prelude::*,
     GAMES_ARCHIVE_FILENAME, LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
@@ -22,7 +18,6 @@ use super::{
     cdn::Cdn,
     config::SiteConfig,
     content_dir::ContentDir,
-    repositories::{about_repo::AboutRepo, blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo, silly_names_repo::SillyNamesRepo},
 };
 
 #[derive(Debug, Clone)]
@@ -63,27 +58,6 @@ impl AppStateData {
             silly_names_repo: SillyNamesRepo::new(),
             blog_posts_repo: BlogPostsRepo::new(),
         }
-    }
-
-    pub async fn load_from_archive(&mut self) -> Result<()> {
-        match load_archive_file(self.config(), GAMES_ARCHIVE_FILENAME).await {
-            Ok(games_archive) => self.games_repo = GamesRepo::from_archive(games_archive),
-            Err(_) => {}
-        }
-
-        match load_archive_file(self.config(), LEGO_ARCHIVE_FILENAME).await {
-            Ok(lego_archive) => self.lego_repo = LegoRepo::from_archive(lego_archive),
-            Err(_) => {}
-        }
-
-        match load_archive_file(self.config(), STATUS_LOL_ARCHIVE_FILENAME).await {
-            Ok(status_lol_archive) => {
-                self.status_lol_repo = StatusLolRepo::from_archive(status_lol_archive)
-            }
-            Err(_) => {}
-        }
-
-        Ok(())
     }
 
     pub async fn dispatch_job<J: Job + 'static>(&self, job: J) -> Result<()> {
