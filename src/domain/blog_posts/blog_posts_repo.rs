@@ -43,7 +43,9 @@ fn file_to_blog_post(s: &str) -> Result<BlogPost> {
     let split = s.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
-    let content = split.get(2);
+    let front_matter_len = front_matter.map(|s| s.len()).unwrap_or(0);
+
+    let content = s.get(front_matter_len + 6..);
 
     match (front_matter, content) {
         (Some(front_matter), Some(content)) => {

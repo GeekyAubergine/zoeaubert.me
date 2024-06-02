@@ -108,7 +108,7 @@
     }
 
     hr {
-        @apply border-border dark:border-border-dark my-4 mx-0 last-of-type:hidden;
+        @apply border-border dark:border-border-dark my-4 mx-0;
     }
 
     div,
@@ -201,12 +201,12 @@
 
     :not(pre) > code {
         @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
-        font-size: 90%;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro', 'Courier New', monospace;
     }
 
     pre {
-        @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal overflow-x-scroll;
-        font-size: 90%;
+        @apply bg-code dark:bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro', 'Courier New', monospace;
     }
 
     p:first-of-type {

@@ -22,7 +22,7 @@ lazy_static! {
         options.extension.header_ids = None;
         options.extension.footnotes = false;
         options.extension.description_lists = false;
-        options.extension.front_matter_delimiter = Some("---".to_owned());
+        options.extension.front_matter_delimiter =None;
         options.extension.multiline_block_quotes = true;
         options.extension.shortcodes = true;
 
@@ -69,7 +69,7 @@ lazy_static! {
     // };
 }
 
-fn correct_codeblock_language_name(s: &str) -> &str {
+fn correct_codeblock_language_name_to_extension(s: &str) -> &str {
     match s {
         "ts" => "tsx",
         "js" => "javascript",
@@ -81,7 +81,7 @@ fn correct_codeblock_language_name(s: &str) -> &str {
         "css" => "css",
         "scss" => "scss",
         "md" => "markdown",
-        "rs" => "rust",
+        "rust" => "rs",
         "py" => "python",
         "rb" => "ruby",
         "java" => "java",
@@ -105,9 +105,7 @@ fn highlight_code_block_capture(caps: &regex::Captures) -> Result<String> {
         .ok_or(Error::CouldNotFindBodyForCodeBlock())?
         .as_str();
 
-    let lang = correct_codeblock_language_name(original_lang);
-
-    println!("lang: {}", lang);
+    let lang = correct_codeblock_language_name_to_extension(original_lang);
 
     let syntax = SYNTAX_SET
         .find_syntax_by_extension(lang)
@@ -148,18 +146,19 @@ fn highlight_code_block_capture(caps: &regex::Captures) -> Result<String> {
     let highlighted = lines.join("\n");
 
     Ok(format!(
-        "<pre lang=\"{}\"><code>{}</code></pre>",
+        "<pre lang=\"{}\">{}</pre>",
         original_lang, highlighted
     ))
 }
 
 fn highligh_codeblocks(markdown: &str) -> String {
+    let markdown = html_escape::decode_html_entities(markdown).to_string();
     let re = Regex::new(
         r#"<pre lang="(?P<lang>\S+?)">\s*?<code>(?P<body>(?s:(.*?)))(</code>\s*?</pre>)"#,
     )
     .unwrap();
     re.replace_all(
-        markdown,
+        &markdown,
         |caps: &regex::Captures| match highlight_code_block_capture(caps) {
             Ok(highlighted) => highlighted,
             Err(e) => {
@@ -169,15 +168,6 @@ fn highligh_codeblocks(markdown: &str) -> String {
         },
     )
     .into_owned()
-}
-
-fn replace_codeblock_language_old_style_with_new(s: &str) -> String {
-    let re = Regex::new("<pre lang=\"(.+)\">(.*?)<code>").unwrap();
-    re.replace_all(
-        s,
-        "<pre class=\"language-$1\">$2<code class=\"language-$1\">",
-    )
-    .to_string()
 }
 
 fn string_to_html(s: &str) -> String {
