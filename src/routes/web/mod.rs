@@ -8,20 +8,28 @@ use axum::{
 };
 use tracing::info;
 
-use crate::{build_data, domain::{blog_posts::blog_post_models::BlogPost, models::page::Page}, infrastructure::app_state::AppState};
-use crate::{utils::{FormatMarkdown, FormatDate}};
+use crate::utils::{FormatDate, FormatMarkdown};
+use crate::{
+    build_data,
+    domain::{blog_posts::blog_post_models::BlogPost, models::page::Page},
+    infrastructure::app_state::AppState,
+};
 
 const RECENT_POSTS_COUNT: usize = 5;
 
 pub mod blog;
 pub mod hobbies;
+pub mod interests;
+pub mod timeline;
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/faq", get(faq))
         .nest("/hobbies", hobbies::router())
+        .nest("/interests", interests::router())
         .nest("/blog", blog::router())
+        .nest("/timeline", timeline::router())
 }
 
 #[derive(Template)]
@@ -34,7 +42,16 @@ pub struct IndexTemplate {
 }
 
 async fn index(State(state): State<AppState>) -> IndexTemplate {
-    let page = Page::new(state.site(), "/", None, None, None, None, None, vec![]);
+    let page = Page::new(
+        state.site(),
+        "/",
+        None,
+        None,
+        None,
+        None,
+        None,
+        vec![],
+    );
 
     let about_text = state.about_repo().get().await.short().to_owned();
 

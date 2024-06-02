@@ -527,11 +527,11 @@
             }
         }
 
-        & .post-title {
+        .post-title, h3 {
             @apply text-2xl mt-0 mb-2 accent no-underline;
             font-family: 'WilcoLoftSans';
             font-display: swap;
-            @apply mt-8 mb-0;
+            @apply mt-8;
             letter-spacing: 0.025rem;
         }
 
@@ -563,6 +563,23 @@
 
             & .timestamp {
                 @apply w-[16ch] text-right;
+            }
+        }
+
+        .timeline-game-achievement {
+            h3 {
+                @apply mb-4;
+            }
+
+            .images-and-descriptions {
+                @apply flex-row;
+
+                .images {
+                    @apply flex-row;
+                    img {
+                        @apply block h-[6rem];
+                    }
+                }
             }
         }
     }
@@ -685,6 +702,10 @@
 
         & hr {
             @apply !flex my-4;
+
+            &:is(:last-of-type, :not(:first-of-type)) {
+                @apply hidden;
+            }
         }
     }
 

@@ -26,7 +26,7 @@ pub fn router() -> Router<AppState> {
 }
 
 #[derive(Template)]
-#[template(path = "hobbies/games/index.html")]
+#[template(path = "interests/games/index.html")]
 pub struct IndexTemplate {
     page: Page,
     games_by_recently_played: Vec<Game>,
@@ -38,7 +38,7 @@ pub struct IndexTemplate {
 async fn index(State(state): State<AppState>) -> IndexTemplate {
     let page = Page::new(
         state.site(),
-        "/hobbies/games",
+        "/interests/games",
         Some("Games"),
         Some("Games I own"),
         None,
@@ -73,7 +73,7 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
 }
 
 #[derive(Template)]
-#[template(path = "hobbies/games/game.html")]
+#[template(path = "interests/games/game.html")]
 pub struct GameTemplate {
     page: Page,
     game: Game,
@@ -114,7 +114,7 @@ async fn game_page(
 
     let page = Page::new(
         state.site(),
-        &format!("/hobbies/games/{}", game.id()),
+        &format!("/interests/games/{}", game.id()),
         Some(title.as_str()),
         Some(description.as_str()),
         Some(image),

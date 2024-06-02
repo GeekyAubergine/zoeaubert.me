@@ -1,8 +1,8 @@
 use askama::Template;
 use axum::{
-    extract::State,
+    extract::{Path, State},
     http::StatusCode,
-    response::{Html, IntoResponse, Response},
+    response::{Html, IntoResponse, Redirect, Response},
     routing::get,
     Router,
 };
@@ -11,31 +11,10 @@ use crate::{build_data, domain::models::page::Page, infrastructure::app_state::A
 
 use crate::utils::{FormatDate, FormatNumber};
 
-pub mod games;
-
 pub fn router() -> Router<AppState> {
-    Router::new()
-        .route("/", get(index))
-        .nest("/games", games::router())
+    Router::new().route("/*path", get(redirect_to_interests))
 }
 
-#[derive(Template)]
-#[template(path = "hobbies/index.html")]
-pub struct IndexTemplate {
-    page: Page,
-}
-
-async fn index(State(state): State<AppState>) -> IndexTemplate {
-    let page = Page::new(
-        state.site(),
-        "/hobbies/",
-        Some("Hobbies"),
-        Some("My Hobbies"),
-        None,
-        None,
-        None,
-        vec![],
-    );
-
-    IndexTemplate { page }
+async fn redirect_to_interests(Path(path): Path<String>) -> Redirect {
+    Redirect::permanent(&format!("/interests/{}", path))
 }

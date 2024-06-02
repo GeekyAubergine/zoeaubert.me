@@ -1,0 +1,16 @@
+<artcile class="timeline-post timeline-game-achievement">
+    <h3>{{ game.name() }} - {{ achievement.display_name() }}</h3>
+    <p>{{ achievement.description() }}</p>
+    <p class="secondary">{{ achievement.global_unlocked_percentage().format(1, false) }}% of players have this acheivement{%- if achievement.global_unlocked_percentage() < 10.0 %}
+            <span class="special">⭐️<span>
+                {% endif %}
+            </p>
+    <div class="tags-and-timestamp">
+        <div ></div>
+        <a href="/interests/games/{{ game.id() }}" rel="noopener" class="timestamp">
+            <time datetime="{{ achievement.unlocked_date().datetime() }}">
+                {{ achievement.unlocked_date().short_iso() }}
+            </time>
+        </a>
+    </div>
+</artcile>

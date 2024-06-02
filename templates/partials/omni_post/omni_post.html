@@ -1,0 +1,9 @@
+{% match omni_post %}
+{% when OmniPost::UnlockedGameAchievement with {
+    game,
+    achievement
+} %}
+{% include "partials/omni_post/omni_post_game_achievement.html" %}
+{% when OmniPost::StatusLol with (post) %}
+<p>{{post.content()}}</p>
+{% endmatch %}

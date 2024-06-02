@@ -421,6 +421,22 @@ impl GamesRepo {
 
         total_playtime as f32 / 60.0
     }
+
+    pub async fn get_all_unlocked_acheivements_for_game(&self, id: u32) -> Vec<GameAchievementUnlocked> {
+        let games = self.games.read().await;
+
+        match games.get(&id) {
+            Some(game) => game
+                .achievements()
+                .values()
+                .filter_map(|achievement| match achievement {
+                    GameAchievement::Unlocked(unlocked) => Some(unlocked.clone()),
+                    _ => None,
+                })
+                .collect(),
+            None => vec![],
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

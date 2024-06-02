@@ -79,6 +79,47 @@ impl From<SiteConfigSocialNetworkLink> for SocialNetworkLink {
     }
 }
 
+pub struct PagePaginationLabel {
+    url: String,
+    label: String,
+}
+
+impl PagePaginationLabel {
+    pub fn new(url: &str, title: &str) -> Self {
+        Self {
+            url: url.to_owned(),
+            label: title.to_owned(),
+        }
+    }
+
+    pub fn url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn label(&self) -> &str {
+        &self.label
+    }
+}
+
+pub struct PagePagination {
+    next: Option<PagePaginationLabel>,
+    previous: Option<PagePaginationLabel>,
+}
+
+impl PagePagination {
+    pub fn new(next: Option<PagePaginationLabel>, prev: Option<PagePaginationLabel>) -> Self {
+        Self { next, previous: prev }
+    }
+
+    pub fn next(&self) -> Option<&PagePaginationLabel> {
+        self.next.as_ref()
+    }
+
+    pub fn previous(&self) -> Option<&PagePaginationLabel> {
+        self.previous.as_ref()
+    }
+}
+
 pub struct Page {
     url: String,
     title: String,
@@ -95,6 +136,7 @@ pub struct Page {
     date: Option<DateTime<Utc>>,
     read_time: Option<String>,
     tags: Vec<Tag>,
+    page_pagination: Option<PagePagination>,
 }
 
 impl Page {
@@ -157,6 +199,7 @@ impl Page {
             date,
             read_time,
             tags,
+            page_pagination: None,
         }
     }
 
@@ -167,6 +210,11 @@ impl Page {
 
     pub fn set_no_search(mut self) -> Self {
         self.disable_search = true;
+        self
+    }
+
+    pub fn with_pagination(mut self, pagination: PagePagination) -> Self {
+        self.page_pagination = Some(pagination);
         self
     }
 
@@ -248,5 +296,9 @@ impl Page {
 
     pub fn tags(&self) -> &[Tag] {
         &self.tags
+    }
+
+    pub fn page_pagination(&self) -> Option<&PagePagination> {
+        self.page_pagination.as_ref()
     }
 }

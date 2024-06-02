@@ -21,3 +21,19 @@ async fn handler_404() -> impl IntoResponse {
         "The requested resource was not found",
     )
 }
+
+#[derive(Deserialize)]
+struct Pagination {
+    page: Option<usize>,
+    per_page: Option<usize>,
+}
+
+impl Pagination {
+    fn page(&self) -> usize {
+        self.page.unwrap_or(1)
+    }
+
+    fn per_page(&self) -> usize {
+        self.per_page.unwrap_or(25)
+    }
+}
