@@ -1,3 +1,4 @@
+<artcile class="timeline-post">
 {% match omni_post %}
 {% when OmniPost::UnlockedGameAchievement with {
     game,
@@ -7,3 +8,19 @@
 {% when OmniPost::StatusLol with (post) %}
 <p>{{post.content()}}</p>
 {% endmatch %}
+{%- block content %}
+{%- endblock %}
+
+<div class="tags-and-timestamp">
+    <div class="tags-list">
+        {% let tags = omni_post.tags() %}
+        {% include "partials/tags_list.html" %}
+    </div>
+    <a href="{{ omni_post.permalink() }}" rel="noopener" class="timestamp">
+        <time datetime="{{ omni_post.date().datetime() }}">
+            {{ omni_post.date().short_iso() }}
+        </time>
+    </a>
+</div>
+
+</artcile>

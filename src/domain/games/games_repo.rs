@@ -321,7 +321,7 @@ impl GamesRepo {
         let steam_owned_games_response =
             get_json::<SteamGetOwnedGamesResponse>(&make_get_games_url(config)).await?;
 
-        let mut steam_games = HashMap::new();
+        let mut steam_games = self.games.read().await.clone();
 
         for game in steam_owned_games_response.response.games {
             println!("Loading game: {}", game.name);

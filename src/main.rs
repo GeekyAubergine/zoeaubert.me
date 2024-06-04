@@ -44,6 +44,7 @@ use tokio::{
 use tower::{Service, ServiceBuilder, ServiceExt};
 use tower_http::ServiceBuilderExt;
 use tower_http::{cors::CorsLayer, normalize_path::NormalizePathLayer, services::ServeDir};
+use tower_livereload::LiveReloadLayer;
 use tracing::{debug, info, Level};
 
 mod application;
@@ -124,6 +125,7 @@ async fn main() -> Result<()> {
         .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE]);
 
     let services = ServiceBuilder::new()
+        .layer(LiveReloadLayer::new())
         .layer(NormalizePathLayer::trim_trailing_slash())
         .layer(cors);
 

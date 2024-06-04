@@ -1,10 +1,8 @@
 User-agent: *
 Allow: /interests/warhammer
-Disallow: /albums
-Disallow: /photos
-Disallow: /hobbies
-Disallow: /interests
-Disallow: /timeline
+Allow: /blog
+Allow: /faq
+Disallow: /
 
 User-agent: AdsBot-Google
 User-agent: Amazonbot

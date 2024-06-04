@@ -519,6 +519,8 @@
     }
 
     .timeline-post {
+        @apply py-4 first-of-type:pt-0;
+
         & .timestamp {
             @apply mt-0 mb-4;
 
@@ -527,12 +529,8 @@
             }
         }
 
-        .post-title, h3 {
-            @apply text-2xl mt-0 mb-2 accent no-underline;
-            font-family: 'WilcoLoftSans';
-            font-display: swap;
-            @apply mt-8;
-            letter-spacing: 0.025rem;
+        h2 {
+            @apply mt-0 mb-3 text-2xl accent;
         }
 
         & .media {
@@ -562,24 +560,7 @@
             }
 
             & .timestamp {
-                @apply w-[16ch] text-right;
-            }
-        }
-
-        .timeline-game-achievement {
-            h3 {
-                @apply mb-4;
-            }
-
-            .images-and-descriptions {
-                @apply flex-row;
-
-                .images {
-                    @apply flex-row;
-                    img {
-                        @apply block h-[6rem];
-                    }
-                }
+                @apply w-[16ch] text-right mb-0;
             }
         }
     }
@@ -822,7 +803,7 @@
         }
 
         .right {
-            @apply flex-col justify-between items-end;
+            @apply flex-col justify-between items-end pt-3;
         }
 
         .secondary {

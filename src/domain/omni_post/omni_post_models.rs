@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::{
     games::games_models::{Game, GameAchievementUnlocked},
+    models::tag::Tag,
     status_lol::status_lol_models::StatusLolPost,
 };
 
@@ -35,6 +36,13 @@ impl OmniPost {
         match self {
             Self::StatusLol(status_lol) => status_lol.date(),
             Self::UnlockedGameAchievement { achievement, .. } => achievement.unlocked_date(),
+        }
+    }
+
+    pub fn tags(&self) -> Vec<Tag> {
+        match self {
+            Self::StatusLol(status_lol) => vec![Tag::new("StatusLol")],
+            Self::UnlockedGameAchievement { game, .. } => vec![Tag::new("Gaming")],
         }
     }
 }
