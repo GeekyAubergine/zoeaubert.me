@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+use crate::domain::models::tag::Tag;
 use crate::prelude::*;
 
 use crate::infrastructure::app_state::{self, AppState};
@@ -45,10 +48,41 @@ impl OmniPostRepo {
                 .blog_posts_repo()
                 .get_all()
                 .await
-                .into_iter()
-                .map(|(_, post)| OmniPost::BlogPost(post))
+                .into_values()
+                .map(OmniPost::BlogPost)
                 .collect::<Vec<_>>(),
         );
+
+        posts.sort_by(|a, b| b.date().cmp(a.date()));
+
+        Ok(posts)
+    }
+
+    pub async fn get_posts_tags_and_counts(app_state: &AppState) -> Result<HashMap<Tag, usize>> {
+        let mut tags = HashMap::new();
+
+        let posts = Self::get_posts_ordered_by_date(app_state).await?;
+
+        for post in posts {
+            for tag in post.tags() {
+                let count = tags.entry(tag).or_insert(0);
+                *count += 1;
+            }
+        }
+
+        Ok(tags)
+    }
+
+    pub async fn get_posts_by_tag_ordered_by_date(
+        app_state: &AppState,
+        tag: &Tag,
+    ) -> Result<Vec<OmniPost>> {
+        let posts = Self::get_posts_ordered_by_date(app_state).await?;
+
+        let mut posts = posts
+            .into_iter()
+            .filter(|post| post.tags().iter().any(|t| t == tag))
+            .collect::<Vec<_>>();
 
         posts.sort_by(|a, b| b.date().cmp(a.date()));
 

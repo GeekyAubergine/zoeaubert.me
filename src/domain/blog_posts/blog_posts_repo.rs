@@ -54,7 +54,7 @@ fn file_to_blog_post(s: &str) -> Result<BlogPost> {
             let tags = front_matter
                 .tags
                 .iter()
-                .map(|tag| Tag::new(tag))
+                .map(|tag| Tag::from_string(tag))
                 .collect::<Vec<Tag>>();
 
             let date = parse_date(front_matter.date.as_str())?;

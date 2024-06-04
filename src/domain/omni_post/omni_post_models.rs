@@ -43,8 +43,8 @@ impl OmniPost {
 
     pub fn tags(&self) -> Vec<Tag> {
         match self {
-            Self::StatusLol(status_lol) => vec![Tag::new("StatusLol")],
-            Self::UnlockedGameAchievement { game, .. } => vec![Tag::new("Games")],
+            Self::StatusLol(status_lol) => vec![Tag::from_string("StatusLol")],
+            Self::UnlockedGameAchievement { game, .. } => vec![Tag::from_string("Gaming")],
             Self::BlogPost(blog_post) => blog_post.tags().to_owned(),
         }
     }

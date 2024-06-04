@@ -21,6 +21,7 @@ pub mod blog;
 pub mod hobbies;
 pub mod interests;
 pub mod timeline;
+pub mod tags;
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -30,6 +31,7 @@ pub fn router() -> Router<AppState> {
         .nest("/interests", interests::router())
         .nest("/blog", blog::router())
         .nest("/timeline", timeline::router())
+        .nest("/tags", tags::router())
 }
 
 #[derive(Template)]
