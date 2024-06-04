@@ -10,6 +10,7 @@ impl OmniPostRepo {
     pub async fn get_posts_ordered_by_date(app_state: &AppState) -> Result<Vec<OmniPost>> {
         let mut posts = vec![];
 
+        // Games
         let all_games = app_state.games_repo().get_all_games().await;
 
         for game in all_games.values() {
@@ -27,7 +28,22 @@ impl OmniPostRepo {
             }
         }
 
-        posts.sort_by(|a, b| b.date().cmp(&a.date()));
+        // StatusLol
+
+        let all_status_lol = app_state
+            .status_lol_repo()
+            .get_all()
+            .await
+            .into_iter()
+            .map(OmniPost::StatusLol)
+            .collect::<Vec<_>>();
+
+        posts.extend(all_status_lol);
+
+
+
+
+        posts.sort_by(|a, b| b.date().cmp(a.date()));
 
         Ok(posts)
     }

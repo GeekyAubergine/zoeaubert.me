@@ -49,7 +49,7 @@ impl From<ReponseStatusLolPost> for StatusLolPost {
         let original_url = format!("https://{}.status.lol/{}", post.address, post.id);
 
         let date = match post.created.parse::<i64>() {
-            Ok(date) => match DateTime::from_timestamp(date * 1000, 0) {
+            Ok(date) => match DateTime::from_timestamp(date, 0) {
                 Some(date) => date,
                 None => Utc::now(),
             },
@@ -87,12 +87,12 @@ impl StatusLolRepo {
 
         let posts = response.response.statuses;
 
-        let mut posts = self.posts.write().await;
-        *posts = posts.clone();
+        let mut post_ref = self.posts.write().await;
+        *post_ref = posts.clone();
 
-        let mut last_updated = self.last_updated.write().await;
+        let mut last_updated_ref = self.last_updated.write().await;
 
-        *last_updated = Utc::now();
+        *last_updated_ref = Utc::now();
 
         Ok(())
     }
@@ -107,12 +107,12 @@ impl StatusLolRepo {
         }
     }
 
-    pub async fn get_status_lol_posts(&self) -> Result<Vec<StatusLolPost>> {
+    pub async fn get_all(&self) -> Vec<StatusLolPost> {
         let posts = self.posts.read().await;
-        Ok(posts
+        posts
             .iter()
             .map(|post| post.clone().into())
-            .collect::<Vec<StatusLolPost>>())
+            .collect::<Vec<StatusLolPost>>()
     }
 }
 

@@ -6,7 +6,7 @@
 } %}
 {% include "partials/omni_post/omni_post_game_achievement.html" %}
 {% when OmniPost::StatusLol with (post) %}
-<p>{{post.content()}}</p>
+{% include "partials/omni_post/omni_post_status_lol.html" %}
 {% endmatch %}
 {%- block content %}
 {%- endblock %}
