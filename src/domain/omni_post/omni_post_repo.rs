@@ -29,19 +29,26 @@ impl OmniPostRepo {
         }
 
         // StatusLol
+        posts.extend(
+            app_state
+                .status_lol_repo()
+                .get_all()
+                .await
+                .into_iter()
+                .map(OmniPost::StatusLol)
+                .collect::<Vec<_>>(),
+        );
 
-        let all_status_lol = app_state
-            .status_lol_repo()
-            .get_all()
-            .await
-            .into_iter()
-            .map(OmniPost::StatusLol)
-            .collect::<Vec<_>>();
-
-        posts.extend(all_status_lol);
-
-
-
+        // Blog Posts
+        posts.extend(
+            app_state
+                .blog_posts_repo()
+                .get_all()
+                .await
+                .into_iter()
+                .map(|(_, post)| OmniPost::BlogPost(post))
+                .collect::<Vec<_>>(),
+        );
 
         posts.sort_by(|a, b| b.date().cmp(a.date()));
 

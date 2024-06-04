@@ -7,6 +7,8 @@
 {% include "partials/omni_post/omni_post_game_achievement.html" %}
 {% when OmniPost::StatusLol with (post) %}
 {% include "partials/omni_post/omni_post_status_lol.html" %}
+{% when OmniPost::BlogPost with (post) %}
+{% include "partials/omni_post/omni_post_blog_post.html" %}
 {% endmatch %}
 {%- block content %}
 {%- endblock %}

@@ -75,8 +75,11 @@ impl Image {
         &self.orientation
     }
 
-    pub fn title(&self) -> Option<&str> {
-        self.title.as_deref()
+    pub fn title(&self) -> &str {
+        match &self.title {
+            Some(title) => title,
+            None => self.alt(),
+        }
     }
 
     pub fn description(&self) -> Option<&str> {

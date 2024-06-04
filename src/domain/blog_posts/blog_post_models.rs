@@ -43,8 +43,8 @@ impl BlogPost {
         &self.slug
     }
 
-    pub fn date(&self) -> DateTime<Utc> {
-        self.date
+    pub fn date(&self) -> &DateTime<Utc> {
+        &self.date
     }
 
     pub fn title(&self) -> &str {

@@ -142,7 +142,7 @@ impl BlogPostsRepo {
             .map(|(_, blog_post)| blog_post)
             .collect::<Vec<BlogPost>>();
 
-        blog_posts.sort_by_key(|b| std::cmp::Reverse(b.date()));
+        blog_posts.sort_by_key(|b| std::cmp::Reverse(*b.date()));
 
         blog_posts
     }

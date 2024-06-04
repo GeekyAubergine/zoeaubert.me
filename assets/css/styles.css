@@ -534,7 +534,7 @@
         }
 
         & .media {
-            @apply flex flex-row justify-start mb-6;
+            @apply flex flex-row justify-start my-2;
 
             & > .media-grid {
                 @apply grid gap-x-1 grid-cols-2 overflow-hidden;

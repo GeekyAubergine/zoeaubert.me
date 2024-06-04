@@ -66,7 +66,7 @@ async fn post_page(Path(id): Path<String>, State(state): State<AppState>) -> Res
         Some(post.title()),
         Some(post.description()),
         post.hero_image(),
-        Some(post.date()),
+        Some(post.date().clone()),
         None,
         post.tags(),
     )

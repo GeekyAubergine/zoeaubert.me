@@ -1,0 +1,9 @@
+<h2>{{ post.title() }}</h2>
+{% match post.hero_image() %}
+{% when Some with (hero) %}
+<div class="media">
+    <img src="{{ hero.url() }}" alt="{{ hero.alt() }}" width="{{ hero.width() }}" height="{{ hero.height() }}" title="{{ hero.title() }}"/>
+</div>
+{% when None %}
+{% endmatch %}
+<p>{{ post.description() }}</p>
