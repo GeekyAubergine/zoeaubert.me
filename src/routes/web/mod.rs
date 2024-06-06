@@ -20,13 +20,14 @@ const RECENT_POSTS_COUNT: usize = 5;
 pub mod blog;
 pub mod hobbies;
 pub mod interests;
-pub mod timeline;
 pub mod tags;
+pub mod timeline;
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/faq", get(faq))
+        .route("/now", get(now))
         .nest("/hobbies", hobbies::router())
         .nest("/interests", interests::router())
         .nest("/blog", blog::router())
@@ -44,16 +45,7 @@ pub struct IndexTemplate {
 }
 
 async fn index(State(state): State<AppState>) -> IndexTemplate {
-    let page = Page::new(
-        state.site(),
-        "/",
-        None,
-        None,
-        None,
-        None,
-        None,
-        vec![],
-    );
+    let page = Page::new(state.site(), "/", None, None, None, None, None, vec![]);
 
     let about_text = state.about_repo().get().await.short().to_owned();
 
@@ -98,6 +90,30 @@ async fn faq(State(state): State<AppState>) -> FaqTemplate {
     let faq = state.faq_repo().get().await.text().to_owned();
 
     FaqTemplate { page, faq }
+}
+
+#[derive(Template)]
+#[template(path = "now.html")]
+pub struct NowTemplate {
+    page: Page,
+    now: String,
+}
+
+async fn now(State(state): State<AppState>) -> NowTemplate {
+    let page = Page::new(
+        state.site(),
+        "/now",
+        Some("Now"),
+        Some("My now page"),
+        None,
+        None,
+        None,
+        vec![],
+    );
+
+    let now = "testing".to_owned();
+
+    NowTemplate { page, now }
 }
 
 async fn handler_404() -> impl IntoResponse {

@@ -1,5 +1,5 @@
 ---
-date: 2024-01-13
+date: 2024-01-13T15:50
 title: 2023 What happened with me?
 slug: 2023-what-happened-with-me
 description: A look back over my 2023. CW; Mental health.
