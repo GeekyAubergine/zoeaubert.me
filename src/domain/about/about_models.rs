@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct About {
     short: String,
     long: String,
@@ -17,14 +17,5 @@ impl About {
 
     pub fn long(&self) -> &str {
         &self.long
-    }
-}
-
-impl Default for About {
-    fn default() -> Self {
-        Self {
-            short: String::new(),
-            long: String::new(),
-        }
     }
 }

@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use tracing::warn;
 
 use crate::{
     application::events::Event,
@@ -9,29 +10,24 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct ReloadAboutDataJob;
-
-impl ReloadAboutDataJob {
+pub struct SaveGamesDataToArchiveJob;
+impl SaveGamesDataToArchiveJob {
     pub fn new() -> Self {
         Self
     }
 }
-
 #[async_trait]
-impl Job for ReloadAboutDataJob {
+impl Job for SaveGamesDataToArchiveJob {
     fn name(&self) -> &str {
-        "ReloadAboutDataJob"
+        "SaveGamesDataToArchiveJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
-        app_state
-            .about_repo()
-            .reload(app_state.config(), app_state.content_dir())
-            .await?;
+        let games = app_state.games_repo().get_archived().await;
 
-        app_state
-            .dispatch_event(Event::AboutRepoUpdated)
-            .await?;
+        save_archive_file(app_state.config(), &games, GAMES_ARCHIVE_FILENAME).await?;
+
+        app_state.dispatch_event(Event::GamesRepoArchived).await?;
 
         Ok(())
     }

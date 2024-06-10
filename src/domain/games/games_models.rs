@@ -159,15 +159,10 @@ impl Game {
         name: String,
         header_image_url: String,
         playtime: u32,
-        last_played: u32,
+        last_played: DateTime<Utc>,
         link_url: String,
         achievements: HashMap<String, GameAchievement>,
     ) -> Self {
-        let last_played = match DateTime::from_timestamp(last_played as i64 * 1000, 0) {
-            Some(date) => date,
-            None => Utc::now(),
-        };
-
         Self {
             id,
             name,

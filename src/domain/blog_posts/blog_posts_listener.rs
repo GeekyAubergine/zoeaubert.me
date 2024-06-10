@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::blog_posts_jobs::ReloadBlogPostsJob;
+use super::jobs::load_blog_posts_job::ReloadBlogPostsJob;
 
 pub struct BlogPostsListener;
 

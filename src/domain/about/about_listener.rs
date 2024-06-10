@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::about_jobs::ReloadAboutDataJob;
+use super::jobs::load_about_data_job::LoadAboutDataJob;
 
 pub struct AboutListener;
 
@@ -26,7 +26,7 @@ impl EventListener for AboutListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(ReloadAboutDataJob::new())
+                    .dispatch_job(LoadAboutDataJob::new())
                     .await?;
             }
             _ => {}

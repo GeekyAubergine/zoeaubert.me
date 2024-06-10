@@ -27,19 +27,9 @@ impl SillyNamesRepo {
         }
     }
 
-    pub async fn reload(&self, config: &Config, content_dir: &ContentDir) -> Result<()> {
-        if let Some(silly_names_text) = content_dir.read_file(FILE_NAME, config).await? {
-            let silly_names = silly_names_text
-                .split('\n')
-                .filter_map(|s| Some(s.trim().split(',').next()?.to_owned()))
-                .collect::<Vec<String>>();
-
-            let mut silly_names_ref = self.silly_names.write().await;
-
-            *silly_names_ref = silly_names;
-
-        }
-        Ok(())
+    pub async fn commit(&self, silly_names: Vec<String>) {
+        let mut silly_names_ref = self.silly_names.write().await;
+        *silly_names_ref = silly_names.clone();
     }
 
     pub async fn get(&self) -> Vec<String> {

@@ -29,15 +29,9 @@ impl AboutRepo {
         }
     }
 
-    pub async fn reload(&self, config: &Config, content_dir: &ContentDir) -> Result<()> {
-        if let Some(short_about) = content_dir.read_file(FILE_NAME_SHORT, config).await? {
-            if let Some(long_about) = content_dir.read_file(FILE_NAME_LONG, config).await? {
-                let mut about_ref = self.about.write().await;
-
-                *about_ref = About::new(short_about, long_about);
-            }
-        }
-        Ok(())
+    pub async fn commit(&self, about: About) {
+        let mut about_ref = self.about.write().await;
+        *about_ref = about;
     }
 
     pub async fn get(&self) -> About {

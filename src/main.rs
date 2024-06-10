@@ -59,7 +59,7 @@ pub const GAMES_ARCHIVE_FILENAME: &str = "games.json";
 pub const LEGO_ARCHIVE_FILENAME: &str = "lego.json";
 pub const STATUS_LOL_ARCHIVE_FILENAME: &str = "status_lol.json";
 pub const ABOUT_ARCHIVE_FILENAME: &str = "about.json";
-pub const FAQ_ARCHIVE_FILENAME: &str = "faq.json";
+
 
 pub const ONE_HOUR_CACHE_PERIOD: Duration = Duration::from_mins(59);
 pub const ONE_DAY_CACHE_PERIOD: Duration = Duration::from_mins(60 * 23 + 59);

@@ -23,7 +23,7 @@ pub trait Job: Send + Sync {
 pub type BoxedJob = Box<dyn Job>;
 
 pub fn make_job_channel() -> (Sender<BoxedJob>, Receiver<BoxedJob>) {
-    channel(100)
+    channel(1000)
 }
 
 pub struct JobRunner {

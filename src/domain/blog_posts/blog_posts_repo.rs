@@ -17,81 +17,6 @@ use crate::domain::models::image::Image;
 
 use super::blog_post_models::BlogPost;
 
-const BLOG_POSTS_DIR: &str = "blogPosts";
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct BlogPostFileFrontMatter {
-    slug: String,
-    date: String,
-    title: String,
-    description: String,
-    tags: Vec<String>,
-    hero: Option<String>,
-    #[serde(rename = "heroAlt")]
-    hero_alt: Option<String>,
-    #[serde(rename = "heroWidth")]
-    hero_width: Option<u32>,
-    #[serde(rename = "heroHeight")]
-    hero_height: Option<u32>,
-}
-
-fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
-    serde_yaml::from_str(s).map_err(Error::ParseBlogFrontMatter)
-}
-
-fn file_to_blog_post(s: &str) -> Result<BlogPost> {
-    let split = s.split("---").collect::<Vec<&str>>();
-
-    let front_matter = split.get(1);
-    let front_matter_len = front_matter.map(|s| s.len()).unwrap_or(0);
-
-    let content = s.get(front_matter_len + 6..);
-
-    match (front_matter, content) {
-        (Some(front_matter), Some(content)) => {
-            let front_matter = front_matter_from_string(front_matter)?;
-
-            let tags = front_matter
-                .tags
-                .iter()
-                .map(|tag| Tag::from_string(tag))
-                .collect::<Vec<Tag>>();
-
-            let date = parse_date(front_matter.date.as_str())?;
-
-            let hero_image = match (
-                front_matter.hero,
-                front_matter.hero_alt,
-                front_matter.hero_width,
-                front_matter.hero_height,
-            ) {
-                (Some(url), Some(alt), Some(width), Some(height)) => Some(Image::new(
-                    url.as_str(),
-                    alt.as_str(),
-                    width,
-                    height,
-                    None,
-                    None,
-                    Some(date),
-                    None,
-                )),
-                _ => None,
-            };
-
-            Ok(BlogPost::new(
-                front_matter.slug,
-                date,
-                front_matter.title,
-                front_matter.description,
-                tags,
-                hero_image,
-                content.to_owned().to_owned(),
-            ))
-        }
-        _ => Err(Error::ParseBlogPost("Invalid front matter".to_string())),
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct BlogPostsRepo {
     blog_posts: Arc<RwLock<HashMap<String, BlogPost>>>,
@@ -104,26 +29,9 @@ impl BlogPostsRepo {
         }
     }
 
-    pub async fn reload(&self, config: &Config, content_dir: &ContentDir) -> Result<()> {
-        let blog_posts_files = find_files_rescurse(BLOG_POSTS_DIR, "md", config)?;
-
-        let mut blog_posts = HashMap::new();
-
-        for file in blog_posts_files {
-            let file_content = content_dir.read_file(&file, config).await?;
-
-            if let Some(file_content) = file_content {
-                let blog_post = file_to_blog_post(&file_content)?;
-
-                blog_posts.insert(blog_post.slug().to_owned(), blog_post);
-            }
-        }
-
+    pub async fn commit(&self, blog_post: BlogPost) {
         let mut blog_posts_ref = self.blog_posts.write().await;
-
-        *blog_posts_ref = blog_posts;
-
-        Ok(())
+        blog_posts_ref.insert(blog_post.slug().to_owned(), blog_post);
     }
 
     pub async fn get_all(&self) -> HashMap<String, BlogPost> {

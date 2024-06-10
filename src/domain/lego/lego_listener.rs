@@ -10,7 +10,8 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::lego_jobs::{LoadLegoDataFromArchiveJob, SaveLegoDataToArchiveJob};
+use super::jobs::lego_load_data_from_archive_job::LoadLegoDataFromArchiveJob;
+use super::jobs::lego_save_data_to_archive_job::SaveLegoDataToArchiveJob;
 
 pub struct LegoListener;
 

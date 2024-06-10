@@ -14,7 +14,7 @@ use tracing::error;
 use crate::{application::events::Event, prelude::*};
 
 pub fn make_event_channel() -> (Sender<Event>, Receiver<Event>) {
-    channel(100)
+    channel(1000)
 }
 
 #[async_trait]

@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::faq_jobs::ReloadFaqDataJob;
+use super::jobs::load_faq_job::ReloadFaqDataJob;
 
 pub struct FaqListener;
 

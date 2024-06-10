@@ -14,8 +14,6 @@ use crate::{
 
 use super::faq_models::Faq;
 
-const FILE_NAME: &str = "faq.md";
-
 #[derive(Debug, Clone)]
 pub struct FaqRepo {
     faq_text: Arc<RwLock<Faq>>,
@@ -28,15 +26,17 @@ impl FaqRepo {
         }
     }
 
-    pub async fn reload(&self, config: &Config, content_dir: &ContentDir) -> Result<()> {
-        if let Some(faq_text) = content_dir.read_file(FILE_NAME, config).await? {
-            let mut faq_ref = self.faq_text.write().await;
-
-            *faq_ref = Faq::new(faq_text);
-        }
-        Ok(())
+    pub async fn commit(&self, faq: Faq) {
+        *self.faq_text.write().await = faq;
     }
+
     pub async fn get(&self) -> Faq {
         self.faq_text.read().await.clone()
+    }
+}
+
+impl Default for FaqRepo {
+    fn default() -> Self {
+        Self::new()
     }
 }

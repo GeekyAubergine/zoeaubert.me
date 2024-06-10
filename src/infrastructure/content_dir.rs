@@ -14,7 +14,7 @@ impl ContentDir {
         Self {}
     }
 
-    pub async fn read_file(&self, path: &str, config: &Config) -> Result<Option<String>> {
+    pub async fn read_file(&self, path: &str, config: &Config) -> Result<String> {
         let path = match path.starts_with(config.content_dir()) {
             true => path.to_string(),
             false => format!("{}/{}", config.content_dir(), path),
@@ -23,15 +23,8 @@ impl ContentDir {
 
         debug!("Reading file: {:?}", path);
 
-        match tokio::fs::read_to_string(path).await {
-            Ok(content) => Ok(Some(content)),
-            Err(e) => {
-                if e.kind() == std::io::ErrorKind::NotFound {
-                    Ok(None)
-                } else {
-                    Err(Error::FileSystemUnreadable(e))
-                }
-            }
-        }
+        tokio::fs::read_to_string(path)
+            .await
+            .map_err(Error::FileSystemUnreadable)
     }
 }

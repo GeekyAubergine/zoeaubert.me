@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::silly_names_jobs::ReloadSillyNamesDataJob;
+use super::jobs::silly_name_load_data_job::SillyNameLoadDataJob;
 
 pub struct SillyNamesListener;
 
@@ -26,7 +26,7 @@ impl EventListener for SillyNamesListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(ReloadSillyNamesDataJob::new())
+                    .dispatch_job(SillyNameLoadDataJob::new())
                     .await?;
             }
             _ => {}
