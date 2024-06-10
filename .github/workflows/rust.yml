@@ -14,20 +14,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install latest nightly
+      - name: Install latest 1.78.0
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: 1.78.0
           override: true
           components: rustfmt, clippy
-
-      - name: Install node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '19'
-        
-      - name: Node dependencies
-        run: npm install
 
       - name: Build
         run: cargo build
