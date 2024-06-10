@@ -7,16 +7,16 @@ use crate::{
 const FILE_NAME: &str = "faq.md";
 
 #[derive(Debug)]
-pub struct ReloadFaqDataJob;
-impl ReloadFaqDataJob {
+pub struct LoadFaqJob;
+impl LoadFaqJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for ReloadFaqDataJob {
+impl Job for LoadFaqJob {
     fn name(&self) -> &str {
-        "ReloadFaqDataJob"
+        "LoadFaqJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {

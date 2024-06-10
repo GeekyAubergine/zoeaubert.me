@@ -1,3 +1,3 @@
-pub mod lego_download_data_job;
-pub mod lego_load_data_from_archive_job;
-pub mod lego_save_data_to_archive_job;
+pub mod fetch_lego_job;
+pub mod load_lego_from_archive_job;
+pub mod save_lego_to_archive_job;

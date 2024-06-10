@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::jobs::load_blog_posts_job::ReloadBlogPostsJob;
+use super::jobs::load_blog_posts_job::LoadBlogPostsJob;
 
 pub struct BlogPostsListener;
 
@@ -26,7 +26,7 @@ impl EventListener for BlogPostsListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(ReloadBlogPostsJob::new())
+                    .dispatch_job(LoadBlogPostsJob::new())
                     .await?;
             }
             _ => {}

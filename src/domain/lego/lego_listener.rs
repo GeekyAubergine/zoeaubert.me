@@ -10,8 +10,8 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::jobs::lego_load_data_from_archive_job::LoadLegoDataFromArchiveJob;
-use super::jobs::lego_save_data_to_archive_job::SaveLegoDataToArchiveJob;
+use super::jobs::load_lego_from_archive_job::LoadLegoFromArchiveJob;
+use super::jobs::save_lego_to_archive_job::SaveLegoToArchiveJob;
 
 pub struct LegoListener;
 
@@ -27,12 +27,12 @@ impl EventListener for LegoListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(LoadLegoDataFromArchiveJob::new())
+                    .dispatch_job(LoadLegoFromArchiveJob::new())
                     .await?;
             }
             Event::LegoRepoUpdated => {
                 app_state
-                    .dispatch_job(SaveLegoDataToArchiveJob::new())
+                    .dispatch_job(SaveLegoToArchiveJob::new())
                     .await?;
             }
             _ => {}

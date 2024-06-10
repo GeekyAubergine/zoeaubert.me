@@ -2,20 +2,20 @@ use async_trait::async_trait;
 use tracing::warn;
 
 use crate::{
-    application::events::Event, domain::status_lol::jobs::status_lol_download_data_job::StatusLolDownloadDataJob, infrastructure::{app_state::AppState, bus::job_runner::Job}, load_archive_file, prelude::Result, save_archive_file, STATUS_LOL_ARCHIVE_FILENAME
+    application::events::Event, domain::status_lol::jobs::fetch_status_lol_posts_job::FetchStatusLolPostsJob, infrastructure::{app_state::AppState, bus::job_runner::Job}, load_archive_file, prelude::Result, save_archive_file, STATUS_LOL_ARCHIVE_FILENAME
 };
 
 #[derive(Debug)]
-pub struct StatusLolLoadFromArchiveJob;
-impl StatusLolLoadFromArchiveJob {
+pub struct LoadStatusLolPostsFromArchiveJob;
+impl LoadStatusLolPostsFromArchiveJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for StatusLolLoadFromArchiveJob {
+impl Job for LoadStatusLolPostsFromArchiveJob {
     fn name(&self) -> &str {
-        "StatusLolLoadFromArchiveJob"
+        "LoadStatusLolPostsFromArchiveJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
@@ -32,7 +32,7 @@ impl Job for StatusLolLoadFromArchiveJob {
             }
             Err(err) => {
                 warn!("Failed to load status_lol archive: {:?}", err);
-                app_state.dispatch_job(StatusLolDownloadDataJob::new()).await
+                app_state.dispatch_job(FetchStatusLolPostsJob::new()).await
             }
         }
     }

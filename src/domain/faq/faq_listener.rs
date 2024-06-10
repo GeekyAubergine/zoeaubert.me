@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::jobs::load_faq_job::ReloadFaqDataJob;
+use super::jobs::load_faq_job::LoadFaqJob;
 
 pub struct FaqListener;
 
@@ -26,7 +26,7 @@ impl EventListener for FaqListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(ReloadFaqDataJob::new())
+                    .dispatch_job(LoadFaqJob::new())
                     .await?;
             }
             _ => {}

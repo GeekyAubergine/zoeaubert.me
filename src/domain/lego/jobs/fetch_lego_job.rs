@@ -140,16 +140,16 @@ fn make_get_minifig_url(config: &Config, hash: &str) -> String {
 }
 
 #[derive(Debug)]
-pub struct RealoadLegoDataJob;
-impl RealoadLegoDataJob {
+pub struct FetchLegoJob;
+impl FetchLegoJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for RealoadLegoDataJob {
+impl Job for FetchLegoJob {
     fn name(&self) -> &str {
-        "RealoadLegoDataJob"
+        "FetchLegoJob"
     }
     async fn run(&self, app_state: &AppState) -> Result<()> {
         let last_updated = app_state.lego_repo().get_last_updated().await;

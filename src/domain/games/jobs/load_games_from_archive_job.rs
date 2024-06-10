@@ -11,16 +11,16 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct LoadGamesDataFromArchiveJob;
-impl LoadGamesDataFromArchiveJob {
+pub struct LoadGamesFromArchiveJob;
+impl LoadGamesFromArchiveJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for LoadGamesDataFromArchiveJob {
+impl Job for LoadGamesFromArchiveJob {
     fn name(&self) -> &str {
-        "LoadGamesDataFromArchiveJob"
+        "LoadGamesFromArchiveJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {

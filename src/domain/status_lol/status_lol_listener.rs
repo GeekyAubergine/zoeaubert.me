@@ -10,9 +10,9 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::jobs::status_lol_load_data_from_archive_job::StatusLolLoadFromArchiveJob;
-use super::jobs::status_lol_save_data_to_archive_job::StatusLolSaveDataToArchiveJob;
-use super::jobs::status_lol_download_data_job::StatusLolDownloadDataJob;
+use super::jobs::load_status_lol_posts_from_arhcive_job::LoadStatusLolPostsFromArchiveJob;
+use super::jobs::save_status_lol_posts_to_archive_job::SaveStatusLolPostsToArchiveJob;
+use super::jobs::fetch_status_lol_posts_job::FetchStatusLolPostsJob;
 
 pub struct StatusLolListener;
 
@@ -28,17 +28,17 @@ impl EventListener for StatusLolListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(StatusLolLoadFromArchiveJob::new())
+                    .dispatch_job(LoadStatusLolPostsFromArchiveJob::new())
                     .await?;
             }
             Event::StatusLolRepoLoadedFromArchive => {
                 app_state
-                    .dispatch_job(StatusLolDownloadDataJob::new())
+                    .dispatch_job(FetchStatusLolPostsJob::new())
                     .await?;
             }
             Event::StatusLolRepoUpdated => {
                 app_state
-                    .dispatch_job(StatusLolSaveDataToArchiveJob::new())
+                    .dispatch_job(SaveStatusLolPostsToArchiveJob::new())
                     .await?;
             }
             _ => {}

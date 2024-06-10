@@ -11,8 +11,8 @@ use crate::application::events::Event;
 use crate::infrastructure::app_state::AppState;
 
 use super::jobs::fetch_games_data_from_steam_job::GamesDownloadDataJob;
-use super::jobs::games_load_data_from_archive_job::LoadGamesDataFromArchiveJob;
-use super::jobs::games_save_data_to_archive_job::SaveGamesDataToArchiveJob;
+use super::jobs::load_games_from_archive_job::LoadGamesFromArchiveJob;
+use super::jobs::save_games_to_archive_job::SaveGamesToArchiveJob;
 
 pub struct GamesListener;
 
@@ -28,7 +28,7 @@ impl EventListener for GamesListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(LoadGamesDataFromArchiveJob::new())
+                    .dispatch_job(LoadGamesFromArchiveJob::new())
                     .await?;
             }
             Event::GamesRepoLoadedFromArchive => {
@@ -36,7 +36,7 @@ impl EventListener for GamesListener {
             }
             Event::GamesRepoUpdated => {
                 app_state
-                    .dispatch_job(SaveGamesDataToArchiveJob::new())
+                    .dispatch_job(SaveGamesToArchiveJob::new())
                     .await?;
             }
             _ => {}

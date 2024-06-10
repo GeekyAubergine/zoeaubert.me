@@ -3,7 +3,7 @@ use tracing::warn;
 
 use crate::{
     application::events::Event,
-    domain::lego::jobs::lego_download_data_job::RealoadLegoDataJob,
+    domain::lego::jobs::fetch_lego_job::FetchLegoJob,
     infrastructure::{app_state::AppState, bus::job_runner::Job},
     load_archive_file,
     prelude::Result,
@@ -11,16 +11,16 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct LoadLegoDataFromArchiveJob;
-impl LoadLegoDataFromArchiveJob {
+pub struct LoadLegoFromArchiveJob;
+impl LoadLegoFromArchiveJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for LoadLegoDataFromArchiveJob {
+impl Job for LoadLegoFromArchiveJob {
     fn name(&self) -> &str {
-        "LoadLegoDataFromArchiveJob"
+        "LoadLegoFromArchiveJob"
     }
     async fn run(&self, app_state: &AppState) -> Result<()> {
         match load_archive_file(app_state.config(), LEGO_ARCHIVE_FILENAME).await {
@@ -33,7 +33,7 @@ impl Job for LoadLegoDataFromArchiveJob {
             }
             Err(err) => {
                 warn!("Failed to load lego archive: {:?}", err);
-                app_state.dispatch_job(RealoadLegoDataJob::new()).await
+                app_state.dispatch_job(FetchLegoJob::new()).await
             }
         }
     }

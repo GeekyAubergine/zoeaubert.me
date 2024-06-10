@@ -18,18 +18,18 @@ use crate::{
 };
 
 const FILE_NAME: &str = "silly_names.csv";
-pub struct SillyNameLoadDataJob;
+pub struct LoadSillyNamesJob;
 
-impl SillyNameLoadDataJob {
+impl LoadSillyNamesJob {
     pub fn new() -> Self {
         Self
     }
 }
 
 #[async_trait]
-impl Job for SillyNameLoadDataJob {
+impl Job for LoadSillyNamesJob {
     fn name(&self) -> &str {
-        "SillyNameLoadDataJob"
+        "LoadSillyNamesJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {

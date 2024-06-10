@@ -10,16 +10,16 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct StatusLolSaveDataToArchiveJob;
-impl StatusLolSaveDataToArchiveJob {
+pub struct SaveStatusLolPostsToArchiveJob;
+impl SaveStatusLolPostsToArchiveJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for StatusLolSaveDataToArchiveJob {
+impl Job for SaveStatusLolPostsToArchiveJob {
     fn name(&self) -> &str {
-        "StatusLolSaveDataToArchiveJob"
+        "SaveStatusLolPostsToArchiveJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {

@@ -59,16 +59,16 @@ impl From<ReponseStatusLolPost> for StatusLolPost {
 }
 
 #[derive(Debug)]
-pub struct StatusLolDownloadDataJob;
-impl StatusLolDownloadDataJob {
+pub struct FetchStatusLolPostsJob;
+impl FetchStatusLolPostsJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for StatusLolDownloadDataJob {
+impl Job for FetchStatusLolPostsJob {
     fn name(&self) -> &str {
-        "StatusLolDownloadDataJob"
+        "FetchStatusLolPostsJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {

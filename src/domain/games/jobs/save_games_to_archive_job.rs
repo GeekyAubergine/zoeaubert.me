@@ -6,28 +6,28 @@ use crate::{
     infrastructure::{app_state::AppState, bus::job_runner::Job},
     load_archive_file,
     prelude::Result,
-    save_archive_file, LEGO_ARCHIVE_FILENAME,
+    save_archive_file, GAMES_ARCHIVE_FILENAME,
 };
 
-
 #[derive(Debug)]
-pub struct SaveLegoDataToArchiveJob;
-impl SaveLegoDataToArchiveJob {
+pub struct SaveGamesToArchiveJob;
+impl SaveGamesToArchiveJob {
     pub fn new() -> Self {
         Self
     }
 }
 #[async_trait]
-impl Job for SaveLegoDataToArchiveJob {
+impl Job for SaveGamesToArchiveJob {
     fn name(&self) -> &str {
-        "SaveLegoDataToArchiveJob"
+        "SaveGamesToArchiveJob"
     }
+
     async fn run(&self, app_state: &AppState) -> Result<()> {
-        let lego = app_state.lego_repo().get_archived().await;
+        let games = app_state.games_repo().get_archived().await;
 
-        save_archive_file(app_state.config(), &lego, LEGO_ARCHIVE_FILENAME).await?;
+        save_archive_file(app_state.config(), &games, GAMES_ARCHIVE_FILENAME).await?;
 
-        app_state.dispatch_event(Event::LegoRepoArchived).await?;
+        app_state.dispatch_event(Event::GamesRepoArchived).await?;
 
         Ok(())
     }

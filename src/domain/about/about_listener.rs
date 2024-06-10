@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::jobs::load_about_data_job::LoadAboutDataJob;
+use super::jobs::load_about_job::LoadAboutDataJob;
 
 pub struct AboutListener;
 

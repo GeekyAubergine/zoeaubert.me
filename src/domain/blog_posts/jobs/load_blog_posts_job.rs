@@ -90,18 +90,18 @@ fn file_to_blog_post(s: &str) -> Result<BlogPost> {
 }
 
 #[derive(Debug)]
-pub struct ReloadBlogPostsJob;
+pub struct LoadBlogPostsJob;
 
-impl ReloadBlogPostsJob {
+impl LoadBlogPostsJob {
     pub fn new() -> Self {
         Self
     }
 }
 
 #[async_trait]
-impl Job for ReloadBlogPostsJob {
+impl Job for LoadBlogPostsJob {
     fn name(&self) -> &str {
-        "ReloadBlogPostsJob"
+        "LoadBlogPostsJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
