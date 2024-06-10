@@ -123,7 +123,7 @@ async fn tag(
 
     let previous_nav = match total_posts_count > pagination.page() * pagination.per_page() {
         true => Some(PagePaginationLabel::new(
-            &format!("/tags/{}/page={}", tag.slug(), pagination.page() + 1),
+            &format!("/tags/{}?page={}", tag.slug(), pagination.page() + 1),
             "Older posts",
         )),
         false => None,
@@ -132,7 +132,7 @@ async fn tag(
     let next_nav = match pagination.page() {
         1 => None,
         _ => Some(PagePaginationLabel::new(
-            &format!("/tags/{}/page={}", tag.slug(), pagination.page() - 1),
+            &format!("/tags/{}?page={}", tag.slug(), pagination.page() - 1),
             "Newer posts",
         )),
     };

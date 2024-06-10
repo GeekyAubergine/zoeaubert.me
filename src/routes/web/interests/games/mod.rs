@@ -15,7 +15,7 @@ use crate::{
 
 use crate::utils::{FormatDate, FormatNumber};
 
-const RECENT_GAMES_COUNT: usize = 3;
+const RECENT_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
 const HEADER_IMAGE_HEIGHT: u32 = 193;
 
