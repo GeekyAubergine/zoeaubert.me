@@ -6,14 +6,10 @@ use crate::{error::Error, prelude::*};
 
 use super::config::Config;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct ContentDir {}
 
 impl ContentDir {
-    pub fn new() -> Self {
-        Self {}
-    }
-
     pub async fn read_file(&self, path: &str, config: &Config) -> Result<String> {
         let path = match path.starts_with(config.content_dir()) {
             true => path.to_string(),

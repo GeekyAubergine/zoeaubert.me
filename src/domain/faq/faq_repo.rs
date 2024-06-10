@@ -14,29 +14,17 @@ use crate::{
 
 use super::faq_models::Faq;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct FaqRepo {
     faq_text: Arc<RwLock<Faq>>,
 }
 
 impl FaqRepo {
-    pub fn new() -> Self {
-        Self {
-            faq_text: Arc::new(RwLock::new(Faq::default())),
-        }
-    }
-
     pub async fn commit(&self, faq: Faq) {
         *self.faq_text.write().await = faq;
     }
 
     pub async fn get(&self) -> Faq {
         self.faq_text.read().await.clone()
-    }
-}
-
-impl Default for FaqRepo {
-    fn default() -> Self {
-        Self::new()
     }
 }

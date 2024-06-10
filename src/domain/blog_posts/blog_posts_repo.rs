@@ -17,18 +17,12 @@ use crate::domain::models::image::Image;
 
 use super::blog_post_models::BlogPost;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct BlogPostsRepo {
     blog_posts: Arc<RwLock<HashMap<String, BlogPost>>>,
 }
 
 impl BlogPostsRepo {
-    pub fn new() -> Self {
-        Self {
-            blog_posts: Arc::new(RwLock::new(HashMap::new())),
-        }
-    }
-
     pub async fn commit(&self, blog_post: BlogPost) {
         let mut blog_posts_ref = self.blog_posts.write().await;
         blog_posts_ref.insert(blog_post.slug().to_owned(), blog_post);

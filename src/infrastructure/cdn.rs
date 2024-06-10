@@ -1,6 +1,7 @@
 use aws_config::{BehaviorVersion, Region};
 use aws_credential_types::Credentials;
 use aws_sdk_s3::{primitives::ByteStream, types::ObjectCannedAcl, Client};
+use reqwest::{header::ACCEPT, Body, ClientBuilder};
 
 use crate::{error::Error, prelude::*};
 
@@ -20,38 +21,29 @@ impl CndPath {
 #[derive(Debug, Clone)]
 pub struct Cdn {
     reqwest_client: reqwest::Client,
-    r2_client: Client,
 }
 
 impl Cdn {
     pub async fn new(config: &Config) -> Self {
-        let credentials = Credentials::from_keys(config.r2().key(), config.r2().secret(), None);
-
-        let r2_config = aws_config::defaults(BehaviorVersion::v2023_11_09())
-            .region(Region::new("auto"))
-            .endpoint_url(config.r2().endpoint().to_owned())
-            .credentials_provider(credentials)
-            .load()
-            .await;
-
-        let r2_client = aws_sdk_s3::Client::new(&r2_config);
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(ACCEPT, "application/json".parse().unwrap());
+        headers.insert(
+            "AccessKey",
+            config.bunny_cdn().access_key().parse().unwrap(),
+        );
 
         Self {
-            reqwest_client: reqwest::Client::new(),
-            r2_client,
+            reqwest_client: ClientBuilder::new()
+                .default_headers(headers)
+                .build()
+                .unwrap(),
         }
     }
 
-    pub fn reqwest_client(&self) -> &reqwest::Client {
-        &self.reqwest_client
-    }
-
     pub async fn file_exists(&self, path: CndPath, config: &Config) -> Result<bool> {
-        let request = self
-            .r2_client
-            .head_object()
-            .bucket(config.r2().bucket())
-            .key(path.path.to_owned());
+        let request =
+            self.reqwest_client
+                .get(format!("{}/{}", config.bunny_cdn().url(), path.path));
 
         match request.send().await {
             Ok(_) => Ok(true),
@@ -60,18 +52,29 @@ impl Cdn {
     }
 
     pub async fn upload_file(&self, path: CndPath, data: Vec<u8>, config: &Config) -> Result<()> {
-        let data = ByteStream::from(data);
+        let data = Body::from(data);
 
         let request = self
-            .r2_client
-            .put_object()
-            .bucket(config.r2().bucket())
-            .key(path.path)
-            .acl(ObjectCannedAcl::PublicRead)
+            .reqwest_client
+            .post(format!("{}/{}", config.bunny_cdn().url(), path.path))
+            .header("Content-Type", "application/octet-stream")
             .body(data);
 
         request.send().await.map_err(Error::CdnUpload)?;
 
         Ok(())
+    }
+
+    pub async fn download_file(&self, path: CndPath, config: &Config) -> Result<Vec<u8>> {
+        let request = self
+            .reqwest_client
+            .get(format!("{}/{}", config.bunny_cdn().url(), path.path))
+            .header(ACCEPT, "*/*");
+
+        let response = request.send().await.map_err(Error::CdnDownload)?;
+
+        let bytes = response.bytes().await.map_err(Error::CdnDownload)?;
+
+        Ok(bytes.to_vec())
     }
 }

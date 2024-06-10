@@ -255,7 +255,7 @@ impl Game {
             })
             .collect::<Vec<GameAchievementUnlocked>>();
 
-        achievements.sort_by(|a, b| b.unlocked_date().cmp(&a.unlocked_date()));
+        achievements.sort_by(|a, b| b.unlocked_date().cmp(a.unlocked_date()));
 
         achievements
     }

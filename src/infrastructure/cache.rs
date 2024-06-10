@@ -4,14 +4,10 @@ use crate::{error::Error, prelude::*};
 
 use super::config::Config;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Cache {}
 
 impl Cache {
-    pub fn new() -> Self {
-        Self {}
-    }
-
     pub async fn is_file_cached(&self, path: &str, config: &Config) -> Result<bool> {
         let path = format!("{}/{}", config.cache_dir(), path);
         let path = Path::new(&path);

@@ -14,7 +14,7 @@ use super::lego_models::{LegoMinifig, LegoSet};
 
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct LegoRepo {
     sets: Arc<RwLock<HashMap<String, LegoSet>>>,
     minifigs: Arc<RwLock<HashMap<String, LegoMinifig>>>,
@@ -22,14 +22,6 @@ pub struct LegoRepo {
 }
 
 impl LegoRepo {
-    pub fn new() -> Self {
-        Self {
-            sets: Arc::new(RwLock::new(HashMap::new())),
-            minifigs: Arc::new(RwLock::new(HashMap::new())),
-            last_updated: Arc::new(RwLock::new(UNIX_EPOCH.into())),
-        }
-    }
-
     pub async fn load_from_archive(&self, archive: LegoRepoArchive) {
         let mut sets_ref = self.sets.write().await;
 
@@ -50,15 +42,12 @@ impl LegoRepo {
         lego_minifigs: HashMap<String, LegoMinifig>,
     ) {
         let mut sets_ref = self.sets.write().await;
-
-        *sets_ref = lego_sets.clone();
+        sets_ref.clone_from(&lego_sets);
 
         let mut minifigs_ref = self.minifigs.write().await;
-
-        *minifigs_ref = lego_minifigs.clone();
+        minifigs_ref.clone_from(&lego_minifigs);
 
         let mut last_updated = self.last_updated.write().await;
-
         *last_updated = Utc::now();
     }
 

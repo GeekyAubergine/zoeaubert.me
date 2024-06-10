@@ -11,7 +11,6 @@ use crate::{get_json, infrastructure::config::Config, prelude::*, ONE_HOUR_CACHE
 
 use super::status_lol_models::StatusLolPost;
 
-
 #[derive(Debug, Clone, Default)]
 pub struct StatusLolRepo {
     posts: Arc<RwLock<Vec<StatusLolPost>>>,
@@ -19,13 +18,6 @@ pub struct StatusLolRepo {
 }
 
 impl StatusLolRepo {
-    pub fn new() -> Self {
-        Self {
-            posts: Arc::new(RwLock::new(Vec::new())),
-            last_updated: Arc::new(RwLock::new(UNIX_EPOCH.into())),
-        }
-    }
-
     pub async fn rebuild_from_archive(&self, archive: StatusLolRepoArchive) {
         let mut posts = self.posts.write().await;
         *posts = archive.posts;
@@ -45,16 +37,16 @@ impl StatusLolRepo {
     }
 
     pub async fn get_all(&self) -> Vec<StatusLolPost> {
-        let posts = self.posts.read().await;
-        posts
+        self.posts
+            .read()
+            .await
             .iter()
-            .map(|post| post.clone().into())
+            .cloned()
             .collect::<Vec<StatusLolPost>>()
     }
 
     pub async fn commit(&self, posts: Vec<StatusLolPost>) {
-        let mut post_ref = self.posts.write().await;
-        *post_ref = posts.clone();
+        self.posts.write().await.clone_from(&posts);
 
         let mut last_updated_ref = self.last_updated.write().await;
         *last_updated_ref = Utc::now();

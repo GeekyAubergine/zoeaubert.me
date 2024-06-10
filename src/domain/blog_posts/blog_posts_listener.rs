@@ -23,13 +23,8 @@ impl BlogPostsListener {
 #[async_trait]
 impl EventListener for BlogPostsListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
-        match event {
-            Event::ServerBooted => {
-                app_state
-                    .dispatch_job(LoadBlogPostsJob::new())
-                    .await?;
-            }
-            _ => {}
+        if let Event::BlogPostsRepoUpdated = event {
+            app_state.dispatch_job(LoadBlogPostsJob::new()).await?;
         }
 
         Ok(())

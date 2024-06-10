@@ -48,15 +48,15 @@ impl AppStateData {
             event_sender,
             config: config.clone(),
             cdn: Cdn::new(config).await,
-            cache: Cache::new(),
-            content_dir: ContentDir::new(),
-            games_repo: GamesRepo::new(),
-            lego_repo: LegoRepo::new(),
-            status_lol_repo: StatusLolRepo::new(),
-            about_repo: AboutRepo::new(),
-            faq_repo: FaqRepo::new(),
-            silly_names_repo: SillyNamesRepo::new(),
-            blog_posts_repo: BlogPostsRepo::new(),
+            cache: Cache::default(),
+            content_dir: ContentDir::default(),
+            games_repo: GamesRepo::default(),
+            lego_repo: LegoRepo::default(),
+            status_lol_repo: StatusLolRepo::default(),
+            about_repo: AboutRepo::default(),
+            faq_repo: FaqRepo::default(),
+            silly_names_repo: SillyNamesRepo::default(),
+            blog_posts_repo: BlogPostsRepo::default(),
         }
     }
 
@@ -75,7 +75,7 @@ impl AppStateData {
     }
 
     pub fn site(&self) -> &SiteConfig {
-        &self.config.site()
+        self.config.site()
     }
 
     pub fn config(&self) -> &Config {

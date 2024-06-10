@@ -22,7 +22,9 @@ pub enum Error {
         >,
     ),
     #[error("CND Upload {0}")]
-    CdnUpload(aws_sdk_s3::error::SdkError<aws_sdk_s3::operation::put_object::PutObjectError>),
+    CdnUpload(reqwest::Error),
+    #[error("CND Download {0}")]
+    CdnDownload(reqwest::Error),
     #[error("File system unreadable {0}")]
     FileSystemUnreadable(std::io::Error),
     #[error("Dispatch job {0}")]

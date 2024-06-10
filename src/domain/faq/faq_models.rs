@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Faq {
     text: String,
 }
@@ -12,11 +12,5 @@ impl Faq {
 
     pub fn text(&self) -> &str {
         &self.text
-    }
-}
-
-impl Default for Faq {
-    fn default() -> Self {
-        Self { text: String::new() }
     }
 }

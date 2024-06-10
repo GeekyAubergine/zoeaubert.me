@@ -17,18 +17,12 @@ use super::about_models::About;
 const FILE_NAME_SHORT: &str = "about_short.md";
 const FILE_NAME_LONG: &str = "about_long.md";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct AboutRepo {
     about: Arc<RwLock<About>>,
 }
 
 impl AboutRepo {
-    pub fn new() -> Self {
-        Self {
-            about: Arc::new(RwLock::new(About::default())),
-        }
-    }
-
     pub async fn commit(&self, about: About) {
         let mut about_ref = self.about.write().await;
         *about_ref = about;

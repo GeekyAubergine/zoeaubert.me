@@ -49,42 +49,6 @@ impl ConfigBrickset {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct ConfigR2 {
-    url: String,
-    id: String,
-    endpoint: String,
-    key: String,
-    secret: String,
-    bucket: String,
-}
-
-impl ConfigR2 {
-    pub fn url(&self) -> &str {
-        &self.url
-    }
-
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    pub fn endpoint(&self) -> &str {
-        &self.endpoint
-    }
-
-    pub fn key(&self) -> &str {
-        &self.key
-    }
-
-    pub fn secret(&self) -> &str {
-        &self.secret
-    }
-
-    pub fn bucket(&self) -> &str {
-        &self.bucket
-    }
-}
-
-#[derive(Debug, Clone, Deserialize)]
 pub struct ConfigSteam {
     #[serde(rename = "apiKey")]
     api_key: String,
@@ -241,6 +205,23 @@ impl SiteConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+pub struct BunnyCdnConfig {
+    url: String,
+    #[serde(rename = "accessKey")]
+    access_key: String,
+}
+
+impl BunnyCdnConfig {
+    pub fn url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn access_key(&self) -> &str {
+        &self.access_key
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     cache_dir: String,
     archive_dir: String,
@@ -249,9 +230,10 @@ pub struct Config {
     #[serde(rename = "statusLol")]
     status_lol: ConfigStatusLol,
     brickset: ConfigBrickset,
-    r2: ConfigR2,
     steam: ConfigSteam,
     site: SiteConfig,
+    #[serde(rename = "bunnyCdn")]
+    bunny_cdn: BunnyCdnConfig,
 }
 
 impl Config {
@@ -283,15 +265,15 @@ impl Config {
         &self.brickset
     }
 
-    pub fn r2(&self) -> &ConfigR2 {
-        &self.r2
-    }
-
     pub fn steam(&self) -> &ConfigSteam {
         &self.steam
     }
 
     pub fn site(&self) -> &SiteConfig {
         &self.site
+    }
+
+    pub fn bunny_cdn(&self) -> &BunnyCdnConfig {
+        &self.bunny_cdn
     }
 }

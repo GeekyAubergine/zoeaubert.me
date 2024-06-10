@@ -150,10 +150,7 @@ impl Page {
         read_time: Option<String>,
         tags: Vec<Tag>,
     ) -> Self {
-        let heading = match title {
-            Some(t) => Some(t.to_owned()),
-            None => None,
-        };
+        let heading = title.map(|t| t.to_owned());
 
         let title = match title {
             Some(t) => format!("{} | {}", t, site.title()),

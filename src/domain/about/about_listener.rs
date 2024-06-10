@@ -23,13 +23,8 @@ impl AboutListener {
 #[async_trait]
 impl EventListener for AboutListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
-        match event {
-            Event::ServerBooted => {
-                app_state
-                    .dispatch_job(LoadAboutDataJob::new())
-                    .await?;
-            }
-            _ => {}
+        if let Event::ServerBooted = event {
+            app_state.dispatch_job(LoadAboutDataJob::new()).await?;
         }
 
         Ok(())

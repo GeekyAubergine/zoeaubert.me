@@ -102,7 +102,7 @@ async fn tag(
     let tag = &TagSlug::from_string(&tag).to_tag();
     println!("tag: {:?}", tag);
 
-    let posts = OmniPostRepo::get_posts_by_tag_ordered_by_date(&state, &tag)
+    let posts = OmniPostRepo::get_posts_by_tag_ordered_by_date(&state, tag)
         .await
         .map_err(|e| {
             error!("Failed to get posts ordered by date: {:?}", e);

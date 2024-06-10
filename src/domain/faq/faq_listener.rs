@@ -23,13 +23,8 @@ impl FaqListener {
 #[async_trait]
 impl EventListener for FaqListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
-        match event {
-            Event::ServerBooted => {
-                app_state
-                    .dispatch_job(LoadFaqJob::new())
-                    .await?;
-            }
-            _ => {}
+        if let Event::FaqRepoUpdated = event {
+            app_state.dispatch_job(LoadFaqJob::new()).await?;
         }
 
         Ok(())

@@ -15,21 +15,14 @@ use crate::{
 
 const FILE_NAME: &str = "silly_names.csv";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct SillyNamesRepo {
     silly_names: Arc<RwLock<Vec<String>>>,
 }
 
 impl SillyNamesRepo {
-    pub fn new() -> Self {
-        Self {
-            silly_names: Arc::new(RwLock::new(vec!["Zoe Aubert".to_owned()])),
-        }
-    }
-
     pub async fn commit(&self, silly_names: Vec<String>) {
-        let mut silly_names_ref = self.silly_names.write().await;
-        *silly_names_ref = silly_names.clone();
+        self.silly_names.write().await.clone_from(&silly_names);
     }
 
     pub async fn get(&self) -> Vec<String> {

@@ -23,13 +23,6 @@ pub struct GamesRepo {
 }
 
 impl GamesRepo {
-    pub fn new() -> Self {
-        Self {
-            games: Arc::new(RwLock::new(HashMap::new())),
-            last_updated: Arc::new(RwLock::new(UNIX_EPOCH.into())),
-        }
-    }
-
     pub async fn rebuild_from_archive(&self, archive: GameRepoArchive) {
         let mut games = self.games.write().await;
         let mut last_updated = self.last_updated.write().await;

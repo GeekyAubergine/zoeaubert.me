@@ -7,8 +7,8 @@ impl TagSlug {
         Self(slug.to_string())
     }
 
-    pub fn to_tag(self) -> Tag {
-        let tag = self.0;
+    pub fn to_tag(&self) -> Tag {
+        let tag = &self.0;
 
         if tag.ends_with("-gp") {
             let mut chars = tag.chars();
@@ -29,7 +29,7 @@ impl TagSlug {
 
         // UpperCase followed by LowerCase, separate with hyphen
         let re = regex::Regex::new(r"([a-z])-([a-z])").unwrap();
-        let tag = re.replace_all(&tag, |caps: &regex::Captures| {
+        let tag = re.replace_all(tag, |caps: &regex::Captures| {
             let lower = caps.get(1).map_or("", |m| m.as_str());
             let upper = caps.get(2).map_or("", |m| m.as_str());
 

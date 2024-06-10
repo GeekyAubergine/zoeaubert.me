@@ -46,9 +46,7 @@ lazy_static! {
     };
 
     static ref SYNTAX_SET: SyntaxSet = {
-        let set = SyntaxSet::load_defaults_newlines();
-
-        set
+        SyntaxSet::load_defaults_newlines()
     };
 
 
@@ -175,9 +173,7 @@ fn highligh_codeblocks(markdown: &str) -> String {
 fn string_to_html(s: &str) -> String {
     let html = comrak::markdown_to_html(s, &OPTIONS);
 
-    let html = highligh_codeblocks(&html);
-
-    html
+    highligh_codeblocks(&html)
 }
 
 pub trait FormatMarkdown {
