@@ -1,4 +1,6 @@
-<h2 class="text-xl">{{ game.name() }} - {{ achievement.display_name() }}</h2>
+<a href="{{ omni_post.permalink() }}" rel="noopener" class="no-underline">
+    <h2 class="text-xl">{{ game.name() }} - {{ achievement.display_name() }}</h2>
+</a>
 <p>{{ achievement.description() }}</p>
 <p class="secondary">
     {{ achievement.global_unlocked_percentage().format(1, false) }}% of players have this acheivement
