@@ -5,7 +5,7 @@
 #[macro_use]
 extern crate lazy_static;
 
-use std::{path::Path, sync::Arc, thread::sleep, time::Duration};
+use std::{fs, path::Path, sync::Arc, thread::sleep, time::Duration};
 
 use crate::{
     infrastructure::bus::{event_queue::make_event_channel, job_runner::make_job_channel, Bus},
@@ -33,7 +33,7 @@ use error::Error;
 use infrastructure::{
     app_state::{AppState, AppStateData},
     bus::logger_listener::LoggerListener,
-    cdn::Cdn,
+    cdn::{Cdn, CdnPath},
     config::Config,
 };
 use prelude::Result;
@@ -63,7 +63,7 @@ pub const STATUS_LOL_ARCHIVE_FILENAME: &str = "status_lol.json";
 pub const ABOUT_ARCHIVE_FILENAME: &str = "about.json";
 
 pub const ONE_HOUR_CACHE_PERIOD: Duration = Duration::new(60 * 60 - 1, 0);
-pub const  ONE_DAY_CACHE_PERIOD: Duration = Duration::new(60 * 60 * 24 - 1, 0);
+pub const ONE_DAY_CACHE_PERIOD: Duration = Duration::new(60 * 60 * 24 - 1, 0);
 
 pub mod build_data {
     include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
@@ -138,20 +138,6 @@ async fn main() -> Result<()> {
         .nest_service("/static", static_files)
         .nest_service("/assets", asset_files)
         .layer(services);
-
-    // match cdn
-    //     .file_exists(CndPath::new(
-    //         "2024/01/14/d7e4347cfe88a444a5ee957cff044ba0.jpeg".to_owned(),
-    //     ))
-    //     .await
-    // {
-    //     Ok(exists) => {
-    //         println!("File exists: {}", exists);
-    //     }
-    //     Err(e) => {
-    //         println!("Failed to check file: {}", e);
-    //     }
-    // }
 
     queue.start().await;
 

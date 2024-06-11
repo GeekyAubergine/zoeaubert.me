@@ -1,6 +1,7 @@
-use aws_sdk_s3::error::SdkError;
-
-use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
+use crate::{
+    application::events::Event,
+    infrastructure::{bus::job_runner::Job, cdn::CdnPath},
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -14,17 +15,18 @@ pub enum Error {
     MakeFolder(std::io::Error),
     #[error("HttpReqwest {0}")]
     HttpReqwest(reqwest::Error),
-    #[error("CND Head check {0}")]
-    CdnHeadCheck(
-        SdkError<
-            aws_sdk_s3::operation::head_object::HeadObjectError,
-            aws_smithy_runtime_api::client::orchestrator::HttpResponse,
-        >,
-    ),
     #[error("CND Upload {0}")]
     CdnUpload(reqwest::Error),
     #[error("CND Download {0}")]
     CdnDownload(reqwest::Error),
+    #[error("Unable to parse cdn response {0}")]
+    ParseCdnResponse(serde_json::Error),
+    #[error("CDN invalid path {0}")]
+    CdnInvalidPath(String),
+    #[error("CDN file not found {0}")]
+    CdnFileNotFound(String),
+    #[error("CDN unable to upload file {0} to {1}")]
+    CdnUnableToUploadFile(String, String),
     #[error("File system unreadable {0}")]
     FileSystemUnreadable(std::io::Error),
     #[error("Dispatch job {0}")]
