@@ -23,7 +23,7 @@ impl SillyNamesListener {
 #[async_trait]
 impl EventListener for SillyNamesListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
-        if let Event::SillyNamesRepoUpdated = event {
+        if let Event::ServerBooted = event {
             app_state.dispatch_job(LoadSillyNamesJob::new()).await?;
         }
 

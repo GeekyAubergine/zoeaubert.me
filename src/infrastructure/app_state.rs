@@ -4,7 +4,7 @@ use tokio::sync::{mpsc::Sender, RwLock};
 
 use crate::{
     application::events::Event,
-    domain::{about::about_repo::AboutRepo, blog_posts::blog_posts_repo::BlogPostsRepo, faq::faq_repo::FaqRepo, games::games_repo::GamesRepo, lego::lego_repo::LegoRepo, silly_names::silly_names_repo::SillyNamesRepo, status_lol::status_lol_repo::StatusLolRepo},
+    domain::{about::about_repo::AboutRepo, blog_posts::blog_posts_repo::BlogPostsRepo, faq::faq_repo::FaqRepo, games::games_repo::GamesRepo, lego::lego_repo::LegoRepo, micro_posts::micro_posts_repo::MicroPostsRepo, silly_names::silly_names_repo::SillyNamesRepo, status_lol::status_lol_repo::StatusLolRepo},
     error::Error,
     infrastructure::config::Config,
     load_archive_file,
@@ -35,6 +35,7 @@ pub struct AppStateData {
     faq_repo: FaqRepo,
     silly_names_repo: SillyNamesRepo,
     blog_posts_repo: BlogPostsRepo,
+    micro_posts_repo: MicroPostsRepo,
 }
 
 impl AppStateData {
@@ -57,6 +58,7 @@ impl AppStateData {
             faq_repo: FaqRepo::default(),
             silly_names_repo: SillyNamesRepo::default(),
             blog_posts_repo: BlogPostsRepo::default(),
+            micro_posts_repo: MicroPostsRepo::default(),
         }
     }
 
@@ -120,6 +122,10 @@ impl AppStateData {
 
     pub fn blog_posts_repo(&self) -> &BlogPostsRepo {
         &self.blog_posts_repo
+    }
+
+    pub fn micro_posts_repo(&self) -> &MicroPostsRepo {
+        &self.micro_posts_repo
     }
 }
 

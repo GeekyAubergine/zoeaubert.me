@@ -39,8 +39,12 @@ pub enum Error {
     DeserializeArchive(serde_json::Error),
     #[error("Couldn't parse blog front matter {0}")]
     ParseBlogFrontMatter(serde_yaml::Error),
+    #[error("Couldn't parse micro post front matter {0}")]
+    ParseMicroPostFrontMatter(serde_yaml::Error),
     #[error("Couldn't parse blog post {0}")]
     ParseBlogPost(String),
+    #[error("Couldn't parse micro post {0}")]
+    ParseMicroPost(String),
     #[error("Could not parse date {0}")]
     ParseDate(String),
     #[error("Could not find langauge for code block")]

@@ -22,6 +22,7 @@ pub enum Event {
     
     BlogPostsRepoUpdated,
 
+    MicroPostsRepoUpdated,
 }
 
 impl Event {
@@ -49,6 +50,7 @@ impl Event {
 
             Event::BlogPostsRepoUpdated => "blog_posts_repo.updated",
 
+            Event::MicroPostsRepoUpdated => "micro_posts_repo.updated",
         }
     }
 }

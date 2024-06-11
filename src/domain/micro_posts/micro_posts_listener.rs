@@ -10,21 +10,21 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::jobs::load_faq_job::LoadFaqJob;
+use super::jobs::load_micro_posts_job::LoadMicroPostsJob;
 
-pub struct FaqListener;
+pub struct MicroPostsListener;
 
-impl FaqListener {
+impl MicroPostsListener {
     pub fn new() -> Self {
         Self
     }
 }
 
 #[async_trait]
-impl EventListener for FaqListener {
+impl EventListener for MicroPostsListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
         if let Event::ServerBooted = event {
-            app_state.dispatch_job(LoadFaqJob::new()).await?;
+            app_state.dispatch_job(LoadMicroPostsJob::new()).await?;
         }
 
         Ok(())

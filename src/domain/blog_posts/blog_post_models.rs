@@ -1,4 +1,8 @@
-use crate::{domain::models::{image::Image, tag::Tag}, error::Error, prelude::*};
+use crate::{
+    domain::models::{image::Image, tag::Tag},
+    error::Error,
+    prelude::*,
+};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -25,13 +29,13 @@ impl BlogPost {
         content: String,
     ) -> Self {
         Self {
-            slug: slug.to_string(),
+            slug,
             date,
-            title: title.to_string(),
-            description: description.to_string(),
+            title,
+            description,
             tags,
             hero_image,
-            content: content.to_string(),
+            content,
         }
     }
 
@@ -55,8 +59,8 @@ impl BlogPost {
         &self.description
     }
 
-    pub fn tags(&self) -> Vec<Tag> {
-        self.tags.clone()
+    pub fn tags(&self) -> &Vec<Tag> {
+        &self.tags
     }
 
     pub fn hero_image(&self) -> Option<Image> {

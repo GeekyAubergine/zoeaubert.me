@@ -161,7 +161,7 @@ async fn get_steam_global_achievement_percentage(
 
 // ----
 
-fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
+pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
     match DateTime::from_timestamp(last_played as i64 * 1000, 0) {
         Some(date) => date,
         None => Utc::now(),

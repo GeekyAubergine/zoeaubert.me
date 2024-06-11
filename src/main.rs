@@ -24,10 +24,7 @@ use axum::{
 };
 use chrono::{DateTime, Utc};
 use domain::{
-    about::about_listener::AboutListener, blog_posts::blog_posts_listener::BlogPostsListener,
-    faq::faq_listener::FaqListener, games::games_listener::GamesListener,
-    lego::lego_listener::LegoListener, silly_names::silly_names_listener::SillyNamesListener,
-    status_lol::status_lol_listener::StatusLolListener,
+    about::about_listener::AboutListener, blog_posts::blog_posts_listener::BlogPostsListener, faq::faq_listener::FaqListener, games::games_listener::GamesListener, lego::lego_listener::LegoListener, micro_posts::micro_posts_listener::MicroPostsListener, silly_names::silly_names_listener::SillyNamesListener, status_lol::status_lol_listener::StatusLolListener
 };
 use error::Error;
 use infrastructure::{
@@ -108,13 +105,15 @@ async fn main() -> Result<()> {
 
     let mut queue = Bus::new(state.clone(), job_receiver, event_receiver);
 
-    queue.add_event_listener(Box::new(LoggerListener::new()));
-    queue.add_event_listener(Box::new(GamesListener::new()));
-    queue.add_event_listener(Box::new(StatusLolListener::new()));
     queue.add_event_listener(Box::new(AboutListener::new()));
-    queue.add_event_listener(Box::new(FaqListener::new()));
-    queue.add_event_listener(Box::new(SillyNamesListener::new()));
     queue.add_event_listener(Box::new(BlogPostsListener::new()));
+    queue.add_event_listener(Box::new(FaqListener::new()));
+    queue.add_event_listener(Box::new(GamesListener::new()));
+    queue.add_event_listener(Box::new(LegoListener::new()));
+    queue.add_event_listener(Box::new(MicroPostsListener::new()));
+    queue.add_event_listener(Box::new(SillyNamesListener::new()));
+    queue.add_event_listener(Box::new(StatusLolListener::new()));
+    queue.add_event_listener(Box::new(LoggerListener::new()));
 
     println!("Starting jobs...");
     state.dispatch_event(Event::ServerBooted).await?;

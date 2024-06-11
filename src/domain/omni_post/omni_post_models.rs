@@ -3,7 +3,11 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use crate::domain::{
-    blog_posts::blog_post_models::BlogPost, games::games_models::{Game, GameAchievementUnlocked}, models::tag::Tag, status_lol::status_lol_models::StatusLolPost
+    blog_posts::blog_post_models::BlogPost,
+    games::games_models::{Game, GameAchievementUnlocked},
+    micro_posts::micro_posts_models::MicroPost,
+    models::tag::Tag,
+    status_lol::status_lol_models::StatusLolPost,
 };
 
 #[derive(Debug, Clone)]
@@ -14,6 +18,7 @@ pub enum OmniPost {
         achievement: GameAchievementUnlocked,
     },
     BlogPost(BlogPost),
+    MicroPost(MicroPost),
 }
 
 impl OmniPost {
@@ -22,6 +27,7 @@ impl OmniPost {
             Self::StatusLol(status_lol) => status_lol.key().to_owned(),
             Self::UnlockedGameAchievement { achievement, .. } => achievement.id().to_owned(),
             Self::BlogPost(blog_post) => blog_post.slug().to_owned(),
+            Self::MicroPost(micro_post) => micro_post.slug().to_owned(),
         }
     }
 
@@ -30,6 +36,7 @@ impl OmniPost {
             Self::StatusLol(status_lol) => status_lol.permalink().to_owned(),
             Self::UnlockedGameAchievement { game, .. } => format!("/interests/games/{}", game.id()),
             Self::BlogPost(blog_post) => blog_post.permalink().to_owned(),
+            Self::MicroPost(micro_post) => micro_post.permalink().to_owned(),
         }
     }
 
@@ -38,6 +45,7 @@ impl OmniPost {
             Self::StatusLol(status_lol) => status_lol.date(),
             Self::UnlockedGameAchievement { achievement, .. } => achievement.unlocked_date(),
             Self::BlogPost(blog_post) => blog_post.date(),
+            Self::MicroPost(micro_post) => micro_post.date(),
         }
     }
 
@@ -46,6 +54,7 @@ impl OmniPost {
             Self::StatusLol(status_lol) => vec![Tag::from_string("StatusLol")],
             Self::UnlockedGameAchievement { game, .. } => vec![Tag::from_string("Gaming")],
             Self::BlogPost(blog_post) => blog_post.tags().to_owned(),
+            Self::MicroPost(micro_post) => micro_post.tags().to_owned(),
         }
     }
 }

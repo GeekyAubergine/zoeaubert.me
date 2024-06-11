@@ -19,6 +19,7 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/:id", get(post_page))
+        .route("/:id/", get(post_page))
 }
 
 #[derive(Template)]
@@ -68,7 +69,7 @@ async fn post_page(Path(id): Path<String>, State(state): State<AppState>) -> Res
         post.hero_image(),
         Some(*post.date()),
         None,
-        post.tags(),
+        post.tags().to_vec(),
     )
     .set_no_index();
 

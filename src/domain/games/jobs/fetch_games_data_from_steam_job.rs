@@ -17,7 +17,7 @@ use crate::{
     save_archive_file, GAMES_ARCHIVE_FILENAME, ONE_DAY_CACHE_PERIOD,
 };
 
-use super::fetch_game_data_from_steam_job::FetchGameDataFromSteamJob;
+use super::fetch_game_data_from_steam_job::{steam_last_played_to_datetime, FetchGameDataFromSteamJob};
 
 const NO_REFETCH_DURATION: Duration = ONE_DAY_CACHE_PERIOD;
 
@@ -113,18 +113,29 @@ impl Job for GamesDownloadDataJob {
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
         let last_updated = app_state.games_repo().get_last_updated().await;
-        
-        // if last_updated + NO_REFETCH_DURATION > Utc::now() {
-        //     return Ok(());
-        // }
+
+        if last_updated + NO_REFETCH_DURATION > Utc::now() {
+            return Ok(());
+        }
 
         let last_updated_as_rtime = last_updated.timestamp() as u32;
 
         let steam_owned_games_response =
             get_json::<SteamGetOwnedGamesResponse>(&make_get_games_url(app_state.config())).await?;
 
-        for game in steam_owned_games_response.response.games {
-            app_state.dispatch_job(FetchGameDataFromSteamJob::new(game)).await?;
+        for steam_game in steam_owned_games_response.response.games {
+            // Skip games that have not been played since the last update
+            if let Some(stored_game) = app_state.games_repo().get_game(steam_game.appid()).await {
+                if &steam_last_played_to_datetime(steam_game.rtime_last_played())
+                    <= stored_game.last_played()
+                {
+                    continue;
+                }
+            }
+
+            app_state
+                .dispatch_job(FetchGameDataFromSteamJob::new(steam_game))
+                .await?;
         }
 
         Ok(())

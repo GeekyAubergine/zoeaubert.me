@@ -28,7 +28,7 @@ pub struct IndexTemplate {
 async fn index(State(state): State<AppState>) -> IndexTemplate {
     let page = Page::new(
         state.site(),
-        "/interests/",
+        "/interests",
         Some("Interests"),
         Some("My Interests"),
         None,

@@ -148,16 +148,20 @@
         @apply my-2;
     }
 
+    .title-font {
+        font-family: 'WilcoLoftSans';
+        font-display: swap;
+        @apply mt-8 mb-0;
+        letter-spacing: 0.025rem;
+    }
+
     h1,
     h2,
     h3,
     h4,
     h5,
     h6 {
-        font-family: 'WilcoLoftSans';
-        font-display: swap;
-        @apply mt-8 mb-0;
-        letter-spacing: 0.025rem;
+        @apply title-font;
     }
 
     h1 {
@@ -444,10 +448,6 @@
             & .tags-list {
                 /* @apply ml-2; */
             }
-        }
-
-        & hr {
-            @apply my-0;
         }
     }
 

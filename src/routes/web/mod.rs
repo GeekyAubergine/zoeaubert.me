@@ -22,17 +22,21 @@ pub mod hobbies;
 pub mod interests;
 pub mod tags;
 pub mod timeline;
+pub mod micro_posts;
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/faq", get(faq))
+        .route("/faq/", get(faq))
         .route("/now", get(now))
+        .route("/now/", get(now))
         .nest("/hobbies", hobbies::router())
         .nest("/interests", interests::router())
         .nest("/blog", blog::router())
         .nest("/timeline", timeline::router())
         .nest("/tags", tags::router())
+        .nest("/micros", micro_posts::router())
 }
 
 #[derive(Template)]

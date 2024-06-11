@@ -1,0 +1,21 @@
+{% extends "partials/page.html" %}
+
+{%- block content %}
+    <div class="page-header">
+        {%- match page.date() %}
+    {%- when Some with (date) %}
+        <h1>
+            <time datetime="{{date.datetime()}}" class="title-font">{{ date.short_iso() }}</time>
+        </h1>
+    {%- when None %}
+        {%- endmatch %}
+
+    </div>
+    {{ post.content().to_html()|safe}}
+    {%- if page.tags().len() > 0 %}
+        <div class="tags-list mb-4">
+            {% let tags = page.tags() %}
+            {% include "partials/tags_list.html" %}
+        </div>
+    {%- endif %}
+{% endblock %}

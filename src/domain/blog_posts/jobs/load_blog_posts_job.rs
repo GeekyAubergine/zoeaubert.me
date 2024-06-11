@@ -3,7 +3,10 @@ use serde::Deserialize;
 
 use crate::{
     application::events::Event,
-    domain::{blog_posts::blog_post_models::BlogPost, models::{image::Image, tag::Tag}},
+    domain::{
+        blog_posts::blog_post_models::BlogPost,
+        models::{image::Image, tag::Tag},
+    },
     error::Error,
     infrastructure::{
         app_state::{self, AppState},

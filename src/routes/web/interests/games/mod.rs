@@ -23,6 +23,7 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/:id", get(game_page))
+        .route("/:id/", get(game_page))
 }
 
 #[derive(Template)]

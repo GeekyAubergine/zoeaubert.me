@@ -27,6 +27,7 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/:tag", get(tag))
+        .route("/:tag/", get(tag))
 }
 
 pub struct TagPair {

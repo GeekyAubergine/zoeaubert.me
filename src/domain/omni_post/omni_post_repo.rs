@@ -53,6 +53,17 @@ impl OmniPostRepo {
                 .collect::<Vec<_>>(),
         );
 
+        // Micro Posts
+        posts.extend(
+            app_state
+                .micro_posts_repo()
+                .get_all()
+                .await
+                .into_values()
+                .map(OmniPost::MicroPost)
+                .collect::<Vec<_>>(),
+        );
+
         posts.sort_by(|a, b| b.date().cmp(a.date()));
 
         Ok(posts)
