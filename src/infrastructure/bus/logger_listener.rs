@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use tracing::info;
+use tracing::{debug, info};
 
 use crate::{
     application::events::Event,
@@ -18,7 +18,7 @@ impl LoggerListener {
 #[async_trait]
 impl EventListener for LoggerListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
-        info!("Processing event: {:?}", event.name());
+        debug!("Processing event: {:?}", event.name());
 
         Ok(())
     }

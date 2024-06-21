@@ -6,6 +6,7 @@ use crate::domain::{
     blog_posts::blog_post_models::BlogPost,
     games::games_models::{Game, GameAchievementUnlocked},
     micro_posts::micro_posts_models::MicroPost,
+    microblog_archive::microblog_archive_models::MicroblogArchivePost,
     models::tag::Tag,
     status_lol::status_lol_models::StatusLolPost,
 };
@@ -19,6 +20,7 @@ pub enum OmniPost {
     },
     BlogPost(BlogPost),
     MicroPost(MicroPost),
+    MicroblogArchivePost(MicroblogArchivePost),
 }
 
 impl OmniPost {
@@ -28,6 +30,9 @@ impl OmniPost {
             Self::UnlockedGameAchievement { achievement, .. } => achievement.id().to_owned(),
             Self::BlogPost(blog_post) => blog_post.slug().to_owned(),
             Self::MicroPost(micro_post) => micro_post.slug().to_owned(),
+            Self::MicroblogArchivePost(microblog_archive_post) => {
+                microblog_archive_post.slug().to_owned()
+            }
         }
     }
 
@@ -37,6 +42,9 @@ impl OmniPost {
             Self::UnlockedGameAchievement { game, .. } => format!("/interests/games/{}", game.id()),
             Self::BlogPost(blog_post) => blog_post.permalink().to_owned(),
             Self::MicroPost(micro_post) => micro_post.permalink().to_owned(),
+            Self::MicroblogArchivePost(microblog_archive_post) => {
+                microblog_archive_post.permalink().to_owned()
+            }
         }
     }
 
@@ -46,6 +54,7 @@ impl OmniPost {
             Self::UnlockedGameAchievement { achievement, .. } => achievement.unlocked_date(),
             Self::BlogPost(blog_post) => blog_post.date(),
             Self::MicroPost(micro_post) => micro_post.date(),
+            Self::MicroblogArchivePost(microblog_archive_post) => microblog_archive_post.date(),
         }
     }
 
@@ -55,6 +64,9 @@ impl OmniPost {
             Self::UnlockedGameAchievement { game, .. } => vec![Tag::from_string("Gaming")],
             Self::BlogPost(blog_post) => blog_post.tags().to_owned(),
             Self::MicroPost(micro_post) => micro_post.tags().to_owned(),
+            Self::MicroblogArchivePost(microblog_archive_post) => {
+                microblog_archive_post.tags().to_owned()
+            }
         }
     }
 }

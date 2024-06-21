@@ -281,7 +281,7 @@ impl Job for FetchGameDataFromSteamJob {
             }
         }
 
-        info!("Updating game: {}", self.game.name());
+        info!("Fething game: {}", self.game.name());
 
         let game_with_achievements = load_data_for_steam_game(&self.game, app_state.config()).await;
 

@@ -3,7 +3,7 @@ use std::{collections::HashMap, time::Duration};
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
     application::events::Event,

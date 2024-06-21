@@ -2,6 +2,8 @@ User-agent: *
 Allow: /interests/warhammer
 Allow: /blog
 Allow: /faq
+Allow: /timeline
+Allow: /micros
 Disallow: /
 
 User-agent: AdsBot-Google

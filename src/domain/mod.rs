@@ -8,3 +8,4 @@ pub mod blog_posts;
 pub mod silly_names;
 pub mod omni_post;
 pub mod micro_posts;
+pub mod microblog_archive;

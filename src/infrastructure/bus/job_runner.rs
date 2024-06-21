@@ -7,7 +7,7 @@ use tokio::{
     time::{sleep, Duration},
 };
 
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
 use crate::{application::events::Event, prelude::*};
 
@@ -42,7 +42,7 @@ impl JobRunner {
     pub async fn run(&mut self) {
         loop {
             while let Some(job) = self.job_receiver.recv().await {
-                info!("Running job: {}", job.name());
+                debug!("Running job: {}", job.name());
                 let result = job.run(&self.app_state).await;
                 if let Err(err) = result {
                     error!("Job {} failed: {}", job.name(), err);
