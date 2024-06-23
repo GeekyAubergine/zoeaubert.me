@@ -1,0 +1,22 @@
+{% match page.page_pagination() %}
+{% when Some with (pagination) %}
+<div class='flex-row w-full justify-between mt-11'>
+    <div>
+        {% match pagination.previous() %}
+    {% when Some with (previous) %}
+        <a href="{{ previous.url() }}" class="secondary items-center under">
+            {{ previous.label() }}</a>
+    {% when None %}
+        {% endmatch %}
+    </div>
+    <div>
+        {% match pagination.next() %}
+    {% when Some with (next) %}
+        <a href="{{ next.url() }}" class="secondary items-center under">
+            {{ next.label() }}</a>
+    {% when None %}
+        {% endmatch %}
+    </div>
+</div>
+{% when None %}
+{% endmatch %}

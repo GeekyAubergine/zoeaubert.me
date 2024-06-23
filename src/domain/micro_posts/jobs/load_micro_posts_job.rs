@@ -11,7 +11,7 @@ use crate::{
         bus::job_runner::Job,
     },
     prelude::Result,
-    utils::{find_files_rescurse, parse_date},
+    utils::{extract_media::extract_media_from_markdown, find_files_rescurse, parse_date},
 };
 
 const MICRO_POSTS_DIR: &str = "micros";
@@ -26,7 +26,7 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
     serde_yaml::from_str(s).map_err(Error::ParseMicroPostFrontMatter)
 }
 
-fn file_to_micro_post(file_path: String, s: &str) -> Result<MicroPost> {
+async fn file_to_micro_post(app_state: &AppState, file_path: String, s: &str) -> Result<MicroPost> {
     let split = s.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -60,7 +60,15 @@ fn file_to_micro_post(file_path: String, s: &str) -> Result<MicroPost> {
 
             let slug = format!("{}-{}", slug_date, file_name);
 
-            Ok(MicroPost::new(slug, date, content.to_string(), tags))
+            let mut post = MicroPost::new(slug, date, content.to_string(), tags);
+
+            let permalink = post.permalink();
+
+            post = post.with_media(
+                extract_media_from_markdown(app_state, content, &permalink, &date).await,
+            );
+
+            Ok(post)
         }
         _ => Err(Error::ParseMicroPost("Invalid front matter".to_string())),
     }
@@ -90,7 +98,7 @@ impl Job for LoadMicroPostsJob {
                 .read_file(&file, app_state.config())
                 .await?;
 
-            let micro_post = file_to_micro_post(file, &file_content)?;
+            let micro_post = file_to_micro_post(app_state, file, &file_content).await?;
 
             app_state.micro_posts_repo().commit(micro_post).await;
         }

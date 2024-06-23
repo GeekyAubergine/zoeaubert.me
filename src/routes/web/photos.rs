@@ -20,7 +20,7 @@ use crate::{
 
 use crate::utils::{FormatDate, FormatMarkdown, FormatNumber};
 
-const POSTS_PER_PAGE: usize = 48;
+const POSTS_PER_PAGE: usize = 24;
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))

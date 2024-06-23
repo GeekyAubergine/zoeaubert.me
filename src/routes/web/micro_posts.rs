@@ -12,6 +12,7 @@ use crate::{
     domain::{
         blog_posts::blog_post_models::BlogPost,
         micro_posts::micro_posts_models::MicroPost,
+        microblog_archive::microblog_archive_models::MicroblogArchivePost,
         models::{media::image::Image, page::Page},
     },
     infrastructure::app_state::AppState,
@@ -33,22 +34,61 @@ async fn old_slug_redirect(
     Redirect::permanent(&format!("/micros/{}-{}-{}-{}", year, month, day, title))
 }
 
+pub enum Post {
+    MicroPost(MicroPost),
+    MicroBlogArchive(MicroblogArchivePost),
+}
+
+impl Post {
+    pub fn slug(&self) -> &str {
+        match self {
+            Self::MicroPost(micro_post) => micro_post.slug(),
+            Self::MicroBlogArchive(archive_post) => archive_post.slug(),
+        }
+    }
+
+    pub fn date(&self) -> &chrono::DateTime<chrono::Utc> {
+        match self {
+            Self::MicroPost(micro_post) => micro_post.date(),
+            Self::MicroBlogArchive(archive_post) => archive_post.date(),
+        }
+    }
+
+    pub fn content(&self) -> &str {
+        match self {
+            Self::MicroPost(micro_post) => micro_post.content(),
+            Self::MicroBlogArchive(archive_post) => archive_post.content(),
+        }
+    }
+
+    pub fn tags(&self) -> &Vec<crate::domain::models::tag::Tag> {
+        match self {
+            Self::MicroPost(micro_post) => micro_post.tags(),
+            Self::MicroBlogArchive(archive_post) => archive_post.tags(),
+        }
+    }
+}
+
 #[derive(Template)]
 #[template(path = "micro_posts/post.html")]
 pub struct PostTemplate {
     page: Page,
-    post: MicroPost,
+    post: Post,
 }
 
 async fn post_page(
     Path(id): Path<String>,
     State(state): State<AppState>,
 ) -> Result<PostTemplate, (StatusCode, &'static str)> {
-    let post = state
-        .micro_posts_repo()
-        .get_by_slug(&id)
-        .await
-        .ok_or((StatusCode::NOT_FOUND, "Post not found"))?;
+    let micro_post = state.micro_posts_repo().get_by_slug(&id).await;
+
+    let archive_post = state.microblog_archive_repo().get_by_slug(&id).await;
+
+    let post = match (micro_post, archive_post) {
+        (Some(micro_post), _) => Post::MicroPost(micro_post),
+        (_, Some(archive_post)) => Post::MicroBlogArchive(archive_post),
+        _ => return Err((StatusCode::NOT_FOUND, "Post not found")),
+    };
 
     let page = Page::new(
         state.site(),

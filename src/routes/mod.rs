@@ -3,7 +3,10 @@ use std::sync::Arc;
 use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
 use serde::{Deserialize, Serialize};
 
-use crate::{domain::models::page::{PagePagination, PagePaginationLabel}, infrastructure::app_state::AppState};
+use crate::{
+    domain::models::page::{PagePagination, PagePaginationLabel},
+    infrastructure::app_state::AppState,
+};
 
 mod api;
 mod web;
@@ -65,6 +68,10 @@ impl Pagination {
 
         let next_nav = match self.page() {
             1 => None,
+            2 => Some(PagePaginationLabel::new(
+                &format!("/{}", slug),
+                "Newer posts",
+            )),
             _ => Some(PagePaginationLabel::new(
                 &format!("/{}?page={}", slug, self.page() - 1),
                 "Newer posts",

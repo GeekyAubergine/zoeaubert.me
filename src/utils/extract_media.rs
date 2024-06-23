@@ -10,23 +10,31 @@ use crate::{
 };
 
 lazy_static! {
-    pub static ref HTML_IMAGE_REGEX: Regex = Regex::new(r#"(?i)<img[^>]*?src="([^"]+)"[^>]*alt="([^"]+)"[^>]*width="([^"]+)"[^>]*height="([^"]+)"[^>]*>"#).unwrap();
+    pub static ref HTML_IMAGE_REGEX: Regex = Regex::new(r#"(?i)<img(((src="(?<src>([^"]+))")|(alt="(?<alt>([^"]+))")|(width="(?<width>([^"]+))")|(height="(?<height>([^"]+))"))|[^>])*>"#).unwrap();
     pub static ref MARKDOWN_IMAGE_REGEX: Regex = Regex::new(r#"(?i)!\[([^\]]+)\]\(([^)]+)\)"#).unwrap();
 }
 
-pub fn extract_media_from_html(markdown: &str) -> Vec<Media> {
+pub fn extract_media_from_html(
+    markdown: &str,
+    parent_permalink: &str,
+    date: &DateTime<Utc>,
+) -> Vec<Media> {
     let mut media = vec![];
 
     for cap in HTML_IMAGE_REGEX.captures_iter(markdown) {
-        let url = cap.get(1).map_or("", |m| m.as_str());
-        let alt = cap.get(2).map_or("", |m| m.as_str());
-        let width = cap.get(3).map_or("", |m| m.as_str());
-        let height = cap.get(4).map_or("", |m| m.as_str());
+        let url = cap.name("src").map_or("", |m| m.as_str());
+        let alt = cap.name("alt").map_or("", |m| m.as_str());
+        let width = cap.name("width").map_or("", |m| m.as_str());
+        let height = cap.name("height").map_or("", |m| m.as_str());
 
         let width = width.parse::<u32>().unwrap_or(0);
         let height = height.parse::<u32>().unwrap_or(0);
 
-        media.push(Media::from_image(Image::new(url, alt, width, height)));
+        media.push(Media::from_image(
+            Image::new(url, alt, width, height)
+                .with_date(date.to_owned())
+                .with_parent_permalink(parent_permalink),
+        ));
     }
 
     media
@@ -74,18 +82,20 @@ mod tests {
 
     #[test]
     fn test_extract_media_from_html() {
-        let markdown = r#"This is a bunch of stuff before <img src="https://cdn.geekyaubergine.com/uploads/2021/08/2021-08-01-09-00-00-0001.jpeg" alt="Image" width="100" height="100"> somet thigns arsdlfkjsd"#;
+        let markdown = r#"Movie friend\n\n<img src="uploads/2022/ced7ff5352.jpg" width="600" height="450" alt="Pciture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa">\n"#;
 
-        let media = extract_media_from_html(markdown);
+        let date = Utc::now();
+
+        let media = extract_media_from_html(markdown, "perma", &date);
 
         assert_eq!(media.len(), 1);
 
         let expected = Media::from_image(Image::new(
-            "https://cdn.geekyaubergine.com/uploads/2021/08/2021-08-01-09-00-00-0001.jpeg",
-            "Image",
-            100,
-            100,
-        ));
+            "uploads/2022/ced7ff5352.jpg",
+            "Pciture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa",
+            600,
+            450,
+        ).with_date(date).with_parent_permalink("perma"));
 
         assert_eq!(media[0], expected);
     }

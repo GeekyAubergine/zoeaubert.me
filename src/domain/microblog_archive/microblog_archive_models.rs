@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 
-use crate::domain::models::tag::Tag;
+use crate::domain::models::{media::Media, tag::Tag};
 
 #[derive(Debug, Clone)]
 pub struct MicroblogArchivePost {
@@ -8,6 +8,7 @@ pub struct MicroblogArchivePost {
     date: DateTime<Utc>,
     content: String,
     tags: Vec<Tag>,
+    media: Vec<Media>,
 }
 
 impl MicroblogArchivePost {
@@ -17,7 +18,13 @@ impl MicroblogArchivePost {
             date,
             content,
             tags,
+            media: vec![],
         }
+    }
+    
+    pub fn with_media(mut self, media: Vec<Media>) -> Self {
+        self.media = media;
+        self
     }
 
     pub fn slug(&self) -> &str {
@@ -37,6 +44,10 @@ impl MicroblogArchivePost {
     }
 
     pub fn permalink(&self) -> String {
-        format!("/{}", self.slug)
+        format!("/micros/{}", self.slug)
+    }
+
+    pub fn media(&self) -> &Vec<Media> {
+        &self.media
     }
 }

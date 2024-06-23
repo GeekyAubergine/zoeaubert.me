@@ -75,10 +75,10 @@ impl OmniPost {
             Self::StatusLol(status_lol) => vec![],
             Self::UnlockedGameAchievement { .. } => vec![],
             Self::BlogPost(blog_post) => blog_post.media().to_owned(),
-            Self::MicroPost(micro_post) => vec![], // micro_post.media().to_owned(),
-            Self::MicroblogArchivePost(microblog_archive_post) => vec![], // {
-                                                    // microblog_archive_post.media().to_owned()
-                                                    // }
+            Self::MicroPost(micro_post) => micro_post.media().to_owned(),
+            Self::MicroblogArchivePost(microblog_archive_post) => {
+                microblog_archive_post.media().to_owned()
+            }
         }
     }
 }

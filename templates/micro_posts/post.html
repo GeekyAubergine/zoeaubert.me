@@ -13,7 +13,7 @@
     </div>
     {{ post.content().to_html()|safe}}
     {%- if page.tags().len() > 0 %}
-        <div class="tags-list mb-4">
+        <div class="tags-list my-2">
             {% let tags = page.tags() %}
             {% include "partials/tags_list.html" %}
         </div>

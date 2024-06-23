@@ -7,11 +7,13 @@ use crate::{
     error::Error,
     infrastructure::{app_state::AppState, bus::job_runner::Job},
     prelude::Result,
+    utils::extract_media::extract_media_from_html,
 };
 
 const MICRO_POSTS_DIR: &str = "microBlogArchive/feed.json";
 
 const TAGS_TO_IGNORE: [&str; 2] = ["status", "photography"];
+const SELF_URL: &str = "zoeaubert.me";
 
 #[derive(Debug, Clone, Deserialize)]
 struct ArchiveFileItem {
@@ -52,17 +54,26 @@ fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroblogArchive
 
     let slug = item
         .id
-        .replace("http://geekyaubergine.micro.bog/", "/micros/")
-        .replace(".html", "");
+        .replace("http://geekyaubergine.micro.blog/", "")
+        .replace(".html", "")
+        .replace('/', "-");
 
-    let content = item.content_text.replace("uploads/", "https://cdn.geekyaubergine.com/");
+    let content = item
+        .content_text
+        .replace("uploads/", "https://cdn.geekyaubergine.com/");
 
-    Ok(Some(MicroblogArchivePost::new(
-        slug,
-        item.date_published,
-        content,
-        tags,
-    )))
+    if content.contains(SELF_URL) {
+        return Ok(None);
+    }
+
+    let mut post = MicroblogArchivePost::new(slug, item.date_published, content.to_owned(), tags);
+
+    let permalink = post.permalink();
+    let date = *post.date();
+
+    post = post.with_media(extract_media_from_html(&content, &permalink, &date));
+
+    Ok(Some(post))
 }
 
 #[derive(Debug)]
@@ -90,9 +101,8 @@ impl Job for LoadMicroblogArchiveJob {
             .map_err(Error::DeserializeArchive)?;
 
         for item in archive_file.items {
-            match archive_item_to_post(item)? {
-                Some(post) => app_state.microblog_archive_repo().commit(post).await,
-                None => continue,
+            if let Some(post) = archive_item_to_post(item)? {
+                app_state.microblog_archive_repo().commit(post).await;
             }
         }
 

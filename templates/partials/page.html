@@ -2,63 +2,11 @@
 
 {%- block body %}
     <main>
-    {% include "partials/navbar.html" %}
-    <div class="width-control mx-auto">
-        {%- match page.heading() %}
-            {%- when Some with (heading) %}
-                <div class="page-header">
-                    <h1>{{ heading }}</h1>
-                    {%- match page.date() %}
-                        {%- when Some with (date) %}
-                            <div class="date-and-readtime" data-pagefind-ignore>
-                            <p>
-                                <time datetime="{{date.datetime()}}">{{ date.short_iso() }}</time>
-                                {%- match page.read_time() %}
-                                    {%- when Some with (read_time) %}
-                                        <span>-</span>
-                                        {{read_time}}
-                                    {%- when None %}
-                                {%- endmatch %}
-                            </p>
-                            </div>
-                        {%- when None %}
-                    {%- endmatch %}
-
-                    {%- if page.tags().len() > 0 %}
-                        <div class="tags-list mb-4">
-                            {% let tags = page.tags() %}
-                            {% include "partials/tags_list.html" %}
-                        </div>
-                    {%- endif %}
-                    {% block subheading %}
-                    {% endblock %}
-                </div>
-            {% when None %}
-        {% endmatch %}
-        {% block content %}
-        {% endblock %}
-        {% match page.page_pagination() %}
-            {% when Some with (pagination) %}
-                <div class='flex-row w-full justify-between mt-11'>
-                    <div>
-                        {% match pagination.previous() %}
-                        {% when Some with (previous) %}
-                            <a href="{{ previous.url() }}" class="secondary items-center under">
-                                {{ previous.label() }}</a>
-                        {% when None %}
-                        {% endmatch %}
-                    </div>
-                    <div>
-                        {% match pagination.next() %}
-                        {% when Some with (next) %}
-                            <a href="{{ next.url() }}" class="secondary items-center under">
-                                {{ next.label() }}</a>
-                        {% when None %}
-                        {% endmatch %}
-                    </div>
-                </div>
-            {% when None %}
-        {% endmatch %}
-    </div>
-    {% include "partials/footer.html" %}
-{% endblock %}
+        {% include "partials/navbar.html" %}
+        <div class="width-control mx-auto">
+            {% include "partials/page_header.html" %}
+            {% block content %}{% endblock %}
+            {% include "partials/pagination.html" %}
+        </div>
+        {% include "partials/footer.html" %}
+    {% endblock %}
