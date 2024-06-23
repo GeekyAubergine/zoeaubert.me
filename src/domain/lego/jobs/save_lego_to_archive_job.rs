@@ -4,11 +4,10 @@ use tracing::warn;
 use crate::{
     application::events::Event,
     infrastructure::{app_state::AppState, bus::job_runner::Job},
-    load_archive_file,
     prelude::Result,
-    save_archive_file, LEGO_ARCHIVE_FILENAME,
+    utils::archive::save_archive_file,
+    LEGO_ARCHIVE_FILENAME,
 };
-
 
 #[derive(Debug)]
 pub struct SaveLegoToArchiveJob;

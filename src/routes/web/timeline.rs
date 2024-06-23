@@ -12,12 +12,11 @@ use crate::{
         models::page::{Page, PagePagination, PagePaginationLabel},
         omni_post::{omni_post_models::OmniPost, omni_post_repo::OmniPostRepo},
     },
-    infrastructure::app_state::AppState, routes::Pagination,
+    infrastructure::app_state::AppState,
+    routes::Pagination,
 };
 
 use crate::utils::{FormatDate, FormatMarkdown, FormatNumber};
-
-const POSTS_PER_PAGE: usize = 25;
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))
@@ -45,41 +44,15 @@ async fn index(
 
     let total_posts_count = posts.len();
 
-    let posts = posts
-        .iter()
-        .skip((pagination.page() - 1) * pagination.per_page())
-        .take(POSTS_PER_PAGE)
-        .cloned()
-        .collect::<Vec<OmniPost>>();
-
-    let previous_nav = match total_posts_count > pagination.page() * pagination.per_page() {
-        true => Some(PagePaginationLabel::new(
-            &format!("/timeline?page={}", pagination.page() + 1),
-            "Older posts",
-        )),
-        false => None,
-    };
-
-    let next_nav = match pagination.page() {
-        1 => None,
-        _ => Some(PagePaginationLabel::new(
-            &format!("/timeline?page={}", pagination.page() - 1),
-            "Newer posts",
-        )),
-    };
+    let posts = pagination.slice(&posts);
 
     let page = Page::new(
         state.site(),
         "/timeline",
         Some("Timeline"),
         Some("My timeline"),
-        None,
-        None,
-        None,
-        vec![],
     )
-    .set_no_index()
-    .with_pagination(PagePagination::new(previous_nav, next_nav));
+    .with_pagination(pagination.page_pagination(total_posts_count, "timeline"));
 
     Ok(IndexTemplate { page, posts })
 }

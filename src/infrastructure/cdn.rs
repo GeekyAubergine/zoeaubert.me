@@ -4,6 +4,7 @@ use reqwest::{header::ACCEPT, Body, ClientBuilder};
 use serde::Deserialize;
 use tokio::fs::{self, File};
 use tokio_util::codec::{BytesCodec, FramedRead};
+use tracing::debug;
 
 use crate::{error::Error, prelude::*};
 
@@ -16,17 +17,15 @@ pub struct BunnyCdnFileResponse {
 }
 
 #[derive(Debug, Clone)]
-pub struct CdnPath {
-    path: String,
-}
+pub struct CdnPath(String);
 
 impl CdnPath {
     pub fn new(path: String) -> Self {
-        Self { path }
+        Self(path)
     }
 
     pub fn file_name(&self) -> Result<&str> {
-        self.path
+        self.0
             .split('/')
             .last()
             .ok_or(Error::CdnInvalidPath(self.to_string()))
@@ -35,7 +34,7 @@ impl CdnPath {
     pub fn parent_path(&self) -> Result<&str> {
         let file_name = self.file_name()?;
 
-        self.path
+        self.0
             .strip_suffix(file_name)
             .ok_or(Error::CdnInvalidPath(self.to_string()))
     }
@@ -57,11 +56,15 @@ impl CdnPath {
             .next()
             .ok_or(Error::CdnInvalidPath(self.to_string()))
     }
+
+    pub fn path(&self) -> &str {
+        &self.0
+    }
 }
 
 impl Display for CdnPath {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.path)
+        write!(f, "{}", self.0)
     }
 }
 
@@ -93,7 +96,7 @@ impl Cdn {
     ) -> Result<Option<Vec<BunnyCdnFileResponse>>> {
         let request = self
             .reqwest_client
-            .get(format!("{}{}", config.bunny_cdn().url(), path.path))
+            .get(format!("{}{}", config.bunny_cdn().url(), path.path()))
             .header(ACCEPT, "application/json");
 
         match request.send().await {
@@ -147,16 +150,13 @@ impl Cdn {
         let stream = FramedRead::new(file, BytesCodec::new());
         let file_body = Body::wrap_stream(stream);
 
-        // let form = reqwest::multipart::Form::new()
-        //     .part("file", reqwest::multipart::Part::stream(file_body));
-
         let file = fs::read(local_path)
             .await
             .map_err(Error::FileSystemUnreadable)?;
 
         let request = self
             .reqwest_client
-            .put(format!("{}{}", config.bunny_cdn().url(), cnd_path.path))
+            .put(format!("{}{}", config.bunny_cdn().url(), cnd_path.path()))
             .header("Content-Type", "application/octet-stream")
             .body(file_body);
 
@@ -175,7 +175,7 @@ impl Cdn {
     pub async fn download_file(&self, path: &CdnPath, config: &Config) -> Result<Vec<u8>> {
         let request = self
             .reqwest_client
-            .get(format!("{}{}", config.bunny_cdn().url(), path.path))
+            .get(format!("{}{}", config.bunny_cdn().url(), path.path()))
             .header(ACCEPT, "*/*");
 
         let response = request.send().await.map_err(Error::CdnDownload)?;

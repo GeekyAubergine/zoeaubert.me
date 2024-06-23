@@ -10,9 +10,8 @@ use crate::{
     domain::lego::lego_models::{LegoMinifig, LegoSet},
     get_json,
     infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config},
-    load_archive_file,
     prelude::Result,
-    save_archive_file, LEGO_ARCHIVE_FILENAME, ONE_HOUR_CACHE_PERIOD,
+    LEGO_ARCHIVE_FILENAME, ONE_HOUR_CACHE_PERIOD,
 };
 
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;

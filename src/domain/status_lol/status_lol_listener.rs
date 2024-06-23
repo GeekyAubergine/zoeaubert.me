@@ -1,6 +1,6 @@
 use crate::infrastructure::bus::event_queue::EventListener;
 use crate::{
-    load_archive_file, prelude::*, save_archive_file, GAMES_ARCHIVE_FILENAME,
+    prelude::*, GAMES_ARCHIVE_FILENAME,
     LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
 };
 
@@ -10,7 +10,7 @@ use crate::application::events::Event;
 
 use crate::infrastructure::app_state::AppState;
 
-use super::jobs::load_status_lol_posts_from_arhcive_job::LoadStatusLolPostsFromArchiveJob;
+use super::jobs::load_status_lol_posts_from_archive_job::LoadStatusLolPostsFromArchiveJob;
 use super::jobs::save_status_lol_posts_to_archive_job::SaveStatusLolPostsToArchiveJob;
 use super::jobs::fetch_status_lol_posts_job::FetchStatusLolPostsJob;
 

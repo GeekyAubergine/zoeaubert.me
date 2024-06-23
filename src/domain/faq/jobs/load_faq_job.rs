@@ -1,7 +1,10 @@
 use async_trait::async_trait;
 
 use crate::{
-    application::events::Event, domain::faq::faq_models::Faq, infrastructure::{app_state::AppState, bus::job_runner::Job}, load_archive_file, prelude::Result
+    application::events::Event,
+    domain::faq::faq_models::Faq,
+    infrastructure::{app_state::AppState, bus::job_runner::Job},
+    prelude::Result,
 };
 
 const FILE_NAME: &str = "faq.md";

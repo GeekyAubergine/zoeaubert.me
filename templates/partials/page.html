@@ -1,11 +1,7 @@
 {% extends "base.html" %}
 
 {%- block body %}
-    {%- if page.disable_search() %}
-        <main>
-    {% else %}
-        <main data-pagefind-body>
-    {% endif %}
+    <main>
     {% include "partials/navbar.html" %}
     <div class="width-control mx-auto">
         {%- match page.heading() %}
@@ -34,6 +30,8 @@
                             {% include "partials/tags_list.html" %}
                         </div>
                     {%- endif %}
+                    {% block subheading %}
+                    {% endblock %}
                 </div>
             {% when None %}
         {% endmatch %}

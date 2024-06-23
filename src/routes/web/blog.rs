@@ -9,11 +9,14 @@ use axum::{
 
 use crate::{
     build_data,
-    domain::{blog_posts::blog_post_models::BlogPost, models::{image::Image, page::Page}},
+    domain::{
+        blog_posts::blog_post_models::BlogPost,
+        models::{media::image::Image, page::Page},
+    },
     infrastructure::app_state::AppState,
 };
 
-use crate::utils::{FormatDate, FormatNumber, FormatMarkdown};
+use crate::utils::{FormatDate, FormatMarkdown, FormatNumber};
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -35,12 +38,7 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
         "/blog",
         Some("Blog Posts"),
         Some("My blog posts"),
-        None,
-        None,
-        None,
-        vec![],
-    )
-    .set_no_index();
+    );
 
     let blog_posts = state.blog_posts_repo().get_all_by_published_date().await;
 
@@ -54,7 +52,10 @@ pub struct PostTemplate {
     post: BlogPost,
 }
 
-async fn post_page(Path(id): Path<String>, State(state): State<AppState>) -> Result<PostTemplate, (StatusCode, &'static str)> {
+async fn post_page(
+    Path(id): Path<String>,
+    State(state): State<AppState>,
+) -> Result<PostTemplate, (StatusCode, &'static str)> {
     let post = state
         .blog_posts_repo()
         .get_by_slug(&id)
@@ -66,12 +67,14 @@ async fn post_page(Path(id): Path<String>, State(state): State<AppState>) -> Res
         &format!("/blog/{}", post.slug()),
         Some(post.title()),
         Some(post.description()),
-        post.hero_image(),
-        Some(*post.date()),
-        None,
-        post.tags().to_vec(),
     )
-    .set_no_index();
+    .with_date(*post.date())
+    .with_tags(post.tags().to_vec());
+
+    let page = match post.hero_image() {
+        Some(image) => page.with_image(image.clone()),
+        None => page,
+    };
 
     Ok(PostTemplate { page, post })
 }

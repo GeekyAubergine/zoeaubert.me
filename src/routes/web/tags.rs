@@ -21,8 +21,6 @@ use crate::{
 
 use crate::utils::{FormatDate, FormatMarkdown, FormatNumber};
 
-const POSTS_PER_PAGE: usize = 25;
-
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
@@ -72,17 +70,7 @@ async fn index(State(state): State<AppState>) -> Result<IndexTemplate, (StatusCo
 
     tags.sort_by(|a, b| a.tag().cmp(b.tag()));
 
-    let page = Page::new(
-        state.site(),
-        "/tags",
-        Some("Tags"),
-        Some("All Tags"),
-        None,
-        None,
-        None,
-        vec![],
-    )
-    .set_no_index();
+    let page = Page::new(state.site(), "/tags", Some("Tags"), Some("All Tags"));
 
     Ok(IndexTemplate { page, tags })
 }
@@ -113,41 +101,17 @@ async fn tag(
 
     let total_posts_count = posts.len();
 
-    let posts = posts
-        .iter()
-        .skip((pagination.page() - 1) * pagination.per_page())
-        .take(POSTS_PER_PAGE)
-        .cloned()
-        .collect::<Vec<OmniPost>>();
+    let posts = pagination.slice(&posts);
 
-    let previous_nav = match total_posts_count > pagination.page() * pagination.per_page() {
-        true => Some(PagePaginationLabel::new(
-            &format!("/tags/{}?page={}", tag.slug(), pagination.page() + 1),
-            "Older posts",
-        )),
-        false => None,
-    };
-
-    let next_nav = match pagination.page() {
-        1 => None,
-        _ => Some(PagePaginationLabel::new(
-            &format!("/tags/{}?page={}", tag.slug(), pagination.page() - 1),
-            "Newer posts",
-        )),
-    };
+    let slug = &format!("/tags/{}", tag.slug());
 
     let page = Page::new(
         state.site(),
-        &format!("/tags/{}", tag.slug()),
+        slug,
         Some(&format!("{} Posts", tag.title())),
         Some(&format!("#{} posts", tag.title())),
-        None,
-        None,
-        None,
-        vec![],
     )
-    .set_no_index()
-    .with_pagination(PagePagination::new(previous_nav, next_nav));
+    .with_pagination(pagination.page_pagination(total_posts_count, &slug));
 
     Ok(TagTemplate { page, posts })
 }

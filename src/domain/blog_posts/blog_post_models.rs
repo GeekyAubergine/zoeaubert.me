@@ -1,5 +1,5 @@
 use crate::{
-    domain::models::{image::Image, tag::Tag},
+    domain::models::{media::image::Image, media::Media, tag::Tag},
     error::Error,
     prelude::*,
 };
@@ -16,6 +16,7 @@ pub struct BlogPost {
     tags: Vec<Tag>,
     hero_image: Option<Image>,
     content: String,
+    media: Vec<Media>,
 }
 
 impl BlogPost {
@@ -25,7 +26,6 @@ impl BlogPost {
         title: String,
         description: String,
         tags: Vec<Tag>,
-        hero_image: Option<Image>,
         content: String,
     ) -> Self {
         Self {
@@ -34,9 +34,20 @@ impl BlogPost {
             title,
             description,
             tags,
-            hero_image,
+            hero_image: None,
             content,
+            media: vec![],
         }
+    }
+
+    pub fn with_hero_image(mut self, hero_image: Image) -> Self {
+        self.hero_image = Some(hero_image);
+        self
+    }
+
+    pub fn with_media(mut self, media: Vec<Media>) -> Self {
+        self.media = media;
+        self
     }
 
     pub fn permalink(&self) -> String {
@@ -69,5 +80,9 @@ impl BlogPost {
 
     pub fn content(&self) -> &str {
         &self.content
+    }
+
+    pub fn media(&self) -> &Vec<Media> {
+        &self.media
     }
 }

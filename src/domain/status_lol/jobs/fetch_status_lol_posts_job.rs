@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use tracing::warn;
 
 use crate::{
-    application::events::Event, domain::status_lol::status_lol_models::StatusLolPost, get_json, infrastructure::{app_state::AppState, bus::job_runner::Job}, load_archive_file, prelude::Result, save_archive_file, ONE_HOUR_CACHE_PERIOD, STATUS_LOL_ARCHIVE_FILENAME
+    application::events::Event, domain::status_lol::status_lol_models::StatusLolPost, get_json, infrastructure::{app_state::AppState, bus::job_runner::Job}, prelude::Result, ONE_HOUR_CACHE_PERIOD, STATUS_LOL_ARCHIVE_FILENAME
 };
 
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;

@@ -2,11 +2,7 @@ use async_trait::async_trait;
 use tracing::warn;
 
 use crate::{
-    application::events::Event,
-    infrastructure::{app_state::AppState, bus::job_runner::Job},
-    load_archive_file,
-    prelude::Result,
-    save_archive_file, GAMES_ARCHIVE_FILENAME,
+    application::events::Event, infrastructure::{app_state::AppState, bus::job_runner::Job}, prelude::Result, utils::archive::save_archive_file, GAMES_ARCHIVE_FILENAME
 };
 
 #[derive(Debug)]

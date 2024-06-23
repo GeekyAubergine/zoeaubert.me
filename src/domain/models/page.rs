@@ -5,7 +5,7 @@ use crate::{
     infrastructure::config::{SiteConfig, SiteConfigNavLink, SiteConfigSocialNetworkLink},
 };
 
-use super::{image::Image, tag::Tag};
+use super::{media::image::Image, tag::Tag};
 
 pub struct NavigationLink {
     name: String,
@@ -108,7 +108,10 @@ pub struct PagePagination {
 
 impl PagePagination {
     pub fn new(next: Option<PagePaginationLabel>, prev: Option<PagePaginationLabel>) -> Self {
-        Self { next, previous: prev }
+        Self {
+            next,
+            previous: prev,
+        }
     }
 
     pub fn next(&self) -> Option<&PagePaginationLabel> {
@@ -128,8 +131,6 @@ pub struct Page {
     image: Image,
     language: String,
     build_date: String,
-    no_index: bool,
-    disable_search: bool,
     navigation_links: Vec<NavigationLink>,
     social_links: Vec<SocialNetworkLink>,
     heading: Option<String>,
@@ -145,10 +146,10 @@ impl Page {
         slug: &str,
         title: Option<&str>,
         description: Option<&str>,
-        image: Option<Image>,
-        date: Option<DateTime<Utc>>,
-        read_time: Option<String>,
-        tags: Vec<Tag>,
+        // image: Option<Image>,
+        // date: Option<DateTime<Utc>>,
+        // read_time: Option<String>,
+        // tags: Vec<Tag>,
     ) -> Self {
         let heading = title.map(|t| t.to_owned());
 
@@ -158,13 +159,8 @@ impl Page {
         };
 
         let description = match description {
-            Some(d) => d.to_string(),
+            Some(d) => d.to_owned(),
             None => site.description().to_owned(),
-        };
-
-        let image = match image {
-            Some(image) => image,
-            None => site.image().clone(),
         };
 
         let url = match slug {
@@ -177,11 +173,9 @@ impl Page {
             title,
             description,
             author: site.author().to_owned(),
-            image: image.clone(),
+            image: site.image().clone(),
             language: site.language().to_owned(),
             build_date: BUILD_DATE.to_string(),
-            no_index: false,
-            disable_search: false,
             navigation_links: site
                 .nav_links()
                 .iter()
@@ -193,20 +187,30 @@ impl Page {
                 .map(|link| SocialNetworkLink::from(link.clone()))
                 .collect(),
             heading,
-            date,
-            read_time,
-            tags,
+            date: None,
+            read_time: None,
+            tags: vec![],
             page_pagination: None,
         }
     }
 
-    pub fn set_no_index(mut self) -> Self {
-        self.no_index = true;
+    pub fn with_image(mut self, image: Image) -> Self {
+        self.image = image;
         self
     }
 
-    pub fn set_no_search(mut self) -> Self {
-        self.disable_search = true;
+    pub fn with_date(mut self, date: DateTime<Utc>) -> Self {
+        self.date = Some(date);
+        self
+    }
+
+    pub fn with_read_time(mut self, read_time: &str) -> Self {
+        self.read_time = Some(read_time.to_owned());
+        self
+    }
+
+    pub fn with_tags(mut self, tags: Vec<Tag>) -> Self {
+        self.tags = tags;
         self
     }
 
@@ -247,9 +251,6 @@ impl Page {
         &self.build_date
     }
 
-    pub fn no_index(&self) -> bool {
-        self.no_index
-    }
 
     pub fn image_url(&self) -> String {
         if self.image.url().starts_with("http") {
@@ -261,10 +262,6 @@ impl Page {
 
     pub fn image_alt(&self) -> &str {
         self.image.alt()
-    }
-
-    pub fn disable_search(&self) -> bool {
-        self.disable_search
     }
 
     pub fn navigation_links(&self) -> &[NavigationLink] {

@@ -7,7 +7,7 @@ use crate::domain::{
     games::games_models::{Game, GameAchievementUnlocked},
     micro_posts::micro_posts_models::MicroPost,
     microblog_archive::microblog_archive_models::MicroblogArchivePost,
-    models::tag::Tag,
+    models::{media::Media, tag::Tag},
     status_lol::status_lol_models::StatusLolPost,
 };
 
@@ -67,6 +67,18 @@ impl OmniPost {
             Self::MicroblogArchivePost(microblog_archive_post) => {
                 microblog_archive_post.tags().to_owned()
             }
+        }
+    }
+
+    pub fn media(&self) -> Vec<Media> {
+        match self {
+            Self::StatusLol(status_lol) => vec![],
+            Self::UnlockedGameAchievement { .. } => vec![],
+            Self::BlogPost(blog_post) => blog_post.media().to_owned(),
+            Self::MicroPost(micro_post) => vec![], // micro_post.media().to_owned(),
+            Self::MicroblogArchivePost(microblog_archive_post) => vec![], // {
+                                                    // microblog_archive_post.media().to_owned()
+                                                    // }
         }
     }
 }

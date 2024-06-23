@@ -31,10 +31,6 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
         "/interests",
         Some("Interests"),
         Some("My Interests"),
-        None,
-        None,
-        None,
-        vec![],
     );
 
     IndexTemplate { page }

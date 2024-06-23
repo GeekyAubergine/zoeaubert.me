@@ -12,9 +12,8 @@ use crate::{
     },
     get_json,
     infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config},
-    load_archive_file,
     prelude::Result,
-    save_archive_file, GAMES_ARCHIVE_FILENAME, ONE_DAY_CACHE_PERIOD,
+    GAMES_ARCHIVE_FILENAME, ONE_DAY_CACHE_PERIOD,
 };
 
 use super::fetch_game_data_from_steam_job::{steam_last_played_to_datetime, FetchGameDataFromSteamJob};

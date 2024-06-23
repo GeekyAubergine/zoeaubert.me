@@ -17,6 +17,7 @@ chrono = { version = "0.4.31", features = ["serde"] }
 comrak = { version = "0.24.1", features = ["emojis", "shortcodes", "arbitrary"] }
 html-escape = "0.2.13"
 http-range-header = "0.4.0"
+imagesize = "0.13.0"
 lazy_static = "1.4.0"
 markdown = "0.3.0"
 regex = "1.10.3"

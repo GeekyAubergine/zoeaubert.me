@@ -1,6 +1,6 @@
 use crate::infrastructure::bus::event_queue::EventListener;
 use crate::{
-    load_archive_file, prelude::*, save_archive_file, GAMES_ARCHIVE_FILENAME,
+    prelude::*, GAMES_ARCHIVE_FILENAME,
     LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
 };
 

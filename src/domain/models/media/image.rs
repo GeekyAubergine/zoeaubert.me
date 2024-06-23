@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum ImageOrientation {
     Landscape,
     Portrait,
@@ -18,7 +18,7 @@ impl ImageOrientation {
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Image {
     url: String,
     alt: String,
@@ -32,26 +32,45 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(
-        url: &str,
-        alt: &str,
-        width: u32,
-        height: u32,
-        title: Option<String>,
-        description: Option<String>,
-        date: Option<DateTime<Utc>>,
-        parent_permalink: Option<String>,
-    ) -> Self {
+    pub fn new(url: &str, alt: &str, width: u32, height: u32) -> Self {
         Self {
             url: url.to_string(),
             alt: alt.to_string(),
             width,
             height,
             orientation: ImageOrientation::from_dimensions(width, height),
-            title,
-            description,
-            date,
-            parent_permalink,
+            title: None,
+            description: None,
+            date: None,
+            parent_permalink: None,
+        }
+    }
+
+    pub fn with_title(&self, title: &str) -> Self {
+        Self {
+            title: Some(title.to_string()),
+            ..self.clone()
+        }
+    }
+
+    pub fn with_description(&self, description: &str) -> Self {
+        Self {
+            description: Some(description.to_string()),
+            ..self.clone()
+        }
+    }
+
+    pub fn with_date(&self, date: DateTime<Utc>) -> Self {
+        Self {
+            date: Some(date),
+            ..self.clone()
+        }
+    }
+
+    pub fn with_parent_permalink(&self, parent_permalink: &str) -> Self {
+        Self {
+            parent_permalink: Some(parent_permalink.to_string()),
+            ..self.clone()
         }
     }
 

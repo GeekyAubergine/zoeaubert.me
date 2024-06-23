@@ -27,8 +27,12 @@ pub enum Error {
     CdnFileNotFound(String),
     #[error("CDN unable to upload file {0} to {1}")]
     CdnUnableToUploadFile(String, String),
+    #[error("File not found {0}")]
+    FileNotFound(String),
     #[error("File system unreadable {0}")]
     FileSystemUnreadable(std::io::Error),
+    #[error("File system unwritable {0}")]
+    FileSystemUnwritable(std::io::Error),
     #[error("Dispatch job {0}")]
     DispatchJob(tokio::sync::mpsc::error::SendError<Box<dyn Job>>),
     #[error("Dispatch event {0}")]
@@ -51,4 +55,6 @@ pub enum Error {
     CouldNotFindLangaugeForCodeBlock(),
     #[error("Could not find body for code block")]
     CouldNotFindBodyForCodeBlock(),
+    #[error("Image size {0}")]
+    ImageSize(String),
 }

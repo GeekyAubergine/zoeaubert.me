@@ -5,6 +5,8 @@ use crate::{error::Error, prelude::*};
 pub mod format_date;
 pub mod format_markdown;
 pub mod format_number;
+pub mod archive;
+pub mod extract_media;
 
 use chrono::{DateTime, NaiveDate, NaiveDateTime, NaiveTime, Utc};
 pub use format_date::FormatDate;
@@ -25,8 +27,6 @@ pub fn find_files_rescurse(path: &str, extension: &str, config: &Config) -> Resu
         false => format!("{}/{}", config.content_dir(), path),
     };
     let path = Path::new(&path);
-
-    debug!("Finding files in: {:?}", path);
 
     let mut files = vec![];
 

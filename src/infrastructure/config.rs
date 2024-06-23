@@ -1,4 +1,4 @@
-use crate::{domain::models::image::Image, error::Error, prelude::*};
+use crate::{domain::models::media::image::Image, error::Error, prelude::*};
 
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
@@ -184,10 +184,6 @@ impl SiteConfig {
             self.image.alt(),
             self.image.width(),
             self.image.height(),
-            None,
-            None,
-            None,
-            None,
         )
     }
 

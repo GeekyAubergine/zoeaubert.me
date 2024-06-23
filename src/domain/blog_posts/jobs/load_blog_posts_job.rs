@@ -5,16 +5,18 @@ use crate::{
     application::events::Event,
     domain::{
         blog_posts::blog_post_models::BlogPost,
-        models::{image::Image, tag::Tag},
+        models::{
+            media::{image::Image, Media},
+            tag::Tag,
+        },
     },
     error::Error,
     infrastructure::{
         app_state::{self, AppState},
         bus::job_runner::Job,
     },
-    load_archive_file,
     prelude::Result,
-    utils::{find_files_rescurse, parse_date},
+    utils::{extract_media::extract_media_from_markdown, find_files_rescurse, parse_date},
 };
 
 const BLOG_POSTS_DIR: &str = "blogPosts";
@@ -39,7 +41,7 @@ fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
     serde_yaml::from_str(s).map_err(Error::ParseBlogFrontMatter)
 }
 
-fn file_to_blog_post(s: &str) -> Result<BlogPost> {
+async fn file_to_blog_post(app_state: &AppState, s: &str) -> Result<BlogPost> {
     let split = s.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -59,34 +61,35 @@ fn file_to_blog_post(s: &str) -> Result<BlogPost> {
 
             let date = parse_date(front_matter.date.as_str())?;
 
-            let hero_image = match (
-                front_matter.hero,
-                front_matter.hero_alt,
-                front_matter.hero_width,
-                front_matter.hero_height,
-            ) {
-                (Some(url), Some(alt), Some(width), Some(height)) => Some(Image::new(
-                    url.as_str(),
-                    alt.as_str(),
-                    width,
-                    height,
-                    None,
-                    None,
-                    Some(date),
-                    None,
-                )),
-                _ => None,
-            };
-
-            Ok(BlogPost::new(
+            let mut post = BlogPost::new(
                 front_matter.slug,
                 date,
                 front_matter.title,
                 front_matter.description,
                 tags,
-                hero_image,
                 content.to_owned().to_owned(),
-            ))
+            );
+
+            let permalink = post.permalink();
+
+            if let (Some(url), Some(alt), Some(width), Some(height)) = (
+                front_matter.hero,
+                front_matter.hero_alt,
+                front_matter.hero_width,
+                front_matter.hero_height,
+            ) {
+                post = post.with_hero_image(
+                    Image::new(url.as_str(), alt.as_str(), width, height)
+                        .with_date(date)
+                        .with_parent_permalink(&permalink),
+                );
+            }
+
+            post = post.with_media(
+                extract_media_from_markdown(app_state, content, &permalink, &date).await,
+            );
+
+            Ok(post)
         }
         _ => Err(Error::ParseBlogPost("Invalid front matter".to_string())),
     }
@@ -116,7 +119,7 @@ impl Job for LoadBlogPostsJob {
                 .read_file(&file, app_state.config())
                 .await?;
 
-            let blog_post = file_to_blog_post(&file_content)?;
+            let blog_post = file_to_blog_post(&app_state, &file_content).await?;
 
             app_state.blog_posts_repo().commit(blog_post).await;
         }

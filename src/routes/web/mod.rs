@@ -20,9 +20,10 @@ const RECENT_POSTS_COUNT: usize = 5;
 pub mod blog;
 pub mod hobbies;
 pub mod interests;
+pub mod micro_posts;
 pub mod tags;
 pub mod timeline;
-pub mod micro_posts;
+pub mod photos;
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -37,6 +38,7 @@ pub fn router() -> Router<AppState> {
         .nest("/timeline", timeline::router())
         .nest("/tags", tags::router())
         .nest("/micros", micro_posts::router())
+        .nest("/photos", photos::router())
 }
 
 #[derive(Template)]
@@ -49,7 +51,7 @@ pub struct IndexTemplate {
 }
 
 async fn index(State(state): State<AppState>) -> IndexTemplate {
-    let page = Page::new(state.site(), "/", None, None, None, None, None, vec![]);
+    let page = Page::new(state.site(), "/", None, None);
 
     let about_text = state.about_repo().get().await.short().to_owned();
 
@@ -85,10 +87,6 @@ async fn faq(State(state): State<AppState>) -> FaqTemplate {
         "/faq",
         Some("FAQ"),
         Some("Frequently Asked Questions"),
-        None,
-        None,
-        None,
-        vec![],
     );
 
     let faq = state.faq_repo().get().await.text().to_owned();
@@ -104,16 +102,7 @@ pub struct NowTemplate {
 }
 
 async fn now(State(state): State<AppState>) -> NowTemplate {
-    let page = Page::new(
-        state.site(),
-        "/now",
-        Some("Now"),
-        Some("My now page"),
-        None,
-        None,
-        None,
-        vec![],
-    );
+    let page = Page::new(state.site(), "/now", Some("Now"), Some("My now page"));
 
     let now = "testing".to_owned();
 

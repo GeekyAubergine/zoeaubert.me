@@ -12,7 +12,7 @@ use crate::{
     domain::{
         blog_posts::blog_post_models::BlogPost,
         micro_posts::micro_posts_models::MicroPost,
-        models::{image::Image, page::Page},
+        models::{media::image::Image, page::Page},
     },
     infrastructure::app_state::AppState,
 };
@@ -55,12 +55,9 @@ async fn post_page(
         &format!("/micros/{}", post.slug()),
         None,
         None,
-        None,
-        Some(*post.date()),
-        None,
-        post.tags().to_vec(),
     )
-    .set_no_index();
+    .with_date(*post.date())
+    .with_tags(post.tags().to_vec());
 
     Ok(PostTemplate { page, post })
 }

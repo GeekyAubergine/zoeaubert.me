@@ -9,7 +9,10 @@ use axum::{
 
 use crate::{
     build_data,
-    domain::{games::games_models::Game, models::{image::Image, page::Page}},
+    domain::{
+        games::games_models::Game,
+        models::{media::image::Image, page::Page},
+    },
     infrastructure::app_state::AppState,
 };
 
@@ -42,12 +45,7 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
         "/interests/games",
         Some("Games"),
         Some("Games I own"),
-        None,
-        None,
-        None,
-        vec![],
-    )
-    .set_no_index();
+    );
 
     let games_by_recently_played = state
         .games_repo()
@@ -104,13 +102,9 @@ async fn game_page(
 
     let image = Image::new(
         game.header_image_url(),
-        format!("{} steam header image", game.name()).as_str(),
+        format!("{} Steam header image", game.name()).as_str(),
         HEADER_IMAGE_WIDTH,
         HEADER_IMAGE_HEIGHT,
-        None,
-        None,
-        None,
-        None,
     );
 
     let page = Page::new(
@@ -118,12 +112,8 @@ async fn game_page(
         &format!("/interests/games/{}", game.id()),
         Some(title.as_str()),
         Some(description.as_str()),
-        Some(image),
-        None,
-        None,
-        vec![],
     )
-    .set_no_index();
+    .with_image(image);
 
     Ok(GameTemplate { page, game })
 }

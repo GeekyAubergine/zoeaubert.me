@@ -13,7 +13,7 @@ use serde::Deserialize;
 use tokio::sync::RwLock;
 use tracing::info;
 
-use crate::domain::models::image::Image;
+use crate::domain::models::media::image::Image;
 
 use super::blog_post_models::BlogPost;
 
