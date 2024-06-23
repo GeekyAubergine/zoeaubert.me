@@ -409,14 +409,6 @@
         & .blog-post-item {
             @apply flex-col;
 
-            & .hero {
-                @apply w-full justify-center items-start rounded overflow-hidden mt-4 mb-2;
-
-                & img {
-                    @apply w-full h-[16rem] object-contain p-0 m-0;
-                }
-            }
-
             & .title-and-date {
                 @apply flex-col justify-between items-baseline md:flex-row md:items-baseline;
 
@@ -434,7 +426,7 @@
             }
 
             & .description {
-                @apply hidden md:inline-flex mb-0;
+                @apply hidden md:inline-flex;
             }
 
             & .time-to-read-and-tags {
@@ -447,6 +439,10 @@
 
             & .tags-list {
                 /* @apply ml-2; */
+            }
+
+            p {
+                @apply mt-2;
             }
         }
     }

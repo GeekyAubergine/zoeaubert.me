@@ -99,9 +99,7 @@ async fn tag(
     State(state): State<AppState>,
     pagination: Query<Pagination>,
 ) -> Result<TagTemplate, (StatusCode, &'static str)> {
-    println!("tag: {:?}", tag);
     let tag = &TagSlug::from_string(&tag).to_tag();
-    println!("tag: {:?}", tag);
 
     let posts = OmniPostRepo::get_posts_by_tag_ordered_by_date(&state, tag)
         .await

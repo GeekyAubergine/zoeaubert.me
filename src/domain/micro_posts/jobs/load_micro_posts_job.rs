@@ -27,8 +27,6 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
 }
 
 fn file_to_micro_post(file_path: String, s: &str) -> Result<MicroPost> {
-    println!("file_path: {:?}", file_path);
-
     let split = s.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -61,8 +59,6 @@ fn file_to_micro_post(file_path: String, s: &str) -> Result<MicroPost> {
                 .ok_or(Error::ParseMicroPost("Invalid file name".to_string()))?;
 
             let slug = format!("{}-{}", slug_date, file_name);
-
-            println!("slug: {:?}", slug);
 
             Ok(MicroPost::new(slug, date, content.to_string(), tags))
         }
