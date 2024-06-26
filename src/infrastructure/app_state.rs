@@ -4,7 +4,7 @@ use tokio::sync::{mpsc::Sender, RwLock};
 
 use crate::{
     application::events::Event,
-    domain::{about::about_repo::AboutRepo, blog_posts::blog_posts_repo::BlogPostsRepo, faq::faq_repo::FaqRepo, games::games_repo::GamesRepo, lego::lego_repo::LegoRepo, micro_posts::micro_posts_repo::MicroPostsRepo, microblog_archive::microblog_archive_repo::MicroblogArchiveRepo, silly_names::silly_names_repo::SillyNamesRepo, status_lol::status_lol_repo::StatusLolRepo},
+    domain::{about::about_repo::AboutRepo, blog_posts::blog_posts_repo::BlogPostsRepo, faq::faq_repo::FaqRepo, games::games_repo::GamesRepo, lego::lego_repo::LegoRepo, mastodon_posts::mastodon_posts_repo::MastodonPostsRepo, micro_posts::micro_posts_repo::MicroPostsRepo, microblog_archive::microblog_archive_repo::MicroblogArchiveRepo, silly_names::silly_names_repo::SillyNamesRepo, status_lol::status_lol_repo::StatusLolRepo},
     error::Error,
     infrastructure::config::Config,
     prelude::*,
@@ -35,7 +35,8 @@ pub struct AppStateData {
     silly_names_repo: SillyNamesRepo,
     blog_posts_repo: BlogPostsRepo,
     micro_posts_repo: MicroPostsRepo,
-    microblog_archive_repo: MicroblogArchiveRepo
+    microblog_archive_repo: MicroblogArchiveRepo,
+    mastodon_posts_repo: MastodonPostsRepo,
 }
 
 impl AppStateData {
@@ -59,7 +60,8 @@ impl AppStateData {
             silly_names_repo: SillyNamesRepo::default(),
             blog_posts_repo: BlogPostsRepo::default(),
             micro_posts_repo: MicroPostsRepo::default(),
-            microblog_archive_repo: MicroblogArchiveRepo::default()
+            microblog_archive_repo: MicroblogArchiveRepo::default(),
+            mastodon_posts_repo: MastodonPostsRepo::default()
         }
     }
 
@@ -131,6 +133,10 @@ impl AppStateData {
 
     pub fn microblog_archive_repo(&self) -> &MicroblogArchiveRepo {
         &self.microblog_archive_repo
+    }
+
+    pub fn mastodon_posts_repo(&self) -> &MastodonPostsRepo {
+        &self.mastodon_posts_repo
     }
 }
 

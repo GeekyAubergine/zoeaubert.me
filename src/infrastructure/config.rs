@@ -15,6 +15,24 @@ pub struct ConfigMastodon {
     access_token: String,
 }
 
+impl ConfigMastodon {
+    pub fn account_id(&self) -> &str {
+        &self.account_id
+    }
+
+    pub fn client_key(&self) -> &str {
+        &self.client_key
+    }
+
+    pub fn client_secret(&self) -> &str {
+        &self.client_secret
+    }
+
+    pub fn access_token(&self) -> &str {
+        &self.access_token
+    }
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct ConfigStatusLol {
     url: String,

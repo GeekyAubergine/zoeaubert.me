@@ -23,6 +23,10 @@ pub enum Event {
     BlogPostsRepoUpdated,
 
     MicroPostsRepoUpdated,
+
+    MastodonPostsRepoLoadedFromArchive,
+    MastodonPostsRepoUpdated,
+    MastodonPostsRepoArchived,
 }
 
 impl Event {
@@ -51,6 +55,10 @@ impl Event {
             Event::BlogPostsRepoUpdated => "blog_posts_repo.updated",
 
             Event::MicroPostsRepoUpdated => "micro_posts_repo.updated",
+
+            Event::MastodonPostsRepoLoadedFromArchive => "mastodon_posts_repo.loaded_from_archive",
+            Event::MastodonPostsRepoUpdated => "mastodon_posts_repo.updated",
+            Event::MastodonPostsRepoArchived => "mastodon_posts_repo.archived",
         }
     }
 }

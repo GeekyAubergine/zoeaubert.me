@@ -24,7 +24,13 @@ use axum::{
 };
 use chrono::{DateTime, Utc};
 use domain::{
-    about::about_listener::AboutListener, blog_posts::blog_posts_listener::BlogPostsListener, faq::faq_listener::FaqListener, games::games_listener::GamesListener, lego::lego_listener::LegoListener, micro_posts::micro_posts_listener::MicroPostsListener, microblog_archive::microblog_archive_listener::MicroblogArchiveListener, silly_names::silly_names_listener::SillyNamesListener, status_lol::status_lol_listener::StatusLolListener
+    about::about_listener::AboutListener, blog_posts::blog_posts_listener::BlogPostsListener,
+    faq::faq_listener::FaqListener, games::games_listener::GamesListener,
+    lego::lego_listener::LegoListener, mastodon_posts::mastodon_posts_listener::MastodonListener,
+    micro_posts::micro_posts_listener::MicroPostsListener,
+    microblog_archive::microblog_archive_listener::MicroblogArchiveListener,
+    silly_names::silly_names_listener::SillyNamesListener,
+    status_lol::status_lol_listener::StatusLolListener,
 };
 use error::Error;
 use infrastructure::{
@@ -58,6 +64,7 @@ pub const GAMES_ARCHIVE_FILENAME: &str = "games.json";
 pub const LEGO_ARCHIVE_FILENAME: &str = "lego.json";
 pub const STATUS_LOL_ARCHIVE_FILENAME: &str = "status_lol.json";
 pub const ABOUT_ARCHIVE_FILENAME: &str = "about.json";
+pub const MASTODON_ARCHIVE_FILENAME: &str = "mastodon.json";
 
 pub const ONE_HOUR_CACHE_PERIOD: Duration = Duration::new(60 * 60 - 1, 0);
 pub const ONE_DAY_CACHE_PERIOD: Duration = Duration::new(60 * 60 * 24 - 1, 0);
@@ -110,6 +117,7 @@ async fn main() -> Result<()> {
     queue.add_event_listener(Box::new(FaqListener::new()));
     queue.add_event_listener(Box::new(GamesListener::new()));
     queue.add_event_listener(Box::new(LegoListener::new()));
+    queue.add_event_listener(Box::new(MastodonListener::new()));
     queue.add_event_listener(Box::new(MicroPostsListener::new()));
     queue.add_event_listener(Box::new(MicroblogArchiveListener::new()));
     queue.add_event_listener(Box::new(SillyNamesListener::new()));

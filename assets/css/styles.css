@@ -448,7 +448,7 @@
     }
 
     .page-header {
-        @apply flex flex-col justify-center items-center w-full mt-6 mb-6 md:mt-[4rem] md:mb-[4rem] md:items-center;
+        @apply flex flex-col justify-center items-center w-full mt-6 mb-6 md:mt-[4rem] md:mb-[4.5rem] md:items-center;
 
         & h1 {
             @apply text-center;
