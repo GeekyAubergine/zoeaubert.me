@@ -3,7 +3,7 @@ use std::{collections::HashMap, hash::Hash, time::Duration};
 use async_trait::async_trait;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
     application::events::Event,
@@ -154,8 +154,10 @@ impl Job for FetchLegoJob {
         let last_updated = app_state.lego_repo().get_last_updated().await;
 
         if last_updated + NO_REFETCH_DURATION > Utc::now() {
+            info!("Skipping fetching lego data - cache is still valid");
             return Ok(());
         }
+        info!("Fetching lego data");
 
         let login_response =
             get_json::<BricksetLoginResponse>(&make_login_url(app_state.config())).await?;

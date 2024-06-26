@@ -178,8 +178,10 @@ impl Job for FetchMastodonPostsJob {
         let last_updated = app_state.mastodon_posts_repo().get_last_updated().await;
 
         if last_updated + NO_REFETCH_DURATION > Utc::now() {
+            info!("Skipping fetching mastodon posts - cache is still valid");
             return Ok(());
         }
+        info!("Fetching mastodon posts");
 
         let statuses = fetch_pages(app_state.config()).await?;
 

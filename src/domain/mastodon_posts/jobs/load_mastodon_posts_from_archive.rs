@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::domain::mastodon_posts::jobs::fetch_mastodon_posts_job::FetchMastodonPostsJob;
 use crate::MASTODON_ARCHIVE_FILENAME;
@@ -25,6 +25,7 @@ impl Job for LoadMastodonPostsFromArchiveJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading mastodon archive");
         match load_archive_file(app_state.config(), MASTODON_ARCHIVE_FILENAME).await {
             Ok(mastodon_archive) => {
                 app_state

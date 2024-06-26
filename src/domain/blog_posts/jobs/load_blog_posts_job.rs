@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use serde::Deserialize;
+use tracing::info;
 
 use crate::{
     application::events::Event,
@@ -111,6 +112,7 @@ impl Job for LoadBlogPostsJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading blog posts");
         let blog_posts_files = find_files_rescurse(BLOG_POSTS_DIR, "md", app_state.config())?;
 
         for file in blog_posts_files {

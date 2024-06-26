@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
+use tracing::info;
 
 use crate::{
     domain::{microblog_archive::microblog_archive_models::MicroblogArchivePost, models::tag::Tag},
@@ -92,6 +93,7 @@ impl Job for LoadMicroblogArchiveJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading microblog archive");
         let archive_file: String = app_state
             .content_dir()
             .read_file(MICRO_POSTS_DIR, app_state.config())

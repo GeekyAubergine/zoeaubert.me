@@ -33,6 +33,7 @@ impl Job for LoadSillyNamesJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading silly names");
         let silly_names = app_state
             .content_dir()
             .read_file(FILE_NAME, app_state.config())

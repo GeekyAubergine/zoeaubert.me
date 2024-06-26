@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
     application::events::Event, domain::games::jobs::fetch_games_data_from_steam_job::GamesDownloadDataJob, infrastructure::{app_state::AppState, bus::job_runner::Job}, prelude::Result, utils::archive::load_archive_file, GAMES_ARCHIVE_FILENAME
@@ -19,6 +19,7 @@ impl Job for LoadGamesFromArchiveJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading games archive");
         match load_archive_file(app_state.config(), GAMES_ARCHIVE_FILENAME).await {
             Ok(games_archive) => {
                 app_state

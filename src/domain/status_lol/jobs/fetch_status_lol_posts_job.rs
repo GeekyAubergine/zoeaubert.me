@@ -3,7 +3,7 @@ use std::time::Duration;
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
     application::events::Event, domain::status_lol::status_lol_models::StatusLolPost, get_json, infrastructure::{app_state::AppState, bus::job_runner::Job}, prelude::Result, ONE_HOUR_CACHE_PERIOD, STATUS_LOL_ARCHIVE_FILENAME
@@ -72,6 +72,7 @@ impl Job for FetchStatusLolPostsJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Fetching status.lol posts");
         let response = get_json::<StatusLolResponse>(app_state.config().status_lol().url()).await?;
 
         let posts = response.response.statuses;

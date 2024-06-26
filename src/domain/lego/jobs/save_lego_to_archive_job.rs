@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
     application::events::Event,
@@ -22,6 +22,7 @@ impl Job for SaveLegoToArchiveJob {
         "SaveLegoToArchiveJob"
     }
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Saving lego archive");
         let lego = app_state.lego_repo().get_archived().await;
 
         save_archive_file(app_state.config(), &lego, LEGO_ARCHIVE_FILENAME).await?;

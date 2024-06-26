@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use tracing::info;
 
 use crate::{
     application::events::Event,
@@ -23,6 +24,7 @@ impl Job for LoadFaqJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading faq data");
         let faq_content = app_state
             .content_dir()
             .read_file(FILE_NAME, app_state.config())

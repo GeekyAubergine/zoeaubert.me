@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
+use tracing::info;
 
 use crate::{
     application::events::Event,
@@ -90,6 +91,7 @@ impl Job for LoadMicroPostsJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading micro posts");
         let micro_post_files = find_files_rescurse(MICRO_POSTS_DIR, "md", app_state.config())?;
 
         for file in micro_post_files {

@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
     application::events::Event, domain::status_lol::jobs::fetch_status_lol_posts_job::FetchStatusLolPostsJob, infrastructure::{app_state::AppState, bus::job_runner::Job}, prelude::Result, utils::archive::load_archive_file, STATUS_LOL_ARCHIVE_FILENAME
@@ -19,6 +19,7 @@ impl Job for LoadStatusLolPostsFromArchiveJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading status_lol archive");
         match load_archive_file(app_state.config(), STATUS_LOL_ARCHIVE_FILENAME).await {
             Ok(status_lol_archive) => {
                 app_state

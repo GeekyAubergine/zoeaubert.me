@@ -3,7 +3,7 @@ use std::{collections::HashMap, time::Duration};
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use tracing::{info, warn};
+use tracing::{error, info, warn};
 
 use crate::{
     application::events::Event,
@@ -282,19 +282,11 @@ impl Job for FetchGameDataFromSteamJob {
 
         info!("Fething game: {}", self.game.name());
 
-        let game_with_achievements = load_data_for_steam_game(&self.game, app_state.config()).await;
+        let game_with_achievements =
+            load_data_for_steam_game(&self.game, app_state.config()).await?;
 
-        // TODO Better error and use ?
-        match game_with_achievements {
-            Ok(game) => {
-                app_state.games_repo().commit(game).await;
-                app_state.dispatch_event(Event::GamesRepoUpdated).await?;
-            }
-            Err(err) => {
-                println!("Error loading game data: {:?}", err);
-                // TODO log
-            }
-        }
+        app_state.games_repo().commit(game_with_achievements).await;
+        app_state.dispatch_event(Event::GamesRepoUpdated).await?;
 
         Ok(())
     }

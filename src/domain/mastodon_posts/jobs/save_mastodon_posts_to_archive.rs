@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
     application::events::Event, infrastructure::{app_state::AppState, bus::job_runner::Job}, prelude::Result, utils::archive::save_archive_file, GAMES_ARCHIVE_FILENAME, MASTODON_ARCHIVE_FILENAME
@@ -20,6 +20,7 @@ impl Job for SaveMastodonPostsToArchiveJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Saving mastodon posts archive");
         let mastodon_posts = app_state.mastodon_posts_repo().get_archived().await;
 
         save_archive_file(app_state.config(), &mastodon_posts, MASTODON_ARCHIVE_FILENAME).await?;

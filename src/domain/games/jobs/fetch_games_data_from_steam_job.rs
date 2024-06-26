@@ -114,8 +114,10 @@ impl Job for GamesDownloadDataJob {
         let last_updated = app_state.games_repo().get_last_updated().await;
 
         if last_updated + NO_REFETCH_DURATION > Utc::now() {
+            info!("Skipping fetching steam games data - cache is still valid");
             return Ok(());
         }
+        info!("Fetching steam games data");
 
         let last_updated_as_rtime = last_updated.timestamp() as u32;
 

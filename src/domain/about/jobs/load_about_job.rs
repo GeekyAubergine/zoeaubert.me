@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use tracing::info;
 
 use crate::{
     application::events::Event,
@@ -27,6 +28,7 @@ impl Job for LoadAboutDataJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        info!("Loading about data");
         let short = app_state
             .content_dir()
             .read_file(FILE_NAME_SHORT, app_state.config())
