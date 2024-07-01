@@ -8,15 +8,17 @@ use axum::{
 use tracing::error;
 
 use crate::{
-    domain::{
-        models::page::{Page, PagePagination, PagePaginationLabel},
-        omni_post::{omni_post_models::OmniPost, omni_post_repo::OmniPostRepo},
+    domain::models::{
+        omni_post::OmniPost,
+        page::{Page, PagePagination, PagePaginationLabel},
     },
-    infrastructure::app_state::AppState,
+    infrastructure::{app_state::AppState, repos::omni_post_repo::OmniPostRepo},
     routes::Pagination,
 };
 
-use crate::utils::{FormatDate, FormatMarkdown, FormatNumber};
+pub use crate::infrastructure::services::date::FormatDate;
+pub use crate::infrastructure::services::markdown::FormatMarkdown;
+pub use crate::infrastructure::services::number::FormatNumber;
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))

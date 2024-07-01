@@ -23,21 +23,12 @@ use axum::{
     Json, Router,
 };
 use chrono::{DateTime, Utc};
-use domain::{
-    about::about_listener::AboutListener, blog_posts::blog_posts_listener::BlogPostsListener,
-    faq::faq_listener::FaqListener, games::games_listener::GamesListener,
-    lego::lego_listener::LegoListener, mastodon_posts::mastodon_posts_listener::MastodonListener,
-    micro_posts::micro_posts_listener::MicroPostsListener,
-    microblog_archive::microblog_archive_listener::MicroblogArchiveListener,
-    silly_names::silly_names_listener::SillyNamesListener,
-    status_lol::status_lol_listener::StatusLolListener,
-};
 use error::Error;
 use infrastructure::{
     app_state::{AppState, AppStateData},
     bus::logger_listener::LoggerListener,
-    cdn::{Cdn, CdnPath},
     config::Config,
+    listeners::register_listeners,
 };
 use prelude::Result;
 use routes::router;
@@ -58,7 +49,6 @@ mod error;
 mod infrastructure;
 mod prelude;
 mod routes;
-pub mod utils;
 
 pub const GAMES_ARCHIVE_FILENAME: &str = "games.json";
 pub const LEGO_ARCHIVE_FILENAME: &str = "lego.json";
@@ -110,19 +100,9 @@ async fn main() -> Result<()> {
 
     let state = Arc::new(state);
 
-    let mut queue = Bus::new(state.clone(), job_receiver, event_receiver);
+    let bus = Bus::new(state.clone(), job_receiver, event_receiver);
 
-    queue.add_event_listener(Box::new(AboutListener::new()));
-    queue.add_event_listener(Box::new(BlogPostsListener::new()));
-    queue.add_event_listener(Box::new(FaqListener::new()));
-    queue.add_event_listener(Box::new(GamesListener::new()));
-    queue.add_event_listener(Box::new(LegoListener::new()));
-    queue.add_event_listener(Box::new(MastodonListener::new()));
-    queue.add_event_listener(Box::new(MicroPostsListener::new()));
-    queue.add_event_listener(Box::new(MicroblogArchiveListener::new()));
-    queue.add_event_listener(Box::new(SillyNamesListener::new()));
-    queue.add_event_listener(Box::new(StatusLolListener::new()));
-    queue.add_event_listener(Box::new(LoggerListener::new()));
+    let bus = register_listeners(bus);
 
     println!("Starting jobs...");
     state.dispatch_event(Event::ServerBooted).await?;
@@ -147,7 +127,7 @@ async fn main() -> Result<()> {
         .nest_service("/assets", asset_files)
         .layer(services);
 
-    queue.start().await;
+    bus.start().await;
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();

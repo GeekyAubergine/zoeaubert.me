@@ -9,14 +9,13 @@ use axum::{
 
 use crate::{
     build_data,
-    domain::{
-        games::games_models::Game,
-        models::{media::image::Image, page::Page},
-    },
+    domain::models::{game::Game, media::image::Image, page::Page},
     infrastructure::app_state::AppState,
 };
 
-use crate::utils::{FormatDate, FormatNumber};
+pub use crate::infrastructure::services::date::FormatDate;
+pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::services::markdown::FormatMarkdown;
 
 const RECENT_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;

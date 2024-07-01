@@ -9,14 +9,13 @@ use axum::{
 
 use crate::{
     build_data,
-    domain::{
-        blog_posts::blog_post_models::BlogPost,
-        models::{media::image::Image, page::Page},
-    },
+    domain::models::{blog_post::BlogPost, media::image::Image, page::Page},
     infrastructure::app_state::AppState,
 };
 
-use crate::utils::{FormatDate, FormatMarkdown, FormatNumber};
+pub use crate::infrastructure::services::date::FormatDate;
+pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::services::markdown::FormatMarkdown;
 
 pub fn router() -> Router<AppState> {
     Router::new()

@@ -3,20 +3,19 @@ use std::sync::Arc;
 use tokio::sync::{mpsc::Sender, RwLock};
 
 use crate::{
-    application::events::Event,
-    domain::{about::about_repo::AboutRepo, blog_posts::blog_posts_repo::BlogPostsRepo, faq::faq_repo::FaqRepo, games::games_repo::GamesRepo, lego::lego_repo::LegoRepo, mastodon_posts::mastodon_posts_repo::MastodonPostsRepo, micro_posts::micro_posts_repo::MicroPostsRepo, microblog_archive::microblog_archive_repo::MicroblogArchiveRepo, silly_names::silly_names_repo::SillyNamesRepo, status_lol::status_lol_repo::StatusLolRepo},
-    error::Error,
-    infrastructure::config::Config,
-    prelude::*,
+    application::events::Event, error::Error, infrastructure::config::Config, prelude::*,
     GAMES_ARCHIVE_FILENAME, LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
 };
 
 use super::{
     bus::job_runner::Job,
-    cache::Cache,
-    cdn::Cdn,
     config::SiteConfig,
-    content_dir::ContentDir,
+    repos::{
+        about_repo::AboutRepo, blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo,
+        games_repo::GamesRepo, lego_repo::LegoRepo, mastodon_posts_repo::MastodonPostsRepo,
+        micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo,
+        silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolRepo,
+    }, services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
 };
 
 #[derive(Debug, Clone)]
@@ -61,7 +60,7 @@ impl AppStateData {
             blog_posts_repo: BlogPostsRepo::default(),
             micro_posts_repo: MicroPostsRepo::default(),
             microblog_archive_repo: MicroblogArchiveRepo::default(),
-            mastodon_posts_repo: MastodonPostsRepo::default()
+            mastodon_posts_repo: MastodonPostsRepo::default(),
         }
     }
 

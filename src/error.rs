@@ -1,7 +1,4 @@
-use crate::{
-    application::events::Event,
-    infrastructure::{bus::job_runner::Job, cdn::CdnPath},
-};
+use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

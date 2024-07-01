@@ -9,7 +9,9 @@ use axum::{
 
 use crate::{build_data, domain::models::page::Page, infrastructure::app_state::AppState};
 
-use crate::utils::{FormatDate, FormatNumber};
+pub use crate::infrastructure::services::date::FormatDate;
+pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::services::markdown::FormatMarkdown;
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/*path", get(redirect_to_interests))

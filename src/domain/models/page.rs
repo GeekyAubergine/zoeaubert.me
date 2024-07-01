@@ -251,7 +251,6 @@ impl Page {
         &self.build_date
     }
 
-
     pub fn image_url(&self) -> String {
         if self.image.url().starts_with("http") {
             self.image.url().to_owned()
