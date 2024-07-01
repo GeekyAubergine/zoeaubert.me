@@ -31,7 +31,11 @@
                     <div class="left">
                         <div class="name-and-description">
                             <h3>{{ achievement.display_name() }}</h3>
-                            <p>{{ achievement.description() }}</p>
+                            {% match achievement.description() %}
+                            {% when Some with (description) %}
+                            <p>{{ description }}</p>
+                            {% when None %}
+                            {% endmatch %}
                         </div>
                         <p class="secondary">{{ achievement.global_unlocked_percentage().format(1, false) }}% of players have this acheivement{%- if achievement.global_unlocked_percentage() < 10.0 %}<span class="special">⭐️<span>{% endif %}</p>
                     </div>
@@ -52,7 +56,11 @@
                     <div class="left">
                         <div class="name-and-description">
                             <h3>{{ achievement.display_name() }}</h3>
-                            <p>{{ achievement.description() }}</p>
+                            {% match achievement.description() %}
+                            {% when Some with (description) %}
+                            <p>{{ description }}</p>
+                            {% when None %}
+                            {% endmatch %}
                         </div>
                     </div>
                 </div>

@@ -3,13 +3,16 @@ use std::collections::HashMap;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::{prelude::*, utils::{FormatDate, FormatNumber}};
+use crate::{
+    prelude::*,
+    utils::{FormatDate, FormatNumber},
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameAchievementUnlocked {
     id: String,
     display_name: String,
-    description: String,
+    description: Option<String>,
     image_unlocked_url: String,
     unlocked_date: DateTime<Utc>,
     global_unlocked_percentage: f32,
@@ -19,7 +22,7 @@ impl GameAchievementUnlocked {
     pub fn new(
         id: String,
         display_name: String,
-        description: String,
+        description: Option<String>,
         image_unlocked_url: String,
         unlocked_date: DateTime<Utc>,
         global_unlocked_percentage: f32,
@@ -42,7 +45,7 @@ impl GameAchievementUnlocked {
         &self.display_name
     }
 
-    pub fn description(&self) -> &str {
+    pub fn description(&self) -> &Option<String> {
         &self.description
     }
 
@@ -63,7 +66,7 @@ impl GameAchievementUnlocked {
 pub struct GameAchievementLocked {
     id: String,
     display_name: String,
-    description: String,
+    description: Option<String>,
     image_locked_url: String,
     global_unlocked_percentage: f32,
 }
@@ -72,7 +75,7 @@ impl GameAchievementLocked {
     pub fn new(
         id: String,
         display_name: String,
-        description: String,
+        description: Option<String>,
         image_locked_url: String,
         global_unlocked_percentage: f32,
     ) -> Self {
@@ -93,7 +96,7 @@ impl GameAchievementLocked {
         &self.display_name
     }
 
-    pub fn description(&self) -> &str {
+    pub fn description(&self) -> &Option<String> {
         &self.description
     }
 
@@ -130,7 +133,7 @@ impl GameAchievement {
         }
     }
 
-    pub fn description(&self) -> &str {
+    pub fn description(&self) -> &Option<String> {
         match self {
             Self::Unlocked(achievement) => achievement.description(),
             Self::Locked(achievement) => achievement.description(),

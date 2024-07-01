@@ -13,12 +13,14 @@ use crate::{
     get_json,
     infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config},
     prelude::Result,
-    GAMES_ARCHIVE_FILENAME, ONE_DAY_CACHE_PERIOD,
+    GAMES_ARCHIVE_FILENAME, ONE_HOUR_CACHE_PERIOD,
 };
 
-use super::fetch_game_data_from_steam_job::{steam_last_played_to_datetime, FetchGameDataFromSteamJob};
+use super::fetch_game_data_from_steam_job::{
+    steam_last_played_to_datetime, FetchGameDataFromSteamJob,
+};
 
-const NO_REFETCH_DURATION: Duration = ONE_DAY_CACHE_PERIOD;
+const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
 
 const STEAM_OWNED_GAMES_URL: &str =
   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?format=json&include_appinfo=true";

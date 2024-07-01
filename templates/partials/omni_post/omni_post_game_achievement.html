@@ -1,5 +1,9 @@
 <p>Acheivment Unlocked: {{ achievement.display_name() }} - {{ game.name() }}</p>
-<p>{{ achievement.description() }}</p>
+{% match achievement.description() %}
+{% when Some with (description) %}
+<p>{{ description }}</p>
+{% when None %}
+{% endmatch %}
 <p class="secondary">
     {{ achievement.global_unlocked_percentage().format(1, false) }}% of players have this acheivement
     {%- if achievement.global_unlocked_percentage() < 10.0 %}

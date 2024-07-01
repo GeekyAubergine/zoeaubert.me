@@ -18,8 +18,6 @@ use crate::{
 
 use super::fetch_games_data_from_steam_job::SteamOwnedGame;
 
-const NO_REFETCH_DURATION: Duration = ONE_DAY_CACHE_PERIOD;
-
 const STEAM_OWNED_GAMES_URL: &str =
   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?format=json&include_appinfo=true";
 
@@ -48,7 +46,7 @@ pub struct SteamGameDataAcheivement {
     name: String,
     #[serde(rename = "displayName")]
     display_name: String,
-    description: String,
+    description: Option<String>,
     icon: String,
     #[serde(rename = "icongray")]
     icon_gray: String,
