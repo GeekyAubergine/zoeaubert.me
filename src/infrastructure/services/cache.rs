@@ -1,12 +1,16 @@
-use std::path::Path;
+use std::{fmt::Display, path::Path};
 
 use imagesize::{blob_size, ImageSize};
+use reqwest::ClientBuilder;
 
-use crate::{domain::models::media::image::Image, error::Error, infrastructure::{app_state::AppState, config::Config}, prelude::*};
-
-use super::{
-    cdn::{Cdn, CdnPath},
+use crate::{
+    domain::models::media::image::Image,
+    error::Error,
+    infrastructure::{app_state::AppState, config::Config},
+    prelude::*,
 };
+
+use super::cdn::{Cdn, CdnPath};
 
 #[derive(Debug, Clone)]
 pub struct CachePath(String);
@@ -16,15 +20,43 @@ impl CachePath {
         Self(format!("{}/{}", config.cache_dir(), path))
     }
 
+    pub fn from_url(config: &Config, url: &str) -> Self {
+        let path = url.split('/').skip(3).collect::<Vec<&str>>().join("/");
+        Self::new(config, path)
+    }
+
     pub fn path(&self) -> &str {
         &self.0
+    }
+
+    pub fn cdn_path(&self, config: &Config) -> CdnPath {
+        CdnPath::new(self.0.replace(config.cache_dir(), ""))
+    }
+}
+
+impl Display for CachePath {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct Cache {}
+pub struct Cache {
+    reqwest_client: reqwest::Client,
+}
 
 impl Cache {
+    pub async fn new(config: &Config) -> Self {
+        let mut headers = reqwest::header::HeaderMap::new();
+
+        Self {
+            reqwest_client: ClientBuilder::new()
+                .default_headers(headers)
+                .build()
+                .unwrap(),
+        }
+    }
+
     pub async fn is_file_cached(&self, path: &CachePath, config: &Config) -> Result<bool> {
         tokio::fs::try_exists(Path::new(&path.path()))
             .await
@@ -59,13 +91,39 @@ impl Cache {
     pub async fn get_file_from_cache_or_download(
         &self,
         app_state: &AppState,
-        path: &str,
+        cache_path: &CachePath,
+        url: &str,
+    ) -> Result<Vec<u8>> {
+        if let Ok(content) = self.read_cached_file(&cache_path, app_state.config()).await {
+            return Ok(content);
+        }
+
+        let cdn = app_state.cdn();
+        let config = app_state.config();
+
+        let reqwest = self
+            .reqwest_client
+            .get(url)
+            .send()
+            .await
+            .map_err(Error::UrlDownload)?;
+
+        let content = reqwest.bytes().await.map_err(Error::UrlDownload)?.to_vec();
+
+        self.cache_file(&cache_path, content.clone()).await?;
+
+        Ok(content)
+    }
+
+    pub async fn get_file_from_cache_or_download_from_cdn(
+        &self,
+        app_state: &AppState,
+        cache_path: &CachePath,
     ) -> Result<Vec<u8>> {
         let config = app_state.config();
         let cdn = app_state.cdn();
 
-        let cache_path = CachePath::new(config, path.to_string());
-        let cdn_path = CdnPath::new(path.to_string());
+        let cdn_path = cache_path.cdn_path(config);
 
         if let Ok(content) = self.read_cached_file(&cache_path, config).await {
             return Ok(content);
@@ -81,10 +139,10 @@ impl Cache {
     pub async fn get_image_size_from_cache_or_download(
         &self,
         app_state: &AppState,
-        path: &str,
+        path: &CachePath,
     ) -> Result<ImageSize> {
         let content = self
-            .get_file_from_cache_or_download(app_state, path)
+            .get_file_from_cache_or_download_from_cdn(app_state, path)
             .await?;
 
         match blob_size(&content) {

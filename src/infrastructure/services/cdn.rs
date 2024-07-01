@@ -8,6 +8,8 @@ use tracing::debug;
 
 use crate::{error::Error, infrastructure::config::Config, prelude::*};
 
+use super::cache::CachePath;
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct BunnyCdnFileResponse {
     #[serde(rename = "ObjectName")]
@@ -57,6 +59,10 @@ impl CdnPath {
 
     pub fn path(&self) -> &str {
         &self.0
+    }
+
+    pub fn url(&self, config: &Config) -> String {
+        format!("{}{}", config.cdn_url(), self.0)
     }
 }
 
@@ -135,22 +141,22 @@ impl Cdn {
         Ok(files.contains(&filename.to_string()))
     }
 
-    pub async fn upload_file(
+    pub async fn upload_file_from_cache(
         &self,
-        local_path: &str,
+        cache_path: &CachePath,
         cnd_path: &CdnPath,
         config: &Config,
     ) -> Result<()> {
-        let file = File::open(local_path)
+        let file = File::open(cache_path.path())
             .await
             .map_err(Error::FileSystemUnreadable)?;
 
         let stream = FramedRead::new(file, BytesCodec::new());
         let file_body = Body::wrap_stream(stream);
 
-        let file = fs::read(local_path)
-            .await
-            .map_err(Error::FileSystemUnreadable)?;
+        // let file = fs::read(cache_path.path())
+        //     .await
+        //     .map_err(Error::FileSystemUnreadable)?;
 
         let request = self
             .reqwest_client
@@ -162,7 +168,31 @@ impl Cdn {
 
         if response.status().as_u16() != 201 {
             return Err(Error::CdnUnableToUploadFile(
-                local_path.to_string(),
+                cache_path.to_string(),
+                cnd_path.to_string(),
+            ));
+        }
+
+        Ok(())
+    }
+
+    pub async fn upload_file_from_bytes(
+        &self,
+        data: Vec<u8>,
+        cnd_path: &CdnPath,
+        config: &Config,
+    ) -> Result<()> {
+        let request = self
+            .reqwest_client
+            .put(format!("{}{}", config.bunny_cdn().url(), cnd_path.path()))
+            .header("Content-Type", "application/octet-stream")
+            .body(data);
+
+        let response = request.send().await.map_err(Error::CdnUpload)?;
+
+        if response.status().as_u16() != 201 {
+            return Err(Error::CdnUnableToUploadFile(
+                "bytes".to_string(),
                 cnd_path.to_string(),
             ));
         }

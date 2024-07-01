@@ -1,19 +1,25 @@
 use std::time::Duration;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Datelike, Utc};
 use serde::Deserialize;
 
 use async_trait::async_trait;
 use tracing::info;
 
 use crate::{
-    application::events::Event,
-    domain::models::{mastodon_post::{MastodonPost, MastodonPostNonSpoiler, MastodonPostSpoiler}, media::{image::Image, Media}},
+    application::{
+        events::Event, jobs::cdn::copy_file_from_internet_to_cdn_job::CopyFileFromInternetToCdnJob,
+    },
+    domain::models::{
+        mastodon_post::{MastodonPost, MastodonPostNonSpoiler, MastodonPostSpoiler},
+        media::{image::Image, Media},
+    },
     get_json,
     infrastructure::{
         app_state::{self, AppState},
         bus::job_runner::Job,
         config::Config,
+        services::{cache::CachePath, cdn::CdnPath},
     },
     prelude::Result,
     ONE_DAY_CACHE_PERIOD,
@@ -106,11 +112,36 @@ async fn fetch_pages(config: &Config) -> Result<Vec<MastodonStatus>> {
     Ok(all_statuses)
 }
 
-async fn mastodon_status_to_post(status: MastodonStatus) -> Result<MastodonPost> {
-    let mut media = vec![];
+async fn mastodon_status_to_post(
+    app_state: &AppState,
+    status: MastodonStatus,
+) -> Result<MastodonPost> {
+    let mut post = match status.spoiler_text {
+        None => MastodonPost::NonSpoiler(MastodonPostNonSpoiler::new(
+            status.id,
+            status.uri,
+            status.created_at,
+            status.content,
+            status.reblogs_count,
+            status.favourites_count,
+            status.replies_count,
+            vec![],
+        )),
+        Some(spoiler_text) => MastodonPost::Spoiler(MastodonPostSpoiler::new(
+            status.id,
+            status.uri,
+            status.created_at,
+            status.content,
+            status.reblogs_count,
+            status.favourites_count,
+            status.replies_count,
+            spoiler_text,
+            vec![],
+        )),
+    };
 
-    for post in status.media_attachments.iter() {
-        match post {
+    for attachment in status.media_attachments.iter() {
+        match attachment {
             MastodonStatusMedia::Image {
                 url,
                 preview_url,
@@ -119,37 +150,36 @@ async fn mastodon_status_to_post(status: MastodonStatus) -> Result<MastodonPost>
                 blurhash,
             } => {
                 if let Some(description) = description {
-                    let image =
-                        Image::new(url, description, meta.original.width, meta.original.height);
-                    media.push(Media::Image(image));
+                    let file_name = url.split('/').last().unwrap();
+
+                    let cdn_path = CdnPath::new(format!(
+                        "/{}/{}/{}/{}",
+                        status.created_at.year(),
+                        status.created_at.month(),
+                        status.created_at.day(),
+                        file_name
+                    ));
+
+                    let image = Image::new(
+                        &cdn_path.url(app_state.config()),
+                        description,
+                        meta.original.width,
+                        meta.original.height,
+                    )
+                    .with_date(*post.created_at())
+                    .with_parent_permalink(&post.permalink());
+
+                    let media = Media::Image(image);
+
+                    post.add_media(media);
+
+                    app_state
+                        .dispatch_job(CopyFileFromInternetToCdnJob::new(url.clone(), cdn_path))
+                        .await;
                 }
             }
         }
     }
-
-    let post = match status.spoiler_text {
-        None => MastodonPost::NonSpoiler(MastodonPostNonSpoiler::new(
-            status.id,
-            status.uri,
-            status.created_at,
-            status.content,
-            media,
-            status.reblogs_count,
-            status.favourites_count,
-            status.replies_count,
-        )),
-        Some(spoiler_text) => MastodonPost::Spoiler(MastodonPostSpoiler::new(
-            status.id,
-            status.uri,
-            status.created_at,
-            status.content,
-            media,
-            status.reblogs_count,
-            status.favourites_count,
-            status.replies_count,
-            spoiler_text,
-        )),
-    };
 
     Ok(post)
 }
@@ -181,7 +211,7 @@ impl Job for FetchMastodonPostsJob {
         let statuses = fetch_pages(app_state.config()).await?;
 
         for status in statuses {
-            if let Ok(post) = mastodon_status_to_post(status).await {
+            if let Ok(post) = mastodon_status_to_post(app_state, status).await {
                 info!("Updating mastodon post: {}", post.id());
                 app_state.mastodon_posts_repo().commit(post).await;
             }

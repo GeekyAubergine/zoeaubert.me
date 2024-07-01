@@ -248,6 +248,7 @@ pub struct Config {
     site: SiteConfig,
     #[serde(rename = "bunnyCdn")]
     bunny_cdn: BunnyCdnConfig,
+    cdn_url: String,
 }
 
 impl Config {
@@ -289,5 +290,9 @@ impl Config {
 
     pub fn bunny_cdn(&self) -> &BunnyCdnConfig {
         &self.bunny_cdn
+    }
+
+    pub fn cdn_url(&self) -> &str {
+        &self.cdn_url
     }
 }

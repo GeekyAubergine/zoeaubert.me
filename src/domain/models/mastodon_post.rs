@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::models::media::Media;
 
+use super::tag::Tag;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MastodonPostNonSpoiler {
     id: String,
@@ -13,6 +15,7 @@ pub struct MastodonPostNonSpoiler {
     reblogs_count: u32,
     favourites_count: u32,
     replies_count: u32,
+    tags: Vec<Tag>,
 }
 
 impl MastodonPostNonSpoiler {
@@ -21,20 +24,21 @@ impl MastodonPostNonSpoiler {
         original_uri: String,
         created_at: DateTime<Utc>,
         content: String,
-        media: Vec<Media>,
         reblogs_count: u32,
         favourites_count: u32,
         replies_count: u32,
+        tags: Vec<Tag>,
     ) -> Self {
         Self {
             id,
             original_uri,
             created_at,
             content,
-            media,
+            media: vec![],
             reblogs_count,
             favourites_count,
             replies_count,
+            tags,
         }
     }
 
@@ -69,6 +73,14 @@ impl MastodonPostNonSpoiler {
     pub fn replies_count(&self) -> u32 {
         self.replies_count
     }
+
+    pub fn tags(&self) -> &Vec<Tag> {
+        &self.tags
+    }
+
+    pub fn add_media(&mut self, media: Media) {
+        self.media.push(media);
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -82,6 +94,7 @@ pub struct MastodonPostSpoiler {
     favourites_count: u32,
     replies_count: u32,
     spoiler_text: String,
+    tags: Vec<Tag>,
 }
 
 impl MastodonPostSpoiler {
@@ -90,22 +103,23 @@ impl MastodonPostSpoiler {
         original_uri: String,
         created_at: DateTime<Utc>,
         content: String,
-        media: Vec<Media>,
         reblogs_count: u32,
         favourites_count: u32,
         replies_count: u32,
         spoiler_text: String,
+        tags: Vec<Tag>,
     ) -> Self {
         Self {
             id,
             original_uri,
             created_at,
             content,
-            media,
+            media: vec![],
             reblogs_count,
             favourites_count,
             replies_count,
             spoiler_text,
+            tags,
         }
     }
 
@@ -144,6 +158,14 @@ impl MastodonPostSpoiler {
     pub fn spoiler_text(&self) -> &str {
         &self.spoiler_text
     }
+
+    pub fn tags(&self) -> &Vec<Tag> {
+        &self.tags
+    }
+
+    pub fn add_media(&mut self, media: Media) {
+        self.media.push(media);
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -154,7 +176,7 @@ pub enum MastodonPost {
 }
 
 impl MastodonPost {
-   pub fn id(&self) -> &str {
+    pub fn id(&self) -> &str {
         match self {
             MastodonPost::NonSpoiler(post) => post.id(),
             MastodonPost::Spoiler(post) => post.id(),
@@ -210,8 +232,21 @@ impl MastodonPost {
         }
     }
 
+    pub fn tags(&self) -> &Vec<Tag> {
+        match self {
+            MastodonPost::NonSpoiler(post) => post.tags(),
+            MastodonPost::Spoiler(post) => post.tags(),
+        }
+    }
+
     pub fn permalink(&self) -> String {
         format!("/micros/{}", self.id())
     }
-}
 
+    pub fn add_media(&mut self, media: Media) {
+        match self {
+            MastodonPost::NonSpoiler(post) => post.add_media(media),
+            MastodonPost::Spoiler(post) => post.add_media(media),
+        }
+    }
+}

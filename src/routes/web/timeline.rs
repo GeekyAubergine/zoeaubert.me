@@ -9,6 +9,7 @@ use tracing::error;
 
 use crate::{
     domain::models::{
+        media::Media,
         omni_post::OmniPost,
         page::{Page, PagePagination, PagePaginationLabel},
     },

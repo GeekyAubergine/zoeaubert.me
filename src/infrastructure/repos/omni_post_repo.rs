@@ -74,6 +74,17 @@ impl OmniPostRepo {
                 .collect::<Vec<_>>(),
         );
 
+        // Mastodon Posts
+        posts.extend(
+            app_state
+                .mastodon_posts_repo()
+                .get_all()
+                .await
+                .into_values()
+                .map(OmniPost::MastodonPost)
+                .collect::<Vec<_>>(),
+        );
+
         posts.sort_by(|a, b| b.date().cmp(a.date()));
 
         Ok(posts)

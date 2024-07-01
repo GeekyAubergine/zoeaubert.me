@@ -42,13 +42,13 @@ impl MastodonPostsRepo {
         }
     }
 
-    pub async fn get_post(&self, id: &str) -> Option<MastodonPost> {
+    pub async fn get_by_id(&self, id: &str) -> Option<MastodonPost> {
         let posts = self.posts.read().await;
 
         posts.get(id).cloned()
     }
 
-    pub async fn get_all_posts(&self) -> HashMap<String, MastodonPost> {
+    pub async fn get_all(&self) -> HashMap<String, MastodonPost> {
         let posts = self.posts.read().await;
 
         posts

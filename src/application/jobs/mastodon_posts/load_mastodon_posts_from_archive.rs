@@ -38,7 +38,7 @@ impl Job for LoadMastodonPostsFromArchiveJob {
                     .await
             }
             Err(err) => {
-                warn!("Failed to load games archive: {:?}", err);
+                warn!("Failed to load mastodon archive: {:?}", err);
                 app_state.dispatch_job(FetchMastodonPostsJob::new()).await
             }
         }

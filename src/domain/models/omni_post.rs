@@ -5,10 +5,12 @@ use serde::{Deserialize, Serialize};
 use super::{
     blog_post::BlogPost,
     game::{Game, GameAchievementUnlocked},
+    mastodon_post::MastodonPost,
     media::Media,
     micro_post::MicroPost,
     microblog_archive::MicroblogArchivePost,
-    status_lol::StatusLolPost, tag::Tag,
+    status_lol::StatusLolPost,
+    tag::Tag,
 };
 
 #[derive(Debug, Clone)]
@@ -21,6 +23,7 @@ pub enum OmniPost {
     BlogPost(BlogPost),
     MicroPost(MicroPost),
     MicroblogArchivePost(MicroblogArchivePost),
+    MastodonPost(MastodonPost),
 }
 
 impl OmniPost {
@@ -33,6 +36,7 @@ impl OmniPost {
             Self::MicroblogArchivePost(microblog_archive_post) => {
                 microblog_archive_post.slug().to_owned()
             }
+            Self::MastodonPost(mastodon_post) => mastodon_post.id().to_owned(),
         }
     }
 
@@ -45,6 +49,7 @@ impl OmniPost {
             Self::MicroblogArchivePost(microblog_archive_post) => {
                 microblog_archive_post.permalink().to_owned()
             }
+            Self::MastodonPost(mastodon_post) => mastodon_post.permalink().to_owned(),
         }
     }
 
@@ -55,6 +60,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.date(),
             Self::MicroPost(micro_post) => micro_post.date(),
             Self::MicroblogArchivePost(microblog_archive_post) => microblog_archive_post.date(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
         }
     }
 
@@ -67,6 +73,7 @@ impl OmniPost {
             Self::MicroblogArchivePost(microblog_archive_post) => {
                 microblog_archive_post.tags().to_owned()
             }
+            Self::MastodonPost(mastodon_post) => mastodon_post.tags().to_owned(),
         }
     }
 
@@ -79,6 +86,7 @@ impl OmniPost {
             Self::MicroblogArchivePost(microblog_archive_post) => {
                 microblog_archive_post.media().to_owned()
             }
+            Self::MastodonPost(mastodon_post) => mastodon_post.media().to_owned(),
         }
     }
 }

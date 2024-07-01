@@ -21,7 +21,7 @@ pub use crate::infrastructure::services::date::FormatDate;
 pub use crate::infrastructure::services::markdown::FormatMarkdown;
 pub use crate::infrastructure::services::number::FormatNumber;
 
-const POSTS_PER_PAGE: usize = 24;
+const PHOTOS_PER_PAGE: usize = 24;
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))
@@ -38,7 +38,7 @@ async fn index(
     State(state): State<AppState>,
     mut pagination: Query<Pagination>,
 ) -> Result<PhotosTemplate, (StatusCode, &'static str)> {
-    pagination.set_default_pagination(POSTS_PER_PAGE);
+    pagination.set_default_pagination(PHOTOS_PER_PAGE);
 
     let photos: Vec<Image> = OmniPostRepo::get_posts_ordered_by_date(&state)
         .await
@@ -61,6 +61,8 @@ async fn index(
     let total_posts_count = photos.len();
 
     let photos = pagination.slice(&photos);
+
+    println!("{:?}", photos);
 
     let page = Page::new(
         state.site(),

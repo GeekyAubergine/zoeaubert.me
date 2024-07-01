@@ -10,8 +10,12 @@ use axum::{
 use crate::{
     build_data,
     domain::models::{
-        media::image::Image, micro_post::MicroPost, microblog_archive::MicroblogArchivePost,
+        mastodon_post::MastodonPost,
+        media::{image::Image, Media},
+        micro_post::MicroPost,
+        microblog_archive::MicroblogArchivePost,
         page::Page,
+        tag::Tag,
     },
     infrastructure::app_state::AppState,
 };
@@ -22,21 +26,37 @@ pub use crate::infrastructure::services::number::FormatNumber;
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/:year/:month/:day/:title", get(old_slug_redirect))
-        .route("/:year/:month/:day/:title/", get(old_slug_redirect))
+        .route(
+            "/:year/:month/:day/:title",
+            get(old_micropost_slug_redirect),
+        )
+        .route(
+            "/:year/:month/:day/:title/",
+            get(old_micropost_slug_redirect),
+        )
+        .route("/:year/:month/:id", get(old_mastodon_slug_redirect))
+        .route("/:year/:month/:id/", get(old_mastodon_slug_redirect))
         .route("/:slug", get(post_page))
 }
 
-async fn old_slug_redirect(
+async fn old_micropost_slug_redirect(
     Path((year, month, day, title)): Path<(String, String, String, String)>,
     State(state): State<AppState>,
 ) -> Redirect {
     Redirect::permanent(&format!("/micros/{}-{}-{}-{}", year, month, day, title))
 }
 
+async fn old_mastodon_slug_redirect(
+    Path((_, _, id)): Path<(String, String, String)>,
+    State(state): State<AppState>,
+) -> Redirect {
+    Redirect::permanent(&format!("/micros/{}", id))
+}
+
 pub enum Post {
     MicroPost(MicroPost),
     MicroBlogArchive(MicroblogArchivePost),
+    MastodonPost(MastodonPost),
 }
 
 impl Post {
@@ -44,6 +64,7 @@ impl Post {
         match self {
             Self::MicroPost(micro_post) => micro_post.slug(),
             Self::MicroBlogArchive(archive_post) => archive_post.slug(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.id(),
         }
     }
 
@@ -51,6 +72,7 @@ impl Post {
         match self {
             Self::MicroPost(micro_post) => micro_post.date(),
             Self::MicroBlogArchive(archive_post) => archive_post.date(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
         }
     }
 
@@ -58,13 +80,23 @@ impl Post {
         match self {
             Self::MicroPost(micro_post) => micro_post.content(),
             Self::MicroBlogArchive(archive_post) => archive_post.content(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.content(),
         }
     }
 
-    pub fn tags(&self) -> &Vec<crate::domain::models::tag::Tag> {
+    pub fn tags(&self) -> &Vec<Tag> {
         match self {
             Self::MicroPost(micro_post) => micro_post.tags(),
             Self::MicroBlogArchive(archive_post) => archive_post.tags(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.tags(),
+        }
+    }
+
+    pub fn media(&self) -> Vec<Media> {
+        match self {
+            Self::MicroPost(micro_post) => vec![],
+            Self::MicroBlogArchive(archive_post) => vec![],
+            Self::MastodonPost(mastodon_post) => mastodon_post.media().to_owned(),
         }
     }
 }
@@ -84,11 +116,16 @@ async fn post_page(
 
     let archive_post = state.microblog_archive_repo().get_by_slug(&id).await;
 
-    let post = match (micro_post, archive_post) {
-        (Some(micro_post), _) => Post::MicroPost(micro_post),
-        (_, Some(archive_post)) => Post::MicroBlogArchive(archive_post),
+    let mastodon_post = state.mastodon_posts_repo().get_by_id(&id).await;
+
+    let post = match (micro_post, archive_post, mastodon_post) {
+        (Some(micro_post), _, _) => Post::MicroPost(micro_post),
+        (_, Some(archive_post), _) => Post::MicroBlogArchive(archive_post),
+        (_, _, Some(mastodon_post)) => Post::MastodonPost(mastodon_post),
         _ => return Err((StatusCode::NOT_FOUND, "Post not found")),
     };
+
+    println!("{:?}", post.content());
 
     let page = Page::new(
         state.site(),

@@ -54,4 +54,6 @@ pub enum Error {
     CouldNotFindBodyForCodeBlock(),
     #[error("Image size {0}")]
     ImageSize(String),
+    #[error("Url download {0}")]
+    UrlDownload(reqwest::Error),
 }

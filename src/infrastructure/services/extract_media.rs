@@ -9,6 +9,8 @@ use crate::{
     infrastructure::app_state::{self, AppState},
 };
 
+use super::cache::CachePath;
+
 lazy_static! {
     pub static ref HTML_IMAGE_REGEX: Regex = Regex::new(r#"(?i)<img(((src="(?<src>([^"]+))")|(alt="(?<alt>([^"]+))")|(width="(?<width>([^"]+))")|(height="(?<height>([^"]+))"))|[^>])*>"#).unwrap();
     pub static ref MARKDOWN_IMAGE_REGEX: Regex = Regex::new(r#"(?i)!\[([^\]]+)\]\(([^)]+)\)"#).unwrap();
@@ -52,12 +54,12 @@ pub async fn extract_media_from_markdown(
         let alt = cap.get(1).map_or("", |m| m.as_str());
         let url = cap.get(2).map_or("", |m| m.as_str());
 
-        // Trim domain
-        let path = url.split('/').skip(3).collect::<Vec<&str>>().join("/");
-
         match app_state
             .cache()
-            .get_image_size_from_cache_or_download(app_state, &path)
+            .get_image_size_from_cache_or_download(
+                app_state,
+                &CachePath::from_url(app_state.config(), url),
+            )
             .await
         {
             Ok(size) => {

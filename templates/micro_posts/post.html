@@ -1,21 +1,37 @@
 {% extends "partials/page.html" %}
 
 {%- block content %}
-    <div class="page-header">
-        {%- match page.date() %}
-    {%- when Some with (date) %}
-        <h1>
-            <time datetime="{{date.datetime()}}" class="title-font">{{ date.short_iso() }}</time>
-        </h1>
-    {%- when None %}
-        {%- endmatch %}
-
-    </div>
-    {{ post.content().to_html()|safe}}
-    {%- if page.tags().len() > 0 %}
-        <div class="tags-list my-2">
-            {% let tags = page.tags() %}
-            {% include "partials/tags_list.html" %}
+    <artcile class="micro-post">
+        <div class="page-header">
+            {%- match page.date() %}
+        {%- when Some with (date) %}
+            <h1>
+                <time datetime="{{date.datetime()}}" class="title-font">{{ date.short_iso() }}</time>
+            </h1>
+        {%- when None %}
+            {%- endmatch %}
         </div>
-    {%- endif %}
+        {{ post.content().to_html()|safe}}
+        <div class="media">
+            {% if post
+                .media()
+                .len() > 1 %}
+                <div class="media-grid">
+                    {% for media in post.media() %}
+                        {% include "partials/media/media.html" %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% for media in post.media() %}
+                    {% include "partials/media/media.html" %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        {%- if page.tags().len() > 0 %}
+            <div class="tags-list my-2">
+                {% let tags = page.tags() %}
+                {% include "partials/tags_list.html" %}
+            </div>
+        {%- endif %}
+    </artcile>
 {% endblock %}
