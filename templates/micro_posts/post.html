@@ -33,5 +33,12 @@
                 {% include "partials/tags_list.html" %}
             </div>
         {%- endif %}
+        {% match post.original_url() %}
+            {%- when Some with (original_url) %}
+                <p class="mt-6">See original: 
+                    <a href="{{ original_url }}" class="link" target="_blank" rel="me">{{ original_url }}</a>
+                </p>
+            {%- when None %}
+        {%- endmatch %}
     </artcile>
 {% endblock %}

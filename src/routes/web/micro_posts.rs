@@ -99,6 +99,14 @@ impl Post {
             Self::MastodonPost(mastodon_post) => mastodon_post.media().to_owned(),
         }
     }
+
+    pub fn original_url(&self) -> Option<&str> {
+        match self {
+            Self::MicroPost(_) => None,
+            Self::MicroBlogArchive(_) => None,
+            Self::MastodonPost(mastodon_post) => Some(mastodon_post.original_uri()),
+        }
+    }
 }
 
 #[derive(Template)]
