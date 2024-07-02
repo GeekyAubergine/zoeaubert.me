@@ -104,7 +104,7 @@ async fn main() -> Result<()> {
 
     let bus = register_listeners(bus);
 
-    println!("Starting jobs...");
+    info!("Starting jobs...");
     state.dispatch_event(Event::ServerBooted).await?;
 
     let cors = CorsLayer::new()

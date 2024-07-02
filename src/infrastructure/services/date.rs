@@ -52,8 +52,6 @@ pub fn parse_date(s: &str) -> Result<DateTime<Utc>> {
             .and_utc());
     }
 
-    println!("Failed to parse date: {}", s);
-
     Err(Error::ParseDate(s.to_string()))
 }
 

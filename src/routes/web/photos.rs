@@ -62,8 +62,6 @@ async fn index(
 
     let photos = pagination.slice(&photos);
 
-    println!("{:?}", photos);
-
     let page = Page::new(
         state.site(),
         "/photos",

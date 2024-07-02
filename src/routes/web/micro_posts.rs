@@ -133,8 +133,6 @@ async fn post_page(
         _ => return Err((StatusCode::NOT_FOUND, "Post not found")),
     };
 
-    println!("{:?}", post.content());
-
     let page = Page::new(
         state.site(),
         &format!("/micros/{}", post.slug()),

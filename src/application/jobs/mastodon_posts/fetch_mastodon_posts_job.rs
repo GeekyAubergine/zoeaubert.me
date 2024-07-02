@@ -29,6 +29,8 @@ use crate::{
 };
 
 const NO_REFETCH_DURATION: Duration = ONE_DAY_CACHE_PERIOD;
+const SELF_URL: &str = "zoeaubert.me";
+const APPLICATIONS_TO_IGNORE: [&str; 2] = ["Micro.blog", "status.lol"];
 
 #[derive(Debug, Deserialize)]
 struct MastodonStatusMediaImageSizes {
@@ -90,7 +92,7 @@ lazy_static! {
         // Regex::new(r#"<p><a[^>]*rel=\\"tag\\">#<span>(.*)</span></a></p>"#).unwrap();
         Regex::new(r#"<a[^>]*rel="tag">#<span>(.*?)</span></a>"#).unwrap();
 
-        static ref EMPTY_P_TAGS: Regex = Regex::new(r#"<p>\s*</p>"#).unwrap(); 
+        static ref EMPTY_P_TAGS: Regex = Regex::new(r#"<p>\s*</p>"#).unwrap();
 }
 
 fn make_statuses_url(config: &Config) -> String {
@@ -146,7 +148,17 @@ fn strip_tags(content: &str) -> String {
 async fn mastodon_status_to_post(
     app_state: &AppState,
     status: MastodonStatus,
-) -> Result<MastodonPost> {
+) -> Result<Option<MastodonPost>> {
+    if let Some(application) = &status.application {
+        if APPLICATIONS_TO_IGNORE.contains(&application.name.as_str()) {
+            return Ok(None);
+        }
+    }
+
+    if status.content.contains(SELF_URL) {
+        return Ok(None);
+    }
+
     let tags = extract_tags(&status.content)
         .iter()
         .map(|t| Tag::from_string(t))
@@ -219,7 +231,7 @@ async fn mastodon_status_to_post(
         }
     }
 
-    Ok(post)
+    Ok(Some(post))
 }
 
 #[derive(Debug)]
@@ -249,7 +261,7 @@ impl Job for FetchMastodonPostsJob {
         let statuses = fetch_pages(app_state.config()).await?;
 
         for status in statuses {
-            if let Ok(post) = mastodon_status_to_post(app_state, status).await {
+            if let Ok(Some(post)) = mastodon_status_to_post(app_state, status).await {
                 info!("Updating mastodon post: {}", post.id());
                 app_state.mastodon_posts_repo().commit(post).await;
             }
