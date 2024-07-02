@@ -35,15 +35,16 @@ async fn index(
     State(state): State<AppState>,
     pagination: Query<Pagination>,
 ) -> Result<IndexTemplate, (StatusCode, &'static str)> {
-    let posts = OmniPostRepo::get_posts_ordered_by_date(&state)
-        .await
-        .map_err(|e| {
-            error!("Failed to get posts ordered by date: {:?}", e);
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "Failed to get posts ordered by date",
-            )
-        })?;
+    let posts =
+        OmniPostRepo::get_posts_ordered_by_date(&state, OmniPostRepo::filter_non_album_photo())
+            .await
+            .map_err(|e| {
+                error!("Failed to get posts ordered by date: {:?}", e);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Failed to get posts ordered by date",
+                )
+            })?;
 
     let total_posts_count = posts.len();
 

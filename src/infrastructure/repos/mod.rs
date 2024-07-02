@@ -9,3 +9,4 @@ pub mod microblog_archive_repo;
 pub mod omni_post_repo;
 pub mod silly_names_repo;
 pub mod status_lol_repo;
+pub mod albums_repo;

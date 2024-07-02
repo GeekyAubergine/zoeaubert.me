@@ -1,4 +1,5 @@
 use about_listener::AboutListener;
+use albums_listener::AlbumsListener;
 use blog_posts_listener::BlogPostsListener;
 use faq_listener::FaqListener;
 use games_listener::GamesListener;
@@ -13,6 +14,7 @@ use tracing::debug;
 use super::bus::Bus;
 
 pub mod about_listener;
+pub mod albums_listener;
 pub mod blog_posts_listener;
 pub mod faq_listener;
 pub mod games_listener;
@@ -23,9 +25,10 @@ pub mod microblog_archive_listener;
 pub mod silly_names_listener;
 pub mod status_lol_listener;
 
-pub fn register_listeners(mut bus: Bus) -> Bus{
+pub fn register_listeners(mut bus: Bus) -> Bus {
     debug!("Registering listeners");
     bus.add_event_listener(Box::new(AboutListener::new()));
+    bus.add_event_listener(Box::new(AlbumsListener::new()));
     bus.add_event_listener(Box::new(BlogPostsListener::new()));
     bus.add_event_listener(Box::new(FaqListener::new()));
     bus.add_event_listener(Box::new(GamesListener::new()));

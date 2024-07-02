@@ -56,4 +56,6 @@ pub enum Error {
     ImageSize(String),
     #[error("Url download {0}")]
     UrlDownload(reqwest::Error),
+    #[error("Parse album {0}")]
+    ParseAlbum(serde_yaml::Error),
 }

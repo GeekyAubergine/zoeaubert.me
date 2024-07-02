@@ -9,3 +9,4 @@ pub mod microblog_archive;
 pub mod silly_names;
 pub mod status_lol;
 pub mod cdn;
+pub mod albums;

@@ -14,7 +14,10 @@ use crate::{
         page::{Page, PagePagination, PagePaginationLabel},
         tag::{Tag, TagSlug},
     },
-    infrastructure::{app_state::AppState, repos::omni_post_repo::OmniPostRepo},
+    infrastructure::{
+        app_state::AppState,
+        repos::omni_post_repo::{OmniPostFilterFlags, OmniPostRepo},
+    },
     routes::Pagination,
 };
 
@@ -51,7 +54,7 @@ pub struct IndexTemplate {
     tags: Vec<TagPair>,
 }
 async fn index(State(state): State<AppState>) -> Result<IndexTemplate, (StatusCode, &'static str)> {
-    let tags = OmniPostRepo::get_posts_tags_and_counts(&state)
+    let tags = OmniPostRepo::get_posts_tags_and_counts(&state, OmniPostRepo::filter_non_album())
         .await
         .map_err(|e| {
             error!("Failed to get posts ordered by date: {:?}", e);
@@ -90,15 +93,19 @@ async fn tag(
 ) -> Result<TagTemplate, (StatusCode, &'static str)> {
     let tag = &TagSlug::from_string(&tag).to_tag();
 
-    let posts = OmniPostRepo::get_posts_by_tag_ordered_by_date(&state, tag)
-        .await
-        .map_err(|e| {
-            error!("Failed to get posts ordered by date: {:?}", e);
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "Failed to get posts ordered by date",
-            )
-        })?;
+    let posts = OmniPostRepo::get_posts_by_tag_ordered_by_date(
+        &state,
+        tag,
+        OmniPostRepo::filter_non_album(),
+    )
+    .await
+    .map_err(|e| {
+        error!("Failed to get posts ordered by date: {:?}", e);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Failed to get posts ordered by date",
+        )
+    })?;
 
     let total_posts_count = posts.len();
 

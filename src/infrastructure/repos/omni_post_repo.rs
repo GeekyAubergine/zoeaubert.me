@@ -4,96 +4,136 @@ use crate::domain::models::omni_post::OmniPost;
 use crate::domain::models::tag::Tag;
 use crate::prelude::*;
 
+use bitflags::bitflags;
+
 use crate::infrastructure::app_state::{self, AppState};
+
+bitflags! {
+    #[derive(Debug, Clone, Default, Copy, PartialEq, Eq)]
+    pub struct OmniPostFilterFlags: u64 {
+        const STATUS_LOL = 0x1 << 0;
+        const BLOG_POST = 0x1 << 1;
+        const MICRO_POST = 0x1 << 2;
+        const MICROBLOG_ARCHIVE_POST = 0x1 << 3;
+        const MASTODON_POST = 0x1 << 4;
+        const UNLOCKED_GAME_ACHIEVEMENT = 0x1 << 5;
+        const ALBUM = 0x1 << 6;
+        const ALBUM_PHOTO = 0x1 << 7;
+    }
+}
 
 pub struct OmniPostRepo;
 
 impl OmniPostRepo {
-    pub async fn get_posts_ordered_by_date(app_state: &AppState) -> Result<Vec<OmniPost>> {
+    pub fn filter_all() -> OmniPostFilterFlags {
+        OmniPostFilterFlags::all()
+    }
+
+    pub fn filter_non_album() -> OmniPostFilterFlags {
+        Self::filter_all() - OmniPostFilterFlags::ALBUM
+    }
+
+    pub fn filter_non_album_photo() -> OmniPostFilterFlags {
+        Self::filter_all() - OmniPostFilterFlags::ALBUM_PHOTO
+    }
+
+    pub async fn get_posts_ordered_by_date(
+        app_state: &AppState,
+        filter: OmniPostFilterFlags,
+    ) -> Result<Vec<OmniPost>> {
         let mut posts = vec![];
 
-        // Games
-        let all_games = app_state.games_repo().get_all_games().await;
+        if OmniPostFilterFlags::UNLOCKED_GAME_ACHIEVEMENT.intersects(filter) {
+            let all_games = app_state.games_repo().get_all_games().await;
 
-        for game in all_games.values() {
-            let unlocked_achievements = app_state
-                .games_repo()
-                .get_all_unlocked_acheivements_for_game(game.id())
-                .await;
+            for game in all_games.values() {
+                let unlocked_achievements = app_state
+                    .games_repo()
+                    .get_all_unlocked_acheivements_for_game(game.id())
+                    .await;
 
-            for achievement in unlocked_achievements {
-                let post = OmniPost::UnlockedGameAchievement {
-                    game: game.clone(),
-                    achievement: achievement.clone(),
-                };
-                posts.push(post);
+                for achievement in unlocked_achievements {
+                    let post = OmniPost::UnlockedGameAchievement {
+                        game: game.clone(),
+                        achievement: achievement.clone(),
+                    };
+                    posts.push(post);
+                }
             }
         }
 
-        // StatusLol
-        posts.extend(
-            app_state
-                .status_lol_repo()
-                .get_all()
-                .await
-                .into_iter()
-                .map(OmniPost::StatusLol)
-                .collect::<Vec<_>>(),
-        );
+        if OmniPostFilterFlags::STATUS_LOL.intersects(filter) {
+            posts.extend(
+                app_state
+                    .status_lol_repo()
+                    .get_all()
+                    .await
+                    .into_iter()
+                    .map(OmniPost::StatusLol)
+                    .collect::<Vec<_>>(),
+            );
+        }
 
-        // Blog Posts
-        posts.extend(
-            app_state
-                .blog_posts_repo()
-                .get_all()
-                .await
-                .into_values()
-                .map(OmniPost::BlogPost)
-                .collect::<Vec<_>>(),
-        );
+        if OmniPostFilterFlags::BLOG_POST.intersects(filter) {
+            posts.extend(
+                app_state
+                    .blog_posts_repo()
+                    .get_all()
+                    .await
+                    .into_values()
+                    .map(OmniPost::BlogPost)
+                    .collect::<Vec<_>>(),
+            );
+        }
 
-        // Micro Posts
-        posts.extend(
-            app_state
-                .micro_posts_repo()
-                .get_all()
-                .await
-                .into_values()
-                .map(OmniPost::MicroPost)
-                .collect::<Vec<_>>(),
-        );
+        if OmniPostFilterFlags::MICRO_POST.intersects(filter) {
+            posts.extend(
+                app_state
+                    .micro_posts_repo()
+                    .get_all()
+                    .await
+                    .into_values()
+                    .map(OmniPost::MicroPost)
+                    .collect::<Vec<_>>(),
+            );
+        }
 
-        // Microblog Archive Posts
-        posts.extend(
-            app_state
-                .microblog_archive_repo()
-                .get_all()
-                .await
-                .into_values()
-                .map(OmniPost::MicroblogArchivePost)
-                .collect::<Vec<_>>(),
-        );
+        if OmniPostFilterFlags::MICROBLOG_ARCHIVE_POST.intersects(filter) {
+            posts.extend(
+                app_state
+                    .microblog_archive_repo()
+                    .get_all()
+                    .await
+                    .into_values()
+                    .map(OmniPost::MicroblogArchivePost)
+                    .collect::<Vec<_>>(),
+            );
+        }
 
-        // Mastodon Posts
-        posts.extend(
-            app_state
-                .mastodon_posts_repo()
-                .get_all()
-                .await
-                .into_values()
-                .map(OmniPost::MastodonPost)
-                .collect::<Vec<_>>(),
-        );
+        if OmniPostFilterFlags::MASTODON_POST.intersects(filter) {
+            posts.extend(
+                app_state
+                    .mastodon_posts_repo()
+                    .get_all()
+                    .await
+                    .into_values()
+                    .map(OmniPost::MastodonPost)
+                    .collect::<Vec<_>>(),
+            );
+        }
 
         posts.sort_by(|a, b| b.date().cmp(a.date()));
 
         Ok(posts)
     }
 
-    pub async fn get_posts_tags_and_counts(app_state: &AppState) -> Result<HashMap<Tag, usize>> {
+    pub async fn get_posts_tags_and_counts(
+        app_state: &AppState,
+        filter: OmniPostFilterFlags,
+    ) -> Result<HashMap<Tag, usize>> {
         let mut tags = HashMap::new();
 
-        let posts = Self::get_posts_ordered_by_date(app_state).await?;
+        let posts = Self::get_posts_ordered_by_date(app_state, filter).await?;
 
         for post in posts {
             for tag in post.tags() {
@@ -108,8 +148,9 @@ impl OmniPostRepo {
     pub async fn get_posts_by_tag_ordered_by_date(
         app_state: &AppState,
         tag: &Tag,
+        filter: OmniPostFilterFlags,
     ) -> Result<Vec<OmniPost>> {
-        let posts = Self::get_posts_ordered_by_date(app_state).await?;
+        let posts = Self::get_posts_ordered_by_date(app_state, filter).await?;
 
         let mut posts = posts
             .into_iter()
@@ -120,5 +161,4 @@ impl OmniPostRepo {
 
         Ok(posts)
     }
-
 }

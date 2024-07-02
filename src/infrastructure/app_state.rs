@@ -11,10 +11,7 @@ use super::{
     bus::job_runner::Job,
     config::SiteConfig,
     repos::{
-        about_repo::AboutRepo, blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo,
-        games_repo::GamesRepo, lego_repo::LegoRepo, mastodon_posts_repo::MastodonPostsRepo,
-        micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo,
-        silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolRepo,
+        about_repo::AboutRepo, albums_repo::AlbumsRepo, blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo, games_repo::GamesRepo, lego_repo::LegoRepo, mastodon_posts_repo::MastodonPostsRepo, micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo, silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolRepo
     }, services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
 };
 
@@ -36,6 +33,7 @@ pub struct AppStateData {
     micro_posts_repo: MicroPostsRepo,
     microblog_archive_repo: MicroblogArchiveRepo,
     mastodon_posts_repo: MastodonPostsRepo,
+    albums_repo: AlbumsRepo,
 }
 
 impl AppStateData {
@@ -61,6 +59,7 @@ impl AppStateData {
             micro_posts_repo: MicroPostsRepo::default(),
             microblog_archive_repo: MicroblogArchiveRepo::default(),
             mastodon_posts_repo: MastodonPostsRepo::default(),
+            albums_repo: AlbumsRepo::default(),
         }
     }
 
@@ -136,6 +135,10 @@ impl AppStateData {
 
     pub fn mastodon_posts_repo(&self) -> &MastodonPostsRepo {
         &self.mastodon_posts_repo
+    }
+
+    pub fn albums_repo(&self) -> &AlbumsRepo {
+        &self.albums_repo
     }
 }
 

@@ -94,7 +94,7 @@ impl Cache {
         cache_path: &CachePath,
         url: &str,
     ) -> Result<Vec<u8>> {
-        if let Ok(content) = self.read_cached_file(&cache_path, app_state.config()).await {
+        if let Ok(content) = self.read_cached_file(cache_path, app_state.config()).await {
             return Ok(content);
         }
 
@@ -110,7 +110,7 @@ impl Cache {
 
         let content = reqwest.bytes().await.map_err(Error::UrlDownload)?.to_vec();
 
-        self.cache_file(&cache_path, content.clone()).await?;
+        self.cache_file(cache_path, content.clone()).await?;
 
         Ok(content)
     }
@@ -125,13 +125,13 @@ impl Cache {
 
         let cdn_path = cache_path.cdn_path(config);
 
-        if let Ok(content) = self.read_cached_file(&cache_path, config).await {
+        if let Ok(content) = self.read_cached_file(cache_path, config).await {
             return Ok(content);
         }
 
         let content = cdn.download_file(&cdn_path, config).await?;
 
-        self.cache_file(&cache_path, content.clone()).await?;
+        self.cache_file(cache_path, content.clone()).await?;
 
         Ok(content)
     }
