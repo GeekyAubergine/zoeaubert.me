@@ -1,6 +1,8 @@
 use std::time::Duration;
 
+use askama::filters::format;
 use chrono::{DateTime, Datelike, Utc};
+use regex::Regex;
 use serde::Deserialize;
 
 use async_trait::async_trait;
@@ -13,6 +15,7 @@ use crate::{
     domain::models::{
         mastodon_post::{MastodonPost, MastodonPostNonSpoiler, MastodonPostSpoiler},
         media::{image::Image, Media},
+        tag::Tag,
     },
     get_json,
     infrastructure::{
@@ -59,6 +62,12 @@ struct MastodonStatusApplication {
 }
 
 #[derive(Debug, Deserialize)]
+struct MastodonStatusTag {
+    name: String,
+    url: String,
+}
+
+#[derive(Debug, Deserialize)]
 struct MastodonStatus {
     id: String,
     uri: String,
@@ -71,9 +80,18 @@ struct MastodonStatus {
     application: Option<MastodonStatusApplication>,
     visibility: Option<String>,
     spoiler_text: Option<String>,
+    tags: Vec<MastodonStatusTag>,
 }
 
 const MASTODON_PAGINATION_LIMIT: u32 = 40;
+
+lazy_static! {
+    static ref TAGS_REGEX: Regex =
+        // Regex::new(r#"<p><a[^>]*rel=\\"tag\\">#<span>(.*)</span></a></p>"#).unwrap();
+        Regex::new(r#"<a[^>]*rel="tag">#<span>(.*?)</span></a>"#).unwrap();
+
+        static ref EMPTY_P_TAGS: Regex = Regex::new(r#"<p>\s*</p>"#).unwrap(); 
+}
 
 fn make_statuses_url(config: &Config) -> String {
     format!(
@@ -112,31 +130,51 @@ async fn fetch_pages(config: &Config) -> Result<Vec<MastodonStatus>> {
     Ok(all_statuses)
 }
 
+fn extract_tags(content: &str) -> Vec<String> {
+    TAGS_REGEX
+        .captures_iter(content)
+        .map(|capture| capture.get(1).unwrap().as_str().to_string())
+        .collect()
+}
+
+fn strip_tags(content: &str) -> String {
+    let content = TAGS_REGEX.replace_all(content, "").to_string();
+
+    EMPTY_P_TAGS.replace_all(&content, "").to_string()
+}
+
 async fn mastodon_status_to_post(
     app_state: &AppState,
     status: MastodonStatus,
 ) -> Result<MastodonPost> {
+    let tags = extract_tags(&status.content)
+        .iter()
+        .map(|t| Tag::from_string(t))
+        .collect();
+
+    let mut content = strip_tags(&status.content);
+
     let mut post = match status.spoiler_text {
         None => MastodonPost::NonSpoiler(MastodonPostNonSpoiler::new(
             status.id,
             status.uri,
             status.created_at,
-            status.content,
+            content,
             status.reblogs_count,
             status.favourites_count,
             status.replies_count,
-            vec![],
+            tags,
         )),
         Some(spoiler_text) => MastodonPost::Spoiler(MastodonPostSpoiler::new(
             status.id,
             status.uri,
             status.created_at,
-            status.content,
+            content,
             status.reblogs_count,
             status.favourites_count,
             status.replies_count,
             spoiler_text,
-            vec![],
+            tags,
         )),
     };
 
@@ -222,5 +260,58 @@ impl Job for FetchMastodonPostsJob {
             .await;
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::vec;
+
+    use crate::{
+        application::jobs::mastodon_posts::fetch_mastodon_posts_job::{
+            extract_tags, strip_tags, MastodonStatusTag,
+        },
+        domain::models::tag::Tag,
+    };
+
+    #[test]
+    fn it_should_extract_tags() {
+        let content = "<p>Everyone Is Awesome ❤\u{fe0f}</p><p>Set: 40516</p><p><a href=\"https://social.lol/tags/Lego\" class=\"mention hashtag\" rel=\"tag\">#<span>Lego</span></a></p>";
+
+        let tags = extract_tags(content);
+
+        let expected = vec![Tag::from_string("Lego")];
+
+        let first = tags.first().unwrap();
+
+        assert_eq!(first, &expected[0].tag());
+
+        let content = r#"<p>I haven&#39;t even started the original one yet, and Lego are releasing another Disney castle that I&#39;m going to have to buy 🤣</p><p><a href="https://social.lol/tags/Lego" class="mention hashtag" rel="tag">#<span>Lego</span></a> <a href="https://social.lol/tags/Disney" class="mention hashtag" rel="tag">#<span>Disney</span></a></p>"#;
+
+        let tags = extract_tags(content);
+
+        let expected = vec![Tag::from_string("Lego"), Tag::from_string("Disney")];
+
+        assert_eq!(tags[0], expected[0].tag());
+        assert_eq!(tags[1], expected[1].tag());
+    }
+
+    #[test]
+    fn it_should_strip_tags() {
+        let content = "<p>Everyone Is Awesome ❤\u{fe0f}</p><p>Set: 40516</p><p><a href=\"https://social.lol/tags/Lego\" class=\"mention hashtag\" rel=\"tag\">#<span>Lego</span></a></p>";
+
+        let stripped_content = strip_tags(content);
+
+        let expected = "<p>Everyone Is Awesome ❤\u{fe0f}</p><p>Set: 40516</p>";
+
+        assert_eq!(stripped_content, expected);
+
+        let content = r#"<p>I haven&#39;t even started the original one yet, and Lego are releasing another Disney castle that I&#39;m going to have to buy 🤣</p><p><a href="https://social.lol/tags/Lego" class="mention hashtag" rel="tag">#<span>Lego</span></a> <a href="https://social.lol/tags/Disney" class="mention hashtag" rel="tag">#<span>Disney</span></a></p>"#;
+
+        let stripped_content = strip_tags(content);
+
+        let expected = "<p>I haven&#39;t even started the original one yet, and Lego are releasing another Disney castle that I&#39;m going to have to buy 🤣</p>";
+
+        assert_eq!(stripped_content, expected);
     }
 }
