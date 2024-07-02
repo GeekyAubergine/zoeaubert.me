@@ -3,7 +3,6 @@ use std::{collections::VecDeque, future::Future};
 use async_trait::async_trait;
 use tokio::{
     sync::mpsc::{channel, Receiver, Sender},
-    task,
     time::{sleep, Duration},
 };
 
@@ -42,11 +41,14 @@ impl JobRunner {
     pub async fn run(&mut self) {
         loop {
             while let Some(job) = self.job_receiver.recv().await {
-                debug!("Running job: {}", job.name());
-                let result = job.run(&self.app_state).await;
-                if let Err(err) = result {
-                    error!("Job {} failed: {}", job.name(), err);
-                }
+                let app_state = self.app_state.clone();
+                tokio::spawn(async move {
+                    debug!("Running job: {}", job.name());
+                    let result = job.run(&app_state).await;
+                    if let Err(err) = result {
+                        error!("Job {} failed: {}", job.name(), err);
+                    }
+                });
             }
         }
     }

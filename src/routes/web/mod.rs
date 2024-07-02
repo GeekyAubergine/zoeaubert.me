@@ -8,9 +8,9 @@ use axum::{
 };
 use tracing::info;
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::number::FormatNumber;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
+use crate::infrastructure::services::date::FormatDate;
+use crate::infrastructure::services::number::FormatNumber;
+use crate::infrastructure::services::markdown::FormatMarkdown;
 
 
 use crate::{
@@ -26,6 +26,7 @@ pub mod micro_posts;
 pub mod tags;
 pub mod timeline;
 pub mod photos;
+pub mod albums;
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -41,6 +42,7 @@ pub fn router() -> Router<AppState> {
         .nest("/tags", tags::router())
         .nest("/micros", micro_posts::router())
         .nest("/photos", photos::router())
+        .nest("/albums", albums::router())
 }
 
 #[derive(Template)]

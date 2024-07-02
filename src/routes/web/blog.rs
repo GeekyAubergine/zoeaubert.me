@@ -13,9 +13,9 @@ use crate::{
     infrastructure::app_state::AppState,
 };
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::number::FormatNumber;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
+use crate::infrastructure::services::date::FormatDate;
+use crate::infrastructure::services::number::FormatNumber;
+use crate::infrastructure::services::markdown::FormatMarkdown;
 
 pub fn router() -> Router<AppState> {
     Router::new()

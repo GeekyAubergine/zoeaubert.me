@@ -42,7 +42,7 @@ async fn album_file_to_album(app_state: &AppState, file_album: &FileAlbum) -> Re
         let file_name = photo.url().split('/').last().unwrap();
 
         let image = Image::new(
-            photo.url(),
+            &format!("{}{}", app_state.config().cdn_url(), photo.url()),
             photo.alt(),
             image_size.width as u32,
             image_size.height as u32,
@@ -51,7 +51,14 @@ async fn album_file_to_album(app_state: &AppState, file_album: &FileAlbum) -> Re
         .with_description(photo.description())
         .with_parent_permalink(&format!("{}/{}", album.permalink(), file_name));
 
-        let photo = AlbumPhoto::new(image, file_name.to_string(), tags, featured);
+        let photo = AlbumPhoto::new(
+            image.clone(),
+            image.clone(),
+            image.clone(),
+            file_name.to_string(),
+            tags,
+            featured,
+        );
 
         album.add_photo(photo);
     }

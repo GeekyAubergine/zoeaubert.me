@@ -6,7 +6,9 @@ use super::{media::image::Image, tag::Tag};
 
 #[derive(Debug, Clone)]
 pub struct AlbumPhoto {
-    image: Image,
+    small_image: Image,
+    large_image: Image,
+    full_image: Image,
     file_name: String,
     tags: Vec<Tag>,
     featured: bool,
@@ -14,23 +16,35 @@ pub struct AlbumPhoto {
 
 impl AlbumPhoto {
     pub fn new(
-        image: Image,
+        small_image: Image,
+        large_image: Image,
+        full_image: Image,
         file_name: String,
         tags: Vec<Tag>,
         featured: bool,
     ) -> Self {
         Self {
-            image,
+            small_image,
+            large_image,
+            full_image,
             file_name,
             tags,
             featured,
         }
     }
 
-    pub fn image(&self) -> &Image {
-        &self.image
+    pub fn small_image(&self) -> &Image {
+        &self.small_image
     }
 
+    pub fn large_image(&self) -> &Image {
+        &self.large_image
+    }
+
+    pub fn full_image(&self) -> &Image {
+        &self.full_image
+    }
+    
     pub fn file_name(&self) -> &str {
         &self.file_name
     }
@@ -102,26 +116,12 @@ impl Album {
         &self.photo_order
     }
 
-    pub fn photos_ordered(&self) -> Vec<&AlbumPhoto> {
-        self.photo_order
-            .iter()
-            .filter_map(|file_name| self.photos.get(file_name))
-            .collect()
-    }
-
     pub fn photo(&self, file_name: &str) -> Option<&AlbumPhoto> {
         self.photos.get(file_name)
     }
 
     pub fn photo_count(&self) -> usize {
         self.photos.len()
-    }
-
-    pub fn tags(&self) -> Vec<Tag> {
-        self.photos
-            .values()
-            .flat_map(|photo| photo.tags().to_vec())
-            .collect()
     }
 
     pub fn permalink(&self) -> String {

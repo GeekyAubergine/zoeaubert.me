@@ -16,6 +16,14 @@ impl ImageOrientation {
             std::cmp::Ordering::Equal => Self::Square,
         }
     }
+
+    pub fn to_string(&self) -> &str {
+        match self {
+            Self::Landscape => "landscape",
+            Self::Portrait => "portrait",
+            Self::Square => "square",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
@@ -111,5 +119,9 @@ impl Image {
 
     pub fn parent_permalink(&self) -> Option<&str> {
         self.parent_permalink.as_deref()
+    }
+
+    pub fn is_landscape(&self) -> bool {
+        self.orientation == ImageOrientation::Landscape
     }
 }

@@ -16,6 +16,7 @@ const DATETIME_FORMAT_4: &str = "%Y-%m-%d";
 pub trait FormatDate {
     fn short_iso(&self) -> String;
     fn datetime(&self) -> String;
+    fn without_time(&self) -> String;
 }
 
 impl FormatDate for chrono::DateTime<chrono::Utc> {
@@ -25,6 +26,10 @@ impl FormatDate for chrono::DateTime<chrono::Utc> {
 
     fn datetime(&self) -> String {
         self.format("%Y-%m-%d %H:%M").to_string()
+    }
+
+    fn without_time(&self) -> String {
+        self.format("%Y-%m-%d").to_string()
     }
 }
 
