@@ -21,7 +21,7 @@ pub struct CdnPath(String);
 
 impl CdnPath {
     pub fn new(path: String) -> Self {
-        Self(path)
+        Self(path.replace("//", "/"))
     }
 
     pub fn file_name(&self) -> Result<&str> {

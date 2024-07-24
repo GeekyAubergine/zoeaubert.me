@@ -36,7 +36,7 @@ async fn index(
     pagination: Query<Pagination>,
 ) -> Result<IndexTemplate, (StatusCode, &'static str)> {
     let posts =
-        OmniPostRepo::get_posts_ordered_by_date(&state, OmniPostRepo::filter_non_album_photo())
+        OmniPostRepo::get_posts_ordered_by_date(&state, OmniPostRepo::filter_non_album_photo_and_game_achievement())
             .await
             .map_err(|e| {
                 error!("Failed to get posts ordered by date: {:?}", e);

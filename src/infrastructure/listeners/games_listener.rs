@@ -2,9 +2,9 @@ use crate::application::jobs::games::fetch_games_data_from_steam_job::GamesDownl
 use crate::application::jobs::games::load_games_from_archive_job::LoadGamesFromArchiveJob;
 use crate::application::jobs::games::save_games_to_archive_job::SaveGamesToArchiveJob;
 use crate::infrastructure::bus::event_queue::EventListener;
+use crate::infrastructure::bus::job_runner::JobPriority;
 use crate::{
-    prelude::*, GAMES_ARCHIVE_FILENAME,
-    LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
+    prelude::*, GAMES_ARCHIVE_FILENAME, LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
 };
 
 use async_trait::async_trait;
@@ -27,15 +27,17 @@ impl EventListener for GamesListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(LoadGamesFromArchiveJob::new())
+                    .dispatch_job(LoadGamesFromArchiveJob::new(), JobPriority::High)
                     .await?;
             }
             Event::GamesRepoLoadedFromArchive => {
-                app_state.dispatch_job(GamesDownloadDataJob::new()).await?;
+                app_state
+                    .dispatch_job(GamesDownloadDataJob::new(), JobPriority::Normal)
+                    .await?;
             }
             Event::GamesRepoUpdated => {
                 app_state
-                    .dispatch_job(SaveGamesToArchiveJob::new())
+                    .dispatch_job(SaveGamesToArchiveJob::new(), JobPriority::Low)
                     .await?;
             }
             _ => {}

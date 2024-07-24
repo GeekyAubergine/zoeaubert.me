@@ -12,6 +12,12 @@ use crate::{application::events::Event, prelude::*};
 
 use super::app_state::{self, AppState};
 
+pub enum JobPriority {
+    High,
+    Normal,
+    Low,
+}
+
 #[async_trait]
 pub trait Job: Send + Sync {
     fn name(&self) -> &str;

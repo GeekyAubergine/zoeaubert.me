@@ -6,7 +6,9 @@ use crate::{
         events::Event, jobs::games::fetch_games_data_from_steam_job::GamesDownloadDataJob,
     },
     infrastructure::{
-        app_state::AppState, bus::job_runner::Job, services::archive::load_archive_file,
+        app_state::AppState,
+        bus::job_runner::{Job, JobPriority},
+        services::archive::load_archive_file,
     },
     prelude::Result,
     GAMES_ARCHIVE_FILENAME,
@@ -40,7 +42,9 @@ impl Job for LoadGamesFromArchiveJob {
             }
             Err(err) => {
                 warn!("Failed to load games archive: {:?}", err);
-                app_state.dispatch_job(GamesDownloadDataJob::new()).await
+                app_state
+                    .dispatch_job(GamesDownloadDataJob::new(), JobPriority::Low)
+                    .await
             }
         }
     }

@@ -3,7 +3,7 @@ use crate::{domain::models::media::image::Image, error::Error, prelude::*};
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct ConfigMastodon {
     #[serde(rename = "accountId")]
     account_id: String,
@@ -33,7 +33,7 @@ impl ConfigMastodon {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct ConfigStatusLol {
     url: String,
 }
@@ -44,7 +44,7 @@ impl ConfigStatusLol {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct ConfigBrickset {
     #[serde(rename = "apiKey")]
     api_key: String,
@@ -66,7 +66,7 @@ impl ConfigBrickset {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct ConfigSteam {
     #[serde(rename = "apiKey")]
     api_key: String,
@@ -84,7 +84,7 @@ impl ConfigSteam {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct SiteImage {
     url: String,
     alt: String,
@@ -115,7 +115,7 @@ impl SiteImage {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct SiteConfigNavLink {
     name: String,
     url: String,
@@ -141,7 +141,7 @@ impl SiteConfigNavLink {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct SiteConfigSocialNetworkLink {
     name: String,
     url: String,
@@ -167,7 +167,7 @@ impl SiteConfigSocialNetworkLink {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct SiteConfig {
     url: String,
     title: String,
@@ -218,7 +218,7 @@ impl SiteConfig {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct BunnyCdnConfig {
     url: String,
     #[serde(rename = "accessKey")]
@@ -235,7 +235,7 @@ impl BunnyCdnConfig {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct Config {
     cache_dir: String,
     archive_dir: String,

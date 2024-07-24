@@ -20,7 +20,7 @@ use crate::{
     get_json,
     infrastructure::{
         app_state::{self, AppState},
-        bus::job_runner::Job,
+        bus::job_runner::{Job, JobPriority},
         config::Config,
         services::{cache::CachePath, cdn::CdnPath},
     },
@@ -224,7 +224,10 @@ async fn mastodon_status_to_post(
                     post.add_media(media);
 
                     app_state
-                        .dispatch_job(CopyFileFromInternetToCdnJob::new(url.clone(), cdn_path))
+                        .dispatch_job(
+                            CopyFileFromInternetToCdnJob::new(url.clone(), cdn_path),
+                            JobPriority::Low,
+                        )
                         .await;
                 }
             }

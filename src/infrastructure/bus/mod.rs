@@ -18,23 +18,32 @@ use tokio::{
 
 pub struct Bus {
     app_state: AppState,
-    job_runner: JobRunner,
     event_queue: EventQueue,
+    high_priority_job_runner: JobRunner,
+    normal_priority_job_runner: JobRunner,
+    low_priority_job_runner: JobRunner,
 }
 
 impl Bus {
     pub fn new(
         app_state: AppState,
-        job_receiver: Receiver<BoxedJob>,
         event_receiver: Receiver<Event>,
+        high_priority_job_receiver: Receiver<BoxedJob>,
+        normal_priority_job_receiver: Receiver<BoxedJob>,
+        low_priority_job_receiver: Receiver<BoxedJob>,
     ) -> Self {
-        let job_runner = JobRunner::new(app_state.clone(), job_receiver);
         let event_queue = EventQueue::new(app_state.clone(), event_receiver);
+
+        let high_priority_job_runner = JobRunner::new(app_state.clone(), high_priority_job_receiver);
+        let normal_priority_job_runner = JobRunner::new(app_state.clone(), normal_priority_job_receiver);
+        let low_priority_job_runner = JobRunner::new(app_state.clone(), low_priority_job_receiver);
 
         Self {
             app_state,
-            job_runner,
             event_queue,
+            high_priority_job_runner,
+            normal_priority_job_runner,
+            low_priority_job_runner,
         }
     }
 
@@ -44,11 +53,19 @@ impl Bus {
 
     pub async fn start(mut self) {
         task::spawn(async move {
-            self.job_runner.run().await;
+            self.event_queue.run().await;
         });
 
         task::spawn(async move {
-            self.event_queue.run().await;
+            self.high_priority_job_runner.run().await;
+        });
+
+        task::spawn(async move {
+            self.normal_priority_job_runner.run().await;
+        });
+
+        task::spawn(async move {
+            self.low_priority_job_runner.run().await;
         });
     }
 }

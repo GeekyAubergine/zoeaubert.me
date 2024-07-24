@@ -12,12 +12,16 @@ use crate::{
 
 use super::cdn::{Cdn, CdnPath};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct CachePath(String);
 
 impl CachePath {
     pub fn new(config: &Config, path: String) -> Self {
-        Self(format!("{}/{}", config.cache_dir(), path))
+        if path.starts_with("/") {
+            Self(format!("{}{}", config.cache_dir(), path))
+        } else {
+            Self(format!("{}/{}", config.cache_dir(), path))
+        }
     }
 
     pub fn from_url(config: &Config, url: &str) -> Self {

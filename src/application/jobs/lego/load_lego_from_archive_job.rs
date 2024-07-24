@@ -3,7 +3,11 @@ use tracing::{info, warn};
 
 use crate::{
     application::{events::Event, jobs::lego::fetch_lego_job::FetchLegoJob},
-    infrastructure::{app_state::AppState, bus::job_runner::Job, services::archive::load_archive_file},
+    infrastructure::{
+        app_state::AppState,
+        bus::job_runner::{Job, JobPriority},
+        services::archive::load_archive_file,
+    },
     prelude::Result,
     LEGO_ARCHIVE_FILENAME,
 };
@@ -32,7 +36,9 @@ impl Job for LoadLegoFromArchiveJob {
             }
             Err(err) => {
                 warn!("Failed to load lego archive: {:?}", err);
-                app_state.dispatch_job(FetchLegoJob::new()).await
+                app_state
+                    .dispatch_job(FetchLegoJob::new(), JobPriority::Normal)
+                    .await
             }
         }
     }

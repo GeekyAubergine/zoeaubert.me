@@ -10,7 +10,7 @@ use crate::{
         tag::Tag,
     }, error::Error, infrastructure::{
         app_state::{self, AppState},
-        bus::job_runner::Job,
+        bus::job_runner::{Job, JobPriority},
         services::{cache::CachePath, date::parse_date, files::find_files_rescurse},
     }, prelude::Result
 };
@@ -102,7 +102,7 @@ impl Job for LoadAlbumsJob {
 
             match serde_yaml::from_str(&album_content).map_err(Error::ParseAlbum) {
                 Ok(album) => {
-                    app_state.dispatch_job(LoadAlbumJob::new(album)).await?;
+                    app_state.dispatch_job(LoadAlbumJob::new(album), JobPriority::Normal).await?;
                 }
                 Err(e) => error!("Error parsing album: {:?}", e),
             }

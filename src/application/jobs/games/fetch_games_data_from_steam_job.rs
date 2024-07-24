@@ -8,7 +8,11 @@ use tracing::{info, warn};
 use crate::{
     application::events::Event,
     get_json,
-    infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config},
+    infrastructure::{
+        app_state::AppState,
+        bus::job_runner::{Job, JobPriority},
+        config::Config,
+    },
     prelude::Result,
     GAMES_ARCHIVE_FILENAME, ONE_HOUR_CACHE_PERIOD,
 };
@@ -134,7 +138,10 @@ impl Job for GamesDownloadDataJob {
             }
 
             app_state
-                .dispatch_job(FetchGameDataFromSteamJob::new(steam_game))
+                .dispatch_job(
+                    FetchGameDataFromSteamJob::new(steam_game),
+                    JobPriority::Normal,
+                )
                 .await?;
         }
 

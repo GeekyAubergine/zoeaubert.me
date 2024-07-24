@@ -58,4 +58,10 @@ pub enum Error {
     UrlDownload(reqwest::Error),
     #[error("Parse album {0}")]
     ParseAlbum(serde_yaml::Error),
+    #[error("Unable to parse image format {0}")]
+    UnableToParseImageFormat(std::io::Error),
+    #[error("Unable to decode image {0}")]
+    UnableToDecodeImage(image::ImageError),
+    #[error("Unable to encode image {0}")]
+    UnableToEncodeImage(image::ImageError),
 }

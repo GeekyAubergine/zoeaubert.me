@@ -124,4 +124,8 @@ impl Image {
     pub fn is_landscape(&self) -> bool {
         self.orientation == ImageOrientation::Landscape
     }
+
+    pub fn aspect_ratio(&self) -> f32 {
+        self.height as f32 / self.width as f32
+    }
 }

@@ -2,6 +2,7 @@ use crate::application::jobs::mastodon_posts::fetch_mastodon_posts_job::FetchMas
 use crate::application::jobs::mastodon_posts::load_mastodon_posts_from_archive::LoadMastodonPostsFromArchiveJob;
 use crate::application::jobs::mastodon_posts::save_mastodon_posts_to_archive::SaveMastodonPostsToArchiveJob;
 use crate::infrastructure::bus::event_queue::EventListener;
+use crate::infrastructure::bus::job_runner::JobPriority;
 use crate::{
     prelude::*, GAMES_ARCHIVE_FILENAME, LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
 };
@@ -25,13 +26,19 @@ impl EventListener for MastodonListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
         match event {
             Event::ServerBooted => {
-                app_state.dispatch_job(LoadMastodonPostsFromArchiveJob::new()).await?;
+                app_state
+                    .dispatch_job(LoadMastodonPostsFromArchiveJob::new(), JobPriority::High)
+                    .await?;
             }
             Event::MastodonPostsRepoLoadedFromArchive => {
-                app_state.dispatch_job(FetchMastodonPostsJob::new()).await?;
+                app_state
+                    .dispatch_job(FetchMastodonPostsJob::new(), JobPriority::Normal)
+                    .await?;
             }
             Event::MastodonPostsRepoUpdated => {
-                app_state.dispatch_job(SaveMastodonPostsToArchiveJob::new()).await?;
+                app_state
+                    .dispatch_job(SaveMastodonPostsToArchiveJob::new(), JobPriority::Low)
+                    .await?;
             }
             _ => {}
         }

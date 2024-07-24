@@ -2,6 +2,7 @@ use async_trait::async_trait;
 use tracing::{info, warn};
 
 use crate::application::jobs::mastodon_posts::fetch_mastodon_posts_job::FetchMastodonPostsJob;
+use crate::infrastructure::bus::job_runner::JobPriority;
 use crate::infrastructure::services::archive::load_archive_file;
 use crate::MASTODON_ARCHIVE_FILENAME;
 use crate::{
@@ -39,7 +40,7 @@ impl Job for LoadMastodonPostsFromArchiveJob {
             }
             Err(err) => {
                 warn!("Failed to load mastodon archive: {:?}", err);
-                app_state.dispatch_job(FetchMastodonPostsJob::new()).await
+                app_state.dispatch_job(FetchMastodonPostsJob::new(), JobPriority::Normal).await
             }
         }
     }

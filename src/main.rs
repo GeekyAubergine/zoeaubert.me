@@ -93,14 +93,29 @@ async fn main() -> Result<()> {
 
     prepare_folders(&config).await?;
 
-    let (job_sender, job_receiver) = make_job_channel();
     let (event_sender, event_receiver) = make_event_channel();
+    let (job_high_priority_sender, job_high_priority_receiver) = make_job_channel();
+    let (job_normal_priority_sender, job_normal_priority_receiver) = make_job_channel();
+    let (job_low_priority_sender, job_low_priority_receiver) = make_job_channel();
 
-    let mut state = AppStateData::new(&config, job_sender, event_sender).await;
+    let mut state = AppStateData::new(
+        &config,
+        event_sender,
+        job_high_priority_sender,
+        job_normal_priority_sender,
+        job_low_priority_sender,
+    )
+    .await;
 
     let state = Arc::new(state);
 
-    let bus = Bus::new(state.clone(), job_receiver, event_receiver);
+    let bus = Bus::new(
+        state.clone(),
+        event_receiver,
+        job_high_priority_receiver,
+        job_normal_priority_receiver,
+        job_low_priority_receiver,
+    );
 
     let bus = register_listeners(bus);
 

@@ -8,17 +8,24 @@ use crate::{
 };
 
 use super::{
-    bus::job_runner::Job,
+    bus::job_runner::{Job, JobPriority},
     config::SiteConfig,
     repos::{
-        about_repo::AboutRepo, albums_repo::AlbumsRepo, blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo, games_repo::GamesRepo, lego_repo::LegoRepo, mastodon_posts_repo::MastodonPostsRepo, micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo, silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolRepo
-    }, services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
+        about_repo::AboutRepo, albums_repo::AlbumsRepo, blog_posts_repo::BlogPostsRepo,
+        faq_repo::FaqRepo, games_repo::GamesRepo, lego_repo::LegoRepo,
+        mastodon_posts_repo::MastodonPostsRepo, micro_posts_repo::MicroPostsRepo,
+        microblog_archive_repo::MicroblogArchiveRepo, silly_names_repo::SillyNamesRepo,
+        status_lol_repo::StatusLolRepo,
+    },
+    services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
 };
 
 #[derive(Debug, Clone)]
 pub struct AppStateData {
-    job_sender: Sender<Box<dyn Job>>,
     event_sender: Sender<Event>,
+    job_high_priority_sender: Sender<Box<dyn Job>>,
+    job_normal_priority_sender: Sender<Box<dyn Job>>,
+    job_low_priority_sender: Sender<Box<dyn Job>>,
     config: Config,
     cdn: Cdn,
     cache: Cache,
@@ -39,12 +46,16 @@ pub struct AppStateData {
 impl AppStateData {
     pub async fn new(
         config: &Config,
-        job_sender: Sender<Box<dyn Job>>,
         event_sender: Sender<Event>,
+        job_high_priority_sender: Sender<Box<dyn Job>>,
+        job_normal_priority_sender: Sender<Box<dyn Job>>,
+        job_low_priority_sender: Sender<Box<dyn Job>>,
     ) -> Self {
         Self {
-            job_sender,
             event_sender,
+            job_high_priority_sender,
+            job_normal_priority_sender,
+            job_low_priority_sender,
             config: config.clone(),
             cdn: Cdn::new(config).await,
             cache: Cache::default(),
@@ -63,11 +74,29 @@ impl AppStateData {
         }
     }
 
-    pub async fn dispatch_job<J: Job + 'static>(&self, job: J) -> Result<()> {
-        self.job_sender
-            .send(Box::new(job))
-            .await
-            .map_err(Error::DispatchJob)
+    pub async fn dispatch_job<J: Job + 'static>(
+        &self,
+        job: J,
+        priority: JobPriority,
+    ) -> Result<()> {
+        let job = Box::new(job);
+        match priority {
+            JobPriority::High => self
+                .job_high_priority_sender
+                .send(job)
+                .await
+                .map_err(Error::DispatchJob),
+            JobPriority::Normal => self
+                .job_normal_priority_sender
+                .send(job)
+                .await
+                .map_err(Error::DispatchJob),
+            JobPriority::Low => self
+                .job_low_priority_sender
+                .send(job)
+                .await
+                .map_err(Error::DispatchJob),
+        }
     }
 
     pub async fn dispatch_event(&self, event: Event) -> Result<()> {

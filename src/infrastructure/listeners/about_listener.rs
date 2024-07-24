@@ -1,8 +1,8 @@
 use crate::application::jobs::about::load_about_job::LoadAboutDataJob;
 use crate::infrastructure::bus::event_queue::EventListener;
+use crate::infrastructure::bus::job_runner::JobPriority;
 use crate::{
-    prelude::*, GAMES_ARCHIVE_FILENAME,
-    LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
+    prelude::*, GAMES_ARCHIVE_FILENAME, LEGO_ARCHIVE_FILENAME, STATUS_LOL_ARCHIVE_FILENAME,
 };
 
 use async_trait::async_trait;
@@ -23,7 +23,9 @@ impl AboutListener {
 impl EventListener for AboutListener {
     async fn on_event(&self, event: &Event, app_state: &AppState) -> Result<()> {
         if let Event::ServerBooted = event {
-            app_state.dispatch_job(LoadAboutDataJob::new()).await?;
+            app_state
+                .dispatch_job(LoadAboutDataJob::new(), JobPriority::High)
+                .await?;
         }
 
         Ok(())

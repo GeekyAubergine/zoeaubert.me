@@ -37,6 +37,12 @@ impl OmniPostRepo {
         Self::filter_all() - OmniPostFilterFlags::ALBUM_PHOTO
     }
 
+    pub fn filter_non_album_photo_and_game_achievement() -> OmniPostFilterFlags {
+        Self::filter_all()
+            - OmniPostFilterFlags::ALBUM_PHOTO
+            - OmniPostFilterFlags::UNLOCKED_GAME_ACHIEVEMENT
+    }
+
     pub async fn get_posts_ordered_by_date(
         app_state: &AppState,
         filter: OmniPostFilterFlags,
