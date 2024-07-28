@@ -1,6 +1,25 @@
 use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
 
 #[derive(Debug, thiserror::Error)]
+pub enum DatabaseError {
+    #[error("Database connection error: {0}")]
+    ConnectionError(sqlx::Error),
+
+    #[error("Database query error: {0}")]
+    QueryError(sqlx::Error),
+}
+
+impl DatabaseError {
+    pub fn from_connection_error(err: sqlx::Error) -> Error {
+        Error::DatabaseError(DatabaseError::ConnectionError(err))
+    }
+
+    pub fn from_query_error(err: sqlx::Error) -> Error {
+        Error::DatabaseError(DatabaseError::QueryError(err))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Couldn't read dir {0}")]
     ReadDir(std::io::Error),
@@ -64,4 +83,7 @@ pub enum Error {
     UnableToDecodeImage(image::ImageError),
     #[error("Unable to encode image {0}")]
     UnableToEncodeImage(image::ImageError),
+
+    #[error("Database error: {0}")]
+    DatabaseError(#[from] DatabaseError),
 }

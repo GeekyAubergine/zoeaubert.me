@@ -29,7 +29,7 @@ pub enum OmniPost {
 impl OmniPost {
     pub fn key(&self) -> String {
         match self {
-            Self::StatusLol(status_lol) => status_lol.key().to_owned(),
+            Self::StatusLol(status_lol) => status_lol.id().to_owned(),
             Self::UnlockedGameAchievement { achievement, .. } => achievement.id().to_owned(),
             Self::BlogPost(blog_post) => blog_post.slug().to_owned(),
             Self::MicroPost(micro_post) => micro_post.slug().to_owned(),

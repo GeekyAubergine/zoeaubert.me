@@ -5,6 +5,8 @@
 #[macro_use]
 extern crate lazy_static;
 
+use dotenvy_macro::dotenv;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 use std::{fs, path::Path, sync::Arc, thread::sleep, time::Duration};
 
 use crate::{
@@ -23,7 +25,7 @@ use axum::{
     Json, Router,
 };
 use chrono::{DateTime, Utc};
-use error::Error;
+use error::{DatabaseError, Error};
 use infrastructure::{
     app_state::{AppState, AppStateData},
     bus::logger_listener::LoggerListener,
@@ -83,6 +85,14 @@ async fn prepare_folders(config: &Config) -> Result<()> {
     Ok(())
 }
 
+async fn prepare_database() -> Result<Pool<Postgres>> {
+    PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&dotenv!("DATABASE_URL"))
+        .await
+        .map_err(DatabaseError::from_connection_error)
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt().with_max_level(Level::INFO).init();
@@ -93,12 +103,15 @@ async fn main() -> Result<()> {
 
     prepare_folders(&config).await?;
 
+    let database = (prepare_database().await?);
+
     let (event_sender, event_receiver) = make_event_channel();
     let (job_high_priority_sender, job_high_priority_receiver) = make_job_channel();
     let (job_normal_priority_sender, job_normal_priority_receiver) = make_job_channel();
     let (job_low_priority_sender, job_low_priority_receiver) = make_job_channel();
 
     let mut state = AppStateData::new(
+        database,
         &config,
         event_sender,
         job_high_priority_sender,

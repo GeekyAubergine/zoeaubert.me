@@ -6,7 +6,12 @@ use serde::{Deserialize, Serialize};
 use tracing::{info, warn};
 
 use crate::{
-    application::events::Event, domain::models::status_lol::StatusLolPost, get_json, infrastructure::{app_state::AppState, bus::job_runner::Job}, prelude::Result, ONE_HOUR_CACHE_PERIOD, STATUS_LOL_ARCHIVE_FILENAME
+    application::events::Event,
+    domain::models::status_lol::StatusLolPost,
+    get_json,
+    infrastructure::{app_state::AppState, bus::job_runner::Job},
+    prelude::Result,
+    ONE_HOUR_CACHE_PERIOD, STATUS_LOL_ARCHIVE_FILENAME,
 };
 
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
@@ -42,8 +47,6 @@ pub struct StatusLolResponse {
 
 impl From<ReponseStatusLolPost> for StatusLolPost {
     fn from(post: ReponseStatusLolPost) -> Self {
-        let key = format!("statuslol-{}", post.id);
-        let permalink = format!("/micros/statuslol-{}", post.id);
         let original_url = format!("https://{}.status.lol/{}", post.address, post.id);
 
         let date = match post.created.parse::<i64>() {
@@ -54,7 +57,7 @@ impl From<ReponseStatusLolPost> for StatusLolPost {
             Err(_) => Utc::now(),
         };
 
-        StatusLolPost::new(key, permalink, date, post.content, post.emoji, original_url)
+        StatusLolPost::new(post.id, date, post.content, post.emoji, original_url)
     }
 }
 

@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use sqlx::{Pool, Postgres};
 use tokio::sync::{mpsc::Sender, RwLock};
 
 use crate::{
@@ -19,6 +20,8 @@ use super::{
     },
     services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
 };
+
+pub type DatabaseConnection = Pool<Postgres>;
 
 #[derive(Debug, Clone)]
 pub struct AppStateData {
@@ -45,6 +48,7 @@ pub struct AppStateData {
 
 impl AppStateData {
     pub async fn new(
+        database_connection: DatabaseConnection,
         config: &Config,
         event_sender: Sender<Event>,
         job_high_priority_sender: Sender<Box<dyn Job>>,
@@ -62,7 +66,7 @@ impl AppStateData {
             content_dir: ContentDir::default(),
             games_repo: GamesRepo::default(),
             lego_repo: LegoRepo::default(),
-            status_lol_repo: StatusLolRepo::default(),
+            status_lol_repo: StatusLolRepo::new(database_connection.clone()),
             about_repo: AboutRepo::default(),
             faq_repo: FaqRepo::default(),
             silly_names_repo: SillyNamesRepo::default(),

@@ -5,57 +5,72 @@ use std::{
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use sqlx::{query, QueryBuilder};
 use tokio::sync::RwLock;
 
 use crate::{
-    domain::models::status_lol::StatusLolPost, get_json, infrastructure::config::Config,
-    prelude::*, ONE_HOUR_CACHE_PERIOD,
+    domain::models::status_lol::StatusLolPost,
+    error::DatabaseError,
+    get_json,
+    infrastructure::{app_state::DatabaseConnection, config::Config},
+    prelude::*,
+    ONE_HOUR_CACHE_PERIOD,
 };
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct StatusLolRepo {
-    posts: Arc<RwLock<Vec<StatusLolPost>>>,
-    last_updated: Arc<RwLock<DateTime<Utc>>>,
+    database_connection: DatabaseConnection,
 }
 
 impl StatusLolRepo {
-    pub async fn rebuild_from_archive(&self, archive: StatusLolRepoArchive) {
-        let mut posts = self.posts.write().await;
-        *posts = archive.posts;
-
-        let mut last_updated = self.last_updated.write().await;
-        *last_updated = archive.last_updated;
-    }
-
-    pub async fn get_archived(&self) -> StatusLolRepoArchive {
-        let posts = self.posts.read().await;
-        let last_updated = *self.last_updated.read().await;
-
-        StatusLolRepoArchive {
-            posts: posts.clone(),
-            last_updated,
+    pub fn new(database_connection: DatabaseConnection) -> Self {
+        Self {
+            database_connection,
         }
     }
 
-    pub async fn get_all(&self) -> Vec<StatusLolPost> {
-        self.posts
-            .read()
+    pub async fn get_all(&self) -> Result<Vec<StatusLolPost>> {
+        let rows = sqlx::query!(
+            "
+            SELECT id, date, content, emoji, original_url
+            FROM status_lol
+            "
+        )
+        .fetch_all(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        let posts = rows.into_iter().map(|row| {
+            StatusLolPost::new(
+                row.id,
+                row.date,
+                row.content,
+                row.emoji,
+                row.original_url,
+            )
+        }).collect();
+
+        Ok(posts)
+    }
+
+    pub async fn commit(&self, posts: Vec<StatusLolPost>) -> Result<()> {
+        for post in posts {
+            sqlx::query!(
+                "
+                INSERT INTO status_lol (id, date, content, emoji, original_url)
+                VALUES ($1, $2, $3, $4, $5)
+                ",
+                post.id(),
+                post.date(),
+                post.content(),
+                post.emoji(),
+                post.original_url()
+            )
+            .execute(&self.database_connection)
             .await
-            .iter()
-            .cloned()
-            .collect::<Vec<StatusLolPost>>()
+            .map_err(DatabaseError::from_query_error)?;
+        }
+
+        Ok(())
     }
-
-    pub async fn commit(&self, posts: Vec<StatusLolPost>) {
-        self.posts.write().await.clone_from(&posts);
-
-        let mut last_updated_ref = self.last_updated.write().await;
-        *last_updated_ref = Utc::now();
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StatusLolRepoArchive {
-    posts: Vec<StatusLolPost>,
-    last_updated: DateTime<Utc>,
 }

@@ -5,6 +5,7 @@ use crate::domain::models::tag::Tag;
 use crate::prelude::*;
 
 use bitflags::bitflags;
+use tracing::error;
 
 use crate::infrastructure::app_state::{self, AppState};
 
@@ -69,15 +70,16 @@ impl OmniPostRepo {
         }
 
         if OmniPostFilterFlags::STATUS_LOL.intersects(filter) {
-            posts.extend(
-                app_state
-                    .status_lol_repo()
-                    .get_all()
-                    .await
-                    .into_iter()
-                    .map(OmniPost::StatusLol)
-                    .collect::<Vec<_>>(),
-            );
+            let status_lol_posts = app_state.status_lol_repo().get_all().await;
+
+            match status_lol_posts {
+                Ok(status_lol_posts) => {
+                    posts.extend(status_lol_posts.into_iter().map(OmniPost::StatusLol));
+                }
+                Err(e) => {
+                    error!("Failed to get status lol posts: {}", e);
+                }
+            }
         }
 
         if OmniPostFilterFlags::BLOG_POST.intersects(filter) {

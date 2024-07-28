@@ -1,6 +1,4 @@
 use crate::application::jobs::status_lol::fetch_status_lol_posts_job::FetchStatusLolPostsJob;
-use crate::application::jobs::status_lol::load_status_lol_posts_from_archive_job::LoadStatusLolPostsFromArchiveJob;
-use crate::application::jobs::status_lol::save_status_lol_posts_to_archive_job::SaveStatusLolPostsToArchiveJob;
 use crate::infrastructure::bus::event_queue::EventListener;
 use crate::infrastructure::bus::job_runner::JobPriority;
 use crate::{
@@ -27,17 +25,7 @@ impl EventListener for StatusLolListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(LoadStatusLolPostsFromArchiveJob::new(), JobPriority::High)
-                    .await?;
-            }
-            Event::StatusLolRepoLoadedFromArchive => {
-                app_state
                     .dispatch_job(FetchStatusLolPostsJob::new(), JobPriority::Normal)
-                    .await?;
-            }
-            Event::StatusLolRepoUpdated => {
-                app_state
-                    .dispatch_job(SaveStatusLolPostsToArchiveJob::new(), JobPriority::Low)
                     .await?;
             }
             _ => {}
