@@ -28,7 +28,7 @@ impl Job for LoadLegoFromArchiveJob {
         info!("Loading lego archive");
         match load_archive_file(app_state.config(), LEGO_ARCHIVE_FILENAME).await {
             Ok(lego_archive) => {
-                app_state.lego_repo().load_from_archive(lego_archive).await;
+                app_state.lego_set_repo().load_from_archive(lego_archive).await;
 
                 app_state
                     .dispatch_event(Event::LegoRepoLoadedFromArchive)

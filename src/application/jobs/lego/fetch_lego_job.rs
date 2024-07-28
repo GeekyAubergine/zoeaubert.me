@@ -146,7 +146,7 @@ impl Job for FetchLegoJob {
         "FetchLegoJob"
     }
     async fn run(&self, app_state: &AppState) -> Result<()> {
-        let last_updated = app_state.lego_repo().get_last_updated().await;
+        let last_updated = app_state.lego_set_repo().get_last_updated().await;
 
         if last_updated + NO_REFETCH_DURATION > Utc::now() {
             info!("Skipping fetching lego data - cache is still valid");
@@ -186,7 +186,7 @@ impl Job for FetchLegoJob {
         }
 
         app_state
-            .lego_repo()
+            .lego_set_repo()
             .commit(lego_sets, lego_minifigs)
             .await;
 

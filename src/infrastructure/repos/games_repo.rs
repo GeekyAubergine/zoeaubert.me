@@ -58,6 +58,27 @@ impl GamesRepo {
     }
 
     pub async fn commit(&self, game: &Game) -> Result<()> {
+        if let Some(_) = self.find_by_id(game.id()).await? {
+            sqlx::query!(
+                "
+                UPDATE games
+                SET name = $2, header_image_url = $3, playtime = $4, last_played = $5, link_url = $6
+                WHERE id = $1
+                ",
+                game.id() as i64,
+                game.name(),
+                game.header_image_url(),
+                game.playtime() as i64,
+                game.last_played(),
+                game.link_url()
+            )
+            .execute(&self.database_connection)
+            .await
+            .map_err(DatabaseError::from_query_error)?;
+
+            return Ok(());
+        }
+
         sqlx::query!(
             "
             INSERT INTO games (id, name, header_image_url, playtime, last_played, link_url)

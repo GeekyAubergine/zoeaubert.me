@@ -14,7 +14,7 @@ use super::{
     repos::{
         about_repo::AboutRepo, albums_repo::AlbumsRepo, blog_posts_repo::BlogPostsRepo,
         faq_repo::FaqRepo, game_achievements_repo::GameAchievementsRepo, games_repo::GamesRepo,
-        lego_repo::LegoRepo, mastodon_posts_repo::MastodonPostsRepo,
+        lego_set_repo::LegoSetRepo, mastodon_posts_repo::MastodonPostsRepo,
         micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo,
         silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolRepo,
     },
@@ -35,7 +35,7 @@ pub struct AppStateData {
     content_dir: ContentDir,
     games_repo: GamesRepo,
     game_achievements_repo: GameAchievementsRepo,
-    lego_repo: LegoRepo,
+    lego_set_repo: LegoSetRepo,
     status_lol_repo: StatusLolRepo,
     about_repo: AboutRepo,
     faq_repo: FaqRepo,
@@ -67,7 +67,7 @@ impl AppStateData {
             content_dir: ContentDir::default(),
             games_repo: GamesRepo::new(database_connection.clone()),
             game_achievements_repo: GameAchievementsRepo::new(database_connection.clone()),
-            lego_repo: LegoRepo::default(),
+            lego_set_repo: LegoSetRepo::default(),
             status_lol_repo: StatusLolRepo::new(database_connection.clone()),
             about_repo: AboutRepo::default(),
             faq_repo: FaqRepo::default(),
@@ -140,8 +140,8 @@ impl AppStateData {
         &self.game_achievements_repo
     }
 
-    pub fn lego_repo(&self) -> &LegoRepo {
-        &self.lego_repo
+    pub fn lego_set_repo(&self) -> &LegoSetRepo {
+        &self.lego_set_repo
     }
 
     pub fn status_lol_repo(&self) -> &StatusLolRepo {

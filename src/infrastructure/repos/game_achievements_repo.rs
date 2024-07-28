@@ -69,6 +69,50 @@ impl GameAchievementsRepo {
     }
 
     pub async fn commit(&self, achievment: &GameAchievement) -> Result<()> {
+        if let Ok(_) = self.find_by_id(achievment.id()).await {
+            match achievment {
+                GameAchievement::Locked(achievement) => {
+                    sqlx::query!(
+                        "
+                        UPDATE game_achievements
+                        SET display_name = $2, description = $3, locked_image_url = $4, unlocked_image_url = NULL, unlocked_date = NULL, global_unlocked_percentage = $5
+                        WHERE id = $1 and game_id = $6
+                        ",
+                        achievement.id(),
+                        achievement.display_name(),
+                        achievement.description(),
+                        achievement.image_url(),
+                        achievement.global_unlocked_percentage(),
+                        achievement.game_id() as i64
+                    )
+                    .execute(&self.database_connection)
+                    .await
+                    .map_err(DatabaseError::from_query_error)?;
+                }
+                GameAchievement::Unlocked(achievement) => {
+                    sqlx::query!(
+                        "
+                        UPDATE game_achievements
+                        SET display_name = $2, description = $3, locked_image_url = NULL, unlocked_image_url = $4, unlocked_date = $5, global_unlocked_percentage = $6
+                        WHERE id = $1 and game_id = $7
+                        ",
+                        achievement.id(),
+                        achievement.display_name(),
+                        achievement.description(),
+                        achievement.image_url(),
+                        achievement.unlocked_date(),
+                        achievement.global_unlocked_percentage(),
+                        achievement.game_id() as i64
+                    )
+                    .execute(&self.database_connection)
+                    .await
+                    .map_err(DatabaseError::from_query_error)?;
+                }
+            }
+
+            return Ok(());
+        }
+
         match achievment {
             GameAchievement::Locked(achievement) => {
                 sqlx::query!(
@@ -110,6 +154,23 @@ impl GameAchievementsRepo {
                 Ok(())
             }
         }
+    }
+
+    pub async fn find_by_id(&self, id: &str) -> Result<GameAchievement> {
+        let row = sqlx::query_as!(
+            SelectedRow,
+            "
+            SELECT id, game_id, display_name, description, locked_image_url, unlocked_image_url, unlocked_date, global_unlocked_percentage
+            FROM game_achievements
+            WHERE id = $1
+            ",
+            id
+        )
+        .fetch_one(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        Ok(GameAchievement::from(row))
     }
 
     pub async fn find_by_game_id(&self, game_id: u32) -> Result<GameAchievements> {

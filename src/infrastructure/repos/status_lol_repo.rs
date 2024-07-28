@@ -31,6 +31,26 @@ impl StatusLolRepo {
 
     pub async fn commit(&self, posts: Vec<StatusLolPost>) -> Result<()> {
         for post in posts {
+            if let Some(_) = self.find_by_id(post.id()).await? {
+                sqlx::query!(
+                    "
+                    UPDATE status_lol_posts
+                    SET date = $2, content = $3, emoji = $4, original_url = $5
+                    WHERE id = $1
+                    ",
+                    post.id(),
+                    post.date(),
+                    post.content(),
+                    post.emoji(),
+                    post.original_url()
+                )
+                .execute(&self.database_connection)
+                .await
+                .map_err(DatabaseError::from_query_error)?;
+
+                continue;
+            }
+
             sqlx::query!(
                 "
                 INSERT INTO status_lol_posts (id, date, content, emoji, original_url)
@@ -70,5 +90,25 @@ impl StatusLolRepo {
             .collect();
 
         Ok(posts)
+    }
+
+    pub async fn find_by_id(&self, id: &str) -> Result<Option<StatusLolPost>> {
+        let row = sqlx::query!(
+            "
+            SELECT id, date, content, emoji, original_url
+            FROM status_lol_posts
+            WHERE id = $1
+            ",
+            id
+        )
+        .fetch_optional(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        let post = row.map(|row| {
+            StatusLolPost::new(row.id, row.date, row.content, row.emoji, row.original_url)
+        });
+
+        Ok(post)
     }
 }

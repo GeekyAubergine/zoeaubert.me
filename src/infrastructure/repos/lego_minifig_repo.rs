@@ -13,13 +13,13 @@ use crate::{domain::models::lego::{LegoMinifig, LegoSet}, get_json, infrastructu
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
 
 #[derive(Debug, Clone, Default)]
-pub struct LegoRepo {
+pub struct LegoSetRepo {
     sets: Arc<RwLock<HashMap<String, LegoSet>>>,
     minifigs: Arc<RwLock<HashMap<String, LegoMinifig>>>,
     last_updated: Arc<RwLock<DateTime<Utc>>>,
 }
 
-impl LegoRepo {
+impl LegoSetRepo {
     pub async fn load_from_archive(&self, archive: LegoRepoArchive) {
         let mut sets_ref = self.sets.write().await;
 

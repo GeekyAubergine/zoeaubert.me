@@ -22,7 +22,7 @@ impl Job for SaveLegoToArchiveJob {
     }
     async fn run(&self, app_state: &AppState) -> Result<()> {
         info!("Saving lego archive");
-        let lego = app_state.lego_repo().get_archived().await;
+        let lego = app_state.lego_set_repo().get_archived().await;
 
         save_archive_file(app_state.config(), &lego, LEGO_ARCHIVE_FILENAME).await?;
 
