@@ -13,10 +13,10 @@ use super::{
     config::SiteConfig,
     repos::{
         about_repo::AboutRepo, albums_repo::AlbumsRepo, blog_posts_repo::BlogPostsRepo,
-        faq_repo::FaqRepo, games_repo::GamesRepo, lego_repo::LegoRepo,
-        mastodon_posts_repo::MastodonPostsRepo, micro_posts_repo::MicroPostsRepo,
-        microblog_archive_repo::MicroblogArchiveRepo, silly_names_repo::SillyNamesRepo,
-        status_lol_repo::StatusLolRepo,
+        faq_repo::FaqRepo, game_achievements_repo::GameAchievementsRepo, games_repo::GamesRepo,
+        lego_repo::LegoRepo, mastodon_posts_repo::MastodonPostsRepo,
+        micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo,
+        silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolRepo,
     },
     services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
 };
@@ -34,6 +34,7 @@ pub struct AppStateData {
     cache: Cache,
     content_dir: ContentDir,
     games_repo: GamesRepo,
+    game_achievements_repo: GameAchievementsRepo,
     lego_repo: LegoRepo,
     status_lol_repo: StatusLolRepo,
     about_repo: AboutRepo,
@@ -64,7 +65,8 @@ impl AppStateData {
             cdn: Cdn::new(config).await,
             cache: Cache::default(),
             content_dir: ContentDir::default(),
-            games_repo: GamesRepo::default(),
+            games_repo: GamesRepo::new(database_connection.clone()),
+            game_achievements_repo: GameAchievementsRepo::new(database_connection.clone()),
             lego_repo: LegoRepo::default(),
             status_lol_repo: StatusLolRepo::new(database_connection.clone()),
             about_repo: AboutRepo::default(),
@@ -132,6 +134,10 @@ impl AppStateData {
 
     pub fn games_repo(&self) -> &GamesRepo {
         &self.games_repo
+    }
+
+    pub fn game_achievements_repo(&self) -> &GameAchievementsRepo {
+        &self.game_achievements_repo
     }
 
     pub fn lego_repo(&self) -> &LegoRepo {

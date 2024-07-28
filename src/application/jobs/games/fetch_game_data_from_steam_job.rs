@@ -7,7 +7,10 @@ use tracing::{error, info, warn};
 
 use crate::{
     application::events::Event,
-    domain::models::game::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
+    domain::models::{
+        game::Game,
+        game_achievement::{GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
+    },
     get_json,
     infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config},
     prelude::Result,
@@ -163,37 +166,62 @@ pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
     }
 }
 
-async fn load_data_for_steam_game(steam_game: &SteamOwnedGame, config: &Config) -> Result<Game> {
-    let game_link = format!(
-        "https://store.steampowered.com/app/{}/{}",
-        steam_game.appid(),
-        steam_game.name().replace(' ', "_")
-    );
+#[derive(Debug)]
+pub struct FetchGameDataFromSteamJob {
+    game: SteamOwnedGame,
+}
 
-    let game_header_image = format!(
-        "https://steamcdn-a.akamaihd.net/steam/apps/{}/header.jpg",
-        steam_game.appid()
-    );
+impl FetchGameDataFromSteamJob {
+    pub fn new(game: SteamOwnedGame) -> Self {
+        Self { game }
+    }
+}
 
-    let mut game = Game::new(
-        steam_game.appid(),
-        steam_game.name().to_string(),
-        game_header_image,
-        steam_game.playtime_forever(),
-        steam_last_played_to_datetime(steam_game.rtime_last_played()),
-        game_link,
-        HashMap::new(),
-    );
+#[async_trait]
+impl Job for FetchGameDataFromSteamJob {
+    fn name(&self) -> &str {
+        "FetchGameDataFromSteamJob"
+    }
 
-    match get_steam_game_data(steam_game.appid(), config).await {
-        Ok(game_data) => {
+    async fn run(&self, state: &AppState) -> Result<()> {
+        if let Some(stored_game) = state.games_repo().find_by_id(self.game.appid()).await? {
+            if &steam_last_played_to_datetime(self.game.rtime_last_played())
+                <= stored_game.last_played()
+            {
+                return Ok(());
+            }
+        }
+
+        info!("Fething game: {}", self.game.name());
+
+        let game_link = format!(
+            "https://store.steampowered.com/app/{}/{}",
+            self.game.appid(),
+            self.game.name().replace(' ', "_")
+        );
+
+        let game_header_image = format!(
+            "https://steamcdn-a.akamaihd.net/steam/apps/{}/header.jpg",
+            self.game.appid()
+        );
+
+        let game = Game::new(
+            self.game.appid(),
+            self.game.name().to_string(),
+            game_header_image,
+            self.game.playtime_forever(),
+            steam_last_played_to_datetime(self.game.rtime_last_played()),
+            game_link,
+        );
+
+        state.games_repo().commit(&game).await?;
+
+        if let Ok(game_data) = get_steam_game_data(game.id(), state.config()).await {
             let player_achievements =
-                get_steam_player_achievements(steam_game.appid(), config).await?;
+                get_steam_player_achievements(game.id(), state.config()).await?;
 
             let global_achievement_percentage =
-                get_steam_global_achievement_percentage(steam_game.appid(), config).await?;
-
-            let mut achievements = HashMap::new();
+                get_steam_global_achievement_percentage(game.id(), state.config()).await?;
 
             for achievement in game_data {
                 let player_achievement = player_achievements
@@ -220,69 +248,31 @@ async fn load_data_for_steam_game(steam_game: &SteamOwnedGame, config: &Config) 
                     None => 0.0,
                 };
 
-                let mapped_achievement = match unlocked_date {
+                let achievment = match unlocked_date {
                     Some(unlocked_date) => GameAchievement::Unlocked(GameAchievementUnlocked::new(
                         achievement.name.clone(),
+                        game.id(),
                         achievement.display_name,
-                        achievement.description,
+                        achievement.description.unwrap_or("".to_string()),
                         achievement.icon,
                         unlocked_date,
                         global_percentage,
                     )),
                     None => GameAchievement::Locked(GameAchievementLocked::new(
                         achievement.name.clone(),
+                        game.id(),
                         achievement.display_name,
-                        achievement.description,
+                        achievement.description.unwrap_or("".to_string()),
                         achievement.icon_gray,
                         global_percentage,
                     )),
                 };
 
-                achievements.insert(achievement.name.clone(), mapped_achievement.clone());
-            }
-
-            game.set_achievements(achievements);
-
-            Ok(game)
-        }
-        // So this seems weird but sometimes the API just returns `Game: {}` for some games that aren't really games :shrug: I don't care that much as it wont have the achievement data anyway
-        Err(err) => Ok(game),
-    }
-}
-
-#[derive(Debug)]
-pub struct FetchGameDataFromSteamJob {
-    game: SteamOwnedGame,
-}
-
-impl FetchGameDataFromSteamJob {
-    pub fn new(game: SteamOwnedGame) -> Self {
-        Self { game }
-    }
-}
-
-#[async_trait]
-impl Job for FetchGameDataFromSteamJob {
-    fn name(&self) -> &str {
-        "FetchGameDataFromSteamJob"
-    }
-
-    async fn run(&self, app_state: &AppState) -> Result<()> {
-        if let Some(stored_game) = app_state.games_repo().get_game(self.game.appid()).await {
-            if &steam_last_played_to_datetime(self.game.rtime_last_played())
-                <= stored_game.last_played()
-            {
-                return Ok(());
+                state.game_achievements_repo().commit(&achievment).await?;
             }
         }
 
-        info!("Fething game: {}", self.game.name());
-
-        let game_with_achievements =
-            load_data_for_steam_game(&self.game, app_state.config()).await?;
-
-        app_state.games_repo().commit(game_with_achievements).await;
-        app_state.dispatch_event(Event::GamesRepoUpdated).await?;
+        state.dispatch_event(Event::GamesRepoUpdated).await?;
 
         Ok(())
     }

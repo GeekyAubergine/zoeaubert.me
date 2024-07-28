@@ -11,31 +11,27 @@
                     <p class="numbers">{{ game.playtime_hours().format(1, true) }}h</p>
                     <p class="label">Playtime</p>
                 </div>
-                {%- if game.achievements_count() > 0 %}
+                {%- if achievements.achievements_count() > 0 %}
                     <div class="game-stat">
-                        <p class="numbers">{{ game.achievements_unlocked_count() }}
-                            <span class="mx-[0.15rem]">/</span>{{ game.achievements_count() }}</p>
+                        <p class="numbers">{{ achievements.achievements_unlocked_count() }}
+                            <span class="mx-[0.15rem]">/</span>{{ achievements.achievements_count() }}</p>
                         <p class="label">Achievements</p>
                     </div>
                 {%- endif %}
             </div>
         </div>
 
-        {%- if game.achievements_by_unlocked_date().len() > 0 %}
+        {%- if achievements.achievements_by_unlocked_date().len() > 0 %}
             <h2>Unlocked Achievements</h2>
-            {% for achievement in game.achievements_by_unlocked_date() %}
+            {% for achievement in achievements.achievements_by_unlocked_date() %}
                 <div class="game-achievement">
                     <div class="image-container">
-                        <img src="{{ achievement.image_unlocked_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                        <img src="{{ achievement.image_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
                     </div>
                     <div class="left">
                         <div class="name-and-description">
                             <h3>{{ achievement.display_name() }}</h3>
-                            {% match achievement.description() %}
-                            {% when Some with (description) %}
-                            <p>{{ description }}</p>
-                            {% when None %}
-                            {% endmatch %}
+                            <p>{{ achievement.description() }}</p>
                         </div>
                         <p class="secondary">{{ achievement.global_unlocked_percentage().format(1, false) }}% of players have this acheivement{%- if achievement.global_unlocked_percentage() < 10.0 %}<span class="special">⭐️<span>{% endif %}</p>
                     </div>
@@ -46,21 +42,17 @@
             {% endfor %}
         {% endif %}
 
-        {%- if game.achievments_locked().len() > 0 %}
+        {%- if achievements.achievements_locked().len() > 0 %}
             <h2>Locked Achievements</h2>
-            {% for achievement in game.achievments_locked() %}
+            {% for achievement in achievements.achievements_locked() %}
                 <div class="game-achievement">
                     <div class="image-container">
-                        <img src="{{ achievement.image_locked_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                        <img src="{{ achievement.image_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
                     </div>
                     <div class="left">
                         <div class="name-and-description">
                             <h3>{{ achievement.display_name() }}</h3>
-                            {% match achievement.description() %}
-                            {% when Some with (description) %}
-                            <p>{{ description }}</p>
-                            {% when None %}
-                            {% endmatch %}
+                            <p>{{ achievement.description() }}</p>
                         </div>
                     </div>
                 </div>

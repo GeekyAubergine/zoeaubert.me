@@ -9,13 +9,19 @@ use axum::{
 
 use crate::{
     build_data,
-    domain::models::{game::Game, media::image::Image, page::Page},
+    domain::models::{
+        game::Game,
+        game_achievement::{GameAchievement, GameAchievements},
+        media::image::Image,
+        page::Page,
+    },
     infrastructure::app_state::AppState,
+    TemplateResult,
 };
 
 pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::number::FormatNumber;
 pub use crate::infrastructure::services::markdown::FormatMarkdown;
+pub use crate::infrastructure::services::number::FormatNumber;
 
 const RECENT_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
@@ -29,7 +35,7 @@ pub fn router() -> Router<AppState> {
 }
 
 #[derive(Template)]
-#[template(path = "interests/games/index.html")]
+#[template(path = "interests/games/games_list.html")]
 pub struct IndexTemplate {
     page: Page,
     games_by_recently_played: Vec<Game>,
@@ -38,7 +44,7 @@ pub struct IndexTemplate {
     total_playtime: f32,
 }
 
-async fn index(State(state): State<AppState>) -> IndexTemplate {
+async fn index(State(state): State<AppState>) -> TemplateResult<IndexTemplate> {
     let page = Page::new(
         state.site(),
         "/interests/games",
@@ -49,25 +55,25 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
     let games_by_recently_played = state
         .games_repo()
         .get_games_by_most_recently_played()
-        .await
+        .await?
         .iter()
         .take(RECENT_GAMES_COUNT)
         .cloned()
         .collect::<Vec<Game>>();
 
-    let games_by_most_played = state.games_repo().get_games_by_most_played().await;
+    let games_by_most_played = state.games_repo().get_games_by_most_played().await?;
 
     let total_games = games_by_most_played.len();
 
-    let total_playtime = state.games_repo().get_total_play_time_hours().await;
+    let total_playtime = state.games_repo().get_total_play_time_hours().await?;
 
-    IndexTemplate {
+    Ok(IndexTemplate {
         page,
         games_by_recently_played,
         games_by_most_played,
         total_games,
         total_playtime,
-    }
+    })
 }
 
 #[derive(Template)]
@@ -75,27 +81,31 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
 pub struct GameTemplate {
     page: Page,
     game: Game,
+    achievements: GameAchievements,
 }
 
 async fn game_page(
     State(state): State<AppState>,
     Path(id): Path<u32>,
-) -> Result<GameTemplate, (StatusCode, &'static str)> {
+) -> TemplateResult<GameTemplate> {
     let game = state
         .games_repo()
-        .get_game(id)
+        .find_by_id(id)
         .await
+        .map_err(|_| (StatusCode::NOT_FOUND, "Game not found"))?
         .ok_or((StatusCode::NOT_FOUND, "Game not found"))?;
+
+    let achievements = state.game_achievements_repo().find_by_game_id(id).await?;
 
     let title = format!("{} Game Stats", game.name());
 
-    let mut description = match game.achievements_count() {
+    let mut description = match achievements.achievements_count() {
         0 => format!("{}h playtime", game.playtime_hours().format(1, true),),
         _ => format!(
             "{}h playtime, {}/{} achievements",
             game.playtime_hours().format(1, true),
-            game.achievements_unlocked_count(),
-            game.achievements_count(),
+            achievements.achievements_unlocked_count(),
+            achievements.achievements_count(),
         ),
     };
 
@@ -114,5 +124,9 @@ async fn game_page(
     )
     .with_image(image);
 
-    Ok(GameTemplate { page, game })
+    Ok(GameTemplate {
+        page,
+        game,
+        achievements,
+    })
 }

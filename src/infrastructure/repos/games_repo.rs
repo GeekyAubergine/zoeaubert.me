@@ -10,131 +10,166 @@ use serde::{Deserialize, Serialize};
 use tokio::{sync::RwLock, task::JoinSet};
 
 use crate::{
-    domain::models::game::{Game, GameAchievement, GameAchievementUnlocked},
+    domain::models::game::Game,
+    error::DatabaseError,
     get_json,
-    infrastructure::config::Config,
+    infrastructure::{
+        app_state::{AppState, DatabaseConnection},
+        config::Config,
+    },
     prelude::*,
     ONE_DAY_CACHE_PERIOD, ONE_HOUR_CACHE_PERIOD,
 };
 
-#[derive(Debug, Clone, Default)]
+use super::game_achievements_repo::GameAchievementsRepo;
+
+struct SelectedRow {
+    id: i64,
+    name: String,
+    header_image_url: String,
+    playtime: i64,
+    last_played: DateTime<Utc>,
+    link_url: String,
+}
+
+impl From<SelectedRow> for Game {
+    fn from(row: SelectedRow) -> Self {
+        Game::new(
+            row.id as u32,
+            row.name,
+            row.header_image_url,
+            row.playtime as u32,
+            row.last_played,
+            row.link_url,
+        )
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct GamesRepo {
-    games: Arc<RwLock<HashMap<u32, Game>>>,
-    last_updated: Arc<RwLock<DateTime<Utc>>>,
+    database_connection: DatabaseConnection,
 }
 
 impl GamesRepo {
-    pub async fn rebuild_from_archive(&self, archive: GameRepoArchive) {
-        let mut games = self.games.write().await;
-        let mut last_updated = self.last_updated.write().await;
-
-        *games = archive.games;
-        *last_updated = archive.last_updated;
-    }
-
-    pub async fn commit(&self, game: Game) {
-        let mut games = self.games.write().await;
-        games.insert(game.id(), game);
-
-        let mut last_updated = self.last_updated.write().await;
-        *last_updated = Utc::now();
-    }
-
-    pub async fn get_last_updated(&self) -> DateTime<Utc> {
-        *self.last_updated.read().await
-    }
-
-    pub async fn get_archived(&self) -> GameRepoArchive {
-        let games = self.games.read().await;
-
-        GameRepoArchive {
-            games: games.clone(),
-            last_updated: *self.last_updated.read().await,
+    pub fn new(database_connection: DatabaseConnection) -> Self {
+        Self {
+            database_connection,
         }
     }
 
-    pub async fn get_game(&self, id: u32) -> Option<Game> {
-        let games = self.games.read().await;
+    pub async fn commit(&self, game: &Game) -> Result<()> {
+        sqlx::query!(
+            "
+            INSERT INTO games (id, name, header_image_url, playtime, last_played, link_url)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ",
+            game.id() as i64,
+            game.name(),
+            game.header_image_url(),
+            game.playtime() as i64,
+            game.last_played(),
+            game.link_url()
+        )
+        .execute(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
 
-        games.get(&id).cloned()
+        Ok(())
     }
 
-    pub async fn get_all_games(&self) -> HashMap<u32, Game> {
-        let games = self.games.read().await;
+    pub async fn find_by_id(&self, id: u32) -> Result<Option<Game>> {
+        let row = sqlx::query_as!(
+            SelectedRow,
+            "
+            SELECT id, name, header_image_url, playtime, last_played, link_url
+            FROM games
+            WHERE id = $1
+            ",
+            id as i64
+        )
+        .fetch_optional(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
 
-        games
-            .iter()
-            .map(|(key, game)| (*key, game.clone()))
-            .collect()
-    }
-
-    pub async fn get_games_by_most_recently_played(&self) -> Vec<Game> {
-        let games = self.games.read().await;
-
-        let mut games_array = games.values().cloned().collect::<Vec<Game>>();
-
-        games_array.sort_by(|a, b| b.last_played().cmp(a.last_played()));
-
-        games_array
-    }
-
-    pub async fn get_games_by_most_played(&self) -> Vec<Game> {
-        let games = self.games.read().await;
-
-        let mut games_array = games.values().cloned().collect::<Vec<Game>>();
-
-        games_array.sort_by_key(|b| std::cmp::Reverse(b.playtime()));
-
-        games_array
-    }
-
-    pub async fn get_games_by_most_completed_achievements(&self) -> Vec<Game> {
-        let games = self.games.read().await;
-
-        let mut games_array = games.values().cloned().collect::<Vec<Game>>();
-
-        games_array.sort_by(|a, b| {
-            b.achievements_unlocked_count()
-                .cmp(&a.achievements_unlocked_count())
-        });
-
-        games_array
-    }
-
-    pub async fn get_total_play_time(&self) -> u32 {
-        let games = self.games.read().await;
-
-        games.values().map(|game| game.playtime()).sum()
-    }
-
-    pub async fn get_total_play_time_hours(&self) -> f32 {
-        let total_playtime = self.get_total_play_time().await;
-
-        total_playtime as f32 / 60.0
-    }
-
-    pub async fn get_all_unlocked_acheivements_for_game(
-        &self,
-        id: u32,
-    ) -> Vec<GameAchievementUnlocked> {
-        let games = self.games.read().await;
-
-        match games.get(&id) {
-            Some(game) => game
-                .achievements()
-                .values()
-                .filter_map(|achievement| match achievement {
-                    GameAchievement::Unlocked(unlocked) => Some(unlocked.clone()),
-                    _ => None,
-                })
-                .collect(),
-            None => vec![],
+        match row {
+            Some(row) => Ok(Some(row.into())),
+            None => Ok(None),
         }
     }
-}
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GameRepoArchive {
-    games: HashMap<u32, Game>,
-    last_updated: DateTime<Utc>,
+    pub async fn find_all_games(&self) -> Result<Vec<Game>> {
+        let rows = sqlx::query_as!(
+            SelectedRow,
+            "
+            SELECT id, name, header_image_url, playtime, last_played, link_url
+            FROM games
+            "
+        )
+        .fetch_all(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        let games = rows.into_iter().map(Game::from).collect();
+
+        Ok(games)
+    }
+
+    pub async fn get_games_by_most_recently_played(&self) -> Result<Vec<Game>> {
+        let rows = sqlx::query_as!(
+            SelectedRow,
+            "
+            SELECT id, name, header_image_url, playtime, last_played, link_url
+            FROM games
+            ORDER BY last_played DESC
+            "
+        )
+        .fetch_all(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        let games = rows.into_iter().map(Game::from).collect();
+
+        Ok(games)
+    }
+
+    pub async fn get_games_by_most_played(&self) -> Result<Vec<Game>> {
+        let rows = sqlx::query_as!(
+            SelectedRow,
+            "
+            SELECT id, name, header_image_url, playtime, last_played, link_url
+            FROM games
+            ORDER BY playtime DESC
+            "
+        )
+        .fetch_all(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        let games = rows.into_iter().map(Game::from).collect();
+
+        Ok(games)
+    }
+
+    pub async fn get_total_play_time(&self) -> Result<u32> {
+        let row = sqlx::query!(
+            "
+            SELECT SUM(playtime) as total_playtime
+            FROM games
+            "
+        )
+        .fetch_one(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        match row.total_playtime {
+            Some(playtime) => Ok(playtime as u32),
+            None => Ok(0),
+        }
+    }
+
+    pub async fn get_total_play_time_hours(&self) -> Result<f32> {
+        self.get_total_play_time()
+            .await
+            .map(|playtime| playtime as f32 / 60.0)
+    }
 }

@@ -29,35 +29,11 @@ impl StatusLolRepo {
         }
     }
 
-    pub async fn get_all(&self) -> Result<Vec<StatusLolPost>> {
-        let rows = sqlx::query!(
-            "
-            SELECT id, date, content, emoji, original_url
-            FROM status_lol
-            "
-        )
-        .fetch_all(&self.database_connection)
-        .await
-        .map_err(DatabaseError::from_query_error)?;
-
-        let posts = rows.into_iter().map(|row| {
-            StatusLolPost::new(
-                row.id,
-                row.date,
-                row.content,
-                row.emoji,
-                row.original_url,
-            )
-        }).collect();
-
-        Ok(posts)
-    }
-
     pub async fn commit(&self, posts: Vec<StatusLolPost>) -> Result<()> {
         for post in posts {
             sqlx::query!(
                 "
-                INSERT INTO status_lol (id, date, content, emoji, original_url)
+                INSERT INTO status_lol_posts (id, date, content, emoji, original_url)
                 VALUES ($1, $2, $3, $4, $5)
                 ",
                 post.id(),
@@ -72,5 +48,27 @@ impl StatusLolRepo {
         }
 
         Ok(())
+    }
+
+    pub async fn get_all(&self) -> Result<Vec<StatusLolPost>> {
+        let rows = sqlx::query!(
+            "
+            SELECT id, date, content, emoji, original_url
+            FROM status_lol_posts
+            ORDER BY date DESC
+            "
+        )
+        .fetch_all(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        let posts = rows
+            .into_iter()
+            .map(|row| {
+                StatusLolPost::new(row.id, row.date, row.content, row.emoji, row.original_url)
+            })
+            .collect();
+
+        Ok(posts)
     }
 }

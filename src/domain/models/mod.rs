@@ -7,6 +7,7 @@ pub mod album;
 pub mod blog_post;
 pub mod faq;
 pub mod game;
+pub mod game_achievement;
 pub mod lego;
 pub mod mastodon_post;
 pub mod media;

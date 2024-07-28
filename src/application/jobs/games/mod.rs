@@ -1,4 +1,2 @@
 pub mod fetch_games_data_from_steam_job;
 pub mod fetch_game_data_from_steam_job;
-pub mod load_games_from_archive_job;
-pub mod save_games_to_archive_job;

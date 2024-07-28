@@ -1,4 +1,6 @@
-use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
+use crate::{
+    application::events::Event, infrastructure::bus::job_runner::Job, TemplateErrorResponse,
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum DatabaseError {
@@ -86,4 +88,19 @@ pub enum Error {
 
     #[error("Database error: {0}")]
     DatabaseError(#[from] DatabaseError),
+}
+
+impl Error {
+    pub fn into_response(self) -> TemplateErrorResponse {
+        self.into()
+    }
+}
+
+impl From<Error> for TemplateErrorResponse {
+    fn from(err: Error) -> Self {
+        (
+            axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+            "Something went wrong",
+        )
+    }
 }

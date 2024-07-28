@@ -51,15 +51,15 @@ impl OmniPostRepo {
         let mut posts = vec![];
 
         if OmniPostFilterFlags::UNLOCKED_GAME_ACHIEVEMENT.intersects(filter) {
-            let all_games = app_state.games_repo().get_all_games().await;
+            let all_games = app_state.games_repo().find_all_games().await?;
 
-            for game in all_games.values() {
+            for game in all_games.into_iter() {
                 let unlocked_achievements = app_state
-                    .games_repo()
-                    .get_all_unlocked_acheivements_for_game(game.id())
-                    .await;
+                    .game_achievements_repo()
+                    .find_all_unlocked_for_game_id(game.id())
+                    .await?;
 
-                for achievement in unlocked_achievements {
+                for achievement in unlocked_achievements.into_iter() {
                     let post = OmniPost::UnlockedGameAchievement {
                         game: game.clone(),
                         achievement: achievement.clone(),
@@ -70,16 +70,9 @@ impl OmniPostRepo {
         }
 
         if OmniPostFilterFlags::STATUS_LOL.intersects(filter) {
-            let status_lol_posts = app_state.status_lol_repo().get_all().await;
+            let status_lol_posts = app_state.status_lol_repo().get_all().await?;
 
-            match status_lol_posts {
-                Ok(status_lol_posts) => {
-                    posts.extend(status_lol_posts.into_iter().map(OmniPost::StatusLol));
-                }
-                Err(e) => {
-                    error!("Failed to get status lol posts: {}", e);
-                }
-            }
+            posts.extend(status_lol_posts.into_iter().map(OmniPost::StatusLol));
         }
 
         if OmniPostFilterFlags::BLOG_POST.intersects(filter) {

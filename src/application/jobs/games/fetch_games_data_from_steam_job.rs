@@ -114,29 +114,14 @@ impl Job for GamesDownloadDataJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
-        let last_updated = app_state.games_repo().get_last_updated().await;
+        let games = app_state.games_repo().find_all_games().await;
 
-        if last_updated + NO_REFETCH_DURATION > Utc::now() {
-            info!("Skipping fetching steam games data - cache is still valid");
-            return Ok(());
-        }
         info!("Fetching steam games data");
-
-        let last_updated_as_rtime = last_updated.timestamp() as u32;
 
         let steam_owned_games_response =
             get_json::<SteamGetOwnedGamesResponse>(&make_get_games_url(app_state.config())).await?;
 
         for steam_game in steam_owned_games_response.response.games {
-            // Skip games that have not been played since the last update
-            if let Some(stored_game) = app_state.games_repo().get_game(steam_game.appid()).await {
-                if &steam_last_played_to_datetime(steam_game.rtime_last_played())
-                    <= stored_game.last_played()
-                {
-                    continue;
-                }
-            }
-
             app_state
                 .dispatch_job(
                     FetchGameDataFromSteamJob::new(steam_game),
