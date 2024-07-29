@@ -6,6 +6,8 @@ pub enum Event {
     GamesRepoUpdated,
     GamesRepoArchived,
 
+    GameUpdated { game_id: u32 },
+
     LegoRepoLoadedFromArchive,
     LegoRepoUpdated,
     LegoRepoArchived,
@@ -19,7 +21,7 @@ pub enum Event {
     FaqRepoUpdated,
 
     SillyNamesRepoUpdated,
-    
+
     BlogPostsRepoUpdated,
 
     MicroPostsRepoUpdated,
@@ -37,6 +39,8 @@ impl Event {
             Event::GamesRepoLoadedFromArchive => "games_repo.loaded_from_archive",
             Event::GamesRepoUpdated => "games_repo.updated",
             Event::GamesRepoArchived => "games_report.archived",
+
+            Event::GameUpdated { .. } => "game.updated",
 
             Event::LegoRepoLoadedFromArchive => "lego_repo.loaded_from_archive",
             Event::LegoRepoUpdated => "lego_repo.updated",

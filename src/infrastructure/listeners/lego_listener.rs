@@ -1,5 +1,4 @@
-use crate::application::jobs::lego::load_lego_from_archive_job::LoadLegoFromArchiveJob;
-use crate::application::jobs::lego::save_lego_to_archive_job::SaveLegoToArchiveJob;
+use crate::application::jobs::lego::fetch_lego_job::FetchLegoJob;
 use crate::infrastructure::bus::event_queue::EventListener;
 use crate::infrastructure::bus::job_runner::JobPriority;
 use crate::{
@@ -26,12 +25,7 @@ impl EventListener for LegoListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(LoadLegoFromArchiveJob::new(), JobPriority::High)
-                    .await?;
-            }
-            Event::LegoRepoUpdated => {
-                app_state
-                    .dispatch_job(SaveLegoToArchiveJob::new(), JobPriority::Low)
+                    .dispatch_job(FetchLegoJob::new(), JobPriority::Normal)
                     .await?;
             }
             _ => {}

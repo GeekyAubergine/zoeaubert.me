@@ -14,6 +14,7 @@ pub struct GameAchievementUnlocked {
     image_url: String,
     unlocked_date: DateTime<Utc>,
     global_unlocked_percentage: f32,
+    updated_at: DateTime<Utc>,
 }
 
 impl GameAchievementUnlocked {
@@ -25,6 +26,7 @@ impl GameAchievementUnlocked {
         image_url: String,
         unlocked_date: DateTime<Utc>,
         global_unlocked_percentage: f32,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
@@ -34,6 +36,7 @@ impl GameAchievementUnlocked {
             image_url,
             unlocked_date,
             global_unlocked_percentage,
+            updated_at,
         }
     }
 
@@ -64,6 +67,10 @@ impl GameAchievementUnlocked {
     pub fn global_unlocked_percentage(&self) -> f32 {
         self.global_unlocked_percentage
     }
+
+    pub fn updated_at(&self) -> &DateTime<Utc> {
+        &self.updated_at
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -74,6 +81,7 @@ pub struct GameAchievementLocked {
     description: String,
     image_url: String,
     global_unlocked_percentage: f32,
+    updated_at: DateTime<Utc>,
 }
 
 impl GameAchievementLocked {
@@ -84,6 +92,7 @@ impl GameAchievementLocked {
         description: String,
         image_url: String,
         global_unlocked_percentage: f32,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
@@ -92,6 +101,7 @@ impl GameAchievementLocked {
             description,
             image_url,
             global_unlocked_percentage,
+            updated_at,
         }
     }
 
@@ -117,6 +127,10 @@ impl GameAchievementLocked {
 
     pub fn global_unlocked_percentage(&self) -> f32 {
         self.global_unlocked_percentage
+    }
+
+    pub fn updated_at(&self) -> &DateTime<Utc> {
+        &self.updated_at
     }
 }
 

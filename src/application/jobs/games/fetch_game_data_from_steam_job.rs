@@ -11,6 +11,7 @@ use crate::{
         game::Game,
         game_achievement::{GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
     },
+    error::GameError,
     get_json,
     infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config},
     prelude::Result,
@@ -167,54 +168,30 @@ pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
 }
 
 #[derive(Debug)]
-pub struct FetchGameDataFromSteamJob {
-    game: SteamOwnedGame,
+pub struct FetchGameAchievementsFromSteamJob {
+    game_id: u32,
 }
 
-impl FetchGameDataFromSteamJob {
-    pub fn new(game: SteamOwnedGame) -> Self {
-        Self { game }
+impl FetchGameAchievementsFromSteamJob {
+    pub fn new(game_id: u32) -> Self {
+        Self { game_id }
     }
 }
 
 #[async_trait]
-impl Job for FetchGameDataFromSteamJob {
+impl Job for FetchGameAchievementsFromSteamJob {
     fn name(&self) -> &str {
-        "FetchGameDataFromSteamJob"
+        "FetchGameAchievementsFromSteamJob"
     }
 
     async fn run(&self, state: &AppState) -> Result<()> {
-        if let Some(stored_game) = state.games_repo().find_by_id(self.game.appid()).await? {
-            if &steam_last_played_to_datetime(self.game.rtime_last_played())
-                <= stored_game.last_played()
-            {
-                return Ok(());
-            }
-        }
+        let game = state
+            .games_repo()
+            .find_by_id(self.game_id)
+            .await?
+            .ok_or(GameError::game_not_found(self.game_id))?;
 
-        info!("Fething game: {}", self.game.name());
-
-        let game_link = format!(
-            "https://store.steampowered.com/app/{}/{}",
-            self.game.appid(),
-            self.game.name().replace(' ', "_")
-        );
-
-        let game_header_image = format!(
-            "https://steamcdn-a.akamaihd.net/steam/apps/{}/header.jpg",
-            self.game.appid()
-        );
-
-        let game = Game::new(
-            self.game.appid(),
-            self.game.name().to_string(),
-            game_header_image,
-            self.game.playtime_forever(),
-            steam_last_played_to_datetime(self.game.rtime_last_played()),
-            game_link,
-        );
-
-        state.games_repo().commit(&game).await?;
+        info!("Fething game achievments: {}", game.name());
 
         if let Ok(game_data) = get_steam_game_data(game.id(), state.config()).await {
             let player_achievements =
@@ -257,6 +234,7 @@ impl Job for FetchGameDataFromSteamJob {
                         achievement.icon,
                         unlocked_date,
                         global_percentage,
+                        Utc::now(),
                     )),
                     None => GameAchievement::Locked(GameAchievementLocked::new(
                         achievement.name.clone(),
@@ -265,6 +243,7 @@ impl Job for FetchGameDataFromSteamJob {
                         achievement.description.unwrap_or("".to_string()),
                         achievement.icon_gray,
                         global_percentage,
+                        Utc::now(),
                     )),
                 };
 

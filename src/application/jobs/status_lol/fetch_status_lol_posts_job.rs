@@ -7,7 +7,7 @@ use tracing::{info, warn};
 
 use crate::{
     application::events::Event,
-    domain::models::status_lol::StatusLolPost,
+    domain::models::status_lol_post::StatusLolPost,
     get_json,
     infrastructure::{app_state::AppState, bus::job_runner::Job},
     prelude::Result,
@@ -57,7 +57,7 @@ impl From<ReponseStatusLolPost> for StatusLolPost {
             Err(_) => Utc::now(),
         };
 
-        StatusLolPost::new(post.id, date, post.content, post.emoji, original_url)
+        StatusLolPost::new(post.id, date, post.content, post.emoji, original_url, Utc::now())
     }
 }
 
@@ -75,6 +75,18 @@ impl Job for FetchStatusLolPostsJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        let last_fetch = app_state
+            .status_lol_repo()
+            .find_most_recently_updated_date()
+            .await?;
+
+        if let Some(last_fetch) = last_fetch {
+            if last_fetch + ONE_HOUR_CACHE_PERIOD > Utc::now() {
+                info!("Skipping fetching status.lol posts");
+                return Ok(());
+            }
+        }
+
         info!("Fetching status.lol posts");
         let response = get_json::<StatusLolResponse>(app_state.config().status_lol().url()).await?;
 

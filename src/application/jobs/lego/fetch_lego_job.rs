@@ -6,7 +6,12 @@ use serde::{Deserialize, Serialize};
 use tracing::{info, warn};
 
 use crate::{
-    application::events::Event, domain::models::lego::{LegoMinifig, LegoSet}, get_json, infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config}, prelude::Result, LEGO_ARCHIVE_FILENAME, ONE_HOUR_CACHE_PERIOD
+    application::events::Event,
+    domain::models::lego::{LegoMinifig, LegoSet},
+    get_json,
+    infrastructure::{app_state::AppState, bus::job_runner::Job, config::Config},
+    prelude::Result,
+    LEGO_ARCHIVE_FILENAME, ONE_DAY_CACHE_PERIOD, ONE_HOUR_CACHE_PERIOD,
 };
 
 const NO_REFETCH_DURATION: Duration = ONE_HOUR_CACHE_PERIOD;
@@ -60,6 +65,7 @@ impl From<BricksetSet> for LegoSet {
             set.image.thumbnail_url,
             set.brickset_url,
             set.collection.qty_owned,
+            Utc::now(),
         )
     }
 }
@@ -95,6 +101,7 @@ impl From<BricksetMinifig> for LegoMinifig {
                 "https://img.bricklink.com/ItemImage/MN/0/{}.png",
                 set.minifig_number
             ),
+            Utc::now(),
         )
     }
 }
@@ -145,52 +152,45 @@ impl Job for FetchLegoJob {
     fn name(&self) -> &str {
         "FetchLegoJob"
     }
-    async fn run(&self, app_state: &AppState) -> Result<()> {
-        let last_updated = app_state.lego_set_repo().get_last_updated().await;
-
-        if last_updated + NO_REFETCH_DURATION > Utc::now() {
-            info!("Skipping fetching lego data - cache is still valid");
-            return Ok(());
+    async fn run(&self, state: &AppState) -> Result<()> {
+        if let Some(last_updated) = state
+            .lego_set_repo()
+            .find_most_recently_updated_at()
+            .await?
+        {
+            if last_updated + ONE_DAY_CACHE_PERIOD > Utc::now() {
+                info!("Skipping fetching lego data - cache is still valid");
+                return Ok(());
+            }
         }
         info!("Fetching lego data");
 
         let login_response =
-            get_json::<BricksetLoginResponse>(&make_login_url(app_state.config())).await?;
+            get_json::<BricksetLoginResponse>(&make_login_url(state.config())).await?;
 
-        let get_set_url = make_get_set_url(app_state.config(), &login_response.hash);
+        let get_set_url = make_get_set_url(state.config(), &login_response.hash);
 
         let get_set_response = get_json::<GetSetResponse>(&get_set_url).await?;
 
-        let mut lego_sets: HashMap<String, LegoSet> = HashMap::new();
-
         if get_set_response.status == "success" {
-            lego_sets = get_set_response
-                .sets
-                .iter()
-                .map(|set| (set.number.clone(), set.clone().into()))
-                .collect();
+            for lego_set in get_set_response.sets.iter() {
+                let lego_set = lego_set.clone().into();
+
+                state.lego_set_repo().commit(&lego_set).await?;
+            }
         }
 
-        let get_minifig_url = make_get_minifig_url(app_state.config(), &login_response.hash);
+        let get_minifig_url = make_get_minifig_url(state.config(), &login_response.hash);
 
         let get_minifig_response = get_json::<GetMinifigsResponse>(&get_minifig_url).await?;
 
-        let mut lego_minifigs: HashMap<String, LegoMinifig> = HashMap::new();
-
         if get_minifig_response.status == "success" {
-            lego_minifigs = get_minifig_response
-                .minifigs
-                .iter()
-                .map(|minifig| (minifig.minifig_number.clone(), minifig.clone().into()))
-                .collect();
+            for minifig in get_minifig_response.minifigs.iter() {
+                let minifig = minifig.clone().into();
+
+                state.lego_minifigs_repo().commit(&minifig).await?;
+            }
         }
-
-        app_state
-            .lego_set_repo()
-            .commit(lego_sets, lego_minifigs)
-            .await;
-
-        app_state.dispatch_event(Event::LegoRepoUpdated).await?;
 
         Ok(())
     }

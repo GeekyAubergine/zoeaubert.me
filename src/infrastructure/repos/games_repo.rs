@@ -30,6 +30,7 @@ struct SelectedRow {
     playtime: i64,
     last_played: DateTime<Utc>,
     link_url: String,
+    updated_at: DateTime<Utc>,
 }
 
 impl From<SelectedRow> for Game {
@@ -41,6 +42,7 @@ impl From<SelectedRow> for Game {
             row.playtime as u32,
             row.last_played,
             row.link_url,
+            row.updated_at,
         )
     }
 }
@@ -57,52 +59,11 @@ impl GamesRepo {
         }
     }
 
-    pub async fn commit(&self, game: &Game) -> Result<()> {
-        if let Some(_) = self.find_by_id(game.id()).await? {
-            sqlx::query!(
-                "
-                UPDATE games
-                SET name = $2, header_image_url = $3, playtime = $4, last_played = $5, link_url = $6
-                WHERE id = $1
-                ",
-                game.id() as i64,
-                game.name(),
-                game.header_image_url(),
-                game.playtime() as i64,
-                game.last_played(),
-                game.link_url()
-            )
-            .execute(&self.database_connection)
-            .await
-            .map_err(DatabaseError::from_query_error)?;
-
-            return Ok(());
-        }
-
-        sqlx::query!(
-            "
-            INSERT INTO games (id, name, header_image_url, playtime, last_played, link_url)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            ",
-            game.id() as i64,
-            game.name(),
-            game.header_image_url(),
-            game.playtime() as i64,
-            game.last_played(),
-            game.link_url()
-        )
-        .execute(&self.database_connection)
-        .await
-        .map_err(DatabaseError::from_query_error)?;
-
-        Ok(())
-    }
-
     pub async fn find_by_id(&self, id: u32) -> Result<Option<Game>> {
         let row = sqlx::query_as!(
             SelectedRow,
             "
-            SELECT id, name, header_image_url, playtime, last_played, link_url
+            SELECT id, name, header_image_url, playtime, last_played, link_url, updated_at
             FROM games
             WHERE id = $1
             ",
@@ -122,7 +83,7 @@ impl GamesRepo {
         let rows = sqlx::query_as!(
             SelectedRow,
             "
-            SELECT id, name, header_image_url, playtime, last_played, link_url
+            SELECT id, name, header_image_url, playtime, last_played, link_url, updated_at
             FROM games
             "
         )
@@ -139,7 +100,7 @@ impl GamesRepo {
         let rows = sqlx::query_as!(
             SelectedRow,
             "
-            SELECT id, name, header_image_url, playtime, last_played, link_url
+            SELECT id, name, header_image_url, playtime, last_played, link_url, updated_at
             FROM games
             ORDER BY last_played DESC
             "
@@ -157,7 +118,7 @@ impl GamesRepo {
         let rows = sqlx::query_as!(
             SelectedRow,
             "
-            SELECT id, name, header_image_url, playtime, last_played, link_url
+            SELECT id, name, header_image_url, playtime, last_played, link_url, updated_at
             FROM games
             ORDER BY playtime DESC
             "
@@ -192,5 +153,60 @@ impl GamesRepo {
         self.get_total_play_time()
             .await
             .map(|playtime| playtime as f32 / 60.0)
+    }
+
+    pub async fn find_most_recently_updated_date(&self) -> Result<Option<DateTime<Utc>>> {
+        let row = sqlx::query!(
+            "
+            SELECT updated_at
+            FROM games
+            ORDER BY updated_at DESC
+            LIMIT 1
+            "
+        )
+        .fetch_optional(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        Ok(row.map(|row| row.updated_at))
+    }
+
+    pub async fn commit(&self, game: &Game) -> Result<()> {
+        if let Some(_) = self.find_by_id(game.id()).await? {
+            sqlx::query!(
+                "
+                UPDATE games
+                SET name = $2, header_image_url = $3, playtime = $4, last_played = $5, link_url = $6, updated_at = now()
+                WHERE id = $1
+                ",
+                game.id() as i64,
+                game.name(),
+                game.header_image_url(),
+                game.playtime() as i64,
+                game.last_played(),
+                game.link_url()
+            )
+            .execute(&self.database_connection)
+            .await
+            .map_err(DatabaseError::from_query_error)?;
+        }
+
+        sqlx::query!(
+            "
+            INSERT INTO games (id, name, header_image_url, playtime, last_played, link_url, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, now())
+            ",
+            game.id() as i64,
+            game.name(),
+            game.header_image_url(),
+            game.playtime() as i64,
+            game.last_played(),
+            game.link_url()
+        )
+        .execute(&self.database_connection)
+        .await
+        .map_err(DatabaseError::from_query_error)?;
+
+        Ok(())
     }
 }

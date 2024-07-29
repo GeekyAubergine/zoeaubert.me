@@ -14,9 +14,10 @@ use super::{
     repos::{
         about_repo::AboutRepo, albums_repo::AlbumsRepo, blog_posts_repo::BlogPostsRepo,
         faq_repo::FaqRepo, game_achievements_repo::GameAchievementsRepo, games_repo::GamesRepo,
-        lego_set_repo::LegoSetRepo, mastodon_posts_repo::MastodonPostsRepo,
-        micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo,
-        silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolRepo,
+        lego_minifigs_repo::LegoMinifigsRepo, lego_sets_repo::LegoSetsRepo,
+        mastodon_posts_repo::MastodonPostsRepo, micro_posts_repo::MicroPostsRepo,
+        microblog_archive_repo::MicroblogArchiveRepo, silly_names_repo::SillyNamesRepo,
+        status_lol_repo::StatusLolPostsRepo,
     },
     services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
 };
@@ -35,8 +36,9 @@ pub struct AppStateData {
     content_dir: ContentDir,
     games_repo: GamesRepo,
     game_achievements_repo: GameAchievementsRepo,
-    lego_set_repo: LegoSetRepo,
-    status_lol_repo: StatusLolRepo,
+    lego_set_repo: LegoSetsRepo,
+    lego_minifigs_repo: LegoMinifigsRepo,
+    status_lol_posts_repo: StatusLolPostsRepo,
     about_repo: AboutRepo,
     faq_repo: FaqRepo,
     silly_names_repo: SillyNamesRepo,
@@ -67,8 +69,9 @@ impl AppStateData {
             content_dir: ContentDir::default(),
             games_repo: GamesRepo::new(database_connection.clone()),
             game_achievements_repo: GameAchievementsRepo::new(database_connection.clone()),
-            lego_set_repo: LegoSetRepo::default(),
-            status_lol_repo: StatusLolRepo::new(database_connection.clone()),
+            lego_set_repo: LegoSetsRepo::new(database_connection.clone()),
+            lego_minifigs_repo: LegoMinifigsRepo::new(database_connection.clone()),
+            status_lol_posts_repo: StatusLolPostsRepo::new(database_connection.clone()),
             about_repo: AboutRepo::default(),
             faq_repo: FaqRepo::default(),
             silly_names_repo: SillyNamesRepo::default(),
@@ -140,12 +143,16 @@ impl AppStateData {
         &self.game_achievements_repo
     }
 
-    pub fn lego_set_repo(&self) -> &LegoSetRepo {
+    pub fn lego_set_repo(&self) -> &LegoSetsRepo {
         &self.lego_set_repo
     }
 
-    pub fn status_lol_repo(&self) -> &StatusLolRepo {
-        &self.status_lol_repo
+    pub fn lego_minifigs_repo(&self) -> &LegoMinifigsRepo {
+        &self.lego_minifigs_repo
+    }
+
+    pub fn status_lol_repo(&self) -> &StatusLolPostsRepo {
+        &self.status_lol_posts_repo
     }
 
     pub fn about_repo(&self) -> &AboutRepo {

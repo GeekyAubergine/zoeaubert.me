@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LegoSet {
-    key: u32,
+    id: u32,
     name: String,
     number: String,
     category: String,
@@ -15,11 +16,12 @@ pub struct LegoSet {
     thumbnail: String,
     link: String,
     quantity: u32,
+    updated_at: DateTime<Utc>,
 }
 
 impl LegoSet {
     pub fn new(
-        key: u32,
+        id: u32,
         name: String,
         number: String,
         category: String,
@@ -28,9 +30,10 @@ impl LegoSet {
         thumbnail: String,
         link: String,
         quantity: u32,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
-            key,
+            id,
             name,
             number,
             category,
@@ -39,11 +42,12 @@ impl LegoSet {
             thumbnail,
             link,
             quantity,
+            updated_at,
         }
     }
 
-    pub fn key(&self) -> u32 {
-        self.key
+    pub fn id(&self) -> u32 {
+        self.id
     }
 
     pub fn name(&self) -> &str {
@@ -77,42 +81,49 @@ impl LegoSet {
     pub fn quantity(&self) -> u32 {
         self.quantity
     }
+
+    pub fn updated_at(&self) -> DateTime<Utc> {
+        self.updated_at
+    }
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LegoMinifig {
-    key: String,
+    id: String,
     name: String,
     category: String,
     owned_in_sets: u32,
     owned_loose: u32,
     total_owned: u32,
     image_url: String,
+    updated_at: DateTime<Utc>,
 }
 
 impl LegoMinifig {
     pub fn new(
-        key: String,
+        id: String,
         name: String,
         category: String,
         owned_in_sets: u32,
         owned_loose: u32,
         total_owned: u32,
         image_url: String,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
-            key,
+            id,
             name,
             category,
             owned_in_sets,
             owned_loose,
             total_owned,
             image_url,
+            updated_at,
         }
     }
 
-    pub fn key(&self) -> &str {
-        &self.key
+    pub fn id(&self) -> &str {
+        &self.id
     }
 
     pub fn name(&self) -> &str {
@@ -137,5 +148,13 @@ impl LegoMinifig {
 
     pub fn image_url(&self) -> &str {
         &self.image_url
+    }
+
+    pub fn updated_at(&self) -> DateTime<Utc> {
+        self.updated_at
+    }
+
+    pub fn link(&self) -> String {
+        format!("https://www.brickset.com/minifigs/{}", self.id)
     }
 }

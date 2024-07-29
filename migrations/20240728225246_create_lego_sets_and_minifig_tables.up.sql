@@ -8,7 +8,8 @@ CREATE TABLE lego_sets (
     image_url VARCHAR(1023) NOT NULL,
     thumbnail_url VARCHAR(1023) NOT NULL,
     link VARCHAR(1023) NOT NULL,
-    quantity INT NOT NULL
+    quantity INT NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE lego_minifigs (
@@ -18,5 +19,6 @@ CREATE TABLE lego_minifigs (
     owned_in_sets INT NOT NULL,
     owned_loose INT NOT NULL,
     total_owned INT NOT NULL,
-    image_url VARCHAR(1023) NOT NULL
+    image_url VARCHAR(1023) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 )

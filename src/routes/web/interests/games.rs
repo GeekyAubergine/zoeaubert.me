@@ -91,7 +91,7 @@ async fn game_page(
     let game = state
         .games_repo()
         .find_by_id(id)
-        .await
+            .await
         .map_err(|_| (StatusCode::NOT_FOUND, "Game not found"))?
         .ok_or((StatusCode::NOT_FOUND, "Game not found"))?;
 

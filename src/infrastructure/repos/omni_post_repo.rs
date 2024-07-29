@@ -70,7 +70,7 @@ impl OmniPostRepo {
         }
 
         if OmniPostFilterFlags::STATUS_LOL.intersects(filter) {
-            let status_lol_posts = app_state.status_lol_repo().get_all().await?;
+            let status_lol_posts = app_state.status_lol_repo().find_all().await?;
 
             posts.extend(status_lol_posts.into_iter().map(OmniPost::StatusLol));
         }

@@ -1,24 +1,26 @@
 use std::collections::HashMap;
 
-use chrono::DateTime;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct StatusLolPost {
     id: String,
-    date: DateTime<chrono::Utc>,
+    date: DateTime<Utc>,
     content: String,
     emoji: String,
     original_url: String,
+    updated_at: DateTime<Utc>,
 }
 
 impl StatusLolPost {
     pub fn new(
         id: String,
-        date: chrono::DateTime<chrono::Utc>,
+        date: DateTime<Utc>,
         content: String,
         emoji: String,
         original_url: String,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
@@ -26,6 +28,7 @@ impl StatusLolPost {
             content,
             emoji,
             original_url,
+            updated_at,
         }
     }
 
@@ -37,7 +40,7 @@ impl StatusLolPost {
         format!("/micros/statuslol-{}", self.id)
     }
 
-    pub fn date(&self) -> &chrono::DateTime<chrono::Utc> {
+    pub fn date(&self) -> &DateTime<Utc> {
         &self.date
     }
 
@@ -51,6 +54,10 @@ impl StatusLolPost {
 
     pub fn original_url(&self) -> &str {
         &self.original_url
+    }
+
+    pub fn updated_at(&self) -> &DateTime<Utc> {
+        &self.updated_at
     }
 }
 

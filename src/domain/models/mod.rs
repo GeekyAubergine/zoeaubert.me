@@ -16,5 +16,5 @@ pub mod microblog_archive;
 pub mod now;
 pub mod omni_post;
 pub mod page;
-pub mod status_lol;
+pub mod status_lol_post;
 pub mod tag;

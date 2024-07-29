@@ -14,11 +14,13 @@ pub use crate::infrastructure::services::number::FormatNumber;
 pub use crate::infrastructure::services::markdown::FormatMarkdown;
 
 pub mod games;
+pub mod lego;
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .nest("/games", games::router())
+        .nest("/lego", lego::router())
 }
 
 #[derive(Template)]

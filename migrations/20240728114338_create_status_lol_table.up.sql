@@ -4,5 +4,6 @@ CREATE TABLE status_lol_posts (
     date TIMESTAMP WITH TIME ZONE NOT NULL,
     content TEXT NOT NULL,
     emoji VARCHAR(255) NOT NULL,
-    original_url VARCHAR(255) NOT NULL
+    original_url VARCHAR(255) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );

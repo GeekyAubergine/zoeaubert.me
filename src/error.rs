@@ -22,6 +22,48 @@ impl DatabaseError {
 }
 
 #[derive(Debug, thiserror::Error)]
+pub enum LegoSetsError {
+    #[error("Unable to calculate total piece count")]
+    UnableToCalculateTotalPieceCount,
+    #[error("Unable to calculate total owned count")]
+    UnableToCalculateTotalOwnedCount,
+}
+
+impl LegoSetsError {
+    pub fn unable_to_calculate_total_piece_count() -> Error {
+        Error::LegoSetsError(LegoSetsError::UnableToCalculateTotalPieceCount)
+    }
+
+    pub fn unable_to_calculate_total_owned_count () -> Error {
+        Error::LegoSetsError(LegoSetsError::UnableToCalculateTotalOwnedCount)
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum LegoMinifiguresError {
+    #[error("Unable to calculate total minifigures count")]
+    UnableToCalculateTotalMinifiguresCount,
+}
+
+impl LegoMinifiguresError {
+    pub fn unable_to_calculate_total_minifigures_count() -> Error {
+        Error::LegoMinifiguresError(LegoMinifiguresError::UnableToCalculateTotalMinifiguresCount)
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum GameError {
+    #[error("Game not found [id: {0}]")]
+    GameNotFound(u32),
+}
+
+impl GameError {
+    pub fn game_not_found(id: u32) -> Error {
+        Error::GameError(GameError::GameNotFound(id))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Couldn't read dir {0}")]
     ReadDir(std::io::Error),
@@ -88,6 +130,15 @@ pub enum Error {
 
     #[error("Database error: {0}")]
     DatabaseError(#[from] DatabaseError),
+
+    #[error("LegoSets error: {0}")]
+    LegoSetsError(#[from] LegoSetsError),
+
+    #[error("LegoMinifigures error: {0}")]
+    LegoMinifiguresError(#[from] LegoMinifiguresError),
+
+    #[error("Game error: {0}")]
+    GameError(#[from] GameError),
 }
 
 impl Error {

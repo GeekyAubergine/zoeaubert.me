@@ -3,7 +3,9 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use super::{
-    blog_post::BlogPost, game::Game, game_achievement::GameAchievementUnlocked, mastodon_post::MastodonPost, media::Media, micro_post::MicroPost, microblog_archive::MicroblogArchivePost, status_lol::StatusLolPost, tag::Tag
+    blog_post::BlogPost, game::Game, game_achievement::GameAchievementUnlocked,
+    mastodon_post::MastodonPost, media::Media, micro_post::MicroPost,
+    microblog_archive::MicroblogArchivePost, status_lol_post::StatusLolPost, tag::Tag,
 };
 
 #[derive(Debug, Clone)]

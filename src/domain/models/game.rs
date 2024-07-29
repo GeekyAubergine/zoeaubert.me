@@ -13,6 +13,7 @@ pub struct Game {
     playtime: u32,
     last_played: DateTime<Utc>,
     link_url: String,
+    updated_at: DateTime<Utc>,
 }
 
 impl Game {
@@ -23,6 +24,7 @@ impl Game {
         playtime: u32,
         last_played: DateTime<Utc>,
         link_url: String,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
@@ -31,6 +33,7 @@ impl Game {
             playtime,
             last_played,
             link_url,
+            updated_at,
         }
     }
 
@@ -60,5 +63,9 @@ impl Game {
 
     pub fn link_url(&self) -> &str {
         &self.link_url
+    }
+
+    pub fn updated_at(&self) -> &DateTime<Utc> {
+        &self.updated_at
     }
 }
