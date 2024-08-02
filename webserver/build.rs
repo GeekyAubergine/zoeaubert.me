@@ -1,10 +1,8 @@
+use std::path::Path;
+
 use chrono::prelude::*;
 
 const ASSETS_DIR: &str = "_assets";
-
-const TAILWIND_COMMAND: &str = "ENVIRONMENT=production node_modules/.bin/tailwindcss -i assets/css/styles.css -o _assets/css/tw.css --postcss";
-// const LIGHTNING_CSS_COMMAND: &str = "node_modules/.bin/lightningcss --minify --bundle --targets '>= 0.25%' _assets/css/tw.css -o _assets/css/styles";
-const LIGHTNING_CSS_COMMAND: &str = "cp _assets/css/tw.css _assets/css/styles";
 
 fn main() {
     let build_date = make_build_date_string();
@@ -46,17 +44,17 @@ fn build_data(build_date: &str) {
 fn compile_assets(build_date: &str) {
     // Clear _assets directory
 
-    // match std::fs::remove_dir_all(ASSETS_DIR) {
-    //     Ok(_) => println!("Removed assets directory"),
-    //     Err(e) => {
-    //         if e.kind() == std::io::ErrorKind::NotFound {
-    //             println!("No assets directory to remove");
-    //         } else {
-    //             println!("Failed to remove assets directory: {}", e);
-    //             std::process::exit(1);
-    //         }
-    //     }
-    // }
+    match std::fs::remove_dir_all(ASSETS_DIR) {
+        Ok(_) => println!("Removed assets directory"),
+        Err(e) => {
+            if e.kind() == std::io::ErrorKind::NotFound {
+                println!("No assets directory to remove");
+            } else {
+                println!("Failed to remove assets directory: {}", e);
+                std::process::exit(1);
+            }
+        }
+    }
 
     // Make _assets directory
     match std::fs::create_dir_all(ASSETS_DIR) {
@@ -71,11 +69,20 @@ fn compile_assets(build_date: &str) {
 }
 
 fn compile_css(build_date: &str) {
+    let tailwind_module_location = Path::new("../node_modules/.bin/tailwindcss");
+    let input_css = Path::new("./assets/css/styles.css");
+    let intermediate_css = Path::new("./_assets/css/tw.css");
+    let output_css = Path::new("./_assets/css/styles.css");
+
+    let tw_command = format!("ENVIRONMENT=production {} -i {} -o {} --postcss", tailwind_module_location.display(), input_css.display(), intermediate_css.display());
+    // let lightning_command = format!("{} --minify --bundle --targets '>= 0.25%' {} -o {}", LIGHTNING_CSS_COMMAND, intermediate_css.display(), output_css.display());
+    let lightning_command = format!("cp {} {}", intermediate_css.display(), output_css.display());
+
     // Compile the CSS
     println!("Compiling CSS...");
     let tailwind = std::process::Command::new("sh")
         .arg("-c")
-        .arg(TAILWIND_COMMAND)
+        .arg(tw_command)
         .output()
         .expect("Failed to compile Tailwind CSS");
     if !tailwind.status.success() {
@@ -85,13 +92,9 @@ fn compile_css(build_date: &str) {
         std::process::exit(1);
     }
 
-    let command = format!("{}-{}.css", LIGHTNING_CSS_COMMAND, build_date);
-
-    println!("Running command: {}", command);
-
     let lightning = std::process::Command::new("sh")
         .arg("-c")
-        .arg(command)
+        .arg(lightning_command)
         .output()
         .expect("Failed to compile Lightning CSS");
     if !lightning.status.success() {
