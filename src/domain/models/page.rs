@@ -2,7 +2,9 @@ use chrono::{format, DateTime, Utc};
 
 use crate::{
     build_data::BUILD_DATE,
-    infrastructure::config::{SiteConfig, SiteConfigNavLink, SiteConfigSocialNetworkLink},
+    infrastructure::config::{
+        SiteConfig, SiteConfigNavLink, SiteConfigSocialNetworkLink, SiteImage,
+    },
 };
 
 use super::{media::image::Image, tag::Tag};
@@ -123,12 +125,69 @@ impl PagePagination {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct PageImage {
+    url: String,
+    alt: String,
+    width: u32,
+    height: u32,
+}
+
+impl PageImage {
+    pub fn new(url: &str, alt: &str, width: u32, height: u32) -> Self {
+        Self {
+            url: url.to_owned(),
+            alt: alt.to_owned(),
+            width,
+            height,
+        }
+    }
+
+    pub fn url(&self) -> &str {
+        &self.url
+    }
+
+    pub fn alt(&self) -> &str {
+        &self.alt
+    }
+
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+
+    pub fn height(&self) -> u32 {
+        self.height
+    }
+}
+
+impl From<SiteImage> for PageImage {
+    fn from(val: SiteImage) -> Self {
+        Self {
+            url: val.url().to_owned(),
+            alt: val.alt().to_owned(),
+            width: val.width(),
+            height: val.height(),
+        }
+    }
+}
+
+impl From<Image> for PageImage {
+    fn from(val: Image) -> Self {
+        Self {
+            url: val.url().to_owned(),
+            alt: val.alt().to_owned(),
+            width: val.width(),
+            height: val.height(),
+        }
+    }
+}
+
 pub struct Page {
     url: String,
     title: String,
     description: String,
     author: String,
-    image: Image,
+    image: PageImage,
     language: String,
     build_date: String,
     navigation_links: Vec<NavigationLink>,
@@ -146,10 +205,6 @@ impl Page {
         slug: &str,
         title: Option<&str>,
         description: Option<&str>,
-        // image: Option<Image>,
-        // date: Option<DateTime<Utc>>,
-        // read_time: Option<String>,
-        // tags: Vec<Tag>,
     ) -> Self {
         let heading = title.map(|t| t.to_owned());
 
@@ -173,7 +228,7 @@ impl Page {
             title,
             description,
             author: site.author().to_owned(),
-            image: site.image().clone(),
+            image: site.image().into(),
             language: site.language().to_owned(),
             build_date: BUILD_DATE.to_string(),
             navigation_links: site
@@ -194,7 +249,7 @@ impl Page {
         }
     }
 
-    pub fn with_image(mut self, image: Image) -> Self {
+    pub fn with_image(mut self, image: PageImage) -> Self {
         self.image = image;
         self
     }
@@ -239,7 +294,7 @@ impl Page {
         &self.author
     }
 
-    pub fn image(&self) -> &Image {
+    pub fn image(&self) -> &PageImage {
         &self.image
     }
 

@@ -2,6 +2,7 @@ use crate::{domain::models::media::image::Image, error::Error, prelude::*};
 
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
+use uuid::Uuid;
 
 #[derive(Debug, Clone, Deserialize, Default)]
 pub struct ConfigMastodon {
@@ -198,6 +199,7 @@ impl SiteConfig {
 
     pub fn image(&self) -> Image {
         Image::new(
+            &Uuid::new_v4(),
             self.image.url(),
             self.image.alt(),
             self.image.width(),

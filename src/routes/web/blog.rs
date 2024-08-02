@@ -71,7 +71,7 @@ async fn post_page(
     .with_tags(post.tags().to_vec());
 
     let page = match post.hero_image() {
-        Some(image) => page.with_image(image.clone()),
+        Some(image) => page.with_image(image.into()),
         None => page,
     };
 

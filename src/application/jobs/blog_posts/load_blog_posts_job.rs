@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use serde::Deserialize;
 use tracing::info;
+use uuid::Uuid;
 
 use crate::{
     application::events::Event,
@@ -81,7 +82,9 @@ async fn file_to_blog_post(app_state: &AppState, s: &str) -> Result<BlogPost> {
                 front_matter.hero_height,
             ) {
                 post = post.with_hero_image(
-                    Image::new(url.as_str(), alt.as_str(), width, height)
+                    Image::new(
+                        &Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_bytes()),
+                        url.as_str(), alt.as_str(), width, height)
                         .with_date(date)
                         .with_parent_permalink(&permalink),
                 );

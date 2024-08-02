@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum ImageOrientation {
@@ -28,6 +29,7 @@ impl ImageOrientation {
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Image {
+    uuid: Uuid,
     url: String,
     alt: String,
     width: u32,
@@ -37,11 +39,13 @@ pub struct Image {
     description: Option<String>,
     date: Option<DateTime<Utc>>,
     parent_permalink: Option<String>,
+    updated_at: DateTime<Utc>,
 }
 
 impl Image {
-    pub fn new(url: &str, alt: &str, width: u32, height: u32) -> Self {
+    pub fn new(uuid: &Uuid, url: &str, alt: &str, width: u32, height: u32) -> Self {
         Self {
+            uuid: *uuid,
             url: url.to_string(),
             alt: alt.to_string(),
             width,
@@ -51,6 +55,7 @@ impl Image {
             description: None,
             date: None,
             parent_permalink: None,
+            updated_at: Utc::now(),
         }
     }
 
@@ -82,6 +87,17 @@ impl Image {
         }
     }
 
+    pub fn with_updated_at(&self, updated_at: DateTime<Utc>) -> Self {
+        Self {
+            updated_at,
+            ..self.clone()
+        }
+    }
+
+    pub fn uuid(&self) -> &Uuid {
+        &self.uuid
+    }
+
     pub fn url(&self) -> &str {
         &self.url
     }
@@ -109,6 +125,10 @@ impl Image {
         }
     }
 
+    pub fn title_inner(&self) -> Option<&str> {
+        self.title.as_deref()
+}
+
     pub fn description(&self) -> Option<&str> {
         self.description.as_deref()
     }
@@ -128,4 +148,9 @@ impl Image {
     pub fn aspect_ratio(&self) -> f32 {
         self.height as f32 / self.width as f32
     }
+
+    pub fn updated_at(&self) -> &DateTime<Utc> {
+        &self.updated_at
+    }
+
 }

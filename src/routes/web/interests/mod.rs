@@ -24,7 +24,7 @@ pub fn router() -> Router<AppState> {
 }
 
 #[derive(Template)]
-#[template(path = "interests/index.html")]
+#[template(path = "interests/interests_list.html")]
 pub struct IndexTemplate {
     page: Page,
 }

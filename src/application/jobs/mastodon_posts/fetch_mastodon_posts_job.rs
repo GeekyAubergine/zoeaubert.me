@@ -7,6 +7,7 @@ use serde::Deserialize;
 
 use async_trait::async_trait;
 use tracing::info;
+use uuid::Uuid;
 
 use crate::{
     application::{
@@ -211,6 +212,7 @@ async fn mastodon_status_to_post(
                     ));
 
                     let image = Image::new(
+                        &Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_bytes()),
                         &cdn_path.url(app_state.config()),
                         description,
                         meta.original.width,

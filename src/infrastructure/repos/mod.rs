@@ -12,3 +12,6 @@ pub mod omni_post_repo;
 pub mod silly_names_repo;
 pub mod status_lol_repo;
 pub mod albums_repo;
+pub mod images_repo;
+pub mod tags_repo;
+pub mod album_photos_repo;

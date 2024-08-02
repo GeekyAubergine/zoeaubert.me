@@ -11,13 +11,15 @@ use crate::{
 use super::{
     bus::job_runner::{Job, JobPriority},
     config::SiteConfig,
+    query_services::tags_query_service::TagsQueryService,
     repos::{
-        about_repo::AboutRepo, albums_repo::AlbumsRepo, blog_posts_repo::BlogPostsRepo,
-        faq_repo::FaqRepo, game_achievements_repo::GameAchievementsRepo, games_repo::GamesRepo,
-        lego_minifigs_repo::LegoMinifigsRepo, lego_sets_repo::LegoSetsRepo,
-        mastodon_posts_repo::MastodonPostsRepo, micro_posts_repo::MicroPostsRepo,
-        microblog_archive_repo::MicroblogArchiveRepo, silly_names_repo::SillyNamesRepo,
-        status_lol_repo::StatusLolPostsRepo,
+        about_repo::AboutRepo, album_photos_repo::AlbumPhotosRepo, albums_repo::AlbumsRepo,
+        blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo,
+        game_achievements_repo::GameAchievementsRepo, games_repo::GamesRepo,
+        images_repo::ImagesRepo, lego_minifigs_repo::LegoMinifigsRepo,
+        lego_sets_repo::LegoSetsRepo, mastodon_posts_repo::MastodonPostsRepo,
+        micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo,
+        silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolPostsRepo, tags_repo::TagsRepo,
     },
     services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
 };
@@ -47,6 +49,9 @@ pub struct AppStateData {
     microblog_archive_repo: MicroblogArchiveRepo,
     mastodon_posts_repo: MastodonPostsRepo,
     albums_repo: AlbumsRepo,
+    album_photos_repo: AlbumPhotosRepo,
+    tags_repo: TagsRepo,
+    images_repo: ImagesRepo,
 }
 
 impl AppStateData {
@@ -80,6 +85,9 @@ impl AppStateData {
             microblog_archive_repo: MicroblogArchiveRepo::default(),
             mastodon_posts_repo: MastodonPostsRepo::default(),
             albums_repo: AlbumsRepo::default(),
+            album_photos_repo: AlbumPhotosRepo::new(database_connection.clone()),
+            tags_repo: TagsRepo::new(database_connection.clone()),
+            images_repo: ImagesRepo::new(database_connection.clone()),
         }
     }
 
@@ -185,6 +193,18 @@ impl AppStateData {
 
     pub fn albums_repo(&self) -> &AlbumsRepo {
         &self.albums_repo
+    }
+
+    pub fn album_photos_repo(&self) -> &AlbumPhotosRepo {
+        &self.album_photos_repo
+    }
+
+    pub fn tags_repo(&self) -> &TagsRepo {
+        &self.tags_repo
+    }
+
+    pub fn images_repo(&self) -> &ImagesRepo {
+        &self.images_repo
     }
 }
 

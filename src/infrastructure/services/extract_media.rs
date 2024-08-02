@@ -29,11 +29,13 @@ pub fn extract_media_from_html(
         let width = cap.name("width").map_or("", |m| m.as_str());
         let height = cap.name("height").map_or("", |m| m.as_str());
 
+        let uuid = uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, url.as_bytes());
+
         let width = width.parse::<u32>().unwrap_or(0);
         let height = height.parse::<u32>().unwrap_or(0);
 
         media.push(Media::from_image(
-            Image::new(url, alt, width, height)
+            Image::new(&uuid, url, alt, width, height)
                 .with_date(date.to_owned())
                 .with_parent_permalink(parent_permalink),
         ));
@@ -54,6 +56,8 @@ pub async fn extract_media_from_markdown(
         let alt = cap.get(1).map_or("", |m| m.as_str());
         let url = cap.get(2).map_or("", |m| m.as_str());
 
+        let uuid = uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, url.as_bytes());
+
         match app_state
             .cache()
             .get_image_size_from_cache_or_download(
@@ -64,7 +68,7 @@ pub async fn extract_media_from_markdown(
         {
             Ok(size) => {
                 media.push(Media::from_image(
-                    Image::new(url, alt, size.width as u32, size.height as u32)
+                    Image::new(&uuid, url, alt, size.width as u32, size.height as u32)
                         .with_parent_permalink(parent_permalink)
                         .with_date(date.to_owned()),
                 ));
@@ -92,7 +96,10 @@ mod tests {
 
         assert_eq!(media.len(), 1);
 
+        let expected_uuid = uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, "uploads/2022/ced7ff5352.jpg".as_bytes());
+
         let expected = Media::from_image(Image::new(
+            &expected_uuid,
             "uploads/2022/ced7ff5352.jpg",
             "Pciture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa",
             600,

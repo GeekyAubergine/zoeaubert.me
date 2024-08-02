@@ -6,13 +6,13 @@
 
         <div class="game-page-data">
             <a href="{{ game.link_url() }}" rel="noopener noreferrer">Store Page</a>
-            <div class="game-stats">
-                <div class="game-stat">
+            <div class="number-stats">
+                <div class="number-stat">
                     <p class="numbers">{{ game.playtime_hours().format(1, true) }}h</p>
                     <p class="label">Playtime</p>
                 </div>
                 {%- if achievements.achievements_count() > 0 %}
-                    <div class="game-stat">
+                    <div class="number-stat">
                         <p class="numbers">{{ achievements.achievements_unlocked_count() }}
                             <span class="mx-[0.15rem]">/</span>{{ achievements.achievements_count() }}</p>
                         <p class="label">Achievements</p>

@@ -60,7 +60,7 @@ impl Pagination {
     fn page_pagination(&self, total_entities_count: usize, slug: &str) -> PagePagination {
         let previous_nav = match total_entities_count > self.page() * self.per_page() {
             true => Some(PagePaginationLabel::new(
-                &format!("/{}?page={}", slug, self.page() + 1),
+                &format!("{}?page={}", slug, self.page() + 1),
                 "Older posts",
             )),
             false => None,
@@ -69,11 +69,11 @@ impl Pagination {
         let next_nav = match self.page() {
             1 => None,
             2 => Some(PagePaginationLabel::new(
-                &format!("/{}", slug),
+                &format!("{}", slug),
                 "Newer posts",
             )),
             _ => Some(PagePaginationLabel::new(
-                &format!("/{}?page={}", slug, self.page() - 1),
+                &format!("{}?page={}", slug, self.page() - 1),
                 "Newer posts",
             )),
         };

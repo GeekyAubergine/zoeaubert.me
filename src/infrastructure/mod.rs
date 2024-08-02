@@ -4,3 +4,4 @@ pub mod bus;
 pub mod listeners;
 pub mod repos;
 pub mod services;
+pub mod query_services;

@@ -6,6 +6,7 @@ use axum::{
     routing::get,
     Router,
 };
+use uuid::Uuid;
 
 use crate::{
     build_data,
@@ -13,7 +14,7 @@ use crate::{
         game::Game,
         game_achievement::{GameAchievement, GameAchievements},
         media::image::Image,
-        page::Page,
+        page::{Page, PageImage},
     },
     infrastructure::app_state::AppState,
     TemplateResult,
@@ -26,6 +27,8 @@ pub use crate::infrastructure::services::number::FormatNumber;
 const RECENT_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
 const HEADER_IMAGE_HEIGHT: u32 = 193;
+
+const HEADER_IMAGE_UUID_SEED: u128 = 0x238f888c8d8b8b773;
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -109,7 +112,7 @@ async fn game_page(
         ),
     };
 
-    let image = Image::new(
+    let image = PageImage::new(
         game.header_image_url(),
         format!("{} Steam header image", game.name()).as_str(),
         HEADER_IMAGE_WIDTH,

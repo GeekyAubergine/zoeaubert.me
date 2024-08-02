@@ -1,3 +1,5 @@
+use uuid::Uuid;
+
 use crate::{
     application::events::Event, infrastructure::bus::job_runner::Job, TemplateErrorResponse,
 };
@@ -60,6 +62,30 @@ pub enum GameError {
 impl GameError {
     pub fn game_not_found(id: u32) -> Error {
         Error::GameError(GameError::GameNotFound(id))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum AlbumError {
+    #[error("Album not found [id: {0}]")]
+    AlbumNotFound(u32),
+    #[error("Album photo not found [id: {0}]")]
+    AlbumPhotoNotFound(Uuid),
+    #[error("Album photo image not found [id: {0}, size: {1}]")]
+    AlbumPhotoImageNotFound(Uuid, String),
+}
+
+impl AlbumError {
+    pub fn album_not_found(id: u32) -> Error {
+        Error::AlbumError(AlbumError::AlbumNotFound(id))
+    }
+
+    pub fn album_photo_not_found(id: Uuid) -> Error {
+        Error::AlbumError(AlbumError::AlbumPhotoNotFound(id))
+    }
+
+    pub fn album_photo_image_not_found(id: Uuid, size: String) -> Error {
+        Error::AlbumError(AlbumError::AlbumPhotoImageNotFound(id, size))
     }
 }
 
@@ -139,6 +165,9 @@ pub enum Error {
 
     #[error("Game error: {0}")]
     GameError(#[from] GameError),
+
+    #[error("Album error: {0}")]
+    AlbumError(#[from] AlbumError),
 }
 
 impl Error {

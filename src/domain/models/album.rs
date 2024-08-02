@@ -1,11 +1,14 @@
 use std::collections::HashMap;
 
 use chrono::{DateTime, Datelike, Utc};
+use uuid::Uuid;
 
 use super::{media::image::Image, tag::Tag};
 
 #[derive(Debug, Clone)]
 pub struct AlbumPhoto {
+    uuid: Uuid,
+    album_uuid: Uuid,
     small_image: Image,
     large_image: Image,
     full_image: Image,
@@ -16,6 +19,8 @@ pub struct AlbumPhoto {
 
 impl AlbumPhoto {
     pub fn new(
+        uuid: Uuid,
+        album_uuid: Uuid,
         small_image: Image,
         large_image: Image,
         full_image: Image,
@@ -24,6 +29,8 @@ impl AlbumPhoto {
         featured: bool,
     ) -> Self {
         Self {
+            uuid,
+            album_uuid,
             small_image,
             large_image,
             full_image,
@@ -44,7 +51,7 @@ impl AlbumPhoto {
     pub fn full_image(&self) -> &Image {
         &self.full_image
     }
-    
+
     pub fn file_name(&self) -> &str {
         &self.file_name
     }
@@ -64,6 +71,7 @@ impl AlbumPhoto {
 
 #[derive(Debug, Clone)]
 pub struct Album {
+    uuid: Uuid,
     title: String,
     description: Option<String>,
     date: DateTime<Utc>,
@@ -72,8 +80,9 @@ pub struct Album {
 }
 
 impl Album {
-    pub fn new(title: String, description: Option<String>, date: DateTime<Utc>) -> Self {
+    pub fn new(uuid: &Uuid, title: String, description: Option<String>, date: DateTime<Utc>) -> Self {
         Self {
+            uuid: *uuid,
             title,
             description,
             date,
@@ -86,6 +95,10 @@ impl Album {
         let file_name = photo.file_name().to_string();
         self.photos.insert(file_name.clone(), photo);
         self.photo_order.push(file_name);
+    }
+
+    pub fn uuid(&self) -> &Uuid {
+        &self.uuid
     }
 
     pub fn title(&self) -> &str {
