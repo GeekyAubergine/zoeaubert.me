@@ -1,43 +1,46 @@
 name: Rust
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
+    push:
+        branches: ['main']
+    pull_request:
 
 env:
-  CARGO_TERM_COLOR: always
+    CARGO_TERM_COLOR: always
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
+    check:
+        runs-on: ubuntu-latest
 
-    env:
-      API_TOKEN: ${{ secrets.API_TOKEN }}
+        steps:
+            - uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4
+            - name: Make envfile
+              uses: SpicyPizza/create-envfile@v2.0
+              with:
+                  envkey_API_TOKEN: ${{ secrets.API_TOKEN }}
+                  envkey_WEBSERVER_URL: http://zoeaubert.me
 
-      - name: Install rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
+            - name: Install rust
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+                  override: true
+                  components: rustfmt, clippy
 
-      - name: Install node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '19'
+            - name: Install node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '19'
 
-      - name: Node dependencies
-        run: npm install
+            - name: Node dependencies
+              run: npm install
 
-      - name: Build
-        run: cargo build
-      - name: Run tests
-        run: cargo test
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
+            - name: Build
+              run: cargo build
+            - name: Run tests
+              run: cargo test
+            - name: Run cargo check
+              uses: actions-rs/cargo@v1
+              with:
+                  command: check
