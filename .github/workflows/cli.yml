@@ -45,10 +45,6 @@ jobs:
               run: npm install
 
             - name: Build
-              run: cargo build -p cli
+              run: cargo check -p cli
             - name: Run tests
               run: cargo test -p cli
-            - name: Run cargo check
-              uses: actions-rs/cargo@v1
-              with:
-                  command: check -p cli

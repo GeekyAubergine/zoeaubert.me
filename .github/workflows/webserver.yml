@@ -24,8 +24,7 @@ jobs:
             postgres:
                 image: postgres:latest
                 env:
-                  POSTGRES_PASSWORD: postgres
-                  POSTGRES_DB: testdb
+                    POSTGRES_PASSWORD: postgres
 
         steps:
             - uses: actions/checkout@v4
@@ -34,7 +33,7 @@ jobs:
               uses: SpicyPizza/create-envfile@v2.0
               with:
                   envkey_API_TOKEN: ${{ secrets.API_TOKEN }}
-                  envkey_DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+                  envkey_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgress
 
             - name: Install rust
               uses: actions-rs/toolchain@v1
@@ -52,10 +51,6 @@ jobs:
               run: npm install
 
             - name: Build
-              run: cargo build -p webserver
+              run: cargo check -p webserver
             - name: Run tests
               run: cargo test -p webserver
-            - name: Run cargo check
-              uses: actions-rs/cargo@v1
-              with:
-                  command: check -p webserver
