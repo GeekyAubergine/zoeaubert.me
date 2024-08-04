@@ -1,9 +1,17 @@
-name: Rust
+name: webserver
 
 on:
     push:
         branches: ['main']
+        # paths:
+        #     - 'webserver/**'
+        #     - 'Cargo.toml'
+        #     - 'Cargo.lock'
     pull_request:
+        # paths:
+        #     - 'webserver/**'
+        #     - 'Cargo.toml'
+        #     - 'Cargo.lock'
 
 env:
     CARGO_TERM_COLOR: always
@@ -12,6 +20,13 @@ jobs:
     check:
         runs-on: ubuntu-latest
 
+        services:
+            postgres:
+                image: postgres:latest
+                env:
+                  POSTGRES_PASSWORD: postgres
+                  POSTGRES_DB: testdb
+
         steps:
             - uses: actions/checkout@v4
 
@@ -19,7 +34,7 @@ jobs:
               uses: SpicyPizza/create-envfile@v2.0
               with:
                   envkey_API_TOKEN: ${{ secrets.API_TOKEN }}
-                  envkey_WEBSERVER_URL: http://zoeaubert.me
+                  envkey_DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
 
             - name: Install rust
               uses: actions-rs/toolchain@v1
@@ -37,10 +52,10 @@ jobs:
               run: npm install
 
             - name: Build
-              run: cargo build
+              run: cargo build -p webserver
             - name: Run tests
-              run: cargo test
+              run: cargo test -p webserver
             - name: Run cargo check
               uses: actions-rs/cargo@v1
               with:
-                  command: check
+                  command: check -p webserver
