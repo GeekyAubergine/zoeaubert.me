@@ -8,7 +8,10 @@ use axum::{
 };
 use tracing::info;
 
-use crate::infrastructure::services::number::FormatNumber;
+use crate::infrastructure::{
+    query_services::silly_names_query_service::SillyNamesQueryService,
+    services::number::FormatNumber,
+};
 use crate::{infrastructure::services::date::FormatDate, ResponseResult};
 use crate::{infrastructure::services::markdown::FormatMarkdown, prelude::Result};
 
@@ -60,9 +63,7 @@ async fn index(State(state): State<AppState>) -> ResponseResult<IndexTemplate> {
 
     let about_text = state.about_repo().get().await.short().to_owned();
 
-    let silly_names = state
-        .silly_names_repo()
-        .find_all()
+    let silly_names = SillyNamesQueryService::find_all(&state)
         .await?
         .values()
         .map(|n| n.name.to_owned())
