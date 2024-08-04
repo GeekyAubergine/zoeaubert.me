@@ -8,25 +8,26 @@ use axum::{
 };
 use tracing::info;
 
-use crate::infrastructure::services::date::FormatDate;
 use crate::infrastructure::services::number::FormatNumber;
-use crate::infrastructure::services::markdown::FormatMarkdown;
-
+use crate::{infrastructure::services::date::FormatDate, ResponseResult};
+use crate::{infrastructure::services::markdown::FormatMarkdown, prelude::Result};
 
 use crate::{
-    build_data, domain::models::{blog_post::BlogPost, page::Page}, infrastructure::app_state::AppState
+    build_data,
+    domain::models::{blog_post::BlogPost, page::Page},
+    infrastructure::app_state::AppState,
 };
 
 const RECENT_POSTS_COUNT: usize = 5;
 
+pub mod albums;
 pub mod blog;
 pub mod hobbies;
 pub mod interests;
 pub mod micro_posts;
+pub mod photos;
 pub mod tags;
 pub mod timeline;
-pub mod photos;
-pub mod albums;
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -54,12 +55,18 @@ pub struct IndexTemplate {
     recent_blog_posts: Vec<BlogPost>,
 }
 
-async fn index(State(state): State<AppState>) -> IndexTemplate {
+async fn index(State(state): State<AppState>) -> ResponseResult<IndexTemplate> {
     let page = Page::new(state.site(), "/", None, None);
 
     let about_text = state.about_repo().get().await.short().to_owned();
 
-    let silly_names = state.silly_names_repo().get().await;
+    let silly_names = state
+        .silly_names_repo()
+        .find_all()
+        .await?
+        .values()
+        .map(|n| n.name.to_owned())
+        .collect();
 
     let recent_blog_posts = state
         .blog_posts_repo()
@@ -70,12 +77,12 @@ async fn index(State(state): State<AppState>) -> IndexTemplate {
         .cloned()
         .collect::<Vec<_>>();
 
-    IndexTemplate {
+    Ok(IndexTemplate {
         page,
         silly_names,
         about_text,
         recent_blog_posts,
-    }
+    })
 }
 
 #[derive(Template)]

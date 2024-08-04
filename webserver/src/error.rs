@@ -1,8 +1,66 @@
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 use uuid::Uuid;
 
-use crate::{
-    application::events::Event, infrastructure::bus::job_runner::Job, TemplateErrorResponse,
-};
+use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
+
+
+#[derive(Debug, thiserror::Error)]
+pub enum AuthError {
+    #[error("No Authorization header")]
+    NoAuthorizationHeader,
+
+    #[error("Invalid header")]
+    InvalidHeader,
+
+    #[error("Unauthorized")]
+    Unauthorized,
+
+    #[error("Invalid token")]
+    InvalidToken,
+}
+
+impl AuthError {
+    pub fn no_authorization_header() -> Error {
+        Error::AuthError(AuthError::NoAuthorizationHeader)
+    }
+
+    pub fn invalid_header() -> Error {
+        Error::AuthError(AuthError::InvalidHeader)
+    }
+
+    pub fn unauthorized() -> Error {
+        Error::AuthError(AuthError::Unauthorized)
+    }
+
+
+    pub fn invalid_token() -> Error {
+        Error::AuthError(AuthError::InvalidToken)
+    }
+
+    pub fn to_response(&self) -> ErrorResponse {
+        match self {
+            AuthError::NoAuthorizationHeader => ErrorResponse {
+                status: StatusCode::UNAUTHORIZED,
+                message: "No Authorization header",
+            },
+            AuthError::InvalidHeader => ErrorResponse {
+                status: StatusCode::UNAUTHORIZED,
+                message: "Invalid header",
+            },
+            AuthError::InvalidToken => ErrorResponse {
+                status: StatusCode::UNAUTHORIZED,
+                message: "Invalid token",
+            },
+            AuthError::Unauthorized => ErrorResponse {
+                status: StatusCode::UNAUTHORIZED,
+                message: "Unauthorized",
+            },
+        }
+    }
+}
 
 #[derive(Debug, thiserror::Error)]
 pub enum DatabaseError {
@@ -21,6 +79,13 @@ impl DatabaseError {
     pub fn from_query_error(err: sqlx::Error) -> Error {
         Error::DatabaseError(DatabaseError::QueryError(err))
     }
+
+    pub fn to_response(&self) -> ErrorResponse {
+        ErrorResponse {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Internal Server Error",
+        }
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -36,8 +101,15 @@ impl LegoSetsError {
         Error::LegoSetsError(LegoSetsError::UnableToCalculateTotalPieceCount)
     }
 
-    pub fn unable_to_calculate_total_owned_count () -> Error {
+    pub fn unable_to_calculate_total_owned_count() -> Error {
         Error::LegoSetsError(LegoSetsError::UnableToCalculateTotalOwnedCount)
+    }
+
+    pub fn to_response(&self) -> ErrorResponse {
+        ErrorResponse {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Internal Server Error",
+        }
     }
 }
 
@@ -51,6 +123,13 @@ impl LegoMinifiguresError {
     pub fn unable_to_calculate_total_minifigures_count() -> Error {
         Error::LegoMinifiguresError(LegoMinifiguresError::UnableToCalculateTotalMinifiguresCount)
     }
+
+    pub fn to_response(&self) -> ErrorResponse {
+        ErrorResponse {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Internal Server Error",
+        }
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -62,6 +141,13 @@ pub enum GameError {
 impl GameError {
     pub fn game_not_found(id: u32) -> Error {
         Error::GameError(GameError::GameNotFound(id))
+    }
+
+    pub fn to_response(&self) -> ErrorResponse {
+        ErrorResponse {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Internal Server Error",
+        }
     }
 }
 
@@ -86,6 +172,13 @@ impl AlbumError {
 
     pub fn album_photo_image_not_found(id: Uuid, size: String) -> Error {
         Error::AlbumError(AlbumError::AlbumPhotoImageNotFound(id, size))
+    }
+
+    pub fn to_response(&self) -> ErrorResponse {
+        ErrorResponse {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Internal Server Error",
+        }
     }
 }
 
@@ -168,19 +261,47 @@ pub enum Error {
 
     #[error("Album error: {0}")]
     AlbumError(#[from] AlbumError),
+
+    #[error("Auth Error: {0}")]
+    AuthError(#[from] AuthError),
 }
 
 impl Error {
-    pub fn into_response(self) -> TemplateErrorResponse {
-        self.into()
+    pub fn into_response(self) -> ErrorResponse {
+        match self {
+            Error::AuthError(e) => e.to_response(),
+            Error::AlbumError(e) => e.to_response(),
+            Error::DatabaseError(e) => e.to_response(),
+            Error::LegoSetsError(e) => e.to_response(),
+            Error::LegoMinifiguresError(e) => e.to_response(),
+            Error::GameError(e) => e.to_response(),
+            _ => ErrorResponse {
+                status: StatusCode::INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+            },
+        }
     }
 }
 
-impl From<Error> for TemplateErrorResponse {
+pub struct ErrorResponse {
+    pub status: StatusCode,
+    pub message: &'static str,
+}
+
+impl IntoResponse for ErrorResponse {
+    fn into_response(self) -> Response {
+        (self.status, self.message).into_response()
+    }
+}
+
+impl From<Error> for ErrorResponse {
     fn from(err: Error) -> Self {
-        (
-            axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-            "Something went wrong",
-        )
+        err.into_response()
+    }
+}
+
+impl From<(reqwest::StatusCode, &'static str)> for ErrorResponse {
+    fn from((status, message): (reqwest::StatusCode, &'static str)) -> Self {
+        ErrorResponse { status, message }
     }
 }

@@ -9,3 +9,4 @@ pub mod files;
 pub mod formatters;
 pub mod markdown;
 pub mod number;
+pub mod auth_service;

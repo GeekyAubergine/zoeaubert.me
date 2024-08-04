@@ -66,7 +66,7 @@ pub mod build_data {
 }
 
 async fn load_config() -> Result<Config> {
-    let contents = tokio::fs::read_to_string("./config.json")
+    let contents = tokio::fs::read_to_string("../config.json")
         .await
         .map_err(Error::ReadConfigFile)?;
 

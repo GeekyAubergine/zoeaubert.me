@@ -18,3 +18,4 @@ pub mod omni_post;
 pub mod page;
 pub mod status_lol_post;
 pub mod tag;
+pub mod silly_name;

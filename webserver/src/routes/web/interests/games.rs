@@ -17,7 +17,7 @@ use crate::{
         page::{Page, PageImage},
     },
     infrastructure::app_state::AppState,
-    TemplateResult,
+    ResponseResult,
 };
 
 pub use crate::infrastructure::services::date::FormatDate;
@@ -47,7 +47,7 @@ pub struct IndexTemplate {
     total_playtime: f32,
 }
 
-async fn index(State(state): State<AppState>) -> TemplateResult<IndexTemplate> {
+async fn index(State(state): State<AppState>) -> ResponseResult<IndexTemplate> {
     let page = Page::new(
         state.site(),
         "/interests/games",
@@ -90,7 +90,7 @@ pub struct GameTemplate {
 async fn game_page(
     State(state): State<AppState>,
     Path(id): Path<u32>,
-) -> TemplateResult<GameTemplate> {
+) -> ResponseResult<GameTemplate> {
     let game = state
         .games_repo()
         .find_by_id(id)

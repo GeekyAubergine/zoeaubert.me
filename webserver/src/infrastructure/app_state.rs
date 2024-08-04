@@ -79,7 +79,7 @@ impl AppStateData {
             status_lol_posts_repo: StatusLolPostsRepo::new(database_connection.clone()),
             about_repo: AboutRepo::default(),
             faq_repo: FaqRepo::default(),
-            silly_names_repo: SillyNamesRepo::default(),
+            silly_names_repo: SillyNamesRepo::new(database_connection.clone()),
             blog_posts_repo: BlogPostsRepo::default(),
             micro_posts_repo: MicroPostsRepo::default(),
             microblog_archive_repo: MicroblogArchiveRepo::default(),

@@ -72,7 +72,8 @@ fn compile_css(build_date: &str) {
     let tailwind_module_location = Path::new("../node_modules/.bin/tailwindcss");
     let input_css = Path::new("./assets/css/styles.css");
     let intermediate_css = Path::new("./_assets/css/tw.css");
-    let output_css = Path::new("./_assets/css/styles.css");
+    let output_file_name = format!("./_assets/css/styles-{}.css", build_date);
+    let output_css = Path::new(&output_file_name);
 
     let tw_command = format!("ENVIRONMENT=production {} -i {} -o {} --postcss", tailwind_module_location.display(), input_css.display(), intermediate_css.display());
     // let lightning_command = format!("{} --minify --bundle --targets '>= 0.25%' {} -o {}", LIGHTNING_CSS_COMMAND, intermediate_css.display(), output_css.display());

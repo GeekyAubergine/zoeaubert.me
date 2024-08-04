@@ -17,7 +17,7 @@ use crate::{
         page::Page,
     },
     infrastructure::app_state::AppState,
-    TemplateResult,
+    ResponseResult,
 };
 
 pub use crate::infrastructure::services::date::FormatDate;
@@ -43,7 +43,7 @@ pub struct LegoListTemplate {
     minifigs: Vec<LegoMinifig>,
 }
 
-async fn list(State(state): State<AppState>) -> TemplateResult<LegoListTemplate> {
+async fn list(State(state): State<AppState>) -> ResponseResult<LegoListTemplate> {
     let page = Page::new(
         state.site(),
         "/interests/lego",
