@@ -52,10 +52,9 @@ jobs:
             - name: Node dependencies
               run: npm install
 
-            - name: Use right folder
-              run: cd webserver
-
             - name: Check
+              working-directory: webserver
               run: cargo check
             - name: Run tests
-              run: cargo test -p webserver
+              working-directory: webserver
+              run: cargo test

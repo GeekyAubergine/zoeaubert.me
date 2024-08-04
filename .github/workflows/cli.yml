@@ -36,9 +36,6 @@ jobs:
                   override: true
                   components: rustfmt, clippy
 
-            - name: Node dependencies
-              run: npm install
-
             - name: Check
               run: cargo check -p cli
             - name: Run tests
