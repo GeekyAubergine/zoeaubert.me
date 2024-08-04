@@ -55,7 +55,7 @@ jobs:
             - name: Run migrations
               working-directory: webserver
               run: |
-                  cargo install sqlx-cli
+                  cargo install sqlx-cli --no-default-features --features postgres
                   sqlx migrate run
             - name: Check
               working-directory: webserver
