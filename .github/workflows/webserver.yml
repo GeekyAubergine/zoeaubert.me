@@ -52,6 +52,11 @@ jobs:
             - name: Node dependencies
               run: npm install
 
+            - name: Run migrations
+              working-directory: webserver
+              run: |
+                  cargo install sqlx-cli
+                  sqlx migrate run
             - name: Check
               working-directory: webserver
               run: cargo check
