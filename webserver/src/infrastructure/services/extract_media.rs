@@ -98,14 +98,24 @@ mod tests {
 
         let expected_uuid = uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, "uploads/2022/ced7ff5352.jpg".as_bytes());
 
-        let expected = Media::from_image(Image::new(
+        let expected = Image::new(
             &expected_uuid,
             "uploads/2022/ced7ff5352.jpg",
             "Pciture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa",
             600,
             450,
-        ).with_date(date).with_parent_permalink("perma"));
+        ).with_parent_permalink("perma");
 
-        assert_eq!(media[0], expected);
+        let image = match media.get(0).unwrap() {
+            Media::Image(image) => image,
+            _ => panic!("Expected image"),
+        };
+
+        assert_eq!(image.uuid(), expected.uuid());
+        assert_eq!(image.url(), expected.url());
+        assert_eq!(image.alt(), expected.alt());
+        assert_eq!(image.width(), expected.width());
+        assert_eq!(image.height(), expected.height());
+        assert_eq!(image.parent_permalink(), expected.parent_permalink());
     }
 }

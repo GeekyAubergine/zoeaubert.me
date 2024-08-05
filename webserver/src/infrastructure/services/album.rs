@@ -66,6 +66,7 @@ pub fn cover_photos_for_album(album: &Album) -> Vec<&AlbumPhoto> {
 #[cfg(test)]
 mod test {
     use chrono::Utc;
+    use uuid::Uuid;
 
     use crate::{
         domain::models::{
@@ -77,34 +78,40 @@ mod test {
 
     #[test]
     fn it_should_return_empty_vec_when_no_photos() {
-        let album = Album::new("title".to_string(), None, Utc::now());
+        let album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         let photos = cover_photos_for_album(&album);
         assert_eq!(photos.len(), 0);
     }
 
     #[test]
     fn it_should_return_first_featured_landscaped_photo() {
-        let mut album = Album::new("title".to_string(), None, Utc::now());
+        let mut album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_1", "", 30, 20),
-            Image::new("file_1", "", 30, 20),
-            Image::new("file_1", "", 30, 20),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_1", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_1", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_1", "", 30, 20),
             "file_name1".to_string(),
             vec![],
             true,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
             "file_name2".to_string(),
             vec![],
             true,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_3", "", 30, 20),
-            Image::new("file_3", "", 30, 20),
-            Image::new("file_3", "", 30, 20),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
             "file_name3".to_string(),
             vec![],
             false,
@@ -116,27 +123,33 @@ mod test {
 
     #[test]
     fn it_should_return_first_two_featured_portrait_photos() {
-        let mut album = Album::new("title".to_string(), None, Utc::now());
+        let mut album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
             "file_name1".to_string(),
             vec![],
             true,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
             "file_name2".to_string(),
             vec![],
             true,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_3", "", 20, 30),
-            Image::new("file_3", "", 20, 30),
-            Image::new("file_3", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_3", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_3", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_3", "", 20, 30),
             "file_name3".to_string(),
             vec![],
             false,
@@ -149,27 +162,33 @@ mod test {
 
     #[test]
     fn it_should_return_first_featured_portrait_and_first_non_featured_portrait() {
-        let mut album = Album::new("title".to_string(), None, Utc::now());
+        let mut album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
             "file_name1".to_string(),
             vec![],
             true,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
             "file_name2".to_string(),
             vec![],
             false,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_3", "", 30, 20),
-            Image::new("file_3", "", 30, 20),
-            Image::new("file_3", "", 30, 20),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
             "file_name3".to_string(),
             vec![],
             false,
@@ -182,27 +201,33 @@ mod test {
 
     #[test]
     fn it_should_return_first_non_featured_landscaped_photo() {
-        let mut album = Album::new("title".to_string(), None, Utc::now());
+        let mut album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
             "file_name1".to_string(),
             vec![],
             false,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
             "file_name2".to_string(),
             vec![],
             false,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_3", "", 30, 20),
-            Image::new("file_3", "", 30, 20),
-            Image::new("file_3", "", 30, 20),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
+            Image::new(&Uuid::new_v4(), "file_3", "", 30, 20),
             "file_name3".to_string(),
             vec![],
             false,
@@ -214,27 +239,33 @@ mod test {
 
     #[test]
     fn it_should_return_first_two_non_featured_portrait_photos() {
-        let mut album = Album::new("title".to_string(), None, Utc::now());
+        let mut album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
             "file_name1".to_string(),
             vec![],
             false,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
-            Image::new("file_2", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_2", "", 20, 30),
             "file_name2".to_string(),
             vec![],
             false,
         ));
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_3", "", 20, 30),
-            Image::new("file_3", "", 20, 30),
-            Image::new("file_3", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_3", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_3", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_3", "", 20, 30),
             "file_name3".to_string(),
             vec![],
             false,
@@ -247,11 +278,13 @@ mod test {
 
     #[test]
     fn it_should_return_first_featured_photo_if_no_previous_rule_met() {
-        let mut album = Album::new("title".to_string(), None, Utc::now());
+        let mut album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
             "file_name1".to_string(),
             vec![],
             true,
@@ -263,11 +296,13 @@ mod test {
 
     #[test]
     fn it_should_return_first_non_featured_photo_if_no_previous_rule_met() {
-        let mut album = Album::new("title".to_string(), None, Utc::now());
+        let mut album = Album::new(&Uuid::new_v4(), "title".to_string(), None, Utc::now());
         album.add_photo(AlbumPhoto::new(
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
-            Image::new("file_1", "", 20, 30),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
+            Image::new(&Uuid::new_v4(), "file_1", "", 20, 30),
             "file_name1".to_string(),
             vec![],
             false,
