@@ -1,14 +1,19 @@
-use std::sync::Arc;
+use std::{
+    net::{SocketAddr, SocketAddrV4},
+    sync::Arc,
+};
 
 use dotenvy_macro::dotenv;
 use reqwest::{
     header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE},
     StatusCode,
 };
+use shared::zoeaubert_proto::webserver::silly_names_client::SillyNamesClient;
+use tonic::transport::Channel;
 use tracing::debug;
 
 use crate::{
-    error::{ApiError, Error},
+    error::{ApiError, Error, TonicError},
     prelude::Result,
 };
 
@@ -41,10 +46,11 @@ pub struct ApiResponse<B> {
 
 pub struct ApiClientBase {
     reqwest_client: reqwest::Client,
+    silly_names_client: SillyNamesClient<Channel>,
 }
 
 impl ApiClientBase {
-    pub fn new() -> Result<Self> {
+    pub async fn new() -> Result<Self> {
         let mut headers = reqwest::header::HeaderMap::new();
 
         let api_token = format!("Bearer {}", dotenv!("API_TOKEN"))
@@ -64,7 +70,14 @@ impl ApiClientBase {
             .build()
             .map_err(Error::HttpReqwest)?;
 
-        Ok(Self { reqwest_client })
+        let silly_names_client = SillyNamesClient::connect(dotenv!("GRPC_URL"))
+            .await
+            .map_err(TonicError::unable_to_connect)?;
+
+        Ok(Self {
+            reqwest_client,
+            silly_names_client,
+        })
     }
 
     pub async fn put<B>(&self, path: &str, body: &B) -> Result<()>
@@ -91,10 +104,14 @@ impl ApiClientBase {
 
         Ok(())
     }
+
+    pub fn silly_names_client(&self) -> SillyNamesClient<Channel> {
+        self.silly_names_client.clone()
+    }
 }
 
 pub type ApiClient = Arc<ApiClientBase>;
 
-pub fn make_api_client() -> Result<ApiClient> {
-    Ok(Arc::new(ApiClientBase::new()?))
+pub async fn make_api_client() -> Result<ApiClient> {
+    Ok(Arc::new(ApiClientBase::new().await?))
 }

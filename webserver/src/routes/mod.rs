@@ -10,6 +10,7 @@ use crate::{
 
 mod api;
 mod web;
+pub mod grpc;
 
 pub fn router() -> Router<AppState> {
     Router::new()

@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use axum::http::StatusCode;
 use axum::{extract::State, Json};
-use shared::api_definitions::silly_names::UpdateSillyNamesRequest;
 use tracing::{debug, info};
 
 use crate::prelude::Result;
@@ -15,9 +14,9 @@ use crate::{
 };
 
 pub async fn update_silly_names_command(
-    State(state): State<AppState>,
-    Json(payload): Json<UpdateSillyNamesRequest>,
-) -> ResponseResult<StatusCode> {
+    state: &AppState,
+    new_silly_names: &[String],
+) -> Result<()> {
     info!("Updating silly names");
     let existing_silly_names = SillyNamesQueryService::find_all(&state).await?;
     let existing_by_name = existing_silly_names
@@ -27,7 +26,7 @@ pub async fn update_silly_names_command(
 
     let silly_names_to_delete = existing_silly_names
         .values()
-        .filter(|n| !payload.silly_names.contains(&n.name))
+        .filter(|n| !new_silly_names.contains(&n.name))
         .collect::<Vec<&SillyName>>();
 
     for name in silly_names_to_delete {
@@ -35,7 +34,7 @@ pub async fn update_silly_names_command(
         SillyNamesQueryService::delete(&state, name.uuid).await?;
     }
 
-    for name in payload.silly_names.iter() {
+    for name in new_silly_names.iter() {
         match existing_by_name.get(name) {
             Some(existing) => {
                 let mut existing = existing.clone();
@@ -50,16 +49,5 @@ pub async fn update_silly_names_command(
         }
     }
 
-    // let silly_names_to_insert = payload
-    //     .silly_names
-    //     .iter()
-    //     .filter(|n| !existing_silly_names.values().any(|e| e.name == **n))
-    //     .collect::<Vec<&String>>();
-
-    // for name in silly_names_to_insert {
-    //     debug!("Inserting silly name: {:?}", name);
-    //     SillyNamesQueryService::commit(&state, &SillyName::from_name(name)).await?;
-    // }
-
-    Ok(StatusCode::OK)
+    Ok(())
 }

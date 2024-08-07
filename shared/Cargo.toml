@@ -2,6 +2,15 @@
 name = "shared"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
+prost = { workspace = true }
 serde = { workspace = true }
+tonic = { workspace = true }
+tonic-reflection = "0.12.1"
+
+[build-dependencies]
+prost = { workspace = true }
+prost-build = { workspace = true }
+tonic-build = { workspace = true }

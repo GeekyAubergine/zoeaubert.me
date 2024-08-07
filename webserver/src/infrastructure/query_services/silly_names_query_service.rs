@@ -28,35 +28,6 @@ impl From<&SillyNameDbEntity> for SillyName {
     }
 }
 
-fn calculate_updated_silly_names_from_strings(
-    db_entities: &HashMap<String, SillyName>,
-    updated_silly_names: Vec<String>,
-) -> HashMap<String, SillyName> {
-    let mut entities = HashMap::new();
-
-    let (names_in_new_set, names_not_in_new_set): (Vec<&SillyName>, Vec<&SillyName>) = db_entities
-        .values()
-        .partition(|e| updated_silly_names.contains(&e.name));
-
-    for name in names_not_in_new_set {
-        let mut name = name.clone();
-        name.deleted_at = Some(chrono::Utc::now());
-        entities.insert(name.name.to_string(), name.clone());
-    }
-
-    for name in names_in_new_set {
-        entities.insert(name.name.to_string(), name.clone());
-    }
-
-    for name in updated_silly_names {
-        if !entities.contains_key(&name) {
-            entities.insert(name.to_string(), SillyName::from_name(name.as_str()));
-        }
-    }
-
-    entities
-}
-
 pub struct SillyNamesQueryService;
 
 impl SillyNamesQueryService {

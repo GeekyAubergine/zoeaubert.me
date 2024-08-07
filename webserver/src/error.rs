@@ -6,7 +6,6 @@ use uuid::Uuid;
 
 use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
 
-
 #[derive(Debug, thiserror::Error)]
 pub enum AuthError {
     #[error("No Authorization header")]
@@ -34,7 +33,6 @@ impl AuthError {
     pub fn unauthorized() -> Error {
         Error::AuthError(AuthError::Unauthorized)
     }
-
 
     pub fn invalid_token() -> Error {
         Error::AuthError(AuthError::InvalidToken)
@@ -280,6 +278,10 @@ impl Error {
                 message: "Internal Server Error",
             },
         }
+    }
+
+    pub fn into_tonic_status(self) -> tonic::Status {
+        tonic::Status::new(tonic::Code::Internal, "Internal Server Error")
     }
 }
 

@@ -1,0 +1,4 @@
+syntax = "proto3";
+package me.zoeaubert.webserver;
+
+import "webserver/silly_names.proto";

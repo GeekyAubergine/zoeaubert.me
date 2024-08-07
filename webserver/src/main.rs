@@ -7,7 +7,7 @@ extern crate lazy_static;
 
 use dotenvy_macro::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
-use std::{fs, path::Path, sync::Arc, thread::sleep, time::Duration};
+use std::{fs, future::Future, path::Path, pin::Pin, sync::Arc, thread::sleep, time::Duration};
 
 use crate::{
     infrastructure::bus::{event_queue::make_event_channel, job_runner::make_job_channel, Bus},
@@ -16,9 +16,11 @@ use crate::{
 
 use application::events::Event;
 use axum::{
+    body::Body,
+    extract::Request,
     http::{
         header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
-        HeaderValue, Method, StatusCode,
+        HeaderValue, Method, Response, StatusCode,
     },
     middleware,
     routing::{get, post},
@@ -33,7 +35,7 @@ use infrastructure::{
     listeners::register_listeners,
 };
 use prelude::Result;
-use routes::router;
+use routes::{grpc::build_grpc_service, router};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use tokio::{
     sync::{mpsc::channel, RwLock},
@@ -93,6 +95,67 @@ async fn prepare_database() -> Result<Pool<Postgres>> {
         .map_err(DatabaseError::from_connection_error)
 }
 
+struct HybridWebService<Web, Grpc> {
+    web: Web,
+    grpc: Grpc,
+}
+
+impl<Web, Grpc> HybridWebService<Web, Grpc> {
+    fn new(web: Web, grpc: Grpc) -> Self {
+        Self { web, grpc }
+    }
+}
+
+enum HybridBody<Web, Grpc> {
+    Web(Web),
+    Grpc(Grpc),
+}
+
+enum HybridFuture<Web, Grpc> {
+    Web(Web),
+    Grpc(Grpc),
+}
+
+// impl<Web, Grpc, WebBody, GrpcBody> Service<Request<Body>> for HybridWebService<Web, Grpc>
+// where
+//     Web: Service<Request<Body>, Response = Response<WebBody>>,
+//     Grpc: Service<Request<Body>, Response = Response<GrpcBody>>,
+//     Web::Error: Into<Box<dyn std::error::Error + Send + Sync>>,
+//     Grpc::Error: Into<Box<dyn std::error::Error + Send + Sync>>,
+// {
+//     type Response = Response<HybridBody<WebBody, GrpcBody>>;
+//     type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
+//     type Future = HybridFuture<Web::Future, Grpc::Future>;
+
+//     fn poll_ready(
+//         &mut self,
+//         cx: &mut std::task::Context<'_>,
+//     ) -> std::task::Poll<std::result::Result<(), Self::Error>> {
+//         match self.web.poll_ready(cx) {
+//             std::task::Poll::Ready(Ok(())) => match self.grpc.poll_ready(cx) {
+//                 std::task::Poll::Ready(Ok(())) => std::task::Poll::Ready(Ok(())),
+//                 std::task::Poll::Ready(Err(e)) => std::task::Poll::Ready(Err(e.into())),
+//                 std::task::Poll::Pending => std::task::Poll::Pending,
+//             },
+//             std::task::Poll::Ready(Err(e)) => std::task::Poll::Ready(Err(e.into())),
+//             std::task::Poll::Pending => std::task::Poll::Pending,
+//         }
+//     }
+
+//     fn call(&mut self, req: Request<Body>) -> Self::Future {
+//         if req
+//             .headers()
+//             .get(CONTENT_TYPE)
+//             .map(|v| v == "application/grpc")
+//             .unwrap_or(false)
+//         {
+//             HybridFuture::Grpc(self.grpc.call(req))
+//         } else {
+//             HybridFuture::Web(self.web.call(req))
+//         }
+//     }
+// }
+
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt().with_max_level(Level::INFO).init();
@@ -149,11 +212,15 @@ async fn main() -> Result<()> {
     let static_files = ServeDir::new("./static");
     let asset_files = ServeDir::new("./_assets");
 
+    build_grpc_service(&state);
+
     let app = router()
         .with_state(state)
         .nest_service("/static", static_files)
         .nest_service("/assets", asset_files)
         .layer(services);
+
+    // let app = HybridWebService::new(web_service, gprc_service);
 
     bus.start().await;
 

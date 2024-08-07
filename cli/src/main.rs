@@ -31,7 +31,7 @@ async fn main() -> Result<()> {
         .with_max_level(Level::DEBUG)
         .init();
 
-    let api_client = make_api_client()?;
+    let api_client = make_api_client().await?;
 
     let args = Args::parse();
 

@@ -31,11 +31,17 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Install protobuf
+              run: |
+                  sudo apt update && sudo apt upgrade -y
+                  sudo apt install -y protobuf-compiler libprotobuf-dev
+
             - name: Make envfile
               uses: SpicyPizza/create-envfile@v2.0
               with:
                   envkey_API_TOKEN: ${{ secrets.API_TOKEN }}
                   envkey_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+                  envkey_GRPC_PORT: 50051
 
             - name: Install rust
               uses: actions-rs/toolchain@v1

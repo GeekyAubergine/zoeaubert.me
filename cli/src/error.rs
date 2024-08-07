@@ -20,6 +20,25 @@ impl ApiError {
 }
 
 #[derive(Debug, thiserror::Error)]
+pub enum TonicError {
+    #[error("Unable to connect {0}")]
+    UnableToConnect(tonic::transport::Error),
+
+    #[error("Server returned status {0}")]
+    ServerReturnedStatus(tonic::Status),
+}
+
+impl TonicError {
+    pub fn unable_to_connect(error: tonic::transport::Error) -> Error {
+        Error::Tonic(Self::UnableToConnect(error))
+    }
+
+    pub fn server_returned_status(status: tonic::Status) -> Error {
+        Error::Tonic(Self::ServerReturnedStatus(status))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
 pub enum SillyNamesError {
     #[error("Unable to read csv {0}")]
     UnableToReadCsv(csv::Error),
@@ -44,6 +63,8 @@ pub enum Error {
     ApiError(ApiError),
     #[error("Silly names error: {0}")]
     SillyNames(SillyNamesError),
+    #[error("Tonic error: {0}")]
+    Tonic(TonicError),
 
     #[error("HttpReqwest {0}")]
     HttpReqwest(reqwest::Error),
