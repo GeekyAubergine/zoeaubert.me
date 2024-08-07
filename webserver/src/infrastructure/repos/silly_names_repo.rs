@@ -96,7 +96,6 @@ impl SillyNamesRepo {
 
     pub async fn commit(&self, silly_name: &SillyNameDbEntity) -> Result<()> {
         if let Some(_) = self.find_by_uuid(silly_name.uuid).await? {
-            println!("found silly name: {:?}", silly_name);
             sqlx::query!(
                 "
                 UPDATE silly_names

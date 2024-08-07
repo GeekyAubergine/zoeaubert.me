@@ -26,6 +26,9 @@ pub enum TonicError {
 
     #[error("Server returned status {0}")]
     ServerReturnedStatus(tonic::Status),
+
+    #[error("Invalid URI {0}")]
+    InvalidUri(http::uri::InvalidUri),
 }
 
 impl TonicError {
@@ -35,6 +38,10 @@ impl TonicError {
 
     pub fn server_returned_status(status: tonic::Status) -> Error {
         Error::Tonic(Self::ServerReturnedStatus(status))
+    }
+
+    pub fn invalid_uri(error: http::uri::InvalidUri) -> Error {
+        Error::Tonic(Self::InvalidUri(error))
     }
 }
 

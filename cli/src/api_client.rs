@@ -9,7 +9,11 @@ use reqwest::{
     StatusCode,
 };
 use shared::zoeaubert_proto::webserver::silly_names_client::SillyNamesClient;
-use tonic::transport::Channel;
+use tonic::{
+    metadata::MetadataValue,
+    service::{interceptor::InterceptedService, Interceptor},
+    transport::Channel,
+};
 use tracing::debug;
 
 use crate::{
@@ -44,9 +48,37 @@ pub struct ApiResponse<B> {
     body: B,
 }
 
+// type ClientChannel = InterceptedService<
+//     Channel,
+//     impl FnOnce(tonic::Request<()>) -> std::result::Result<tonic::Request<()>, tonic::Status>,
+// >;
+
+fn add_authorization_header(
+    mut req: tonic::Request<()>,
+) -> std::result::Result<tonic::Request<()>, tonic::Status> {
+    let token: MetadataValue<_> = format!("Bearer {}", dotenv!("API_TOKEN")).parse().unwrap();
+
+    req.metadata_mut().insert("authorization", token);
+    Ok(req)
+}
+
+#[derive(Clone)]
+pub struct Inceptor;
+
+impl Interceptor for Inceptor {
+    fn call(
+        &mut self,
+        request: tonic::Request<()>,
+    ) -> std::result::Result<tonic::Request<()>, tonic::Status> {
+        add_authorization_header(request)
+    }
+}
+
+type InterceptedChannel = InterceptedService<Channel, Inceptor>;
+
 pub struct ApiClientBase {
     reqwest_client: reqwest::Client,
-    silly_names_client: SillyNamesClient<Channel>,
+    silly_names_client: SillyNamesClient<InterceptedChannel>,
 }
 
 impl ApiClientBase {
@@ -70,9 +102,13 @@ impl ApiClientBase {
             .build()
             .map_err(Error::HttpReqwest)?;
 
-        let silly_names_client = SillyNamesClient::connect(dotenv!("GRPC_URL"))
+        let channel = Channel::from_shared(dotenv!("GRPC_URL"))
+            .map_err(TonicError::invalid_uri)?
+            .connect()
             .await
             .map_err(TonicError::unable_to_connect)?;
+
+        let silly_names_client = SillyNamesClient::with_interceptor(channel, Inceptor);
 
         Ok(Self {
             reqwest_client,
@@ -105,7 +141,7 @@ impl ApiClientBase {
         Ok(())
     }
 
-    pub fn silly_names_client(&self) -> SillyNamesClient<Channel> {
+    pub fn silly_names_client(&self) -> SillyNamesClient<InterceptedChannel> {
         self.silly_names_client.clone()
     }
 }

@@ -606,6 +606,7 @@ dependencies = [
  "csv",
  "dotenvy",
  "dotenvy_macro",
+ "http",
  "reqwest",
  "serde",
  "shared",

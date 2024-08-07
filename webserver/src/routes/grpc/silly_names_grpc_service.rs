@@ -5,7 +5,7 @@ use tonic::{Request, Response, Status};
 
 use crate::{
     application::commands::update_silly_names_command::update_silly_names_command,
-    infrastructure::app_state::AppState,
+    infrastructure::{app_state::AppState, services::auth_service::authenticate_grpc},
 };
 
 #[derive(Debug, Clone)]
@@ -25,7 +25,8 @@ impl SillyNames for SillyNamesGprcService {
         &self,
         request: Request<UpdateSillyNamesRequest>,
     ) -> Result<Response<UpdateSillyNamesResponse>, Status> {
-        let headers = request.metadata().get("Authorization");
+        authenticate_grpc(&request)?;
+
         let silly_names = request.into_inner().names;
 
         let silly_names = silly_names

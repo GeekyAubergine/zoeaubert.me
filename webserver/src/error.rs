@@ -38,7 +38,7 @@ impl AuthError {
         Error::AuthError(AuthError::InvalidToken)
     }
 
-    pub fn to_response(&self) -> ErrorResponse {
+    pub fn into_response(&self) -> ErrorResponse {
         match self {
             AuthError::NoAuthorizationHeader => ErrorResponse {
                 status: StatusCode::UNAUTHORIZED,
@@ -56,6 +56,17 @@ impl AuthError {
                 status: StatusCode::UNAUTHORIZED,
                 message: "Unauthorized",
             },
+        }
+    }
+
+    pub fn into_tonic_status(self) -> tonic::Status {
+        match self {
+            AuthError::NoAuthorizationHeader => {
+                tonic::Status::unauthenticated("No Authorization header")
+            }
+            AuthError::InvalidHeader => tonic::Status::unauthenticated("Invalid header"),
+            AuthError::InvalidToken => tonic::Status::unauthenticated("Invalid token"),
+            AuthError::Unauthorized => tonic::Status::unauthenticated("Unauthorized"),
         }
     }
 }
@@ -78,11 +89,15 @@ impl DatabaseError {
         Error::DatabaseError(DatabaseError::QueryError(err))
     }
 
-    pub fn to_response(&self) -> ErrorResponse {
+    pub fn into_response(&self) -> ErrorResponse {
         ErrorResponse {
             status: StatusCode::INTERNAL_SERVER_ERROR,
             message: "Internal Server Error",
         }
+    }
+
+    pub fn into_tonic_status(self) -> tonic::Status {
+        tonic::Status::internal("Internal Server Error")
     }
 }
 
@@ -103,11 +118,15 @@ impl LegoSetsError {
         Error::LegoSetsError(LegoSetsError::UnableToCalculateTotalOwnedCount)
     }
 
-    pub fn to_response(&self) -> ErrorResponse {
+    pub fn into_response(&self) -> ErrorResponse {
         ErrorResponse {
             status: StatusCode::INTERNAL_SERVER_ERROR,
             message: "Internal Server Error",
         }
+    }
+
+    pub fn into_tonic_status(self) -> tonic::Status {
+        tonic::Status::internal("Internal Server Error")
     }
 }
 
@@ -122,11 +141,15 @@ impl LegoMinifiguresError {
         Error::LegoMinifiguresError(LegoMinifiguresError::UnableToCalculateTotalMinifiguresCount)
     }
 
-    pub fn to_response(&self) -> ErrorResponse {
+    pub fn into_response(&self) -> ErrorResponse {
         ErrorResponse {
             status: StatusCode::INTERNAL_SERVER_ERROR,
             message: "Internal Server Error",
         }
+    }
+
+    pub fn into_tonic_status(self) -> tonic::Status {
+        tonic::Status::internal("Internal Server Error")
     }
 }
 
@@ -141,11 +164,15 @@ impl GameError {
         Error::GameError(GameError::GameNotFound(id))
     }
 
-    pub fn to_response(&self) -> ErrorResponse {
+    pub fn into_response(&self) -> ErrorResponse {
         ErrorResponse {
             status: StatusCode::INTERNAL_SERVER_ERROR,
             message: "Internal Server Error",
         }
+    }
+
+    pub fn into_tonic_status(self) -> tonic::Status {
+        tonic::Status::internal("Internal Server Error")
     }
 }
 
@@ -172,11 +199,15 @@ impl AlbumError {
         Error::AlbumError(AlbumError::AlbumPhotoImageNotFound(id, size))
     }
 
-    pub fn to_response(&self) -> ErrorResponse {
+    pub fn into_response(&self) -> ErrorResponse {
         ErrorResponse {
             status: StatusCode::INTERNAL_SERVER_ERROR,
             message: "Internal Server Error",
         }
+    }
+
+    pub fn into_tonic_status(self) -> tonic::Status {
+        tonic::Status::internal("Internal Server Error")
     }
 }
 
@@ -267,12 +298,12 @@ pub enum Error {
 impl Error {
     pub fn into_response(self) -> ErrorResponse {
         match self {
-            Error::AuthError(e) => e.to_response(),
-            Error::AlbumError(e) => e.to_response(),
-            Error::DatabaseError(e) => e.to_response(),
-            Error::LegoSetsError(e) => e.to_response(),
-            Error::LegoMinifiguresError(e) => e.to_response(),
-            Error::GameError(e) => e.to_response(),
+            Error::AuthError(e) => e.into_response(),
+            Error::AlbumError(e) => e.into_response(),
+            Error::DatabaseError(e) => e.into_response(),
+            Error::LegoSetsError(e) => e.into_response(),
+            Error::LegoMinifiguresError(e) => e.into_response(),
+            Error::GameError(e) => e.into_response(),
             _ => ErrorResponse {
                 status: StatusCode::INTERNAL_SERVER_ERROR,
                 message: "Internal Server Error",
@@ -281,7 +312,15 @@ impl Error {
     }
 
     pub fn into_tonic_status(self) -> tonic::Status {
-        tonic::Status::new(tonic::Code::Internal, "Internal Server Error")
+        match self {
+            Error::AuthError(e) => e.into_tonic_status(),
+            Error::AlbumError(e) => e.into_tonic_status(),
+            Error::DatabaseError(e) => e.into_tonic_status(),
+            Error::LegoSetsError(e) => e.into_tonic_status(),
+            Error::LegoMinifiguresError(e) => e.into_tonic_status(),
+            Error::GameError(e) => e.into_tonic_status(),
+            _ => tonic::Status::new(tonic::Code::Internal, "Internal Server Error"),
+        }
     }
 }
 
