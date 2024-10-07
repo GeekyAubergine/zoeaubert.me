@@ -15,7 +15,7 @@ use crate::{
 const FILE_NAME: &str = "silly_names.csv";
 
 #[derive(Debug, Clone)]
-pub struct SillyNameDbEntity {
+pub struct SillyNameRepoEntity {
     pub uuid: Uuid,
     pub name: String,
     pub deleted_at: Option<DateTime<Utc>>,
@@ -33,9 +33,9 @@ impl SillyNamesRepo {
         }
     }
 
-    pub async fn find_by_uuid(&self, uuid: Uuid) -> Result<Option<SillyNameDbEntity>> {
+    pub async fn find_by_uuid(&self, uuid: Uuid) -> Result<Option<SillyNameRepoEntity>> {
         sqlx::query_as!(
-            SillyNameDbEntity,
+            SillyNameRepoEntity,
             "
             SELECT * FROM silly_names
             WHERE uuid = $1
@@ -47,9 +47,9 @@ impl SillyNamesRepo {
         .map_err(DatabaseError::from_query_error)
     }
 
-    pub async fn find_by_name(&self, name: &str) -> Result<Option<SillyNameDbEntity>> {
+    pub async fn find_by_name(&self, name: &str) -> Result<Option<SillyNameRepoEntity>> {
         sqlx::query_as!(
-            SillyNameDbEntity,
+            SillyNameRepoEntity,
             "
             SELECT * FROM silly_names
             WHERE name = $1
@@ -61,9 +61,9 @@ impl SillyNamesRepo {
         .map_err(DatabaseError::from_query_error)
     }
 
-    pub async fn find_all(&self) -> Result<HashMap<Uuid, SillyNameDbEntity>> {
+    pub async fn find_all(&self) -> Result<HashMap<Uuid, SillyNameRepoEntity>> {
         let names = sqlx::query_as!(
-            SillyNameDbEntity,
+            SillyNameRepoEntity,
             "
             SELECT * FROM silly_names
             "
@@ -94,7 +94,7 @@ impl SillyNamesRepo {
         Ok(())
     }
 
-    pub async fn commit(&self, silly_name: &SillyNameDbEntity) -> Result<()> {
+    pub async fn commit(&self, silly_name: &SillyNameRepoEntity) -> Result<()> {
         if let Some(_) = self.find_by_uuid(silly_name.uuid).await? {
             sqlx::query!(
                 "
@@ -113,7 +113,6 @@ impl SillyNamesRepo {
             return Ok(());
         }
 
-        println!("committing silly name: {:?}", silly_name);
         sqlx::query!(
             "
             INSERT INTO silly_names (uuid, name, deleted_at)

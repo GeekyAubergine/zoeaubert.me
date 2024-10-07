@@ -1,17 +1,23 @@
-use api_client::make_api_client;
+#[macro_use]
+extern crate lazy_static;
+
 use clap::{Parser, Subcommand};
+use commands::upload;
 use dotenvy_macro::dotenv;
 use error::Error;
 use prelude::Result;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
+use utils::api_client::make_api_client;
 use std::path::Path;
 use tracing::{debug, info, Level};
 
-pub mod api_client;
+pub mod commands;
 pub mod error;
+pub mod microblog_archive;
+pub mod microposts;
 pub mod prelude;
 pub mod silly_names;
-pub mod upload;
+pub mod utils;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]

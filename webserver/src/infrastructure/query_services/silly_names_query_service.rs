@@ -4,11 +4,11 @@ use uuid::Uuid;
 
 use crate::{
     domain::models::silly_name::SillyName,
-    infrastructure::{app_state::AppState, repos::silly_names_repo::SillyNameDbEntity},
+    infrastructure::{app_state::AppState, repos::silly_names_repo::SillyNameRepoEntity},
     prelude::Result,
 };
 
-impl From<&SillyName> for SillyNameDbEntity {
+impl From<&SillyName> for SillyNameRepoEntity {
     fn from(silly_name: &SillyName) -> Self {
         Self {
             uuid: silly_name.uuid,
@@ -18,8 +18,8 @@ impl From<&SillyName> for SillyNameDbEntity {
     }
 }
 
-impl From<&SillyNameDbEntity> for SillyName {
-    fn from(silly_name: &SillyNameDbEntity) -> Self {
+impl From<&SillyNameRepoEntity> for SillyName {
+    fn from(silly_name: &SillyNameRepoEntity) -> Self {
         Self {
             uuid: silly_name.uuid,
             name: silly_name.name.to_string(),

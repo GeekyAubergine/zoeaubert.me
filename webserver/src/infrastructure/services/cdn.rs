@@ -1,14 +1,16 @@
 use std::{fmt::Display, path::Path};
 
+use dotenvy_macro::dotenv;
 use reqwest::{header::ACCEPT, Body, ClientBuilder};
 use serde::Deserialize;
+use shared::cache::CachePath;
 use tokio::fs::{self, File};
 use tokio_util::codec::{BytesCodec, FramedRead};
 use tracing::debug;
 
 use crate::{error::Error, infrastructure::config::Config, prelude::*};
 
-use super::cache::CachePath;
+const CACHE_DIR: &str = dotenv!("CACHE_DIR");
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct BunnyCdnFileResponse {
@@ -22,6 +24,10 @@ pub struct CdnPath(String);
 impl CdnPath {
     pub fn new(path: String) -> Self {
         Self(path.replace("//", "/"))
+    }
+
+    pub fn from_cache_path(path: &CachePath) -> Self {
+        Self(path.as_str().replace(CACHE_DIR, ""))
     }
 
     pub fn file_name(&self) -> Result<&str> {
@@ -147,7 +153,7 @@ impl Cdn {
         cnd_path: &CdnPath,
         config: &Config,
     ) -> Result<()> {
-        let file = File::open(cache_path.path())
+        let file = File::open(cache_path.as_path())
             .await
             .map_err(Error::FileSystemUnreadable)?;
 

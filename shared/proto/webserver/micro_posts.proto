@@ -1,17 +1,19 @@
 syntax = "proto3";
 package me.zoeaubert.webserver;
 
+import "webserver/image.proto";
+
 message MicroPost {
     string uuid = 1;
     string slug = 2;
     string date = 3;
     string content = 4;
     repeated string tags = 5;
-    repeated string image_urls = 6;
+    repeated Image images = 6;
 }
 
 service MicroPosts {
-    rpc UpdateMicroPost(UpdateMicroPostRequest) returns (MicroPost) {}
+    rpc UpdateMicroPost(UpdateMicroPostRequest) returns (UpdateMicroPostResponse) {}
 }
 
 message UpdateMicroPostRequest {

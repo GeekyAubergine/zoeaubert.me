@@ -89,6 +89,7 @@ impl Job for LoadMicroblogArchiveJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
+        return Ok(());
         info!("Loading microblog archive");
         let archive_file: String = app_state
             .content_dir()

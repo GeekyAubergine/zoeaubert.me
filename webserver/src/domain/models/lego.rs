@@ -130,6 +130,15 @@ impl LegoMinifig {
         &self.name
     }
 
+    pub fn display_name(&self) -> String {
+        let name = match self.name.split(" - ").next() {
+            Some(name) => name.to_string(),
+            None => self.name.clone(),
+        };
+
+        name.replace("(Minifigure Only without Stand and Accessories)", "")
+    }
+
     pub fn category(&self) -> &str {
         &self.category
     }

@@ -6,11 +6,16 @@ use serde::{Deserialize, Serialize};
 use tracing::{debug, info, warn};
 
 use crate::{
-    application::events::Event, domain::models::game::Game, get_json, infrastructure::{
+    application::events::Event,
+    domain::models::game::Game,
+    get_json,
+    infrastructure::{
         app_state::AppState,
         bus::job_runner::{Job, JobPriority},
         config::Config,
-    }, prelude::Result, GAMES_ARCHIVE_FILENAME, ONE_HOUR_CACHE_PERIOD
+    },
+    prelude::Result,
+    GAMES_ARCHIVE_FILENAME, ONE_HOUR_CACHE_PERIOD,
 };
 
 use super::fetch_game_data_from_steam_job::{
@@ -96,8 +101,8 @@ async fn get_steam_owned_games(config: &Config) -> Result<HashMap<u32, SteamOwne
 }
 
 #[derive(Debug)]
-pub struct GamesDownloadDataJob;
-impl GamesDownloadDataJob {
+pub struct FetchGamesDataJob;
+impl FetchGamesDataJob {
     pub fn new() -> Self {
         Self
     }
@@ -105,14 +110,12 @@ impl GamesDownloadDataJob {
 
 async fn process_game(state: &AppState, game: SteamOwnedGame) -> Result<()> {
     if let Some(stored_game) = state.games_repo().find_by_id(game.appid()).await? {
-        if &steam_last_played_to_datetime(game.rtime_last_played())
-            <= stored_game.last_played()
-        {
+        if &steam_last_played_to_datetime(game.rtime_last_played()) <= stored_game.last_played() {
             return Ok(());
         }
     }
 
-    info!("Fething game: {}", game.name());
+    info!("Fetching game: {} [{}]", game.name(), game.appid());
 
     let game_link = format!(
         "https://store.steampowered.com/app/{}/{}",
@@ -137,15 +140,17 @@ async fn process_game(state: &AppState, game: SteamOwnedGame) -> Result<()> {
 
     state.games_repo().commit(&game).await?;
 
-    state.dispatch_event(Event::GameUpdated { game_id: game.id() }).await?;
+    state
+        .dispatch_event(Event::GameUpdated { game_id: game.id() })
+        .await?;
 
     Ok(())
 }
 
 #[async_trait]
-impl Job for GamesDownloadDataJob {
+impl Job for FetchGamesDataJob {
     fn name(&self) -> &str {
-        "GamesDownloadDataJob"
+        "FetchGamesDataJob"
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
@@ -154,12 +159,12 @@ impl Job for GamesDownloadDataJob {
             .find_most_recently_updated_date()
             .await?;
 
-        if let Some(last_fetch) = last_fetch {
-            if last_fetch + NO_REFETCH_DURATION > Utc::now() {
-                debug!("Skipping fetching games data from steam");
-                return Ok(());
-            }
-        }
+        // if let Some(last_fetch) = last_fetch {
+        //     if last_fetch + NO_REFETCH_DURATION > Utc::now() {
+        //         debug!("Skipping fetching games data from steam");
+        //         return Ok(());
+        //     }
+        // }
 
         let games = app_state.games_repo().find_all_games().await;
 

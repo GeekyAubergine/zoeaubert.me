@@ -2,6 +2,9 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use shared::{cache::CacheDirError, utils::date::DatePaserError};
+use tokio::sync::oneshot::error;
+use tracing::{debug, error, info};
 use uuid::Uuid;
 
 use crate::{application::events::Event, infrastructure::bus::job_runner::Job};
@@ -212,6 +215,18 @@ impl AlbumError {
 }
 
 #[derive(Debug, thiserror::Error)]
+pub enum MicroPostError {
+    #[error("Post not found {0}")]
+    NotFound(String),
+}
+
+impl MicroPostError {
+    pub fn not_found(slug: String) -> Error {
+        Error::MicroPostError(MicroPostError::NotFound(slug))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Couldn't read dir {0}")]
     ReadDir(std::io::Error),
@@ -293,10 +308,24 @@ pub enum Error {
 
     #[error("Auth Error: {0}")]
     AuthError(#[from] AuthError),
+
+    #[error("Micro Post Error: {0}")]
+    MicroPostError(#[from] MicroPostError),
+
+    #[error("Date Parser Error: {0}")]
+    DateParserError(#[from] DatePaserError),
+
+    #[error("Cache Error: {0}")]
+    CacheError(#[from] CacheDirError),
+
+    #[error("Invalid UUID {0}")]
+    InvalidUuid(uuid::Error),
 }
 
 impl Error {
     pub fn into_response(self) -> ErrorResponse {
+        error!("API Error: {:?}", self);
+
         match self {
             Error::AuthError(e) => e.into_response(),
             Error::AlbumError(e) => e.into_response(),
@@ -312,6 +341,8 @@ impl Error {
     }
 
     pub fn into_tonic_status(self) -> tonic::Status {
+        error!("GRPC Error: {:?}", self);
+
         match self {
             Error::AuthError(e) => e.into_tonic_status(),
             Error::AlbumError(e) => e.into_tonic_status(),

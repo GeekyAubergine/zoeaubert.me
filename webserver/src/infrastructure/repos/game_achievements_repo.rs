@@ -8,6 +8,7 @@ use std::{
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::{sync::RwLock, task::JoinSet};
+use tracing::info;
 
 use crate::{
     domain::models::game_achievement::{
@@ -71,15 +72,16 @@ impl GameAchievementsRepo {
         }
     }
 
-    pub async fn find_by_id(&self, id: &str) -> Result<GameAchievement> {
+    pub async fn find_by_id(&self, id: &str, game_id: u32) -> Result<GameAchievement> {
         let row = sqlx::query_as!(
             SelectedRow,
             "
             SELECT id, game_id, display_name, description, locked_image_url, unlocked_image_url, unlocked_date, global_unlocked_percentage, updated_at
             FROM game_achievements
-            WHERE id = $1
+            WHERE id = $1 AND game_id = $2
             ",
-            id
+            id,
+            game_id as i64
         )
         .fetch_one(&self.database_connection)
         .await
@@ -145,7 +147,12 @@ impl GameAchievementsRepo {
     }
 
     pub async fn commit(&self, achievment: &GameAchievement) -> Result<()> {
-        if let Ok(_) = self.find_by_id(achievment.id()).await {
+        info!(
+            "Updating or commiting {} {}",
+            achievment.id(),
+            achievment.game_id()
+        );
+        if let Ok(_) = self.find_by_id(achievment.id(), achievment.game_id()).await {
             match achievment {
                 GameAchievement::Locked(achievement) => {
                     sqlx::query!(

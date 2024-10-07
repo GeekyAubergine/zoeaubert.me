@@ -191,64 +191,63 @@ impl Job for FetchGameAchievementsFromSteamJob {
             .await?
             .ok_or(GameError::game_not_found(self.game_id))?;
 
-        info!("Fething game achievments: {}", game.name());
+        info!("Fething game achievments: {} [{}]", game.name(), game.id());
+        let player_achievements = get_steam_player_achievements(game.id(), state.config()).await?;
 
-        if let Ok(game_data) = get_steam_game_data(game.id(), state.config()).await {
-            let player_achievements =
-                get_steam_player_achievements(game.id(), state.config()).await?;
+        let game_data = get_steam_game_data(game.id(), state.config()).await?;
 
-            let global_achievement_percentage =
-                get_steam_global_achievement_percentage(game.id(), state.config()).await?;
 
-            for achievement in game_data {
-                let player_achievement = player_achievements
-                    .iter()
-                    .find(|player_achievement| player_achievement.apiname == achievement.name);
+        let global_achievement_percentage =
+            get_steam_global_achievement_percentage(game.id(), state.config()).await?;
 
-                let unlocked_date = match player_achievement {
-                    Some(player_achievement) => {
-                        if player_achievement.achieved == 1 {
-                            DateTime::from_timestamp(player_achievement.unlocktime as i64, 0)
-                        } else {
-                            None
-                        }
+        for achievement in game_data {
+            let player_achievement = player_achievements
+                .iter()
+                .find(|player_achievement| player_achievement.apiname == achievement.name);
+
+            let unlocked_date = match player_achievement {
+                Some(player_achievement) => {
+                    if player_achievement.achieved == 1 {
+                        DateTime::from_timestamp(player_achievement.unlocktime as i64, 0)
+                    } else {
+                        None
                     }
-                    None => None,
-                };
+                }
+                None => None,
+            };
 
-                let global_achievement = global_achievement_percentage
-                    .iter()
-                    .find(|global_achievement| global_achievement.name == achievement.name);
+            let global_achievement = global_achievement_percentage
+                .iter()
+                .find(|global_achievement| global_achievement.name == achievement.name);
 
-                let global_percentage = match global_achievement {
-                    Some(global_achievement) => global_achievement.percent,
-                    None => 0.0,
-                };
+            let global_percentage = match global_achievement {
+                Some(global_achievement) => global_achievement.percent,
+                None => 0.0,
+            };
 
-                let achievment = match unlocked_date {
-                    Some(unlocked_date) => GameAchievement::Unlocked(GameAchievementUnlocked::new(
-                        achievement.name.clone(),
-                        game.id(),
-                        achievement.display_name,
-                        achievement.description.unwrap_or("".to_string()),
-                        achievement.icon,
-                        unlocked_date,
-                        global_percentage,
-                        Utc::now(),
-                    )),
-                    None => GameAchievement::Locked(GameAchievementLocked::new(
-                        achievement.name.clone(),
-                        game.id(),
-                        achievement.display_name,
-                        achievement.description.unwrap_or("".to_string()),
-                        achievement.icon_gray,
-                        global_percentage,
-                        Utc::now(),
-                    )),
-                };
+            let achievment = match unlocked_date {
+                Some(unlocked_date) => GameAchievement::Unlocked(GameAchievementUnlocked::new(
+                    achievement.name.clone(),
+                    game.id(),
+                    achievement.display_name,
+                    achievement.description.unwrap_or("".to_string()),
+                    achievement.icon,
+                    unlocked_date,
+                    global_percentage,
+                    Utc::now(),
+                )),
+                None => GameAchievement::Locked(GameAchievementLocked::new(
+                    achievement.name.clone(),
+                    game.id(),
+                    achievement.display_name,
+                    achievement.description.unwrap_or("".to_string()),
+                    achievement.icon_gray,
+                    global_percentage,
+                    Utc::now(),
+                )),
+            };
 
-                state.game_achievements_repo().commit(&achievment).await?;
-            }
+            state.game_achievements_repo().commit(&achievment).await?;
         }
 
         state.dispatch_event(Event::GamesRepoUpdated).await?;

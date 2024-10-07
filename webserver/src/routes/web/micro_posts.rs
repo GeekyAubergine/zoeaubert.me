@@ -6,23 +6,36 @@ use axum::{
     routing::get,
     Router,
 };
+use uuid::Uuid;
 
 use crate::{
     build_data,
     domain::models::{
         mastodon_post::MastodonPost,
-        media::{image::Image, Media},
+        media::{image::Image, Media, MediaUuid},
         micro_post::MicroPost,
         microblog_archive::MicroblogArchivePost,
         page::Page,
         tag::Tag,
+        UuidIdentifiable,
     },
-    infrastructure::app_state::AppState,
+    error::MicroPostError,
+    infrastructure::{
+        app_state::AppState,
+        query_services::{
+            media_query_service::find_media_by_uuids,
+            micro_posts_query_service::find_micro_post_by_slug,
+            tags_query_service::find_tags_byr_entity,
+        },
+    },
+    ResponseResult,
 };
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
-pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::formatters::format_date::FormatDate;
+pub use crate::infrastructure::formatters::format_markdown::FormatMarkdown;
+pub use crate::infrastructure::formatters::format_number::FormatNumber;
+
+use crate::prelude::Result;
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -55,47 +68,38 @@ async fn old_mastodon_slug_redirect(
 
 pub enum Post {
     MicroPost(MicroPost),
-    MicroBlogArchive(MicroblogArchivePost),
     MastodonPost(MastodonPost),
 }
 
 impl Post {
     pub fn slug(&self) -> &str {
         match self {
-            Self::MicroPost(micro_post) => micro_post.slug(),
-            Self::MicroBlogArchive(archive_post) => archive_post.slug(),
+            Self::MicroPost(micro_post) => micro_post.slug,
             Self::MastodonPost(mastodon_post) => mastodon_post.id(),
         }
     }
 
     pub fn date(&self) -> &chrono::DateTime<chrono::Utc> {
         match self {
-            Self::MicroPost(micro_post) => micro_post.date(),
-            Self::MicroBlogArchive(archive_post) => archive_post.date(),
+            Self::MicroPost(micro_post) => micro_post.date,
             Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
         }
     }
 
     pub fn content(&self) -> &str {
         match self {
-            Self::MicroPost(micro_post) => micro_post.content(),
-            Self::MicroBlogArchive(archive_post) => archive_post.content(),
+            Self::MicroPost(micro_post) => micro_post.content,
             Self::MastodonPost(mastodon_post) => mastodon_post.content(),
         }
     }
 
-    pub fn tags(&self) -> &Vec<Tag> {
+    pub fn media(&self) -> &Vec<MediaUuid> {
         match self {
-            Self::MicroPost(micro_post) => micro_post.tags(),
-            Self::MicroBlogArchive(archive_post) => archive_post.tags(),
-            Self::MastodonPost(mastodon_post) => mastodon_post.tags(),
-        }
-    }
-
-    pub fn media(&self) -> Vec<Media> {
-        match self {
-            Self::MicroPost(micro_post) => vec![],
-            Self::MicroBlogArchive(archive_post) => vec![],
+            Self::MicroPost(micro_post) => &micro_post
+                .image_order
+                .iter()
+                .map(|image_uuid| image_uuid.into())
+                .collect::<Vec<MediaUuid>>(),
             Self::MastodonPost(mastodon_post) => mastodon_post.media().to_owned(),
         }
     }
@@ -103,8 +107,16 @@ impl Post {
     pub fn original_url(&self) -> Option<&str> {
         match self {
             Self::MicroPost(_) => None,
-            Self::MicroBlogArchive(_) => None,
             Self::MastodonPost(mastodon_post) => Some(mastodon_post.original_uri()),
+        }
+    }
+}
+
+impl UuidIdentifiable for Post {
+    fn uuid(&self) -> &Uuid {
+        match self {
+            Self::MicroPost(micro_post) => micro_post.uuid().into(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.uuid(),
         }
     }
 }
@@ -114,24 +126,24 @@ impl Post {
 pub struct PostTemplate {
     page: Page,
     post: Post,
+    media: Vec<Media>,
 }
 
 async fn post_page(
     Path(id): Path<String>,
     State(state): State<AppState>,
-) -> Result<PostTemplate, (StatusCode, &'static str)> {
-    let micro_post = state.micro_posts_repo().get_by_slug(&id).await;
-
-    let archive_post = state.microblog_archive_repo().get_by_slug(&id).await;
+) -> ResponseResult<PostTemplate> {
+    let micro_post = find_micro_post_by_slug(state.micro_posts_repo(), &id).await?;
 
     let mastodon_post = state.mastodon_posts_repo().get_by_id(&id).await;
 
-    let post = match (micro_post, archive_post, mastodon_post) {
-        (Some(micro_post), _, _) => Post::MicroPost(micro_post),
-        (_, Some(archive_post), _) => Post::MicroBlogArchive(archive_post),
-        (_, _, Some(mastodon_post)) => Post::MastodonPost(mastodon_post),
-        _ => return Err((StatusCode::NOT_FOUND, "Post not found")),
+    let post = match (micro_post, mastodon_post) {
+        (Some(micro_post), None) => Post::MicroPost(micro_post),
+        (None, Some(mastodon_post)) => Post::MastodonPost(mastodon_post),
+        _ => return Err(MicroPostError::not_found(id).into_response()),
     };
+
+    let tags = find_tags_byr_entity(&post, state.tags_repo()).await?;
 
     let page = Page::new(
         state.site(),
@@ -140,7 +152,13 @@ async fn post_page(
         None,
     )
     .with_date(*post.date())
-    .with_tags(post.tags().to_vec());
+    .with_tags(tags);
 
-    Ok(PostTemplate { page, post })
+    let media = find_media_by_uuids(post.media(), state.images_repo())
+        .await?
+        .values()
+        .cloned()
+        .collect();
+
+    Ok(PostTemplate { page, post, media })
 }

@@ -13,16 +13,13 @@ use crate::{
         page::Page,
         tag::{Tag, TagSlug},
     },
-    infrastructure::{
-        app_state::AppState,
-        repos::omni_post_repo::{OmniPostFilterFlags, OmniPostRepo},
-    },
+    infrastructure::{app_state::AppState, query_services::omni_post_query_service::OmniPostQueryService},
     routes::Pagination,
 };
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
-pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::formatters::format_date::FormatDate;
+pub use crate::infrastructure::formatters::format_markdown::FormatMarkdown;
+pub use crate::infrastructure::formatters::format_number::FormatNumber;
 
 const PHOTOS_PER_PAGE: usize = 24;
 
@@ -43,24 +40,26 @@ async fn index(
 ) -> Result<PhotosTemplate, (StatusCode, &'static str)> {
     pagination.set_default_pagination(PHOTOS_PER_PAGE);
 
-    let photos: Vec<Image> =
-        OmniPostRepo::get_posts_ordered_by_date(&state, OmniPostRepo::filter_non_album())
-            .await
-            .map_err(|e| {
-                error!("Failed to get posts ordered by date: {:?}", e);
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    "Failed to get posts ordered by date",
-                )
-            })?
-            .iter()
-            .flat_map(|post| post.media())
-            .filter_map(|media| match media {
-                Media::Image(image) => Some(image.clone()),
-                _ => None,
-            })
-            .clone()
-            .collect();
+    let photos: Vec<Image> = OmniPostQueryService::get_posts_ordered_by_date(
+        &state,
+        OmniPostQueryService::filter_non_album(),
+    )
+    .await
+    .map_err(|e| {
+        error!("Failed to get posts ordered by date: {:?}", e);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Failed to get posts ordered by date",
+        )
+    })?
+    .iter()
+    .flat_map(|post| post.media())
+    .filter_map(|media| match media {
+        Media::Image(image) => Some(image.clone()),
+        _ => None,
+    })
+    .clone()
+    .collect();
 
     let total_posts_count = photos.len();
 

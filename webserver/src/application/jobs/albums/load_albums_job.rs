@@ -4,15 +4,19 @@ use serde::Deserialize;
 use tracing::{error, info};
 
 use crate::{
-    application::jobs::albums::load_album_job::LoadAlbumJob, domain::models::{
+    application::jobs::albums::load_album_job::LoadAlbumJob,
+    domain::models::{
         album::{Album, AlbumPhoto},
         media::image::Image,
         tag::Tag,
-    }, error::Error, infrastructure::{
+    },
+    error::Error,
+    infrastructure::{
         app_state::{self, AppState},
         bus::job_runner::{Job, JobPriority},
-        services::{cache::CachePath, date::parse_date, files::find_files_rescurse},
-    }, prelude::Result
+        services::{cache::CachePath, files::find_files_rescurse},
+    },
+    prelude::Result,
 };
 
 const ALBUMS_POSTS_DIR: &str = "albums";
@@ -102,7 +106,9 @@ impl Job for LoadAlbumsJob {
 
             match serde_yaml::from_str(&album_content).map_err(Error::ParseAlbum) {
                 Ok(album) => {
-                    app_state.dispatch_job(LoadAlbumJob::new(album), JobPriority::Normal).await?;
+                    app_state
+                        .dispatch_job(LoadAlbumJob::new(album), JobPriority::Normal)
+                        .await?;
                 }
                 Err(e) => error!("Error parsing album: {:?}", e),
             }

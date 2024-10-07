@@ -1,5 +1,5 @@
 use crate::application::jobs::games::fetch_game_data_from_steam_job::FetchGameAchievementsFromSteamJob;
-use crate::application::jobs::games::fetch_games_data_from_steam_job::GamesDownloadDataJob;
+use crate::application::jobs::games::fetch_games_data_from_steam_job::FetchGamesDataJob;
 use crate::infrastructure::bus::event_queue::EventListener;
 use crate::infrastructure::bus::job_runner::JobPriority;
 use crate::{
@@ -26,7 +26,7 @@ impl EventListener for GamesListener {
         match event {
             Event::ServerBooted => {
                 app_state
-                    .dispatch_job(GamesDownloadDataJob::new(), JobPriority::Normal)
+                    .dispatch_job(FetchGamesDataJob::new(), JobPriority::Normal)
                     .await?;
             }
             Event::GameUpdated { game_id } => {

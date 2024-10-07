@@ -20,9 +20,9 @@ use crate::{
     ResponseResult,
 };
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
-pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::formatters::format_date::FormatDate;
+pub use crate::infrastructure::formatters::format_markdown::FormatMarkdown;
+pub use crate::infrastructure::formatters::format_number::FormatNumber;
 
 const RECENT_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
@@ -48,7 +48,7 @@ async fn list(State(state): State<AppState>) -> ResponseResult<LegoListTemplate>
         state.site(),
         "/interests/lego",
         Some("Lego"),
-        Some("My Lgo Collection"),
+        Some("My Lego Collection"),
     );
 
     let sets = state.lego_set_repo().find_all_sort_by_most_pieces().await?;

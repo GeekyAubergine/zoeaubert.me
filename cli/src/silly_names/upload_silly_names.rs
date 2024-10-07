@@ -2,11 +2,7 @@ use shared::zoeaubert_proto::webserver::{SillyName, UpdateSillyNamesRequest};
 use tonic::Request;
 use tracing::info;
 
-use crate::{
-    api_client::{ApiClient, ApiResponse},
-    error::TonicError,
-    prelude::Result,
-};
+use crate::{error::TonicError, prelude::Result, utils::api_client::ApiClient};
 
 use super::read_silly_names_file;
 
@@ -24,13 +20,11 @@ pub async fn upload_silly_names(api_client: &ApiClient) -> Result<()> {
 
     let request = Request::new(UpdateSillyNamesRequest { names: silly_names });
 
-    let response = api_client
+    api_client
         .silly_names_client()
         .update_silly_names(request)
         .await
         .map_err(TonicError::server_returned_status)?;
-
-    println!("RESPONSE={:?}", response);
 
     Ok(())
 }

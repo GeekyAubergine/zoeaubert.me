@@ -1,6 +1,9 @@
 use tonic_reflection::server::{ServerReflection, ServerReflectionServer};
 use zoeaubert_proto::FILE_DESCRIPTOR_SET;
 
+pub mod utils;
+pub mod cache;
+
 pub mod zoeaubert_proto {
     pub mod webserver {
         tonic::include_proto!("me.zoeaubert.webserver");

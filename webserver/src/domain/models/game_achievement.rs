@@ -148,6 +148,13 @@ impl GameAchievement {
         }
     }
 
+    pub fn game_id(&self) -> u32 {
+        match self {
+            Self::Unlocked(achievement) => achievement.game_id(),
+            Self::Locked(achievement) => achievement.game_id(),
+        }
+    }
+
     pub fn display_name(&self) -> &str {
         match self {
             Self::Unlocked(achievement) => achievement.display_name(),

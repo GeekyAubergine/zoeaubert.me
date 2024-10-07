@@ -4,8 +4,6 @@ pub mod faq;
 pub mod games;
 pub mod lego;
 pub mod mastodon_posts;
-pub mod micro_posts;
-pub mod microblog_archive;
 pub mod status_lol;
 pub mod cdn;
 pub mod albums;

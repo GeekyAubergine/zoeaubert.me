@@ -1,7 +1,9 @@
+use error::SillyNamesError;
 use serde::{Deserialize, Serialize};
 
-use crate::{content_folder_path, error::SillyNamesError, prelude::Result};
+use crate::{content_folder_path, prelude::Result};
 
+pub mod error;
 pub mod upload_silly_names;
 
 pub const SILLY_NAMES_FILE_NAME: &str = "silly_names.csv";

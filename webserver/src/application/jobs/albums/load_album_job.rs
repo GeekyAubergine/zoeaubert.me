@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
+use shared::utils::date::parse_date;
 use tracing::info;
 use uuid::Uuid;
 
@@ -16,7 +17,7 @@ use crate::{
         app_state::{self, AppState},
         bus::job_runner::{Job, JobPriority},
         config::Config,
-        services::{cache::CachePath, date::parse_date, files::find_files_rescurse},
+        services::{cache::CachePath,files::find_files_rescurse},
     },
     prelude::Result,
 };

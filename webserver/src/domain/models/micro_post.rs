@@ -1,53 +1,97 @@
+use std::fmt;
+
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::domain::models::{media::Media, tag::Tag};
 
+use super::{
+    media::{image::ImageUuid, MediaUuid},
+    UuidIdentifiable,
+};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MicroPostUuid(pub Uuid);
+
+impl MicroPostUuid {
+    pub fn new(uuid: Uuid) -> Self {
+        Self(uuid)
+    }
+}
+
+impl From<Uuid> for MicroPostUuid {
+    fn from(uuid: Uuid) -> Self {
+        Self::new(uuid)
+    }
+}
+
+impl From<MicroPostUuid> for Uuid {
+    fn from(micro_post_uuid: MicroPostUuid) -> Self {
+        micro_post_uuid.0
+    }
+}
+
+impl From<&MicroPostUuid> for Uuid {
+    fn from(micro_post_uuid: &MicroPostUuid) -> Self {
+        micro_post_uuid.0
+    }
+}
+
+impl fmt::Display for MicroPostUuid {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct MicroPost {
-    slug: String,
-    date: DateTime<Utc>,
-    content: String,
-    tags: Vec<Tag>,
-    media: Vec<Media>,
+    pub uuid: MicroPostUuid,
+    pub slug: String,
+    pub date: DateTime<Utc>,
+    pub content: String,
+    pub image_order: Vec<ImageUuid>,
+    pub updated_at: DateTime<Utc>,
 }
 
 impl MicroPost {
-    pub fn new(slug: String, date: DateTime<Utc>, content: String, tags: Vec<Tag>) -> Self {
+    pub fn new(
+        uuid: MicroPostUuid,
+        slug: String,
+        date: DateTime<Utc>,
+        content: String,
+        image_order: Vec<ImageUuid>,
+    ) -> Self {
         Self {
+            uuid,
             slug,
             date,
             content,
-            tags,
-            media: vec![],
+            image_order: vec![],
+            updated_at: Utc::now(),
         }
     }
 
-    pub fn with_media(mut self, media: Vec<Media>) -> Self {
-        self.media = media;
+    pub fn with_updated_at(mut self, updated_at: DateTime<Utc>) -> Self {
+        self.updated_at = updated_at;
         self
-    }
-
-    pub fn slug(&self) -> &str {
-        &self.slug
-    }
-
-    pub fn date(&self) -> &DateTime<Utc> {
-        &self.date
-    }
-
-    pub fn content(&self) -> &str {
-        &self.content
-    }
-
-    pub fn tags(&self) -> &Vec<Tag> {
-        &self.tags
     }
 
     pub fn permalink(&self) -> String {
         format!("/micros/{}", self.slug)
     }
 
-    pub fn media(&self) -> &Vec<Media> {
-        &self.media
+    pub fn media_order(&self) -> Vec<MediaUuid> {
+        self
+            .image_order
+            .iter()
+            .map(|image_uuid| image_uuid.into())
+            .collect::<Vec<MediaUuid>>()
+    }
+}
+
+impl UuidIdentifiable for MicroPost {
+    fn uuid(&self) -> &Uuid {
+        &self.uuid.0
     }
 }

@@ -1,3 +1,5 @@
+use crate::domain::models::micro_post::MicroPostUuid;
+
 #[derive(Debug)]
 pub enum Event {
     ServerBooted,
@@ -29,6 +31,8 @@ pub enum Event {
     MastodonPostsRepoLoadedFromArchive,
     MastodonPostsRepoUpdated,
     MastodonPostsRepoArchived,
+
+    MicroPostUpdated { uuid: MicroPostUuid },
 }
 
 impl Event {
@@ -63,6 +67,8 @@ impl Event {
             Event::MastodonPostsRepoLoadedFromArchive => "mastodon_posts_repo.loaded_from_archive",
             Event::MastodonPostsRepoUpdated => "mastodon_posts_repo.updated",
             Event::MastodonPostsRepoArchived => "mastodon_posts_repo.archived",
+
+            Event::MicroPostUpdated { .. } => "micro_post.updated",
         }
     }
 }

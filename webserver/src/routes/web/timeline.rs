@@ -6,23 +6,62 @@ use axum::{
     Router,
 };
 use tracing::error;
+use uuid::Uuid;
 
 use crate::{
     domain::models::{
         media::Media,
         omni_post::OmniPost,
         page::{Page, PagePagination, PagePaginationLabel},
+        tag::Tag, UuidIdentifiable,
     },
-    infrastructure::{app_state::AppState, repos::omni_post_repo::OmniPostRepo},
+    infrastructure::{
+        app_state::AppState,
+        query_services::{
+            omni_post_query_service::{
+                find_omni_posts_by_date, OmniPostFilterFlags, OmniPostQueryService,
+            },
+            tags_query_service::find_tags_for_entities,
+        },
+    },
     routes::Pagination,
+    ResponseResult,
 };
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
-pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::formatters::format_date::FormatDate;
+pub use crate::infrastructure::formatters::format_markdown::FormatMarkdown;
+pub use crate::infrastructure::formatters::format_number::FormatNumber;
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))
+}
+
+pub struct Post {
+    pub post: OmniPost,
+    pub media: Vec<Media>,
+    pub tags: Vec<Tag>,
+}
+
+impl Post {
+    pub fn key(&self) -> String {
+        self.post.key()
+    }
+
+    pub fn permalink(&self) -> String{
+        self.post.permalink()
+    }
+
+    pub fn date(&self) -> &chrono::DateTime<chrono::Utc> {
+        &self.post.date()
+    }
+
+    pub fn tags(&self) -> &Vec<Tag> {
+        &self.tags
+    }
+
+    pub fn media(&self) -> &Vec<Media> {
+        &self.media
+    }
 }
 
 #[derive(Template)]
@@ -34,17 +73,14 @@ pub struct IndexTemplate {
 async fn index(
     State(state): State<AppState>,
     pagination: Query<Pagination>,
-) -> Result<IndexTemplate, (StatusCode, &'static str)> {
-    let posts =
-        OmniPostRepo::get_posts_ordered_by_date(&state, OmniPostRepo::filter_non_album_photo_and_game_achievement())
-            .await
-            .map_err(|e| {
-                error!("Failed to get posts ordered by date: {:?}", e);
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    "Failed to get posts ordered by date",
-                )
-            })?;
+) -> ResponseResult<IndexTemplate> {
+    let posts = find_omni_posts_by_date(
+        &state,
+        OmniPostFilterFlags::filter_non_album_photo_and_game_achievement(),
+    )
+    .await?;
+
+    let tags = find_tags_for_entities(&posts, state.tags_repo()).await?;
 
     let total_posts_count = posts.len();
 

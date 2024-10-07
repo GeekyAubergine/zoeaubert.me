@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use serde::Deserialize;
+use shared::utils::date::parse_date;
 use tracing::info;
 use uuid::Uuid;
 
@@ -14,10 +15,7 @@ use crate::{
     infrastructure::{
         app_state::{self, AppState},
         bus::job_runner::Job,
-        services::{
-            date::parse_date, extract_media::extract_media_from_markdown,
-            files::find_files_rescurse,
-        },
+        services::{extract_media::extract_media_from_markdown, files::find_files_rescurse},
     },
     prelude::Result,
 };
@@ -84,9 +82,13 @@ async fn file_to_blog_post(app_state: &AppState, s: &str) -> Result<BlogPost> {
                 post = post.with_hero_image(
                     Image::new(
                         &Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_bytes()),
-                        url.as_str(), alt.as_str(), width, height)
-                        .with_date(date)
-                        .with_parent_permalink(&permalink),
+                        url.as_str(),
+                        alt.as_str(),
+                        width,
+                        height,
+                    )
+                    .with_date(date)
+                    .with_parent_permalink(&permalink),
                 );
             }
 

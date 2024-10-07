@@ -1,0 +1,7 @@
+{% extends "partials/page.html" %}
+
+{%- block content %}
+    <p>This is <a href="https://nownownow.com/about"  target="_blank" rel="noopener">a now page</a>, and if you have your own site, you should make one, too.</p>
+
+    {{ now.to_html()|safe}}
+{% endblock %}

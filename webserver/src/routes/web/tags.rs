@@ -14,16 +14,13 @@ use crate::{
         page::{Page, PagePagination, PagePaginationLabel},
         tag::{Tag, TagSlug},
     },
-    infrastructure::{
-        app_state::AppState,
-        repos::omni_post_repo::{OmniPostFilterFlags, OmniPostRepo},
-    },
+    infrastructure::{app_state::AppState, query_services::omni_post_query_service::OmniPostQueryService},
     routes::Pagination,
 };
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
-pub use crate::infrastructure::services::number::FormatNumber;
+pub use crate::infrastructure::formatters::format_date::FormatDate;
+pub use crate::infrastructure::formatters::format_markdown::FormatMarkdown;
+pub use crate::infrastructure::formatters::format_number::FormatNumber;
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -54,7 +51,7 @@ pub struct IndexTemplate {
     tags: Vec<TagPair>,
 }
 async fn index(State(state): State<AppState>) -> Result<IndexTemplate, (StatusCode, &'static str)> {
-    let tags = OmniPostRepo::get_posts_tags_and_counts(&state, OmniPostRepo::filter_non_album())
+    let tags = OmniPostQueryService::get_posts_tags_and_counts(&state, OmniPostQueryService::filter_non_album())
         .await
         .map_err(|e| {
             error!("Failed to get posts ordered by date: {:?}", e);
@@ -93,10 +90,10 @@ async fn tag(
 ) -> Result<TagTemplate, (StatusCode, &'static str)> {
     let tag = &TagSlug::from_string(&tag).to_tag();
 
-    let posts = OmniPostRepo::get_posts_by_tag_ordered_by_date(
+    let posts = OmniPostQueryService::get_posts_by_tag_ordered_by_date(
         &state,
         tag,
-        OmniPostRepo::filter_non_album(),
+        OmniPostQueryService::filter_non_album(),
     )
     .await
     .map_err(|e| {

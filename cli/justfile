@@ -3,3 +3,6 @@ watch:
 
 test:
     cargo watch -x "test" -w src
+
+check:
+    cargo watch -x "check" -w src

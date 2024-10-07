@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use shared::cache::{CacheService, DefaultCache};
 use sqlx::{Pool, Postgres};
 use tokio::sync::{mpsc::Sender, RwLock};
 
@@ -16,12 +17,12 @@ use super::{
         about_repo::AboutRepo, album_photos_repo::AlbumPhotosRepo, albums_repo::AlbumsRepo,
         blog_posts_repo::BlogPostsRepo, faq_repo::FaqRepo,
         game_achievements_repo::GameAchievementsRepo, games_repo::GamesRepo,
-        images_repo::ImagesRepo, lego_minifigs_repo::LegoMinifigsRepo,
+        images_repo::ImagesRepoDb, lego_minifigs_repo::LegoMinifigsRepo,
         lego_sets_repo::LegoSetsRepo, mastodon_posts_repo::MastodonPostsRepo,
-        micro_posts_repo::MicroPostsRepo, microblog_archive_repo::MicroblogArchiveRepo,
-        silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolPostsRepo, tags_repo::TagsRepo,
+        micro_posts_repo::{MicroPostsRepo, MicroPostsRepoDb}, microblog_archive_repo::MicroblogArchiveRepo,
+        silly_names_repo::SillyNamesRepo, status_lol_repo::StatusLolPostsRepo, tags_repo::{TagsRepo, TagsRepoDb},
     },
-    services::{cache::Cache, cdn::Cdn, content_dir::ContentDir},
+    services::{cdn::Cdn, content_dir::ContentDir},
 };
 
 pub type DatabaseConnection = Pool<Postgres>;
@@ -34,7 +35,7 @@ pub struct AppStateData {
     job_low_priority_sender: Sender<Box<dyn Job>>,
     config: Config,
     cdn: Cdn,
-    cache: Cache,
+    cache: DefaultCache,
     content_dir: ContentDir,
     games_repo: GamesRepo,
     game_achievements_repo: GameAchievementsRepo,
@@ -45,13 +46,13 @@ pub struct AppStateData {
     faq_repo: FaqRepo,
     silly_names_repo: SillyNamesRepo,
     blog_posts_repo: BlogPostsRepo,
-    micro_posts_repo: MicroPostsRepo,
+    micro_posts_repo: MicroPostsRepoDb,
     microblog_archive_repo: MicroblogArchiveRepo,
     mastodon_posts_repo: MastodonPostsRepo,
     albums_repo: AlbumsRepo,
     album_photos_repo: AlbumPhotosRepo,
-    tags_repo: TagsRepo,
-    images_repo: ImagesRepo,
+    tags_repo: TagsRepoDb,
+    images_repo: ImagesRepoDb,
 }
 
 impl AppStateData {
@@ -70,7 +71,7 @@ impl AppStateData {
             job_low_priority_sender,
             config: config.clone(),
             cdn: Cdn::new(config).await,
-            cache: Cache::default(),
+            cache: DefaultCache::new(),
             content_dir: ContentDir::default(),
             games_repo: GamesRepo::new(database_connection.clone()),
             game_achievements_repo: GameAchievementsRepo::new(database_connection.clone()),
@@ -81,13 +82,13 @@ impl AppStateData {
             faq_repo: FaqRepo::default(),
             silly_names_repo: SillyNamesRepo::new(database_connection.clone()),
             blog_posts_repo: BlogPostsRepo::default(),
-            micro_posts_repo: MicroPostsRepo::default(),
+            micro_posts_repo: MicroPostsRepoDb::new(database_connection.clone()),
             microblog_archive_repo: MicroblogArchiveRepo::default(),
             mastodon_posts_repo: MastodonPostsRepo::default(),
             albums_repo: AlbumsRepo::default(),
             album_photos_repo: AlbumPhotosRepo::new(database_connection.clone()),
-            tags_repo: TagsRepo::new(database_connection.clone()),
-            images_repo: ImagesRepo::new(database_connection.clone()),
+            tags_repo: TagsRepoDb::new(database_connection.clone()),
+            images_repo: ImagesRepoDb::new(database_connection.clone()),
         }
     }
 
@@ -135,7 +136,7 @@ impl AppStateData {
         &self.cdn
     }
 
-    pub fn cache(&self) -> &Cache {
+    pub fn cache(&self) -> &impl CacheService {
         &self.cache
     }
 
@@ -179,7 +180,7 @@ impl AppStateData {
         &self.blog_posts_repo
     }
 
-    pub fn micro_posts_repo(&self) -> &MicroPostsRepo {
+    pub fn micro_posts_repo(&self) -> &impl MicroPostsRepo {
         &self.micro_posts_repo
     }
 
@@ -199,11 +200,11 @@ impl AppStateData {
         &self.album_photos_repo
     }
 
-    pub fn tags_repo(&self) -> &TagsRepo {
+    pub fn tags_repo(&self) -> &impl TagsRepo {
         &self.tags_repo
     }
 
-    pub fn images_repo(&self) -> &ImagesRepo {
+    pub fn images_repo(&self) -> &ImagesRepoDb {
         &self.images_repo
     }
 }

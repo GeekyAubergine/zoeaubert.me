@@ -189,6 +189,8 @@ impl GamesRepo {
             .execute(&self.database_connection)
             .await
             .map_err(DatabaseError::from_query_error)?;
+
+            return Ok(());
         }
 
         sqlx::query!(

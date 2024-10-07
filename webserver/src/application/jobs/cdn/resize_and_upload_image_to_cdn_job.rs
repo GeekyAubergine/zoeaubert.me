@@ -2,11 +2,12 @@ use std::io::Cursor;
 
 use async_trait::async_trait;
 use image::ImageReader;
+use shared::cache::{CachePath, CacheService};
 use tracing::{debug, info};
 
 use crate::{
     error::Error,
-    infrastructure::{app_state::AppState, bus::job_runner::Job, services::cache::CachePath},
+    infrastructure::{app_state::AppState, bus::job_runner::Job, services::cdn::CdnPath},
     prelude::Result,
 };
 
@@ -36,8 +37,8 @@ impl Job for ResizeAndUploadImageToCdnJob {
     }
 
     async fn run(&self, app_state: &AppState) -> Result<()> {
-        let cnd_path = self.cache_path.cdn_path(app_state.config());
-        let new_cdn_path = self.new_cache_path.cdn_path(app_state.config());
+        let cnd_path = CdnPath::from_cache_path(&self.cache_path);
+        let new_cdn_path = CdnPath::from_cache_path(&self.new_cache_path);
 
         if app_state
             .cdn()
@@ -51,8 +52,6 @@ impl Job for ResizeAndUploadImageToCdnJob {
             return Ok(());
         }
 
-        println!("{:?}", self);
-
         info!(
             "Resizing and uploading image from CDN [{}] to CDN [{}]",
             cnd_path, new_cdn_path
@@ -60,11 +59,7 @@ impl Job for ResizeAndUploadImageToCdnJob {
 
         let original_image_data = app_state
             .cache()
-            .get_file_from_cache_or_download(
-                app_state,
-                &self.cache_path,
-                &cnd_path.url(app_state.config()),
-            )
+            .get_file_from_cache_or_url(&cnd_path.url(app_state.config()))
             .await?;
 
         let original_image = ImageReader::new(Cursor::new(original_image_data))
@@ -89,7 +84,7 @@ impl Job for ResizeAndUploadImageToCdnJob {
 
         app_state
             .cache()
-            .cache_file(&self.new_cache_path, resized_image_data.clone())
+            .write_file(&self.new_cache_path, resized_image_data.clone())
             .await?;
 
         app_state

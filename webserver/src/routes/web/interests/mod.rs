@@ -9,9 +9,9 @@ use axum::{
 
 use crate::{build_data, domain::models::page::Page, infrastructure::app_state::AppState};
 
-pub use crate::infrastructure::services::date::FormatDate;
-pub use crate::infrastructure::services::number::FormatNumber;
-pub use crate::infrastructure::services::markdown::FormatMarkdown;
+pub use crate::infrastructure::formatters::format_date::FormatDate;
+pub use crate::infrastructure::formatters::format_markdown::FormatMarkdown;
+pub use crate::infrastructure::formatters::format_number::FormatNumber;
 
 pub mod games;
 pub mod lego;

@@ -23,7 +23,7 @@ use crate::{
         app_state::{self, AppState},
         bus::job_runner::{Job, JobPriority},
         config::Config,
-        services::{cache::CachePath, cdn::CdnPath},
+        services::cdn::CdnPath,
     },
     prelude::Result,
     ONE_DAY_CACHE_PERIOD,

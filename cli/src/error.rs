@@ -1,4 +1,10 @@
 use reqwest::StatusCode;
+use shared::utils::date::DatePaserError;
+
+use crate::{
+    microblog_archive::error::MicroBlogArchiveError, microposts::error::MicroPostError,
+    silly_names::error::SillyNamesError,
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ApiError {
@@ -46,21 +52,28 @@ impl TonicError {
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum SillyNamesError {
-    #[error("Unable to read csv {0}")]
-    UnableToReadCsv(csv::Error),
+pub enum FileSystemError {
+    #[error("Unable to read file {0}")]
+    UnableToReadFile(std::io::Error),
 
-    #[error("Unable to parse csv {0}")]
-    UnableToParseCsv(csv::Error),
+    #[error("Unable to write file {0}")]
+    UnableToWriteFile(std::io::Error),
+
+    #[error("Unable to read dir {0}")]
+    UnableToReadDir(std::io::Error),
 }
 
-impl SillyNamesError {
-    pub fn unable_to_read_csv(error: csv::Error) -> Error {
-        Error::SillyNames(Self::UnableToReadCsv(error))
+impl FileSystemError {
+    pub fn unable_to_read_file(error: std::io::Error) -> Error {
+        Error::FileSystem(Self::UnableToReadFile(error))
     }
 
-    pub fn unable_to_parse_csv(error: csv::Error) -> Error {
-        Error::SillyNames(Self::UnableToParseCsv(error))
+    pub fn unable_to_write_file(error: std::io::Error) -> Error {
+        Error::FileSystem(Self::UnableToWriteFile(error))
+    }
+
+    pub fn unable_to_read_dir(error: std::io::Error) -> Error {
+        Error::FileSystem(Self::UnableToReadDir(error))
     }
 }
 
@@ -68,11 +81,20 @@ impl SillyNamesError {
 pub enum Error {
     #[error("ApiError error: {0}")]
     ApiError(ApiError),
-    #[error("Silly names error: {0}")]
-    SillyNames(SillyNamesError),
     #[error("Tonic error: {0}")]
     Tonic(TonicError),
+    #[error("FileSystem error: {0}")]
+    FileSystem(FileSystemError),
+
+    #[error("MicroBlogArchive error: {0}")]
+    MicroBlogArchive(MicroBlogArchiveError),
+    #[error("Silly names error: {0}")]
+    SillyNames(SillyNamesError),
+    #[error("MicroPost error: {0}")]
+    MicroPost(MicroPostError),
 
     #[error("HttpReqwest {0}")]
     HttpReqwest(reqwest::Error),
+    #[error("Date parse error {0}")]
+    DateParse(DatePaserError),
 }

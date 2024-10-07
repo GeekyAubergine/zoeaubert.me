@@ -8,12 +8,7 @@ use axum::{
 };
 use tracing::info;
 
-use crate::infrastructure::{
-    query_services::silly_names_query_service::SillyNamesQueryService,
-    services::number::FormatNumber,
-};
-use crate::{infrastructure::services::date::FormatDate, ResponseResult};
-use crate::{infrastructure::services::markdown::FormatMarkdown, prelude::Result};
+use crate::{infrastructure::query_services::silly_names_query_service::SillyNamesQueryService, ResponseResult};
 
 use crate::{
     build_data,
@@ -31,6 +26,9 @@ pub mod micro_posts;
 pub mod photos;
 pub mod tags;
 pub mod timeline;
+
+pub use crate::infrastructure::formatters::format_date::FormatDate;
+pub use crate::infrastructure::formatters::format_markdown::FormatMarkdown;
 
 pub fn router() -> Router<AppState> {
     Router::new()

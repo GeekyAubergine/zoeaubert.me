@@ -1,11 +1,17 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use super::{
-    blog_post::BlogPost, game::Game, game_achievement::GameAchievementUnlocked,
-    mastodon_post::MastodonPost, media::Media, micro_post::MicroPost,
-    microblog_archive::MicroblogArchivePost, status_lol_post::StatusLolPost, tag::Tag,
+    blog_post::BlogPost,
+    game::Game,
+    game_achievement::GameAchievementUnlocked,
+    mastodon_post::MastodonPost,
+    media::{Media, MediaUuid},
+    micro_post::MicroPost,
+    status_lol_post::StatusLolPost,
+    tag::Tag,
 };
 
 #[derive(Debug, Clone)]
@@ -17,20 +23,26 @@ pub enum OmniPost {
     },
     BlogPost(BlogPost),
     MicroPost(MicroPost),
-    MicroblogArchivePost(MicroblogArchivePost),
     MastodonPost(MastodonPost),
 }
 
 impl OmniPost {
+    pub fn uuid(&self) -> &Uuid {
+        match self {
+            Self::StatusLol(status_lol) => status_lol.uuid(),
+            Self::UnlockedGameAchievement { achievement, .. } => achievement.uuid(),
+            Self::BlogPost(blog_post) => blog_post.uuid(),
+            Self::MicroPost(micro_post) => micro_post.uuid.into(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.uuid(),
+        }
+    }
+
     pub fn key(&self) -> String {
         match self {
             Self::StatusLol(status_lol) => status_lol.id().to_owned(),
             Self::UnlockedGameAchievement { achievement, .. } => achievement.id().to_owned(),
             Self::BlogPost(blog_post) => blog_post.slug().to_owned(),
-            Self::MicroPost(micro_post) => micro_post.slug().to_owned(),
-            Self::MicroblogArchivePost(microblog_archive_post) => {
-                microblog_archive_post.slug().to_owned()
-            }
+            Self::MicroPost(micro_post) => micro_post.slug.to_owned(),
             Self::MastodonPost(mastodon_post) => mastodon_post.id().to_owned(),
         }
     }
@@ -41,9 +53,6 @@ impl OmniPost {
             Self::UnlockedGameAchievement { game, .. } => format!("/interests/games/{}", game.id()),
             Self::BlogPost(blog_post) => blog_post.permalink().to_owned(),
             Self::MicroPost(micro_post) => micro_post.permalink().to_owned(),
-            Self::MicroblogArchivePost(microblog_archive_post) => {
-                microblog_archive_post.permalink().to_owned()
-            }
             Self::MastodonPost(mastodon_post) => mastodon_post.permalink().to_owned(),
         }
     }
@@ -53,35 +62,34 @@ impl OmniPost {
             Self::StatusLol(status_lol) => status_lol.date(),
             Self::UnlockedGameAchievement { achievement, .. } => achievement.unlocked_date(),
             Self::BlogPost(blog_post) => blog_post.date(),
-            Self::MicroPost(micro_post) => micro_post.date(),
-            Self::MicroblogArchivePost(microblog_archive_post) => microblog_archive_post.date(),
+            Self::MicroPost(micro_post) => &micro_post.date,
             Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
         }
     }
 
-    pub fn tags(&self) -> Vec<Tag> {
-        match self {
-            Self::StatusLol(status_lol) => vec![Tag::from_string("StatusLol")],
-            Self::UnlockedGameAchievement { game, .. } => vec![Tag::from_string("Gaming")],
-            Self::BlogPost(blog_post) => blog_post.tags().to_owned(),
-            Self::MicroPost(micro_post) => micro_post.tags().to_owned(),
-            Self::MicroblogArchivePost(microblog_archive_post) => {
-                microblog_archive_post.tags().to_owned()
-            }
-            Self::MastodonPost(mastodon_post) => mastodon_post.tags().to_owned(),
-        }
-    }
-
-    pub fn media(&self) -> Vec<Media> {
+    pub fn media(&self) -> Vec<MediaUuid> {
         match self {
             Self::StatusLol(status_lol) => vec![],
             Self::UnlockedGameAchievement { .. } => vec![],
-            Self::BlogPost(blog_post) => blog_post.media().to_owned(),
-            Self::MicroPost(micro_post) => micro_post.media().to_owned(),
-            Self::MicroblogArchivePost(microblog_archive_post) => {
-                microblog_archive_post.media().to_owned()
-            }
-            Self::MastodonPost(mastodon_post) => mastodon_post.media().to_owned(),
+            Self::BlogPost(blog_post) => blog_post
+                .media()
+                .iter()
+                .map(|media| media.uuid())
+                .cloned()
+                .collect(),
+            Self::MicroPost(micro_post) => micro_post.media_order(),
+            Self::MastodonPost(mastodon_post) => mastodon_post
+                .media()
+                .iter()
+                .map(|media| media.uuid())
+                .cloned()
+                .collect(),
         }
+    }
+}
+
+impl UuidIdentifiable for OmniPost {
+    fn uuid(&self) -> &Uuid {
+        self.uuid()
     }
 }

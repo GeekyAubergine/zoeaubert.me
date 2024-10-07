@@ -810,7 +810,7 @@
             }
 
             .label {
-                @apply text-lg leading-4;
+                @apply text-lg;
             }
         }
     }
