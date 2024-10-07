@@ -1,5 +1,5 @@
 [workspace]
-members = [ "builder","cli", "shared", "webserver"]
+members = [ "zaw","cli", "shared", "webserver"]
 
 [workspace.dependencies]
 async-trait = "0.1.77"

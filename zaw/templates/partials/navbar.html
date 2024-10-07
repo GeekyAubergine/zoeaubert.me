@@ -13,25 +13,25 @@
             </button>
         </div>
         <div class="links">
-            {% for link in page.navigation_links() %}
+            {% for link in page.navigation_links %}
                 <a
                 class="link"
-                href="{{ link.url() }}"
-                target="{{ link.target() }}"
-                rel="{{ link.rel() }}"
+                href="{{ link.url }}"
+                target="{{ link.target }}"
+                rel="{{ link.rel }}"
             >
-                    {{ link.name() }}
+                    {{ link.name }}
                 </a>
             {% endfor %}
-            {% for link in page.social_links() %}
-                {% if link.show_in_top_nav() %}
+            {% for link in page.social_links %}
+                {% if link.show_in_top_nav %}
                     <a
                 class="link"
-                href="{{ link.url() }}"
+                href="{{ link.url }}"
                 target="_blank"
                 rel="me"
             >
-                        {{ link.name() }}
+                        {{ link.name }}
                     </a>
                 {% endif %}
             {% endfor %}
@@ -40,20 +40,20 @@
             {% for link in page.navigation_links() %}
                 <a
                 class="link"
-                href="{{ link.url() }}"
-                target="{{ link.target() }}"
-                rel="{{ link.rel() }}"
-            >{{ link.name() }}</a>
+                href="{{ link.url }}"
+                target="{{ link.target }}"
+                rel="{{ link.rel }}"
+            >{{ link.name }}</a>
             {% endfor %}
-            {% for link in page.social_links() %}
-                {% if link.show_in_top_nav() %}
+            {% for link in page.social_links %}
+                {% if link.show_in_top_nav %}
                     <a
                 class="link"
-                href="{{ link.url() }}"
+                href="{{ link.url }}"
                 target="_blank"
                 rel="me"
             >
-                        {{ link.name() }}
+                        {{ link.name }}
                     </a>
                 {% endif %}
             {% endfor %}

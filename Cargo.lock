@@ -481,49 +481,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "builder"
-version = "0.1.0"
-dependencies = [
- "askama",
- "askama-filters",
- "askama_axum",
- "askama_escape 0.10.3",
- "async-trait",
- "axum",
- "axum-extra",
- "bitflags 2.6.0",
- "chrono",
- "comrak",
- "dotenvy",
- "dotenvy_macro",
- "html-escape",
- "http-range-header",
- "image",
- "imagesize",
- "lazy_static",
- "markdown",
- "regex",
- "reqwest",
- "serde",
- "serde_json",
- "serde_yaml",
- "shared",
- "sqlx",
- "syntect",
- "thiserror",
- "tokio",
- "tokio-util",
- "tonic",
- "tower",
- "tower-http",
- "tower-livereload",
- "tracing",
- "tracing-subscriber",
- "url",
- "uuid",
-]
-
-[[package]]
 name = "built"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2011,9 +1968,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.19.0"
+version = "1.20.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
+checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 
 [[package]]
 name = "onig"
@@ -4261,6 +4218,50 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
 dependencies = [
  "linked-hash-map",
+]
+
+[[package]]
+name = "zaw"
+version = "0.1.0"
+dependencies = [
+ "askama",
+ "askama-filters",
+ "askama_axum",
+ "askama_escape 0.10.3",
+ "async-trait",
+ "axum",
+ "axum-extra",
+ "bitflags 2.6.0",
+ "chrono",
+ "comrak",
+ "dotenvy",
+ "dotenvy_macro",
+ "html-escape",
+ "http-range-header",
+ "image",
+ "imagesize",
+ "lazy_static",
+ "markdown",
+ "once_cell",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "shared",
+ "sqlx",
+ "syntect",
+ "thiserror",
+ "tokio",
+ "tokio-util",
+ "tonic",
+ "tower",
+ "tower-http",
+ "tower-livereload",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+ "uuid",
 ]
 
 [[package]]

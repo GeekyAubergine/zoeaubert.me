@@ -9,21 +9,15 @@
 
         <link rel="icon" type="image/x-icon" href="/static/img/icon.png">
 
-        {% let pageTitle = page.title() %}
+        <title>{{ page.title }}</title>
 
-        {# {% let pageTitle = site.make_title(title) %} #}
+        <meta name="title" content="{{ page.title }}"/>
+        <meta property="og:title" content="{{ page.title }}"/>
+        <meta property="twitter:title" content="{{ page.title }}"/>
 
-        <title>{{ pageTitle }}</title>
-
-        <meta name="title" content="{{ pageTitle }}"/>
-        <meta property="og:title" content="{{ pageTitle }}"/>
-        <meta property="twitter:title" content="{{ pageTitle }}"/>
-
-        {% let pageDescription = page.description() %}
-
-        <meta name="description" content="{{ pageDescription }}"/>
-        <meta property="og:description" content="{{ pageDescription }}"/>
-        <meta property="twitter:description" content="{{ pageDescription }}"/>
+        <meta name="description" content="{{ page.description }}"/>
+        <meta property="og:description" content="{{ page.description }}"/>
+        <meta property="twitter:description" content="{{ page.description }}"/>
 
         <meta property="og:url" content="{{ page.url() }}"/>
         <meta property="twitter:url" content="{{ page.url() }}"/>

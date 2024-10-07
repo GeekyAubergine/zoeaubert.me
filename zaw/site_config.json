@@ -1,0 +1,84 @@
+{
+    "url": "https://zoeaubert.me",
+    "title": "Zoe Aubert",
+    "description": "Software developer, musician, photographer, nerd, and some other things. Making computers go bleep bloop since 2010.",
+    "author": "Zoe Aubert | GeekyAubergine",
+    "image": {
+        "url": "assets/img/web-bg.png",
+        "alt": "Zoe Aubert centered in purple/pink text on a dark grey background",
+        "width": 400,
+        "height": 200,
+        "date": 1678200125
+    },
+    "language": "en-gb",
+    "navigation_links": [
+        {
+            "name": "Blog",
+            "target": "",
+            "rel": "",
+            "url": "/blog"
+        },
+        {
+            "name": "Timeline",
+            "target": "",
+            "rel": "",
+            "url": "/timeline"
+        },
+        {
+            "name": "Photos",
+            "target": "",
+            "rel": "",
+            "url": "/photos"
+        },
+        {
+            "name": "Interests",
+            "target": "",
+            "rel": "",
+            "url": "/interests"
+        },
+        {
+            "name": "Tags",
+            "target": "",
+            "rel": "",
+            "url": "/tags"
+        },
+        {
+            "name": "/now",
+            "target": "",
+            "rel": "",
+            "url": "/now"
+        },
+        {
+            "name": "/faq",
+            "target": "",
+            "rel": "",
+            "url": "/faq"
+        },
+        {
+            "name": "RSS",
+            "target": "",
+            "rel": "",
+            "url": "/subscribe"
+        }
+    ],
+    "social_links": [
+        {
+            "name": "Mastodon",
+            "url": "https://social.lol/@geekyaubergine",
+            "show_in_top_nav": true,
+            "show_in_footer": false
+        },
+        {
+            "name": "GitHub",
+            "url": "https://github.com/geekyaubergine",
+            "show_in_top_nav": true,
+            "show_in_footer": true
+        },
+        {
+            "name": "LinkedIn",
+            "url": "https://www.linkedin.com/in/zoeaubert/",
+            "show_in_top_nav": false,
+            "show_in_footer": true
+        }
+    ]
+}

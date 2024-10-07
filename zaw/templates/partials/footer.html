@@ -5,9 +5,9 @@
     </p>
     </div>
     <div>
-        {% for social in page.social_links() %}
-            {% if social.show_in_footer() %}
-                <a href="{{ social.url() }}" target="_blank" rel="me">{{ social.name() }}</a>
+        {% for social in page.social_links %}
+            {% if social.show_in_footer %}
+                <a href="{{ social.url }}" target="_blank" rel="me">{{ social.name }}</a>
                 <span>-</span>
             {% endif %}
         {% endfor %}
