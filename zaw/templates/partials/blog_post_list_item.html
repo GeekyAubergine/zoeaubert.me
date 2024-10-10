@@ -1,6 +1,6 @@
 <article class="blog-post-item" data-pagefind-ignore>
     <div class="title-and-date">
-        <a href="{{ post.permalink() }}">
+        <a href="{{ post.slug.relative_link() }}">
             <h3>{{ post.title }}</h3>
         </a>
         <time class="date" dateTime="{{ post.date.datetime() }}">{{ post.date.short_iso() }}</time>

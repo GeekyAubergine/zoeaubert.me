@@ -162,7 +162,7 @@ fn highligh_codeblocks(markdown: &str) -> String {
     .into_owned()
 }
 
-fn string_to_html(s: &str) -> String {
+fn markdown_to_html(s: &str) -> String {
     let html = comrak::markdown_to_html(s, &OPTIONS);
 
     highligh_codeblocks(&html)
@@ -174,12 +174,12 @@ pub trait FormatMarkdown {
 
 impl FormatMarkdown for String {
     fn to_html(&self) -> String {
-        string_to_html(self).to_string()
+        markdown_to_html(self).to_string()
     }
 }
 
 impl FormatMarkdown for &str {
     fn to_html(&self) -> String {
-        string_to_html(self).to_string()
+        markdown_to_html(self).to_string()
     }
 }

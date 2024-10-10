@@ -5,7 +5,7 @@ fn format<T>(n: T, precision: usize, commas: bool) -> String
 where
     T: std::fmt::Display,
 {
-    let mut formatted = format!("{:.*}", precision, n);
+    let formatted = format!("{:.*}", precision, n);
 
     let mut parts = formatted.split('.');
 

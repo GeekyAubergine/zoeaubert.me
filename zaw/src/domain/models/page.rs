@@ -1,28 +1,13 @@
-use std::fs;
-
 use chrono::{DateTime, Utc};
-use once_cell::sync::Lazy;
 use serde::Deserialize;
 
 use crate::build_data::BUILD_DATE;
 
-use super::tag::Tag;
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct NavigationLink {
-    pub name: String,
-    pub url: String,
-    pub target: String,
-    pub rel: String,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct SocialNetworkLink {
-    pub name: String,
-    pub url: String,
-    pub show_in_top_nav: bool,
-    pub show_in_footer: bool,
-}
+use super::{
+    slug::{Slug},
+    site_config::{NavigationLink, PageImage, SocialNetworkLink, SITE_CONFIG},
+    tag::Tag,
+};
 
 #[derive(Debug, Clone)]
 pub struct PagePaginationLabel {
@@ -55,25 +40,6 @@ impl PagePagination {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct PageImage {
-    pub url: String,
-    pub alt: String,
-    pub width: u32,
-    pub height: u32,
-}
-
-impl PageImage {
-    pub fn new(url: &str, alt: &str, width: u32, height: u32) -> Self {
-        Self {
-            url: url.to_owned(),
-            alt: alt.to_owned(),
-            width,
-            height,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Deserialize)]
 pub struct PageConfig {
     pub url: String,
     pub title: String,
@@ -85,16 +51,9 @@ pub struct PageConfig {
     pub social_links: Vec<SocialNetworkLink>,
 }
 
-static PAGE_CONFIG: Lazy<PageConfig> = Lazy::new(|| {
-    let contents = fs::read_to_string("./site_config.json").unwrap();
-
-    serde_json::from_str(&contents).unwrap()
-});
-
 #[derive(Debug, Clone)]
 pub struct Page<'a> {
-    pub slug: &'a str,
-    pub url: String,
+    pub slug: Slug,
     pub title: String,
     pub description: String,
     pub author: &'a str,
@@ -111,39 +70,33 @@ pub struct Page<'a> {
 }
 
 impl<'a> Page<'a> {
-    pub fn new(slug: &'a str, title: Option<&str>, description: Option<&str>) -> Self {
+    pub fn new(slug: Slug, title: Option<&str>, description: Option<&str>) -> Self {
         let heading = title.map(|t| t.to_owned());
 
         let title = match title {
-            Some(t) => format!("{} | {}", t, PAGE_CONFIG.title),
-            None => PAGE_CONFIG.title.clone(),
+            Some(t) => format!("{} | {}", t, SITE_CONFIG.title),
+            None => SITE_CONFIG.title.clone(),
         };
 
         let description = match description {
             Some(d) => d.to_owned(),
-            None => PAGE_CONFIG.description.clone(),
-        };
-
-        let url = match slug {
-            "" | "/" => PAGE_CONFIG.url.to_owned(),
-            _ => format!("{}{}", PAGE_CONFIG.url, slug),
+            None => SITE_CONFIG.description.clone(),
         };
 
         Self {
             slug,
-            url,
             title,
             description,
-            author: &PAGE_CONFIG.author,
-            image: &PAGE_CONFIG.image,
-            language: &PAGE_CONFIG.language,
+            author: &SITE_CONFIG.author,
+            image: &SITE_CONFIG.image,
+            language: &SITE_CONFIG.language,
             build_date: BUILD_DATE,
-            navigation_links: PAGE_CONFIG
+            navigation_links: SITE_CONFIG
                 .navigation_links
                 .iter()
                 .map(|link| NavigationLink::from(link.clone()))
                 .collect(),
-            social_links: PAGE_CONFIG
+            social_links: SITE_CONFIG
                 .social_links
                 .iter()
                 .map(|link| SocialNetworkLink::from(link.clone()))
@@ -185,8 +138,8 @@ impl<'a> Page<'a> {
         self.heading = None;
     }
 
-    pub fn url(&self) -> &str {
-        &self.url
+    pub fn permalink(&self) -> String {
+        self.slug.permalink()
     }
 
     pub fn title(&self) -> &str {
@@ -217,7 +170,7 @@ impl<'a> Page<'a> {
         if self.image.url.starts_with("http") {
             self.image.url.to_owned()
         } else {
-            format!("{}/{}", self.url, self.image.url)
+            format!("{}/{}", SITE_CONFIG.url, self.image.url)
         }
     }
 

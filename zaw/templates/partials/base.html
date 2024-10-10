@@ -7,7 +7,7 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-        <link rel="icon" type="image/x-icon" href="/static/img/icon.png">
+        <link rel="icon" type="image/x-icon" href="/assets/img/icon.png">
 
         <title>{{ page.title }}</title>
 
@@ -19,14 +19,16 @@
         <meta property="og:description" content="{{ page.description }}"/>
         <meta property="twitter:description" content="{{ page.description }}"/>
 
-        <meta property="og:url" content="{{ page.url() }}"/>
-        <meta property="twitter:url" content="{{ page.url() }}"/>
+        <meta property="og:url" content="{{ page.permalink() }}"/>
+        <meta property="twitter:url" content="{{ page.permalink() }}"/>
 
         <meta property="twitter:image" content="{{ page.image_url() }}"/>
         <meta property="og:image" content="{{  page.image_url() }}"/>
 
         <meta property="twitter:image:alt" content="{{ page.image_alt() }}"/>
         <meta property="og:image:alt" content="{{  page.image_alt() }}"/>
+
+        <meta name="fediverse:creator" content="@geekyaubergine@social.lol" />
 
         <link rel="stylesheet" href="/assets/css/styles-{{ page.build_date() }}.css">
 

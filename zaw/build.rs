@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{path::Path, process::Command};
 
 use chrono::prelude::*;
 
@@ -69,6 +69,12 @@ fn compile_assets(build_date: &str) {
 }
 
 fn compile_css(build_date: &str) {
+    Command::new("mkdir")
+        .arg("-p")
+        .arg("_assets/css")
+        .output()
+        .expect("Failed to create _assets/css directory");
+
     let tailwind_module_location = Path::new("../node_modules/.bin/tailwindcss");
     let input_css = Path::new("./assets/css/styles.css");
     let intermediate_css = Path::new("./_assets/css/tw.css");

@@ -4234,6 +4234,7 @@ dependencies = [
  "bitflags 2.6.0",
  "chrono",
  "comrak",
+ "csv",
  "dotenvy",
  "dotenvy_macro",
  "html-escape",

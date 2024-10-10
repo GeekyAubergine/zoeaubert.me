@@ -23,6 +23,7 @@ comrak = { version = "0.24.1", features = [
     "shortcodes",
     "arbitrary",
 ] }
+csv = "1.3.0"
 dotenvy = { workspace = true }
 dotenvy_macro = { workspace = true }
 html-escape = "0.2.13"

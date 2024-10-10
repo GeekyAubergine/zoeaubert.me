@@ -3,3 +3,6 @@ pub mod tag;
 pub mod blog_post;
 pub mod image;
 pub mod media;
+pub mod micro_post;
+pub mod slug;
+pub mod site_config;

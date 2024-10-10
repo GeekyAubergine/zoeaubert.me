@@ -1,11 +1,15 @@
+pub mod application;
+pub mod domain;
 pub mod error;
-pub mod models;
+pub mod infrastructure;
 pub mod prelude;
-pub mod renderers;
+pub mod tasks;
 
 use std::{path::Path, process::Command};
 
-use renderers::home_page::render_home_page;
+use application::commands::update_all_data::update_all_data;
+use error::FileSystemError;
+use infrastructure::{app_state::AppState, renderers::home_page::render_home_page};
 use tracing::Level;
 
 use crate::prelude::*;
@@ -14,8 +18,7 @@ pub mod build_data {
     include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
+async fn prepare_folders() -> Result<()> {
     Command::new("rm")
         .arg("-rf")
         .arg("./output")
@@ -42,15 +45,31 @@ async fn main() -> Result<()> {
         .output()
         .expect("Failed to copy assets");
 
-    tracing_subscriber::fmt()
-        .with_max_level(Level::DEBUG)
-        .init();
-
     tokio::fs::create_dir_all(Path::new("./output"))
         .await
-        .unwrap();
+        .map_err(FileSystemError::create_dir_error)?;
 
-    render_home_page().await?;
+    Ok(())
+}
+
+async fn prepare_state() -> Result<AppState> {
+    let state = AppState::new().await?;
+
+    update_all_data(&state).await?;
+
+    Ok(state)
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    tracing_subscriber::fmt()
+        .with_max_level(Level::INFO)
+        .init();
+
+    prepare_folders().await?;
+    let state = prepare_state().await?;
+
+    render_home_page(&state).await?;
 
     Ok(())
 }

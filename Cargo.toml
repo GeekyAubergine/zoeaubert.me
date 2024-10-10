@@ -3,7 +3,7 @@ members = [ "zaw","cli", "shared", "webserver"]
 
 [workspace.dependencies]
 async-trait = "0.1.77"
-chrono = { version = "0.4.31", features = ["serde"] }
+chrono = { version = "0.4.31", features = ["serde", "std"] }
 dotenvy = "0.15.7"
 dotenvy_macro = "0.15.7"
 image = "0.25.2"

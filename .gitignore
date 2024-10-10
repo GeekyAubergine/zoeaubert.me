@@ -76,6 +76,7 @@ _site
 _cache
 .cache
 .archive
+.data
 
 config.js
 config.json
