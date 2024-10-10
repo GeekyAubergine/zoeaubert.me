@@ -1,10 +1,10 @@
 use std::path::Path;
 
+use crate::domain::repositories::Profiler;
 use crate::domain::{models::slug::Slug, queries::blog_post_queries::commit_blog_post};
 use crate::infrastructure::utils::date::parse_date;
 use serde::Deserialize;
-use tracing::info;
-use uuid::Uuid;
+use tracing::debug;
 
 use crate::{
     domain::{
@@ -58,8 +58,10 @@ async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()
 
             let date = parse_date(front_matter.date.as_str())?;
 
+            let slug = format!("/blog/{}", front_matter.slug);
+
             let mut post = BlogPost::new(
-                Slug::new(&front_matter.slug),
+                Slug::new(&slug),
                 date,
                 front_matter.title,
                 front_matter.description,
@@ -95,6 +97,8 @@ async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()
 
             commit_blog_post(state, &post).await?;
 
+            state.profiler().add_post_processed().await?;
+
             Ok(())
         }
         _ => Err(BlogPostError::unparsable_blog_post()),
@@ -105,7 +109,7 @@ pub async fn update_blog_post_command<P>(state: &impl State, file_path: &P) -> R
 where
     P: AsRef<Path> + std::fmt::Display,
 {
-    info!("Updating blog post: [{}]", file_path);
+    debug!("Updating blog post: [{}]", file_path);
 
     let file_contents = read_text_file(file_path).await?;
 

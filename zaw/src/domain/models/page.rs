@@ -1,22 +1,22 @@
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
-use crate::build_data::BUILD_DATE;
+use crate::{build_data::BUILD_DATE, infrastructure::utils::paginator::PaginatorPage};
 
 use super::{
-    slug::{Slug},
     site_config::{NavigationLink, PageImage, SocialNetworkLink, SITE_CONFIG},
+    slug::Slug,
     tag::Tag,
 };
 
 #[derive(Debug, Clone)]
 pub struct PagePaginationLabel {
-    pub url: String,
+    pub url: Slug,
     pub label: String,
 }
 
 impl PagePaginationLabel {
-    pub fn new(url: &str, title: &str) -> Self {
+    pub fn new(url: &Slug, title: &str) -> Self {
         Self {
             url: url.to_owned(),
             label: title.to_owned(),
@@ -36,6 +36,32 @@ impl PagePagination {
             next,
             previous: prev,
         }
+    }
+
+    pub fn from_slug_and_pagniator_page<'d, D>(
+        slug: &Slug,
+        page: &PaginatorPage<'d, D>,
+        entity_name: &str,
+    ) -> Self {
+        println!("Base slug {:?}", slug);
+
+        let next = match page.has_next() {
+            true => Some(PagePaginationLabel::new(
+                &slug.append(&format!("page-{}", page.page_number + 1)),
+                &format!("Newer {}", entity_name),
+            )),
+            false => None,
+        };
+
+        let prev = match page.has_previous() {
+            true => Some(PagePaginationLabel::new(
+                &slug.append(&format!("page-{}", page.page_number - 1)),
+                &format!("Older {}", entity_name),
+            )),
+            false => None,
+        };
+
+        Self::new(next, prev)
     }
 }
 
@@ -131,6 +157,23 @@ impl<'a> Page<'a> {
 
     pub fn with_pagination(mut self, pagination: PagePagination) -> Self {
         self.page_pagination = Some(pagination);
+        self
+    }
+
+    pub fn with_pagination_from_paginator<'d, D>(
+        mut self,
+        page: &PaginatorPage<'d, D>,
+        entity_name: &str,
+    ) -> Self {
+        let pagination =
+            PagePagination::from_slug_and_pagniator_page(&self.slug, page, entity_name);
+
+        self.page_pagination = Some(pagination);
+
+        if page.page_number > 1 {
+            self.slug = self.slug.append(&format!("page-{}", page.page_number));
+        }
+
         self
     }
 

@@ -1,11 +1,11 @@
-<a href="{{ omni_post.permalink() }}" rel="noopener" class="no-underline">
-    <h2>{{ post.title() }}</h2>
+<a href="{{ omni_post.slug().relative_link() }}" rel="noopener" class="no-underline">
+    <h2>{{ post.title }}</h2>
 </a>
-{% match post.hero_image() %}
+{% match post.hero_image %}
 {% when Some with (hero) %}
 <div class="media">
-    <img src="{{ hero.url() }}" alt="{{ hero.alt() }}" width="{{ hero.width() }}" height="{{ hero.height() }}" title="{{ hero.title() }}"/>
+    <img src="{{ hero.url }}" alt="{{ hero.alt }}" width="{{ hero.width }}" height="{{ hero.height }}" title="{{ hero.title() }}"/>
 </div>
 {% when None %}
 {% endmatch %}
-<p>{{ post.description() }}</p>
+<p>{{ post.description }}</p>

@@ -4,7 +4,7 @@ use comrak::{ListStyleType, Options};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use syntect::{easy::HighlightLines, parsing::SyntaxSet};
-use tracing::info;
+use tracing::error;
 
 static OPTIONS: Lazy<Options> = Lazy::new(|| {
     let mut options = Options::default();
@@ -102,7 +102,7 @@ fn highlight_code_block_capture(caps: &regex::Captures) -> Result<String> {
     let syntax = SYNTAX_SET
         .find_syntax_by_extension(lang)
         .unwrap_or_else(|| {
-            info!("Syntax not found for {}", lang);
+            error!("Syntax not found for {}", lang);
             SYNTAX_SET.find_syntax_plain_text()
         });
 
@@ -125,12 +125,12 @@ fn highlight_code_block_capture(caps: &regex::Captures) -> Result<String> {
                         lines.push(html);
                     }
                     Err(e) => {
-                        info!("Error highlighting line: {}", e);
+                        error!("Error highlighting line: {}", e);
                     }
                 }
             }
             Err(e) => {
-                info!("Error highlighting line: {}", e);
+                error!("Error highlighting line: {}", e);
             }
         }
     }
@@ -154,7 +154,7 @@ fn highligh_codeblocks(markdown: &str) -> String {
         |caps: &regex::Captures| match highlight_code_block_capture(caps) {
             Ok(highlighted) => highlighted,
             Err(e) => {
-                info!("Error highlighting code block: {}", e);
+                error!("Error highlighting code block: {}", e);
                 markdown.to_string()
             }
         },

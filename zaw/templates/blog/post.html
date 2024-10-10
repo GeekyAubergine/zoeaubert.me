@@ -1,5 +1,5 @@
 {% extends "partials/page.html" %}
 
 {%- block content %}
-    {{ post.content().to_html()|safe}}
+    {{ post.content.to_html()|safe}}
 {% endblock %}

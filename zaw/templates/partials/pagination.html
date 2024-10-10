@@ -4,7 +4,7 @@
     <div>
         {% match pagination.previous %}
     {% when Some with (previous) %}
-        <a href="{{ previous.url }}" class="secondary items-center under">
+        <a href="{{ previous.url.relative_link() }}" class="secondary items-center under">
             {{ previous.label }}</a>
     {% when None %}
         {% endmatch %}
@@ -12,7 +12,7 @@
     <div>
         {% match pagination.next %}
     {% when Some with (next) %}
-        <a href="{{ next.url }}" class="secondary items-center under">
+        <a href="{{ next.url.relative_link() }}" class="secondary items-center under">
             {{ next.label }}</a>
     {% when None %}
         {% endmatch %}

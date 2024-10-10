@@ -31,42 +31,8 @@ impl ImageOrientation {
     }
 }
 
-#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq)]
-pub struct ImageUuid(pub Uuid);
-
-impl ImageUuid {
-    pub fn new(uuid: Uuid) -> Self {
-        Self(uuid)
-    }
-}
-
-impl From<Uuid> for ImageUuid {
-    fn from(uuid: Uuid) -> Self {
-        Self::new(uuid)
-    }
-}
-
-impl From<ImageUuid> for Uuid {
-    fn from(image_uuid: ImageUuid) -> Self {
-        image_uuid.0
-    }
-}
-
-impl From<&ImageUuid> for Uuid {
-    fn from(image_uuid: &ImageUuid) -> Self {
-        image_uuid.0
-    }
-}
-
-impl fmt::Display for ImageUuid {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Image {
-    pub uuid: ImageUuid,
     pub url: String,
     pub alt: String,
     pub width: u32,
@@ -80,9 +46,8 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(uuid: &ImageUuid, url: &str, alt: &str, width: u32, height: u32) -> Self {
+    pub fn new(url: &str, alt: &str, width: u32, height: u32) -> Self {
         Self {
-            uuid: *uuid,
             url: url.to_string(),
             alt: alt.to_string(),
             width,
@@ -129,10 +94,6 @@ impl Image {
             updated_at,
             ..self.clone()
         }
-    }
-
-    pub fn uuid(&self) -> &ImageUuid {
-        &self.uuid
     }
 
     pub fn url(&self) -> &str {
@@ -188,17 +149,5 @@ impl Image {
 
     pub fn updated_at(&self) -> &DateTime<Utc> {
         &self.updated_at
-    }
-}
-
-impl From<Image> for Media {
-    fn from(image: Image) -> Self {
-        Media::Image(image)
-    }
-}
-
-impl From<&Image> for Media {
-    fn from(image: &Image) -> Self {
-        Media::Image(image.clone())
     }
 }

@@ -22,6 +22,10 @@ pub fn make_cache_file_path(file_name: &str) -> String {
     format!("../{}/{}", dotenv!("CACHE_DIR"), file_name)
 }
 
+pub fn make_output_file_path(file_name: &str) -> String {
+    format!("./{}/{}", dotenv!("OUTPUT_DIR"), file_name)
+}
+
 pub async fn read_json_file<P, D>(path: &P) -> Result<D>
 where
     P: AsRef<Path> + std::fmt::Display,
@@ -110,6 +114,23 @@ where
     tokio::fs::read_to_string(path)
         .await
         .map_err(FileSystemError::read_error)
+}
+
+pub async fn write_text_file<P>(path: &P, data: &str) -> Result<()>
+where
+    P: AsRef<Path> + std::fmt::Display,
+{
+    debug!("Writing text to [{}]", path);
+
+    let parent_dir = path.as_ref().parent().unwrap();
+
+    tokio::fs::create_dir_all(parent_dir)
+        .await
+        .map_err(FileSystemError::create_dir_error)?;
+
+    tokio::fs::write(path, data)
+        .await
+        .map_err(FileSystemError::write_error)
 }
 
 pub fn find_files_rescurse<P>(path: &P, extension: &str) -> Result<Vec<String>>

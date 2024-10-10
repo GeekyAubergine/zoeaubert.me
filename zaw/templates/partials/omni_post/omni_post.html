@@ -1,18 +1,7 @@
-<artcile class="timeline-post">
+<article class="timeline-post">
 {% match omni_post %}
-{% when OmniPost::UnlockedGameAchievement with {
-    game,
-    achievement
-} %}
-{% include "partials/omni_post/omni_post_game_achievement.html" %}
-{% when OmniPost::StatusLol with (post) %}
-{% include "partials/omni_post/omni_post_status_lol.html" %}
 {% when OmniPost::BlogPost with (post) %}
 {% include "partials/omni_post/omni_post_blog_post.html" %}
-{% when OmniPost::MicroPost with (post) %}
-{% include "partials/omni_post/omni_post_micro_post.html" %}
-{% when OmniPost::MastodonPost with (post) %}
-{% include "partials/omni_post/omni_post_mastodon_post.html" %}
 {% endmatch %}
 {%- block content %}
 {%- endblock %}
@@ -22,11 +11,11 @@
         {% let tags = omni_post.tags() %}
         {% include "partials/tags_list.html" %}
     </div>
-    <a href="{{ omni_post.permalink() }}" rel="noopener" class="timestamp">
+    <a href="{{ omni_post.link() }}" rel="noopener" class="timestamp">
         <time datetime="{{ omni_post.date().datetime() }}">
             {{ omni_post.date().short_iso() }}
         </time>
     </a>
 </div>
 
-</artcile>
+</article>

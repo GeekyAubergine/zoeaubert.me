@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use tracing::info;
+use tracing::debug;
 
 use crate::domain::queries::silly_names_queries::commit_silly_names;
 use crate::domain::state::State;
@@ -15,7 +15,7 @@ pub struct SillyNamesFileRecord {
 const FILE_NAME: &str = "silly_names.csv";
 
 pub async fn update_silly_names(state: &impl State) -> Result<()> {
-    info!("Update silly names");
+    debug!("Update silly names");
     let silly_names: Vec<SillyNamesFileRecord> =
         read_csv_file(&make_content_file_path(FILE_NAME)).await?;
 

@@ -8,8 +8,10 @@ pub mod tasks;
 use std::{path::Path, process::Command};
 
 use application::commands::update_all_data::update_all_data;
+use domain::repositories::Profiler;
 use error::FileSystemError;
-use infrastructure::{app_state::AppState, renderers::home_page::render_home_page};
+use infrastructure::app_state::AppState;
+use tasks::build_site::build_site;
 use tracing::Level;
 
 use crate::prelude::*;
@@ -55,6 +57,8 @@ async fn prepare_folders() -> Result<()> {
 async fn prepare_state() -> Result<AppState> {
     let state = AppState::new().await?;
 
+    state.profiler().start_timer().await?;
+
     update_all_data(&state).await?;
 
     Ok(state)
@@ -62,14 +66,12 @@ async fn prepare_state() -> Result<AppState> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt()
-        .with_max_level(Level::INFO)
-        .init();
+    tracing_subscriber::fmt().with_max_level(Level::INFO).init();
 
     prepare_folders().await?;
     let state = prepare_state().await?;
 
-    render_home_page(&state).await?;
+    build_site(&state).await?;
 
     Ok(())
 }

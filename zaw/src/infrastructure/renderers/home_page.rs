@@ -8,7 +8,7 @@ use crate::domain::queries::silly_names_queries::find_silly_names;
 use crate::domain::state::State;
 use crate::prelude::*;
 
-use super::{render_page_with_template};
+use super::render_page_with_template;
 
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
@@ -54,5 +54,5 @@ pub async fn render_home_page(state: &impl State) -> Result<()> {
         recent_blog_posts,
     };
 
-    render_page_with_template(&page, template).await
+    render_page_with_template(state, &page, template).await
 }

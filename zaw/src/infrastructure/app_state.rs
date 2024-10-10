@@ -1,13 +1,14 @@
 use super::repositories::{
-    about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_memory::BlogPostsRepoMemory, silly_names_repo_memory::SillyNamesRepoMemory
+    about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_memory::BlogPostsRepoMemory, profiler_memory::ProfilerMemory, silly_names_repo_memory::SillyNamesRepoMemory
 };
 
 use crate::{
-    domain::{repositories::{AboutTextRepo, BlogPostsRepo, SillyNamesRepo}, state::State},
+    domain::{repositories::{AboutTextRepo, BlogPostsRepo, Profiler, SillyNamesRepo}, state::State},
     prelude::*,
 };
 
 pub struct AppState {
+    profiler: ProfilerMemory,
     silly_names_repo: SillyNamesRepoMemory,
     about_text_repo: AboutTextRepoMemory,
     blog_posts_repo: BlogPostsRepoMemory,
@@ -16,14 +17,23 @@ pub struct AppState {
 impl AppState {
     pub async fn new() -> Result<Self> {
         Ok(Self {
+            profiler: ProfilerMemory::new(),
             silly_names_repo: SillyNamesRepoMemory::new(),
             about_text_repo: AboutTextRepoMemory::new(),
             blog_posts_repo: BlogPostsRepoMemory::new(),
         })
     }
+
+    pub fn profiler(&self) -> &impl Profiler {
+        &self.profiler
+    }
 }
 
 impl State for AppState {
+    fn profiler(&self) -> &impl Profiler {
+        &self.profiler
+    }
+
     fn silly_names_repo(&self) -> &impl SillyNamesRepo {
         &self.silly_names_repo
     }

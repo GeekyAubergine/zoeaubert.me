@@ -3,66 +3,31 @@ use std::fmt;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+use super::image::Image;
 
-use super::{image::ImageUuid, media::MediaUuid};
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct MicroPostUuid(pub Uuid);
-
-impl MicroPostUuid {
-    pub fn new(uuid: Uuid) -> Self {
-        Self(uuid)
-    }
-}
-
-impl From<Uuid> for MicroPostUuid {
-    fn from(uuid: Uuid) -> Self {
-        Self::new(uuid)
-    }
-}
-
-impl From<MicroPostUuid> for Uuid {
-    fn from(micro_post_uuid: MicroPostUuid) -> Self {
-        micro_post_uuid.0
-    }
-}
-
-impl From<&MicroPostUuid> for Uuid {
-    fn from(micro_post_uuid: &MicroPostUuid) -> Self {
-        micro_post_uuid.0
-    }
-}
-
-impl fmt::Display for MicroPostUuid {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
+use super::media::Media;
 
 #[derive(Debug, Clone)]
 pub struct MicroPost {
-    pub uuid: MicroPostUuid,
     pub slug: String,
     pub date: DateTime<Utc>,
     pub content: String,
-    pub image_order: Vec<ImageUuid>,
+    pub images: Vec<Image>,
     pub updated_at: DateTime<Utc>,
 }
 
 impl MicroPost {
     pub fn new(
-        uuid: MicroPostUuid,
         slug: String,
         date: DateTime<Utc>,
         content: String,
-        image_order: Vec<ImageUuid>,
+        images: Vec<Image>,
     ) -> Self {
         Self {
-            uuid,
             slug,
             date,
             content,
-            image_order,
+            images,
             updated_at: Utc::now(),
         }
     }
@@ -76,11 +41,10 @@ impl MicroPost {
         format!("/micros/{}", self.slug)
     }
 
-    pub fn media_order(&self) -> Vec<MediaUuid> {
-        self
-            .image_order
+    pub fn media(&self) -> Vec<Media> {
+        self.images
             .iter()
-            .map(|image_uuid| image_uuid.into())
-            .collect::<Vec<MediaUuid>>()
+            .map(|image| image.into())
+            .collect::<Vec<Media>>()
     }
 }
