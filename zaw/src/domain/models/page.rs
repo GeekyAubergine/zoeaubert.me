@@ -43,8 +43,6 @@ impl PagePagination {
         page: &PaginatorPage<'d, D>,
         entity_name: &str,
     ) -> Self {
-        println!("Base slug {:?}", slug);
-
         let next = match page.has_next() {
             true => Some(PagePaginationLabel::new(
                 &slug.append(&format!("page-{}", page.page_number + 1)),
@@ -162,16 +160,16 @@ impl<'a> Page<'a> {
 
     pub fn with_pagination_from_paginator<'d, D>(
         mut self,
-        page: &PaginatorPage<'d, D>,
+        paginator_page: &PaginatorPage<'d, D>,
         entity_name: &str,
     ) -> Self {
         let pagination =
-            PagePagination::from_slug_and_pagniator_page(&self.slug, page, entity_name);
+            PagePagination::from_slug_and_pagniator_page(&self.slug, paginator_page, entity_name);
 
         self.page_pagination = Some(pagination);
 
-        if page.page_number > 1 {
-            self.slug = self.slug.append(&format!("page-{}", page.page_number));
+        if paginator_page.page_number > 1 {
+            self.slug = self.slug.append(&format!("page-{}", paginator_page.page_number));
         }
 
         self

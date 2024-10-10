@@ -14,6 +14,7 @@ pub mod blog_pages;
 pub mod formatters;
 pub mod home_page;
 pub mod timeline_pages;
+pub mod tags_pages;
 
 pub async fn render_page_with_template<'p, T>(state: &impl State, page: &Page<'p>, template: T) -> Result<()>
 where

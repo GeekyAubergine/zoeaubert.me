@@ -58,7 +58,7 @@ impl TagSlug {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Tag {
-    tag: String,
+    pub tag: String,
 }
 
 impl Tag {
