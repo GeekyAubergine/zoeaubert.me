@@ -1,0 +1,62 @@
+{% extends "partials/page.html" %}
+
+{%- block content %}
+    <article>
+        <img src="{{ game.header_image_url() }}" alt="{{ game.name() }} steam header image">
+
+        <div class="game-page-data">
+            <a href="{{ game.link_url() }}" rel="noopener noreferrer">Store Page</a>
+            <div class="number-stats">
+                <div class="number-stat">
+                    <p class="numbers">{{ game.playtime_hours().format(1, true) }}h</p>
+                    <p class="label">Playtime</p>
+                </div>
+                {%- if achievements.achievements_count() > 0 %}
+                    <div class="number-stat">
+                        <p class="numbers">{{ achievements.achievements_unlocked_count() }}
+                            <span class="mx-[0.15rem]">/</span>{{ achievements.achievements_count() }}</p>
+                        <p class="label">Achievements</p>
+                    </div>
+                {%- endif %}
+            </div>
+        </div>
+
+        {%- if achievements.achievements_by_unlocked_date().len() > 0 %}
+            <h2>Unlocked Achievements</h2>
+            {% for achievement in achievements.achievements_by_unlocked_date() %}
+                <div class="game-achievement">
+                    <div class="image-container">
+                        <img src="{{ achievement.image_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                    </div>
+                    <div class="left">
+                        <div class="name-and-description">
+                            <h3>{{ achievement.display_name() }}</h3>
+                            <p>{{ achievement.description() }}</p>
+                        </div>
+                        <p class="secondary">{{ achievement.global_unlocked_percentage().format(1, false) }}% of players have this acheivement{%- if achievement.global_unlocked_percentage() < 10.0 %}<span class="special">⭐️<span>{% endif %}</p>
+                    </div>
+                    <div class="right">
+                        <time datetime="{{ achievement.unlocked_date().datetime() }}">{{ achievement.unlocked_date().short_iso() }}</time>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {%- if achievements.achievements_locked().len() > 0 %}
+            <h2>Locked Achievements</h2>
+            {% for achievement in achievements.achievements_locked() %}
+                <div class="game-achievement">
+                    <div class="image-container">
+                        <img src="{{ achievement.image_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                    </div>
+                    <div class="left">
+                        <div class="name-and-description">
+                            <h3>{{ achievement.display_name() }}</h3>
+                            <p>{{ achievement.description() }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </article>
+{% endblock %}

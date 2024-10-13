@@ -1,0 +1,71 @@
+title: Jersey Zoo
+date: '2019-09-13'
+photos:
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0013.jpg'
+      description: Rabbit
+      alt: Rabbit sitting site on in grass looking at camera with one eye
+      tags:
+          - Jersey
+          - Zoo
+          - Rabbit
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0079.jpg'
+      description: Sulawesi crested black macaque
+      alt: Sulawesi crested black macaque sitting perpindicular to camera with head rotated looking at camera infront of a grassy background
+      tags:
+          - Jersey
+          - Zoo
+          - Macaque
+          - SulawesiCrestedBlackMacaque
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0091.jpg'
+      description: Sulawesi crested black macaque
+      alt: Sulawesi crested black macaque sitting perpindicular to camera with head rotated and tilted looking at camera infront of a grassy background with other macaques in the background
+      tags:
+          - Jersey
+          - Zoo
+          - Macaque
+          - SulawesiCrestedBlackMacaque
+      featured: true
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0156.jpg'
+      description: Western lowland gorilla
+      alt: Western lowland gorilla sitting on grass with its teeth on display eating what appears to be a leek.
+      tags:
+          - Jersey
+          - Zoo
+          - Gorilla
+          - WesternLowlandGorilla
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0233.jpg'
+      description: Sumatran orangutan
+      alt: Sumatran orangutan side profile looking right with heavily bokeh trees in the background
+      tags:
+          - Jersey
+          - Zoo
+          - Orangutan
+          - SumatranOrangutan
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0342.jpg'
+      description: Chilean flamingo
+      alt: A chilean flamingo's head and neck in profile against a green and leafy background
+      tags:
+          - Jersey
+          - Zoo
+          - Bird
+          - Flamingo
+          - ChileanFlamingo
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0358.jpg'
+      description: Chilean flamingo
+      alt: A chilean flamingo's head and neck in profile with many other flamingos blurred in the background
+      tags:
+          - Jersey
+          - Zoo
+          - Bird
+          - Flamingo
+          - ChileanFlamingo
+      featured: true
+    - url: '/2019/09/jersey_zoo_2019/20190913-_MG_0669.jpg'
+      description: Red-tailed laughingthrush
+      alt: Red-tailed laughingthrush sitting on a branch looking at directly camera
+      tags:
+          - Jersey
+          - Zoo
+          - Bird
+          - LaughingThrush
+          - RedTailedLaughingThrush

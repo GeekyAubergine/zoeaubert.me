@@ -1,0 +1,31 @@
+{% extends "partials/base.html" %}
+
+{%- block body %}
+    {% include "partials/navbar.html" %}
+
+    {% include "partials/page_header.html" %}
+
+    <div class="wide">
+        <div class="flex-row justify-center">
+            <a href="/tags" class="link mr-4">Tags</a>
+            <a href="/albums" class="link">View Albums</a>
+        </div>
+
+        <div class="photogrid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+            {% for image in photos %}
+                {% match image.parent_permalink() %}
+                {% when Some with (parent_permalink) %}
+                    <a href="{{ parent_permalink }}" class="flex justify-center items-center col-span-1 max-h-8">
+                        {% include "partials/media/image.html" %}
+                    </a>
+                {% when None %}
+                {% endmatch %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="width-control mx-auto">
+        {% include "partials/pagination.html" %}
+    </div>
+    {% include "partials/footer.html" %}
+{% endblock %}

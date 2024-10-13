@@ -1,0 +1,30 @@
+{%- match page.heading() %}
+{%- when Some with (heading) %}
+<div class="page-header">
+    <h1>{{ heading }}</h1>
+    {%- match page.date() %}
+{%- when Some with (date) %}
+    <div class="date-and-readtime" data-pagefind-ignore>
+        <p>
+            <time datetime="{{date.datetime()}}">{{ date.short_iso() }}</time>
+            {%- match page.read_time() %}
+        {%- when Some with (read_time) %}
+            <span>-</span>
+            {{read_time}}
+        {%- when None %}
+            {%- endmatch %}
+        </p>
+    </div>
+{%- when None %}
+    {%- endmatch %}
+
+    {%- if page.tags().len() > 0 %}
+        <div class="tags-list mb-4">
+            {% let tags = page.tags() %}
+            {% include "partials/tags_list.html" %}
+        </div>
+    {%- endif %}
+    {% block subheading %}{% endblock %}
+</div>
+{% when None %}
+{% endmatch %}

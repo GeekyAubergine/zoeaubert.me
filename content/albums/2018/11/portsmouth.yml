@@ -1,0 +1,19 @@
+title: Portsmouth
+date: '2018-11-08'
+photos:
+    - url: '/2018/11/portsmouth/20181108-IMG_0026.jpg'
+      description: Fireworks
+      alt: Long exposure of fireworks over Portsmouth Harbour
+      tags:
+          - Portsmouth
+          - Fireworks
+          - LongExposure
+    - url: '/2018/11/portsmouth/20181108-IMG_0047.jpg'
+      description: Spinnaker Tower
+      alt: Spinnaker Tower viewed from behind in Old Portsmouth at hightide tide at night. The long exposure has caused the sea to be smooth. The tower is lit up greem.
+      tags:
+          - Portsmouth
+          - SpinnakerTower
+          - Sunset
+          - LongExposure
+      featured: true
