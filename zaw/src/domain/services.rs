@@ -10,10 +10,12 @@ pub trait CacheService {
 
     async fn write_file(&self, path: &CachePath, content: &[u8]) -> Result<()>;
 
+    async fn download_and_cache_file(&self, url: &str) -> Result<CachePath>;
+
     async fn get_file_from_cache_or_url(&self, url: &str) -> Result<Vec<u8>>;
 }
 
 #[async_trait::async_trait]
 pub trait CdnService {
-    async fn copy_file(&self, source: &str, destination: &str) -> Result<()>;
+    async fn upload_file(&self, source: &str, destination: &str) -> Result<()>;
 }

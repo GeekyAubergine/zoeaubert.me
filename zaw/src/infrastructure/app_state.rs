@@ -1,13 +1,13 @@
 use super::{
     repositories::{
-        about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_memory::BlogPostsRepoMemory, mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_memory::MicroPostsRepoMemory, profiler_memory::ProfilerMemory, silly_names_repo_memory::SillyNamesRepoMemory
+        about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_memory::BlogPostsRepoMemory, lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_memory::MicroPostsRepoMemory, profiler_memory::ProfilerMemory, silly_names_repo_memory::SillyNamesRepoMemory
     },
     services::{cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny},
 };
 
 use crate::{
     domain::{
-        repositories::{AboutTextRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo},
+        repositories::{AboutTextRepo, BlogPostsRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo},
         services::{CacheService, CdnService},
         state::State,
     },
@@ -21,6 +21,7 @@ pub struct AppState {
     blog_posts_repo: BlogPostsRepoMemory,
     micro_posts_repo: MicroPostsRepoMemory,
     mastodon_posts_repo: MastodonPostRepoDisk,
+    lego_repo: LegoRepoDisk,
     cache_service: CacheServiceDisk,
     cdn_service: CdnServiceBunny,
 }
@@ -34,6 +35,7 @@ impl AppState {
             blog_posts_repo: BlogPostsRepoMemory::new(),
             micro_posts_repo: MicroPostsRepoMemory::new(),
             mastodon_posts_repo: MastodonPostRepoDisk::new().await?,
+            lego_repo: LegoRepoDisk::new().await?,
             cache_service: CacheServiceDisk::new(),
             cdn_service: CdnServiceBunny::new(),
         })
@@ -67,6 +69,10 @@ impl State for AppState {
 
     fn mastodon_posts_repo(&self) -> &impl MastodonPostsRepo {
         &self.mastodon_posts_repo
+    }
+
+    fn lego_repo(&self) -> &impl LegoRepo {
+        &self.lego_repo
     }
 
     fn cache_service(&self) -> &impl CacheService {

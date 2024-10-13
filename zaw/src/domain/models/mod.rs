@@ -9,3 +9,4 @@ pub mod site_config;
 pub mod omni_post;
 pub mod cache_path;
 pub mod mastodon_post;
+pub mod lego;

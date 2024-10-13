@@ -5,6 +5,8 @@ use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::infrastructure::services::cdn_service_bunny::make_cdn_url;
+
 use super::{media::Media, slug::Slug};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
@@ -100,7 +102,7 @@ impl Image {
     pub fn url(&self) -> String {
         match self.url.starts_with("http") {
             true => self.url.clone(),
-            false => format!("{}/{}", dotenv!("CDN_URL"), self.url),
+            false => make_cdn_url(&self.url),
         }
     }
 

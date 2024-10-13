@@ -35,6 +35,10 @@ pub fn make_cdn_path_for_file_with_date(
     format!("{}/{}{}.{}", date_str, name, suffix_str, ext)
 }
 
+pub fn make_cdn_url(url: &str) -> String {
+    format!("{}/{}", dotenv!("CDN_URL"), url)
+}
+
 fn make_cdn_path(path: &str) -> String {
     format!("{}{}", dotenv!("BUNNY_CDN_URL"), path)
 }
@@ -110,12 +114,12 @@ impl CdnServiceBunny {
 
 #[async_trait::async_trait]
 impl CdnService for CdnServiceBunny {
-    async fn copy_file(&self, source: &str, destination: &str) -> Result<()> {
-        // debug!("Copying file from {} to {}", source, destination);
-        // if self.file_exists(destination).await? {
-        //     debug!("File already exists in destination, skipping");
-        //     return Ok(());
-        // }
+    async fn upload_file(&self, source: &str, destination: &str) -> Result<()> {
+        debug!("Copying file from {} to {}", source, destination);
+        if self.file_exists(destination).await? {
+            debug!("File already exists in destination, skipping");
+            return Ok(());
+        }
 
         debug!("File does not exist in destination, copying");
 

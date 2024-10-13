@@ -25,8 +25,6 @@ pub async fn render_mastodon_post_page(state: &impl State, mastodon_post: &Masto
         .with_date(*mastodon_post.created_at())
         .with_tags(mastodon_post.tags().clone());
 
-    println!("Rendering mastodon post: {}", mastodon_post.slug().relative_link());
-
     let template = MastodonPostTemplate {
         page: &page,
         post: mastodon_post,

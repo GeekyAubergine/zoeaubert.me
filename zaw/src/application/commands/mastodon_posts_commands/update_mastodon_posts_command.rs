@@ -11,13 +11,15 @@ use crate::domain::models::mastodon_post::{
 };
 use crate::domain::models::media::Media;
 use crate::domain::models::tag::Tag;
-use crate::domain::queries::mastodon_queries::{commit_mastodon_post, find_all_mastodon_posts};
+use crate::domain::queries::mastodon_queries::{
+    commit_mastodon_post, find_all_mastodon_posts, find_mastodon_posts_last_updated_at,
+};
 use crate::domain::repositories::Profiler;
 use crate::domain::services::{CacheService, CdnService};
 use crate::domain::state::State;
 use crate::infrastructure::services::cdn_service_bunny::make_cdn_path_for_file_with_date;
 use crate::infrastructure::utils::networking::*;
-use crate::prelude::*;
+use crate::{prelude::*, ONE_HOUR_PERIOD};
 
 const SELF_URL: &str = "zoeaubert.me";
 const APPLICATIONS_TO_IGNORE: [&str; 2] = ["Micro.blog", "status.lol"];
@@ -251,12 +253,7 @@ async fn mastodon_status_to_post(
                     .with_date(post.created_at())
                     .with_parent_slug(&post.slug());
 
-                    state
-                        .cache_service()
-                        .get_file_from_cache_or_url(url)
-                        .await?;
-
-                    state.cdn_service().copy_file(url, &image.url).await?;
+                    copy_file_from_url_to_cdn(state, url, &image.url).await?;
 
                     debug!("making preview image");
 
@@ -275,14 +272,7 @@ async fn mastodon_status_to_post(
                             .with_date(post.created_at())
                             .with_parent_slug(&post.slug());
 
-                            state
-                                .cache_service()
-                                .get_file_from_cache_or_url(preview_url)
-                                .await?;
-
-                            state
-                                .cdn_service()
-                                .copy_file(preview_url, &preview_image.url)
+                            copy_file_from_url_to_cdn(state, preview_url, &preview_image.url)
                                 .await?;
 
                             Some(preview_image)
@@ -303,6 +293,14 @@ async fn mastodon_status_to_post(
 }
 
 pub async fn update_mastodon_posts_command(state: &impl State) -> Result<()> {
+    let last_updated = find_mastodon_posts_last_updated_at(state).await?;
+
+    if let Some(last_updated) = find_mastodon_posts_last_updated_at(state).await? {
+        if last_updated + ONE_HOUR_PERIOD > Utc::now() {
+            return Ok(());
+        }
+    }
+
     let posts = find_all_mastodon_posts(state).await?;
 
     let mut oldest_post_to_update_since: Option<&MastodonPost> = None;

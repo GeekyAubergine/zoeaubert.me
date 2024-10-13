@@ -1,6 +1,8 @@
+use chrono::{DateTime, Utc};
+
 use crate::prelude::*;
 
-use super::models::{blog_post::BlogPost, mastodon_post::MastodonPost, micro_post::MicroPost};
+use super::models::{blog_post::BlogPost, lego::{LegoMinifig, LegoSet}, mastodon_post::MastodonPost, micro_post::MicroPost};
 
 #[async_trait::async_trait]
 pub trait Profiler {
@@ -51,5 +53,26 @@ pub trait MicroPostsRepo {
 pub trait MastodonPostsRepo {
     async fn find_all(&self) -> Result<Vec<MastodonPost>>;
 
+    async fn find_last_updated_at(&self) -> Result<Option<DateTime<Utc>>>;
+
     async fn commit(&self, micro_post: &MastodonPost) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait LegoRepo {
+    async fn find_all_sets(&self) -> Result<Vec<LegoSet>>;
+
+    async fn find_all_minifigs(&self) -> Result<Vec<LegoMinifig>>;
+
+    async fn find_total_pieces(&self) -> Result<u32>;
+
+    async fn find_total_sets(&self) -> Result<u32>;
+
+    async fn find_total_minifigs(&self) -> Result<u32>;
+
+    async fn find_last_updated_at(&self) -> Result<Option<DateTime<Utc>>>;
+
+    async fn commit_set(&self, set: &LegoSet) -> Result<()>;
+
+    async fn commit_minifig(&self, minifig: &LegoMinifig) -> Result<()>;
 }

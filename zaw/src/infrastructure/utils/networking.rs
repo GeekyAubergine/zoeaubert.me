@@ -1,13 +1,20 @@
 use serde::de::DeserializeOwned;
 use tracing::debug;
 
+use crate::domain::services::CacheService;
+use crate::domain::services::CdnService;
+use crate::domain::state::State;
 use crate::error::*;
 use crate::prelude::*;
 
 async fn download_response(client: &reqwest::Client, url: &str) -> Result<reqwest::Response> {
     debug!("Making request to: {}", url);
 
-    let resp = client.get(url).send().await.map_err(NetworkError::fetch_error)?;
+    let resp = client
+        .get(url)
+        .send()
+        .await
+        .map_err(NetworkError::fetch_error)?;
 
     Ok(resp)
 }
@@ -29,4 +36,20 @@ pub async fn download_bytes(client: &reqwest::Client, url: &str) -> Result<Vec<u
     let bytes = resp.bytes().await.map_err(NetworkError::fetch_error)?;
 
     Ok(bytes.to_vec())
+}
+
+pub async fn copy_file_from_url_to_cdn(
+    state: &impl State,
+    source: &str,
+    destiniation: &str,
+) -> Result<()> {
+    state
+        .cache_service()
+        .download_and_cache_file(&source)
+        .await?;
+
+    state
+        .cdn_service()
+        .upload_file(&source, &destiniation)
+        .await
 }

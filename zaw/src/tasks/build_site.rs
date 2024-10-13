@@ -12,6 +12,8 @@ use crate::domain::state::State;
 
 use crate::infrastructure::renderers::blog_pages::{render_blog_post_page, render_blogs_list_page};
 use crate::infrastructure::renderers::home_page::render_home_page;
+use crate::infrastructure::renderers::interests_page::render_interests_list_page;
+use crate::infrastructure::renderers::lego_pages::render_lego_list_page;
 use crate::infrastructure::renderers::mastodon_post_pages::render_mastodon_post_page;
 use crate::infrastructure::renderers::micro_post_pages::render_micro_post_page;
 use crate::infrastructure::renderers::tags_pages::{render_tag_page, render_tags_list_page};
@@ -36,8 +38,9 @@ pub async fn build_site(state: &impl State) -> Result<()> {
 
     build_mastodon_post_pages(state).await?;
 
-    state.profiler().overall_stop().await?;
+    build_interests_pages(state).await?;
 
+    state.profiler().overall_stop().await?;
     state.profiler().print_results().await?;
 
     Ok(())
@@ -104,4 +107,15 @@ async fn build_mastodon_post_pages(state: &impl State) -> Result<()> {
     }
 
     Ok(())
+}
+
+async fn build_interests_pages(state: &impl State) -> Result<()> {
+    render_interests_list_page(state).await?;
+
+    build_lego_pages(state).await?;
+    Ok(())
+}
+
+async fn build_lego_pages(state: &impl State) -> Result<()> {
+    render_lego_list_page(state).await
 }

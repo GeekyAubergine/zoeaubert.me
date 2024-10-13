@@ -2,6 +2,7 @@ use tracing::info;
 
 use crate::application::commands::about_text_commands::update_about_text;
 use crate::application::commands::blog_posts_commands::update_blog_posts_command::update_blog_posts_command;
+use crate::application::commands::lego_commands::update_lego_command::update_lego_command;
 use crate::application::commands::mastodon_posts_commands::update_mastodon_posts_command::update_mastodon_posts_command;
 use crate::application::commands::micro_posts_commands::update_micro_blog_archive_posts_command::update_micro_blog_archive_posts_command;
 use crate::application::commands::micro_posts_commands::update_micro_posts_command::update_micro_posts;
@@ -19,6 +20,7 @@ pub async fn update_all_data(state: &impl State) -> Result<()> {
     update_micro_blog_archive_posts_command(state).await?;
     update_micro_posts(state).await?;
     update_mastodon_posts_command(state).await?;
+    update_lego_command(state).await?;
 
     Ok(())
 }

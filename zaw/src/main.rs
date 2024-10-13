@@ -7,7 +7,7 @@ pub mod infrastructure;
 pub mod prelude;
 pub mod tasks;
 
-use std::{path::Path, process::Command};
+use std::{path::Path, process::Command, time::Duration};
 
 use application::commands::update_all_data::update_all_data;
 use domain::repositories::Profiler;
@@ -21,6 +21,9 @@ use crate::prelude::*;
 pub mod build_data {
     include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
 }
+
+pub const ONE_HOUR_PERIOD: Duration = Duration::new(60 * 60 - 1, 0);
+pub const ONE_DAY_PERIOD: Duration = Duration::new(60 * 60 * 24 - 1, 0);
 
 async fn prepare_folders() -> Result<()> {
     Command::new("rm")

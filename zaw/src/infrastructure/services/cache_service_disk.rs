@@ -38,6 +38,14 @@ impl CacheService for CacheServiceDisk {
         write_file(&make_cache_file_path(path.as_str()), content).await
     }
 
+    async fn download_and_cache_file(&self, url: &str) -> Result<CachePath> {
+        self.get_file_from_cache_or_url(url).await?;
+
+        let path = CachePath::from_url(url);
+
+        Ok(path)
+    }
+
     async fn get_file_from_cache_or_url(&self, url: &str) -> Result<Vec<u8>> {
         debug!("Getting file from cache or url: {}", url);
 

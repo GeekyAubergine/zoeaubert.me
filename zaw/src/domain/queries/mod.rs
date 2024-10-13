@@ -5,3 +5,4 @@ pub mod omni_post_queries;
 pub mod tags_queries;
 pub mod micro_posts_queries;
 pub mod mastodon_queries;
+pub mod lego_queries;

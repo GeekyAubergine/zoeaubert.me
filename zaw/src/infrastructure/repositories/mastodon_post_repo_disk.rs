@@ -1,5 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
@@ -14,15 +15,8 @@ const FILE_NAME: &str = "mastodon_posts.json";
 
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct MastodonPostRepoData {
-    blog_posts: HashMap<String, MastodonPost>,
-}
-
-impl MastodonPostRepoData {
-    pub fn new() -> Self {
-        Self {
-            blog_posts: HashMap::new(),
-        }
-    }
+    mastodon_posts: HashMap<String, MastodonPost>,
+    updated_at: Option<DateTime<Utc>>,
 }
 
 pub struct MastodonPostRepoDisk {
@@ -45,7 +39,7 @@ impl MastodonPostsRepo for MastodonPostRepoDisk {
         let data = self.data.read().await;
 
         let mut posts = data
-            .blog_posts
+            .mastodon_posts
             .values()
             .cloned()
             .collect::<Vec<MastodonPost>>();
@@ -55,10 +49,17 @@ impl MastodonPostsRepo for MastodonPostRepoDisk {
         Ok(posts)
     }
 
+    async fn find_last_updated_at(&self) -> Result<Option<DateTime<Utc>>> {
+        let data = self.data.read().await;
+
+        Ok(data.updated_at)
+    }
+
     async fn commit(&self, post: &MastodonPost) -> Result<()> {
         let mut data = self.data.write().await;
 
-        data.blog_posts.insert(post.id().to_string(), post.clone());
+        data.mastodon_posts.insert(post.id().to_string(), post.clone());
+        data.updated_at = Some(Utc::now());
 
         write_json_file(&make_archive_file_path(FILE_NAME), &data.clone()).await?;
 
