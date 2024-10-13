@@ -3,7 +3,7 @@ use tracing::{debug, info};
 use crate::{
     domain::{models::cache_path::CachePath, services::CacheService},
     error::{FileSystemError, NetworkError},
-    infrastructure::utils::file_system::{make_cache_file_path, read_file, write_file},
+    infrastructure::utils::{file_system::{make_cache_file_path, read_file, write_file}, networking::download_bytes},
 };
 
 use crate::prelude::*;
@@ -39,26 +39,15 @@ impl CacheService for CacheServiceDisk {
     }
 
     async fn get_file_from_cache_or_url(&self, url: &str) -> Result<Vec<u8>> {
+        debug!("Getting file from cache or url: {}", url);
+
         let path = CachePath::from_url(url);
 
         if let Ok(content) = self.read_file(&path).await {
             return Ok(content);
         }
 
-        info!("Fetching file from URL: {}", url);
-
-        let request = self
-            .reqwest_client
-            .get(url)
-            .send()
-            .await
-            .map_err(NetworkError::fetch_error)?;
-
-        let content = request
-            .bytes()
-            .await
-            .map_err(NetworkError::fetch_error)?
-            .to_vec();
+        let content = download_bytes(&self.reqwest_client, url).await?;
 
         self.write_file(&path, &content).await?;
 

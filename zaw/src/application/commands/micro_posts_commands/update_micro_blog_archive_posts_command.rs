@@ -4,7 +4,7 @@ use tracing::info;
 
 use crate::{
     domain::{
-        models::{micro_post::MicroPost, slug::Slug, tag::Tag},
+        models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
         queries::micro_posts_queries::commit_micro_post,
         repositories::Profiler,
         state::State,
@@ -87,13 +87,14 @@ fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
         return Ok(None);
     }
 
-    let images = extract_images_from_html(&content, &item.date_published, &slug);
+    let media = extract_images_from_html(&content, &item.date_published, &slug)
+        .iter().map(|i| Media::from(i)).collect();
 
     Ok(Some(MicroPost::new(
         slug.clone(),
         item.date_published,
         content,
-        images,
+        media,
         tags,
     )))
 }

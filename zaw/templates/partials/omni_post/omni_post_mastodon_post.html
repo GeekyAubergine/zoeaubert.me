@@ -1,15 +1,15 @@
 <div>{{ post.content().to_html()|safe }}</div>
 <div class="media">
     {% if post
-        .media()
+        .optimised_media()
         .len() > 1 %}
         <div class="media-grid">
-            {% for media in post.media() %}
+            {% for media in post.optimised_media() %}
                 {% include "partials/media/media.html" %}
             {% endfor %}
         </div>
     {% else %}
-        {% for media in post.media() %}
+        {% for media in post.optimised_media() %}
             {% include "partials/media/media.html" %}
         {% endfor %}
     {% endif %}

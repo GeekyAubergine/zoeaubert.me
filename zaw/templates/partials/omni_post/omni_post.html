@@ -4,6 +4,8 @@
 {% include "partials/omni_post/omni_post_blog_post.html" %}
 {% when OmniPost::MicroPost with (post) %}
 {% include "partials/omni_post/omni_post_micro_post.html" %}
+{% when OmniPost::MastodonPost with (post) %}
+{% include "partials/omni_post/omni_post_mastodon_post.html" %}
 {% endmatch %}
 {%- block content %}
 {%- endblock %}

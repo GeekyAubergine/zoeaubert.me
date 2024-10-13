@@ -11,7 +11,7 @@
         {%- when None %}
             {%- endmatch %}
         </div>
-        {{ post.content.to_html()|safe}}
+        {{ post.content().to_html()|safe}}
         <div class="media">
             {% let media = post.media() %}
             {% if media
@@ -33,12 +33,8 @@
                 {% include "partials/tags_list.html" %}
             </div>
         {%- endif %}
-        {% match post.original_url() %}
-            {%- when Some with (original_url) %}
-                <p class="mt-6">See original:
-                    <a href="{{ original_url }}" class="link" target="_blank" rel="me">{{ original_url }}</a>
-                </p>
-            {%- when None %}
-        {%- endmatch %}
+        <p class="mt-6">See original:
+            <a href="{{ post.original_uri() }}" class="link" target="_blank" rel="me">{{ post.original_uri() }}</a>
+        </p>
     </artcile>
 {% endblock %}

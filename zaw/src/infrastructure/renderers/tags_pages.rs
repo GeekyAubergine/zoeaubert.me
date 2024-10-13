@@ -14,6 +14,7 @@ use crate::{
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
+use crate::domain::models::media::Media;
 
 use crate::domain::models::tag::Tag;
 

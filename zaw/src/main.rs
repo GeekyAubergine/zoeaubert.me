@@ -59,7 +59,7 @@ async fn prepare_folders() -> Result<()> {
 async fn prepare_state() -> Result<AppState> {
     let state = AppState::new().await?;
 
-    state.profiler().start_timer().await?;
+    state.profiler().overall_start().await?;
 
     update_all_data(&state).await?;
 

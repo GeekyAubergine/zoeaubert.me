@@ -1,6 +1,7 @@
 use std::fmt;
 
 use chrono::{DateTime, Utc};
+use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -96,8 +97,11 @@ impl Image {
         }
     }
 
-    pub fn url(&self) -> &str {
-        &self.url
+    pub fn url(&self) -> String {
+        match self.url.starts_with("http") {
+            true => self.url.clone(),
+            false => format!("{}/{}", dotenv!("CDN_URL"), self.url),
+        }
     }
 
     pub fn alt(&self) -> &str {

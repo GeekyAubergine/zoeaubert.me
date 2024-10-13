@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use super::models::{blog_post::BlogPost, micro_post::MicroPost};
+use super::models::{blog_post::BlogPost, mastodon_post::MastodonPost, micro_post::MicroPost};
 
 #[async_trait::async_trait]
 pub trait Profiler {
@@ -8,9 +8,11 @@ pub trait Profiler {
 
     async fn add_page_generated(&self) -> Result<()>;
 
-    async fn start_timer(&self) -> Result<()>;
+    async fn overall_start(&self) -> Result<()>;
 
-    async fn stop_timer(&self) -> Result<()>;
+    async fn overall_stop(&self) -> Result<()>;
+
+    async fn page_generation_start(&self) -> Result<()>;
 
     async fn print_results(&self) -> Result<()>;
 }
@@ -43,4 +45,11 @@ pub trait MicroPostsRepo {
     async fn find_all(&self) -> Result<Vec<MicroPost>>;
 
     async fn commit(&self, micro_post: &MicroPost) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait MastodonPostsRepo {
+    async fn find_all(&self) -> Result<Vec<MastodonPost>>;
+
+    async fn commit(&self, micro_post: &MastodonPost) -> Result<()>;
 }

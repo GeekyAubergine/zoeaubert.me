@@ -19,6 +19,11 @@ impl Slug {
             false => format!("{}/", slug),
         };
 
+        let slug = match slug.starts_with("http") {
+            true => slug.split("/").skip(3).collect::<Vec<&str>>().join("/"),
+            false => slug,
+        };
+
         Self(slug)
     }
 

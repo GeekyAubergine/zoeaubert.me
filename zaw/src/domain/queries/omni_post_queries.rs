@@ -5,6 +5,7 @@ use crate::prelude::*;
 use crate::domain::{models::omni_post::OmniPost, models::tag::Tag, state::State};
 
 use super::blog_post_queries::find_all_blog_posts;
+use super::mastodon_queries::find_all_mastodon_posts;
 use super::micro_posts_queries::find_all_micro_posts;
 
 bitflags! {
@@ -64,6 +65,15 @@ pub async fn find_all_omni_posts(
             .collect::<Vec<OmniPost>>();
 
         omni_posts.extend(micro_posts);
+    }
+
+    if filter_flags.contains(OmniPostFilterFlags::MASTODON_POST) {
+        let mastodon_posts = find_all_mastodon_posts(state).await?
+            .iter()
+            .map(|p| p.into())
+            .collect::<Vec<OmniPost>>();
+
+        omni_posts.extend(mastodon_posts);
     }
 
     omni_posts.sort_by(|a, b| b.date().cmp(&a.date()));

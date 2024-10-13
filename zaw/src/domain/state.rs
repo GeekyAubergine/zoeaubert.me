@@ -1,6 +1,6 @@
 use super::{
-    repositories::{AboutTextRepo, BlogPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo},
-    services::CacheService,
+    repositories::{AboutTextRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo},
+    services::{CacheService, CdnService},
 };
 
 pub trait State {
@@ -14,5 +14,9 @@ pub trait State {
 
     fn micro_posts_repo(&self) -> &impl MicroPostsRepo;
 
+    fn mastodon_posts_repo(&self) -> &impl MastodonPostsRepo;
+
     fn cache_service(&self) -> &impl CacheService;
+
+    fn cdn_service(&self) -> &impl CdnService;
 }

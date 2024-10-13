@@ -2,9 +2,18 @@ use serde::Deserialize;
 use tracing::info;
 
 use crate::{
-    domain::{models::{micro_post::MicroPost, slug::Slug, tag::Tag}, queries::micro_posts_queries::commit_micro_post, repositories::Profiler, state::State},
+    domain::{
+        models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
+        queries::micro_posts_queries::commit_micro_post,
+        repositories::Profiler,
+        state::State,
+    },
     error::MicroPostError,
-    infrastructure::utils::{date::parse_date, file_system::{find_files_rescurse, make_content_file_path, read_text_file}, image_extractor::extract_images_from_html},
+    infrastructure::utils::{
+        date::parse_date,
+        file_system::{find_files_rescurse, make_content_file_path, read_text_file},
+        image_extractor::extract_images_from_html,
+    },
 };
 
 use crate::prelude::*;
@@ -53,7 +62,10 @@ async fn file_to_micro_post(file_path: &str, content: &str) -> Result<MicroPost>
 
     let slug = Slug::new(&format!("{}/{}", slug_date, file_name));
 
-    let images = extract_images_from_html(&content, &date, &slug);
+    let media = extract_images_from_html(&content, &date, &slug)
+        .iter()
+        .map(|i| Media::from(i))
+        .collect::<Vec<Media>>();
 
     let tags = front_matter
         .tags
@@ -65,7 +77,7 @@ async fn file_to_micro_post(file_path: &str, content: &str) -> Result<MicroPost>
         slug,
         date,
         content.to_string(),
-        images,
+        media,
         tags,
     ))
 }

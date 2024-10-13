@@ -26,6 +26,9 @@ pub enum Error {
 
     #[error("Micro post error: {0}")]
     MicroPostError(#[from] MicroPostError),
+
+    #[error("Cdn error: {0}")]
+    CdnError(#[from] CdnError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -149,7 +152,6 @@ impl DateParseError {
     }
 }
 
-
 #[derive(Debug, thiserror::Error)]
 pub enum TemplateError {
     #[error("Unable to render template: {0}")]
@@ -211,5 +213,24 @@ impl MicroPostError {
 
     pub fn invalid_file_name(post: String) -> Error {
         Error::MicroPostError(Self::InvalidFileName(post))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum CdnError {
+    #[error("Unable to upload file: {0}")]
+    UploadError(reqwest::Error),
+
+    #[error("Bad status from CDN: {0}")]
+    BadStatus(u16),
+}
+
+impl CdnError {
+    pub fn upload_error(error: reqwest::Error) -> Error {
+        Error::CdnError(Self::UploadError(error))
+    }
+
+    pub fn base_status(status: u16) -> Error {
+        Error::CdnError(Self::BadStatus(status))
     }
 }

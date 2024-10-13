@@ -13,16 +13,15 @@
         </div>
         {{ post.content.to_html()|safe}}
         <div class="media">
-            {% let media = post.media() %}
-            {% if media
+            {% if post.media
                 .len() > 1 %}
                 <div class="media-grid">
-                    {% for media in media %}
+                    {% for media in post.media %}
                         {% include "partials/media/media.html" %}
                     {% endfor %}
                 </div>
             {% else %}
-                {% for media in media %}
+                {% for media in post.media %}
                     {% include "partials/media/media.html" %}
                 {% endfor %}
             {% endif %}

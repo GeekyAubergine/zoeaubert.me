@@ -14,7 +14,7 @@ pub struct MicroPost {
     pub slug: Slug,
     pub date: DateTime<Utc>,
     pub content: String,
-    pub images: Vec<Image>,
+    pub media: Vec<Media>,
     pub tags: Vec<Tag>,
 }
 
@@ -23,26 +23,19 @@ impl MicroPost {
         slug: Slug,
         date: DateTime<Utc>,
         content: String,
-        images: Vec<Image>,
+        media: Vec<Media>,
         tags: Vec<Tag>,
     ) -> Self {
         Self {
             slug,
             date,
             content,
-            images,
+            media,
             tags,
         }
     }
 
     pub fn permalink(&self) -> String {
         self.slug.permalink()
-    }
-
-    pub fn media(&self) -> Vec<Media> {
-        self.images
-            .iter()
-            .map(|image| image.into())
-            .collect::<Vec<Media>>()
     }
 }

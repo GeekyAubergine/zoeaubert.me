@@ -4,7 +4,10 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::{blog_post::BlogPost, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag};
+use super::{
+    blog_post::BlogPost, mastodon_post::MastodonPost, media::Media, micro_post::MicroPost,
+    slug::Slug, tag::Tag,
+};
 
 #[derive(Debug, Clone)]
 pub enum OmniPost {
@@ -15,17 +18,17 @@ pub enum OmniPost {
     // },
     BlogPost(BlogPost),
     MicroPost(MicroPost),
-    // MastodonPost(MastodonPost),
+    MastodonPost(MastodonPost),
 }
 
 impl OmniPost {
-    pub fn slug(&self) -> &Slug {
+    pub fn slug(&self) -> Slug {
         match self {
             // Self::StatusLol(status_lol) => status_lol.slug().to_owned(),
             // Self::UnlockedGameAchievement { achievement, .. } => achievement.slug().to_owned(),
-            Self::BlogPost(blog_post) => &blog_post.slug,
-            Self::MicroPost(micro_post) => &micro_post.slug,
-            // Self::MastodonPost(mastodon_post) => mastodon_post.slug().to_owned(),
+            Self::BlogPost(blog_post) => blog_post.slug.clone(),
+            Self::MicroPost(micro_post) => micro_post.slug.clone(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.slug(),
         }
     }
 
@@ -45,32 +48,31 @@ impl OmniPost {
             // Self::UnlockedGameAchievement { game, .. } => format!("/interests/games/{}", game.id()),
             Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
             Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
-            // Self::MastodonPost(mastodon_post) => mastodon_post.permalink().to_owned(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_link(),
         }
     }
 
-    pub fn date(&self) -> DateTime<Utc> {
+    pub fn date(&self) -> &DateTime<Utc> {
         match self {
             // Self::StatusLol(status_lol) => status_lol.date(),
             // Self::UnlockedGameAchievement { achievement, .. } => achievement.unlocked_date(),
-            Self::BlogPost(blog_post) => blog_post.date,
-            Self::MicroPost(micro_post) => micro_post.date,
-            // Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
+            Self::BlogPost(blog_post) => &blog_post.date,
+            Self::MicroPost(micro_post) => &micro_post.date,
+            Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
         }
     }
 
-    pub fn media(&self) -> Vec<Media> {
+    pub fn media(&self) -> &Vec<Media> {
         match self {
             // Self::StatusLol(status_lol) => vec![],
             // Self::UnlockedGameAchievement { .. } => vec![],
-            Self::BlogPost(blog_post) => blog_post.media.clone(),
-            Self::MicroPost(micro_post) => micro_post.media(),
-            // Self::MastodonPost(mastodon_post) => mastodon_post
-            //     .media()
-            //     .iter()
-            //     .map(|media| media.uuid())
-            //     .cloned()
-            //     .collect(),
+            Self::BlogPost(blog_post) => &blog_post.media,
+            Self::MicroPost(micro_post) => &micro_post.media,
+            Self::MastodonPost(mastodon_post) => mastodon_post.media(), //     .media()
+                                                                        //     .iter()
+                                                                        //     .map(|media| media.uuid())
+                                                                        //     .cloned()
+                                                                        //     .collect(),
         }
     }
 
@@ -80,7 +82,7 @@ impl OmniPost {
             // Self::UnlockedGameAchievement { .. } => vec![],
             Self::BlogPost(blog_post) => blog_post.tags.clone(),
             Self::MicroPost(micro_post) => micro_post.tags.clone(),
-            // Self::MastodonPost(mastodon_post) => mastodon_post.tags.clone(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.tags().clone(),
         }
     }
 }
@@ -106,5 +108,17 @@ impl From<MicroPost> for OmniPost {
 impl From<&MicroPost> for OmniPost {
     fn from(micro_post: &MicroPost) -> Self {
         Self::MicroPost(micro_post.clone())
+    }
+}
+
+impl From<MastodonPost> for OmniPost {
+    fn from(mastodon_post: MastodonPost) -> Self {
+        Self::MastodonPost(mastodon_post)
+    }
+}
+
+impl From<&MastodonPost> for OmniPost {
+    fn from(mastodon_post: &MastodonPost) -> Self {
+        Self::MastodonPost(mastodon_post.clone())
     }
 }

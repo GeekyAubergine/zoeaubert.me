@@ -19,6 +19,7 @@ use super::render_page_with_template;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
+use crate::domain::models::media::Media;
 
 #[derive(Template)]
 #[template(path = "timeline/index.html")]
