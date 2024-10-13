@@ -23,6 +23,9 @@ pub enum Error {
 
     #[error("Network error: {0}")]
     NetworkError(#[from] NetworkError),
+
+    #[error("Micro post error: {0}")]
+    MicroPostError(#[from] MicroPostError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -168,5 +171,45 @@ pub enum NetworkError {
 impl NetworkError {
     pub fn fetch_error(error: reqwest::Error) -> Error {
         Error::NetworkError(Self::FetchError(error))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum MicroPostError {
+    #[error("Unable to parse front matter: {0}")]
+    UnparsableFrontMatter(serde_yaml::Error),
+
+    #[error("Post has no content {0}")]
+    PostHasNoContent(String),
+
+    #[error("Post has not front matter {0}")]
+    PostHasNoFrontMatter(String),
+
+    #[error("Post has invalid file path {0}")]
+    InvalidFilePath(String),
+
+    #[error("Post has invalid file name {0}")]
+    InvalidFileName(String),
+}
+
+impl MicroPostError {
+    pub fn unable_to_parse_front_matter(error: serde_yaml::Error) -> Error {
+        Error::MicroPostError(Self::UnparsableFrontMatter(error))
+    }
+
+    pub fn no_content(post: String) -> Error {
+        Error::MicroPostError(Self::PostHasNoContent(post))
+    }
+
+    pub fn no_front_matter(post: String) -> Error {
+        Error::MicroPostError(Self::PostHasNoFrontMatter(post))
+    }
+
+    pub fn invalid_file_path(post: String) -> Error {
+        Error::MicroPostError(Self::InvalidFilePath(post))
+    }
+
+    pub fn invalid_file_name(post: String) -> Error {
+        Error::MicroPostError(Self::InvalidFileName(post))
     }
 }

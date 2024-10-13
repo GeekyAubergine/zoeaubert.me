@@ -69,11 +69,11 @@ fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
         .join("/")
         .replace(".html", "");
 
+    let slug_date = item.date_published.format("%Y/%m/%d").to_string();
+
     let slug = format!(
-        "micros/{}/{}/{}/{}",
-        item.date_published.year(),
-        item.date_published.month(),
-        item.date_published.day(),
+        "micros/{}/{}",
+        slug_date,
         id
     );
 
