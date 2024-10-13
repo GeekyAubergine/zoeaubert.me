@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use super::models::blog_post::BlogPost;
+use super::models::{blog_post::BlogPost, micro_post::MicroPost};
 
 #[async_trait::async_trait]
 pub trait Profiler {
@@ -36,4 +36,11 @@ pub trait BlogPostsRepo {
     async fn find_all(&self) -> Result<Vec<BlogPost>>;
 
     async fn commit(&self, blog_post: &BlogPost) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait MicroPostsRepo {
+    async fn find_all(&self) -> Result<Vec<MicroPost>>;
+
+    async fn commit(&self, micro_post: &MicroPost) -> Result<()>;
 }

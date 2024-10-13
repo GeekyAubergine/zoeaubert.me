@@ -1,7 +1,7 @@
 use tracing::info;
 
-use crate::domain::models::omni_post::OmniPost;
 use crate::domain::queries::blog_post_queries::find_all_blog_posts;
+use crate::domain::queries::micro_posts_queries::find_all_micro_posts;
 use crate::domain::queries::omni_post_queries::{
     find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags,
 };
@@ -11,6 +11,7 @@ use crate::domain::state::State;
 
 use crate::infrastructure::renderers::blog_pages::{render_blog_post_page, render_blogs_list_page};
 use crate::infrastructure::renderers::home_page::render_home_page;
+use crate::infrastructure::renderers::micro_post_pages::render_micro_post_page;
 use crate::infrastructure::renderers::tags_pages::{render_tag_page, render_tags_list_page};
 use crate::infrastructure::renderers::timeline_pages::render_timeline_page;
 use crate::infrastructure::utils::paginator::paginate;
@@ -27,6 +28,8 @@ pub async fn build_site(state: &impl State) -> Result<()> {
     build_timeline_pages(state).await?;
 
     build_tags_pages(state).await?;
+
+    build_micro_post_pages(state).await?;
 
     state.profiler().stop_timer().await?;
 
@@ -73,6 +76,16 @@ async fn build_tags_pages(state: &impl State) -> Result<()> {
         for page in paginated {
             render_tag_page(state, tag, &page).await?;
         }
+    }
+
+    Ok(())
+}
+
+async fn build_micro_post_pages(state: &impl State) -> Result<()> {
+    let micro_posts = find_all_micro_posts(state).await?;
+
+    for micro_post in micro_posts {
+        render_micro_post_page(state, &micro_post).await?;
     }
 
     Ok(())

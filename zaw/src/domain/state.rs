@@ -1,4 +1,7 @@
-use super::repositories::{AboutTextRepo, BlogPostsRepo, Profiler, SillyNamesRepo};
+use super::{
+    repositories::{AboutTextRepo, BlogPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo},
+    services::CacheService,
+};
 
 pub trait State {
     fn profiler(&self) -> &impl Profiler;
@@ -8,4 +11,8 @@ pub trait State {
     fn about_text_repo(&self) -> &impl AboutTextRepo;
 
     fn blog_posts_repo(&self) -> &impl BlogPostsRepo;
+
+    fn micro_posts_repo(&self) -> &impl MicroPostsRepo;
+
+    fn cache_service(&self) -> &impl CacheService;
 }

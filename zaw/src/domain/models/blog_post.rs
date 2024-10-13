@@ -46,6 +46,11 @@ impl BlogPost {
         self
     }
 
+    pub fn with_images(mut self, images: Vec<Image>) -> Self {
+        self.media = images.into_iter().map(Media::from_image).collect();
+        self
+    }
+
     pub fn permalink(&self) -> String {
         self.slug.permalink()
     }

@@ -3,6 +3,7 @@ use std::path::Path;
 use crate::domain::repositories::Profiler;
 use crate::domain::{models::slug::Slug, queries::blog_post_queries::commit_blog_post};
 use crate::infrastructure::utils::date::parse_date;
+use crate::infrastructure::utils::image_extractor::extract_images_from_markdown;
 use serde::Deserialize;
 use tracing::debug;
 
@@ -58,10 +59,10 @@ async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()
 
             let date = parse_date(front_matter.date.as_str())?;
 
-            let slug = format!("/blog/{}", front_matter.slug);
+            let slug = Slug::new(&format!("/blog/{}", front_matter.slug));
 
             let mut post = BlogPost::new(
-                Slug::new(&slug),
+                slug.clone(),
                 date,
                 front_matter.title,
                 front_matter.description,
@@ -69,31 +70,24 @@ async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()
                 content.to_owned().to_owned(),
             );
 
-            let permalink = post.permalink();
-
             // TODO
-            // if let (Some(url), Some(alt), Some(width), Some(height)) = (
-            //     front_matter.hero,
-            //     front_matter.hero_alt,
-            //     front_matter.hero_width,
-            //     front_matter.hero_height,
-            // ) {
-            //     post = post.with_hero_image(
-            //         Image::new(
-            //             &ImageUuid(Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_bytes())),
-            //             url.as_str(),
-            //             alt.as_str(),
-            //             width,
-            //             height,
-            //         )
-            //         .with_date(date)
-            //         .with_parent_permalink(&permalink),
-            //     );
-            // }
+            if let (Some(url), Some(alt), Some(width), Some(height)) = (
+                front_matter.hero,
+                front_matter.hero_alt,
+                front_matter.hero_width,
+                front_matter.hero_height,
+            ) {
+                post = post.with_hero_image(
+                    Image::new(url.as_str(), alt.as_str(), width, height)
+                        .with_date(&date)
+                        .with_parent_slug(&slug),
+                );
+            }
 
-            // post = post.with_media(
-            //     extract_media_from_markdown(app_state, content, &permalink, &date).await,
-            // );
+            post = post.with_images(
+                extract_images_from_markdown(content, state.cache_service(), &date, &slug)
+                    .await,
+            );
 
             commit_blog_post(state, &post).await?;
 

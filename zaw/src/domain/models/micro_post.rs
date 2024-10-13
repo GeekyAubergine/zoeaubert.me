@@ -4,41 +4,39 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use super::image::Image;
+use super::tag::Tag;
 
 use super::media::Media;
+use super::slug::Slug;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MicroPost {
-    pub slug: String,
+    pub slug: Slug,
     pub date: DateTime<Utc>,
     pub content: String,
     pub images: Vec<Image>,
-    pub updated_at: DateTime<Utc>,
+    pub tags: Vec<Tag>,
 }
 
 impl MicroPost {
     pub fn new(
-        slug: String,
+        slug: Slug,
         date: DateTime<Utc>,
         content: String,
         images: Vec<Image>,
+        tags: Vec<Tag>,
     ) -> Self {
         Self {
             slug,
             date,
             content,
             images,
-            updated_at: Utc::now(),
+            tags,
         }
     }
 
-    pub fn with_updated_at(mut self, updated_at: DateTime<Utc>) -> Self {
-        self.updated_at = updated_at;
-        self
-    }
-
     pub fn permalink(&self) -> String {
-        format!("/micros/{}", self.slug)
+        self.slug.permalink()
     }
 
     pub fn media(&self) -> Vec<Media> {

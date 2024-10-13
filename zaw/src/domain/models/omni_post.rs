@@ -14,7 +14,7 @@ pub enum OmniPost {
     //     achievement: GameAchievementUnlocked,
     // },
     BlogPost(BlogPost),
-    // MicroPost(MicroPost),
+    MicroPost(MicroPost),
     // MastodonPost(MastodonPost),
 }
 
@@ -24,7 +24,7 @@ impl OmniPost {
             // Self::StatusLol(status_lol) => status_lol.slug().to_owned(),
             // Self::UnlockedGameAchievement { achievement, .. } => achievement.slug().to_owned(),
             Self::BlogPost(blog_post) => &blog_post.slug,
-            // Self::MicroPost(micro_post) => micro_post.slug.to_owned(),
+            Self::MicroPost(micro_post) => &micro_post.slug,
             // Self::MastodonPost(mastodon_post) => mastodon_post.slug().to_owned(),
         }
     }
@@ -44,7 +44,7 @@ impl OmniPost {
             // Self::StatusLol(status_lol) => status_lol.permalink().to_owned(),
             // Self::UnlockedGameAchievement { game, .. } => format!("/interests/games/{}", game.id()),
             Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
-            // Self::MicroPost(micro_post) => micro_post.permalink().to_owned(),
+            Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
             // Self::MastodonPost(mastodon_post) => mastodon_post.permalink().to_owned(),
         }
     }
@@ -54,7 +54,7 @@ impl OmniPost {
             // Self::StatusLol(status_lol) => status_lol.date(),
             // Self::UnlockedGameAchievement { achievement, .. } => achievement.unlocked_date(),
             Self::BlogPost(blog_post) => blog_post.date,
-            // Self::MicroPost(micro_post) => &micro_post.date,
+            Self::MicroPost(micro_post) => micro_post.date,
             // Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
         }
     }
@@ -64,7 +64,7 @@ impl OmniPost {
             // Self::StatusLol(status_lol) => vec![],
             // Self::UnlockedGameAchievement { .. } => vec![],
             Self::BlogPost(blog_post) => blog_post.media.clone(),
-            // Self::MicroPost(micro_post) => micro_post.media_order(),
+            Self::MicroPost(micro_post) => micro_post.media(),
             // Self::MastodonPost(mastodon_post) => mastodon_post
             //     .media()
             //     .iter()
@@ -79,7 +79,7 @@ impl OmniPost {
             // Self::StatusLol(status_lol) => status_lol.tags.clone(),
             // Self::UnlockedGameAchievement { .. } => vec![],
             Self::BlogPost(blog_post) => blog_post.tags.clone(),
-            // Self::MicroPost(micro_post) => micro_post.tags.clone(),
+            Self::MicroPost(micro_post) => micro_post.tags.clone(),
             // Self::MastodonPost(mastodon_post) => mastodon_post.tags.clone(),
         }
     }
@@ -94,5 +94,17 @@ impl From<BlogPost> for OmniPost {
 impl From<&BlogPost> for OmniPost {
     fn from(blog_post: &BlogPost) -> Self {
         Self::BlogPost(blog_post.clone())
+    }
+}
+
+impl From<MicroPost> for OmniPost {
+    fn from(micro_post: MicroPost) -> Self {
+        Self::MicroPost(micro_post)
+    }
+}
+
+impl From<&MicroPost> for OmniPost {
+    fn from(micro_post: &MicroPost) -> Self {
+        Self::MicroPost(micro_post.clone())
     }
 }

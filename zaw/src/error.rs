@@ -20,6 +20,9 @@ pub enum Error {
 
     #[error("Template error: {0}")]
     TemplateError(#[from] TemplateError),
+
+    #[error("Network error: {0}")]
+    NetworkError(#[from] NetworkError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -153,5 +156,17 @@ pub enum TemplateError {
 impl TemplateError {
     pub fn render_error(error: askama::Error) -> Error {
         Error::TemplateError(Self::RenderError(error))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum NetworkError {
+    #[error("Unable to fetch url: {0}")]
+    FetchError(reqwest::Error),
+}
+
+impl NetworkError {
+    pub fn fetch_error(error: reqwest::Error) -> Error {
+        Error::NetworkError(Self::FetchError(error))
     }
 }

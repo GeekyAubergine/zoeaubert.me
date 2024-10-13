@@ -2,6 +2,7 @@ use tracing::info;
 
 use crate::application::commands::about_text_commands::update_about_text;
 use crate::application::commands::blog_posts_commands::update_blog_posts_command::update_blog_posts_command;
+use crate::application::commands::micro_posts_commands::update_micro_blog_archive_posts_command::update_micro_blog_archive_posts_command;
 use crate::domain::state::State;
 use crate::prelude::*;
 
@@ -13,6 +14,7 @@ pub async fn update_all_data(state: &impl State) -> Result<()> {
     update_silly_names(state).await?;
     update_about_text(state).await?;
     update_blog_posts_command(state).await?;
+    update_micro_blog_archive_posts_command(state).await?;
 
     Ok(())
 }

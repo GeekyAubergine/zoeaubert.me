@@ -7,3 +7,4 @@ pub mod micro_post;
 pub mod slug;
 pub mod site_config;
 pub mod omni_post;
+pub mod cache_path;

@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::media::Media;
+use super::{media::Media, slug::Slug};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum ImageOrientation {
@@ -41,7 +41,7 @@ pub struct Image {
     pub title: Option<String>,
     pub description: Option<String>,
     pub date: Option<DateTime<Utc>>,
-    pub parent_permalink: Option<String>,
+    pub parent_slug: Option<Slug>,
     pub updated_at: DateTime<Utc>,
 }
 
@@ -56,7 +56,7 @@ impl Image {
             title: None,
             description: None,
             date: None,
-            parent_permalink: None,
+            parent_slug: None,
             updated_at: Utc::now(),
         }
     }
@@ -75,16 +75,16 @@ impl Image {
         }
     }
 
-    pub fn with_date(&self, date: DateTime<Utc>) -> Self {
+    pub fn with_date(&self, date: &DateTime<Utc>) -> Self {
         Self {
-            date: Some(date),
+            date: Some(date.clone()),
             ..self.clone()
         }
     }
 
-    pub fn with_parent_permalink(&self, parent_permalink: &str) -> Self {
+    pub fn with_parent_slug(&self, parent_slug: &Slug) -> Self {
         Self {
-            parent_permalink: Some(parent_permalink.to_string()),
+            parent_slug: Some(parent_slug.clone()),
             ..self.clone()
         }
     }
@@ -135,8 +135,8 @@ impl Image {
         self.date.as_ref()
     }
 
-    pub fn parent_permalink(&self) -> Option<&str> {
-        self.parent_permalink.as_deref()
+    pub fn parent_slug(&self) -> Option<Slug> {
+        self.parent_slug.clone()
     }
 
     pub fn is_landscape(&self) -> bool {
