@@ -1,0 +1,318 @@
+use std::path::Path;
+
+use chrono::DateTime;
+use dotenvy_macro::dotenv;
+use serde::{Deserialize, Serialize};
+use tracing::info;
+use url::Url;
+
+use crate::domain::models::games::{
+    Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked,
+};
+use crate::domain::queries::games_queries::find_game_by_id;
+use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
+use crate::domain::services::CdnService;
+use crate::domain::state::State;
+use crate::error::GameError;
+use crate::infrastructure::utils::image_utils::image_from_url;
+use crate::infrastructure::utils::networking::download_json;
+
+use crate::prelude::*;
+
+const STEAM_OWNED_GAMES_URL: &str =
+  "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?format=json&include_appinfo=true";
+
+const STEAM_PLAYER_ACHEIVEMENTS_URL: &str =
+    "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?format=json";
+
+const STEAM_GAME_DATA_URL: &str =
+    "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?format=json";
+
+const STEAM_GAME_GLOBAL_ACHIEMENT_PERCENTAGE_URL: &str =
+    "http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?format=json";
+
+// ---- Steam Game Data
+
+fn make_steam_game_data_url(appid: u32) -> Url {
+    format!(
+        "{}&key={}&appid={}",
+        STEAM_GAME_DATA_URL,
+        dotenv!("STEAM_API_KEY"),
+        appid
+    )
+    .parse()
+    .unwrap()
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SteamGameDataAcheivement {
+    name: String,
+    #[serde(rename = "displayName")]
+    display_name: String,
+    description: Option<String>,
+    icon: Url,
+    #[serde(rename = "icongray")]
+    icon_gray: Url,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SteamGameDataAvaialableGameStats {
+    achievements: Vec<SteamGameDataAcheivement>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
+enum SteamAvailableGameSchemaResponseWrapper {
+    WithGame {
+        #[serde(rename = "gameName")]
+        game_name: String,
+        #[serde(rename = "availableGameStats")]
+        available_game_stats: SteamGameDataAvaialableGameStats,
+    },
+    WithoutGame {},
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SteamAvailableGameStatsResponse {
+    game: SteamAvailableGameSchemaResponseWrapper,
+}
+
+async fn get_steam_game_data(
+    client: &reqwest::Client,
+    appid: u32,
+) -> Result<Vec<SteamGameDataAcheivement>> {
+    let response =
+        download_json::<SteamAvailableGameStatsResponse>(client, &make_steam_game_data_url(appid))
+            .await?;
+
+    match response.game {
+        SteamAvailableGameSchemaResponseWrapper::WithGame {
+            available_game_stats,
+            ..
+        } => Ok(available_game_stats.achievements),
+        SteamAvailableGameSchemaResponseWrapper::WithoutGame {} => Ok(vec![]),
+    }
+}
+
+// ---- Steam Game Player Achievements
+
+fn make_get_player_achievements_url(appid: u32) -> Url {
+    format!(
+        "{}&key={}&appid={}&steamid={}",
+        STEAM_PLAYER_ACHEIVEMENTS_URL,
+        dotenv!("STEAM_API_KEY"),
+        appid,
+        dotenv!("STEAM_ID")
+    )
+    .parse()
+    .unwrap()
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SteamGamePlayerAchievement {
+    apiname: String,
+    achieved: u8,
+    unlocktime: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+enum SteamGetPlayerAchievementsResponseInner {
+    Achievements {
+        achievements: Vec<SteamGamePlayerAchievement>,
+    },
+    NoStats {
+        error: Option<String>,
+        success: bool,
+        #[serde(rename = "gameName")]
+        game_name: Option<String>,
+        #[serde(rename = "steamID")]
+        steam_id: Option<String>,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct SteamGetPlayerStatsResponse {
+    playerstats: SteamGetPlayerAchievementsResponseInner,
+}
+
+async fn get_steam_player_achievements(
+    client: &reqwest::Client,
+    appid: u32,
+) -> Result<Vec<SteamGamePlayerAchievement>> {
+    let response = download_json::<SteamGetPlayerStatsResponse>(
+        client,
+        &make_get_player_achievements_url(appid),
+    )
+    .await?;
+
+    match response.playerstats {
+        SteamGetPlayerAchievementsResponseInner::Achievements { achievements } => Ok(achievements),
+        SteamGetPlayerAchievementsResponseInner::NoStats { .. } => Ok(vec![]),
+    }
+}
+
+// ---- Steam Game Global Achievement Percentage
+
+fn make_get_global_achievement_percentage_url(appid: u32) -> Url {
+    format!(
+        "{}&key={}&gameid={}",
+        STEAM_GAME_GLOBAL_ACHIEMENT_PERCENTAGE_URL,
+        dotenv!("STEAM_API_KEY"),
+        appid
+    )
+    .parse()
+    .unwrap()
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SteamGameGlobalAchievement {
+    name: String,
+    percent: f32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct SteamGetGlobalAchievementPercentagesResponseInner {
+    achievements: Vec<SteamGameGlobalAchievement>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+enum SteamGetGlobalAchievementPercentagesResponse {
+    WithAchievements {
+        achievementpercentages: SteamGetGlobalAchievementPercentagesResponseInner,
+    },
+    Empty {},
+}
+
+async fn get_steam_global_achievement_percentage(
+    client: &reqwest::Client,
+    appid: u32,
+) -> Result<Vec<SteamGameGlobalAchievement>> {
+    let response = download_json::<SteamGetGlobalAchievementPercentagesResponse>(
+        client,
+        &make_get_global_achievement_percentage_url(appid),
+    )
+    .await?;
+
+    match response {
+        SteamGetGlobalAchievementPercentagesResponse::Empty {} => Ok(vec![]),
+        SteamGetGlobalAchievementPercentagesResponse::WithAchievements {
+            achievementpercentages,
+        } => Ok(achievementpercentages.achievements),
+    }
+}
+
+pub async fn update_game_achievements_command(
+    state: &impl State,
+    client: &reqwest::Client,
+    game: &Game,
+) -> Result<()> {
+    info!(
+        "Updating game achievements for game: {} [{}]",
+        game.id, game.name
+    );
+
+    let player_achievements = get_steam_player_achievements(client, game.id).await?;
+
+    let game_data = get_steam_game_data(client, game.id).await?;
+
+    let global_achievement_percentage =
+        get_steam_global_achievement_percentage(client, game.id).await?;
+
+    for achievement in game_data {
+        let player_achievement = player_achievements
+            .iter()
+            .find(|player_achievement| player_achievement.apiname == achievement.name);
+
+        let unlocked_date = match player_achievement {
+            Some(player_achievement) => {
+                if player_achievement.achieved == 1 {
+                    DateTime::from_timestamp(player_achievement.unlocktime as i64, 0)
+                } else {
+                    None
+                }
+            }
+            None => None,
+        };
+
+        let global_achievement = global_achievement_percentage
+            .iter()
+            .find(|global_achievement| global_achievement.name == achievement.name);
+
+        // TODO, this is the wrong value
+        // TODO, go back to storing relative paths for images, easier to swap out
+        let global_percentage = match global_achievement {
+            Some(global_achievement) => global_achievement.percent,
+            None => 0.0,
+        };
+
+        let achievment = match unlocked_date {
+            Some(unlocked_date) => {
+                let path = &format!(
+                    "/games/{}-{}-unlocked.jpg",
+                    game.id,
+                    achievement.name.replace(' ', "").replace('%', "")
+                );
+
+                let path = Path::new(&path);
+
+                let image = image_from_url(
+                    state,
+                    &achievement.icon,
+                    &path,
+                    &format!("{} achievement icon", achievement.display_name),
+                )
+                .await?;
+
+                GameAchievement::Unlocked(GameAchievementUnlocked::new(
+                    achievement.name,
+                    game.id,
+                    achievement.display_name,
+                    achievement.description.unwrap_or("".to_string()),
+                    image,
+                    unlocked_date,
+                    global_percentage,
+                ))
+            }
+            None => {
+                let path = &format!(
+                    "/games/{}-{}-locked.jpg",
+                    game.id,
+                    achievement.name.replace(' ', "").replace('%', "")
+                );
+
+                let path = Path::new(&path);
+
+                let icon = match &achievement.icon_gray.as_str().ends_with("/") {
+                    true => achievement.icon,
+                    false => achievement.icon_gray,
+                };
+
+                let image = image_from_url(
+                    state,
+                    &icon,
+                    &path,
+                    &format!("{} achievement icon", achievement.display_name),
+                )
+                .await?;
+
+                GameAchievement::Locked(GameAchievementLocked::new(
+                    achievement.name,
+                    game.id,
+                    achievement.display_name,
+                    achievement.description.unwrap_or("".to_string()),
+                    image,
+                    global_percentage,
+                ))
+            }
+        };
+
+        state
+            .game_achievements_repo()
+            .commit(&game, &achievment)
+            .await?;
+    }
+
+    Ok(())
+}

@@ -1,8 +1,8 @@
-webserver:
-    cargo watch -x "run -p webserver" -w webserver -w Cargo.toml
+watch:
+    cargo watch -x "run" -w src -w templates -w Cargo.toml -w assets -w ./content
 
 test:
     cargo watch -x "test" -w src
 
 check:
-    cargo watch -x "check" -w cli -w shared -w webserver -w Cargo.toml
+    cargo watch -x "check" -w src -w templates -w Cargo.toml

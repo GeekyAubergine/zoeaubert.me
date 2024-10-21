@@ -26,7 +26,7 @@
             {% for achievement in achievements.achievements_by_unlocked_date() %}
                 <div class="game-achievement">
                     <div class="image-container">
-                        <img src="{{ achievement.image_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                        <img src="{{ achievement.image.cdn_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
                     </div>
                     <div class="left">
                         <div class="name-and-description">
@@ -47,7 +47,7 @@
             {% for achievement in achievements.achievements_locked() %}
                 <div class="game-achievement">
                     <div class="image-container">
-                        <img src="{{ achievement.image_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
+                        <img src="{{ achievement.image.cdn_url() }}" alt="{{ achievement.display_name() }} achievement icon"/>
                     </div>
                     <div class="left">
                         <div class="name-and-description">

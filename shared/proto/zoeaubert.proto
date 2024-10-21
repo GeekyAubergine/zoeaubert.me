@@ -1,4 +1,0 @@
-syntax = "proto3";
-package me.zoeaubert;
-
-import "webserver/zoeaubert-webserver.proto";

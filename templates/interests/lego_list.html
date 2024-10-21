@@ -26,26 +26,26 @@
         >
             <a
                 class="flex my-0 justify-center"
-                href="{{ set.link() }}"
+                href="{{ set.link }}"
                 target="_blank"
                 rel="noopener noreferrer"
             >
                 <img
-                    src="{{ set.thumbnail() }}"
-                    alt="{{ set.name() }}"
+                    src="{{ set.thumbnail.cdn_url() }}"
+                    alt="{{ set.name }}"
                     class="max-h-[12rem] bg-white rounded-sm"
                 />
             </a>
         </div>
         <div class="justify-end">
-            <a class="no-underline" href="{{ set.link() }}">
-                <p class="my-0 text-center accent">{{ set.name() }}</p>
-                <p class="secondary my-0 text-center">{{ set.number() }}</p>
+            <a class="no-underline" href="{{ set.link }}">
+                <p class="my-0 text-center accent">{{ set.name }}</p>
+                <p class="secondary my-0 text-center">{{ set.number }}</p>
             </a>
         </div>
         <p class="secondary my-0">
-            {{ set.pieces().format(0, true) }} pieces {%- if set.quantity() > 1
-            %} x {{ set.quantity() }} {% endif %}
+            {{ set.pieces.format(0, true) }} pieces {%- if set.quantity > 1
+            %} x {{ set.quantity }} {% endif %}
         </p>
     </div>
     {% endfor %}
@@ -66,7 +66,7 @@
             >
                 <img
                     src="{{ minifig.image.cdn_url() }}"
-                    alt="{{ minifig.name() }}"
+                    alt="{{ minifig.name }}"
                     class="max-h-[12rem] bg-white rounded-sm"
                 />
             </a>
@@ -77,7 +77,7 @@
             </a>
         </div>
         <p class="secondary my-0">
-            {%- if minifig.total_owned() > 1 %} x {{ minifig.total_owned() }} {%
+            {%- if minifig.total_owned > 1 %} x {{ minifig.total_owned }} {%
             endif %}
         </p>
     </div>
