@@ -8,12 +8,13 @@ use tracing::info;
 use crate::{
     domain::{
         models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
-        queries::micro_posts_queries::commit_micro_post,
         repositories::{MicroPostsRepo, Profiler},
         services::CdnService,
         state::State,
     },
-    infrastructure::utils::file_system::{get_file_last_modified, make_content_file_path, read_json_file},
+    infrastructure::utils::file_system::{
+        get_file_last_modified, make_content_file_path, read_json_file,
+    },
     prelude::*,
 };
 
@@ -93,7 +94,10 @@ fn slug_for_item(item: &ArchiveFileItem) -> Slug {
     Slug::new(&slug)
 }
 
-fn archive_item_to_post(item: ArchiveFileItem, updated_at: DateTime<Utc>) -> Result<Option<MicroPost>> {
+fn archive_item_to_post(
+    item: ArchiveFileItem,
+    updated_at: DateTime<Utc>,
+) -> Result<Option<MicroPost>> {
     let slug = slug_for_item(&item);
 
     let tags: Vec<String> = match item.tags {
@@ -129,7 +133,7 @@ fn archive_item_to_post(item: ArchiveFileItem, updated_at: DateTime<Utc>) -> Res
         content,
         media,
         tags,
-        updated_at
+        updated_at,
     )))
 }
 
@@ -139,7 +143,8 @@ pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Resu
     let archive_file: ArchiveFile =
         read_json_file(&make_content_file_path(&Path::new(MICRO_POSTS_DIR))).await?;
 
-    let last_modified = get_file_last_modified(&make_content_file_path(&Path::new(MICRO_POSTS_DIR))).await?;
+    let last_modified =
+        get_file_last_modified(&make_content_file_path(&Path::new(MICRO_POSTS_DIR))).await?;
 
     for item in archive_file.items {
         state.profiler().post_processed().await?;
@@ -154,7 +159,7 @@ pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Resu
         }
 
         if let Some(post) = archive_item_to_post(item, last_modified.clone())? {
-            commit_micro_post(state, &post).await?;
+            state.micro_posts_repo().commit(&post).await?;
         }
     }
 

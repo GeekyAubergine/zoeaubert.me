@@ -14,7 +14,7 @@ use domain::{repositories::Profiler, state::State};
 use dotenvy_macro::dotenv;
 use error::FileSystemError;
 use infrastructure::app_state::AppState;
-use tasks::build_site::build_site;
+use tasks::render_site::render_site;
 use tracing::Level;
 
 use crate::prelude::*;
@@ -83,7 +83,7 @@ async fn main() -> Result<()> {
     prepare_folders().await?;
     let state = prepare_state().await?;
 
-    build_site(&state).await?;
+    render_site(&state).await?;
 
     process_queue(&state).await?;
 

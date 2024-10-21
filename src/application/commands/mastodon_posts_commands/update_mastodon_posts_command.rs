@@ -13,10 +13,7 @@ use crate::domain::models::mastodon_post::{
 };
 use crate::domain::models::media::Media;
 use crate::domain::models::tag::Tag;
-use crate::domain::queries::mastodon_queries::{
-    commit_mastodon_post, find_all_mastodon_posts, find_mastodon_posts_last_updated_at,
-};
-use crate::domain::repositories::Profiler;
+use crate::domain::repositories::{MastodonPostsRepo, Profiler};
 use crate::domain::services::{CacheService, CdnService};
 use crate::domain::state::State;
 use crate::infrastructure::utils::file_system::make_file_path_from_date_and_file;
@@ -289,15 +286,13 @@ async fn mastodon_status_to_post(
 }
 
 pub async fn update_mastodon_posts_command(state: &impl State) -> Result<()> {
-    let last_updated = find_mastodon_posts_last_updated_at(state).await?;
-
-    if let Some(last_updated) = find_mastodon_posts_last_updated_at(state).await? {
+    if let Some(last_updated) = state.mastodon_posts_repo().find_last_updated_at().await? {
         if last_updated + ONE_HOUR_PERIOD > Utc::now() {
             return Ok(());
         }
     }
 
-    let posts = find_all_mastodon_posts(state).await?;
+    let posts = state.mastodon_posts_repo().find_all_by_date().await?;
 
     let mut oldest_post_to_update_since: Option<&MastodonPost> = None;
 
@@ -333,7 +328,7 @@ pub async fn update_mastodon_posts_command(state: &impl State) -> Result<()> {
         let post = mastodon_status_to_post(state, status).await?;
 
         if let Some(post) = post {
-            commit_mastodon_post(state, &post).await?;
+            state.mastodon_posts_repo().commit(&post).await?;
         }
     }
 

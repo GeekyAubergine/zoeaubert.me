@@ -1,12 +1,9 @@
 use bitflags::bitflags;
 
+use crate::domain::repositories::{BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo};
 use crate::prelude::*;
 
 use crate::domain::{models::omni_post::OmniPost, models::tag::Tag, state::State};
-
-use super::blog_post_queries::find_all_blog_posts;
-use super::mastodon_queries::find_all_mastodon_posts;
-use super::micro_posts_queries::find_all_micro_posts;
 
 bitflags! {
     #[derive(Debug, Clone, Default, Copy, PartialEq, Eq)]
@@ -48,7 +45,9 @@ pub async fn find_all_omni_posts(
     let mut omni_posts = Vec::new();
 
     if filter_flags.contains(OmniPostFilterFlags::BLOG_POST) {
-        let blog_posts = find_all_blog_posts(state)
+        let blog_posts = state
+            .blog_posts_repo()
+            .find_all_by_date()
             .await?
             .iter()
             .map(|p| p.into())
@@ -58,7 +57,9 @@ pub async fn find_all_omni_posts(
     }
 
     if filter_flags.contains(OmniPostFilterFlags::MICRO_POST) {
-        let micro_posts = find_all_micro_posts(state)
+        let micro_posts = state
+            .micro_posts_repo()
+            .find_all()
             .await?
             .iter()
             .map(|p| p.into())
@@ -68,7 +69,10 @@ pub async fn find_all_omni_posts(
     }
 
     if filter_flags.contains(OmniPostFilterFlags::MASTODON_POST) {
-        let mastodon_posts = find_all_mastodon_posts(state).await?
+        let mastodon_posts = state
+            .mastodon_posts_repo()
+            .find_all_by_date()
+            .await?
             .iter()
             .map(|p| p.into())
             .collect::<Vec<OmniPost>>();

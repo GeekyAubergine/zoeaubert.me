@@ -9,7 +9,6 @@ use tracing::info;
 use crate::{
     domain::{
         models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
-        queries::micro_posts_queries::commit_micro_post,
         repositories::{MicroPostsRepo, Profiler},
         services::{CacheService, CdnService},
         state::State,
@@ -90,7 +89,7 @@ async fn process_file(
 
     let micro_post = MicroPost::new(slug, date, content.to_string(), media, tags, last_modified);
 
-    commit_micro_post(state, &micro_post).await?;
+    state.micro_posts_repo().commit(&micro_post).await?;
 
     Ok(())
 }

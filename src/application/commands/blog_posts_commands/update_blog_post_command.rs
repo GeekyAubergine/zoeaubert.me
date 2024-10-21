@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use crate::domain::repositories::{BlogPostsRepo, Profiler};
-use crate::domain::{models::slug::Slug, queries::blog_post_queries::commit_blog_post};
+use crate::domain::{models::slug::Slug};
 use crate::infrastructure::utils::date::parse_date;
 use crate::infrastructure::utils::file_system::get_file_last_modified;
 use crate::infrastructure::utils::image_extractor::extract_images_from_markdown;
@@ -109,7 +109,7 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
             post =
                 post.with_images(extract_images_from_markdown(state, content, &date, &slug).await?);
 
-            commit_blog_post(state, &post).await?;
+            state.blog_posts_repo().commit(&post).await?;
 
             state.profiler().post_processed().await?;
 

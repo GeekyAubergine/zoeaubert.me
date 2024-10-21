@@ -36,7 +36,7 @@ impl BlogPostsRepoMemory {
 
 #[async_trait::async_trait]
 impl BlogPostsRepo for BlogPostsRepoMemory {
-    async fn find_all(&self) -> Result<Vec<BlogPost>> {
+    async fn find_all_by_date(&self) -> Result<Vec<BlogPost>> {
         let data = self.data.read().await;
 
         let mut posts = data.blog_posts.values().cloned().collect::<Vec<BlogPost>>();

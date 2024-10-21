@@ -2,6 +2,7 @@ use askama::Template;
 
 use crate::domain::{
     models::{mastodon_post::MastodonPost, media::Media, micro_post::MicroPost, page::Page},
+    repositories::MastodonPostsRepo,
     state::State,
 };
 
@@ -20,15 +21,21 @@ pub struct MastodonPostTemplate<'t> {
     post: &'t MastodonPost,
 }
 
-pub async fn render_mastodon_post_page(state: &impl State, mastodon_post: &MastodonPost) -> Result<()> {
-    let page = Page::new(mastodon_post.slug().clone(), None, None)
-        .with_date(*mastodon_post.created_at())
-        .with_tags(mastodon_post.tags().clone());
+pub async fn render_mastodon_post_pages(state: &impl State) -> Result<()> {
+    let mastodon_posts = state.mastodon_posts_repo().find_all_by_date().await?;
 
-    let template = MastodonPostTemplate {
-        page: &page,
-        post: mastodon_post,
-    };
+    for mastodon_post in mastodon_posts {
+        let page = Page::new(mastodon_post.slug().clone(), None, None)
+            .with_date(*mastodon_post.created_at())
+            .with_tags(mastodon_post.tags().clone());
 
-    render_page_with_template(state, &page, template).await
+        let template = MastodonPostTemplate {
+            page: &page,
+            post: &mastodon_post,
+        };
+
+        render_page_with_template(state, &page, template).await?;
+    }
+
+    Ok(())
 }

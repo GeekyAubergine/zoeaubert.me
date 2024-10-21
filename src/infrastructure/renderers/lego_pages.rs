@@ -2,7 +2,7 @@ use askama::Template;
 
 use crate::domain::models::lego::{LegoMinifig, LegoSet};
 use crate::domain::models::slug::Slug;
-use crate::domain::queries::lego_queries::{find_all_lego_sets, find_all_lego_minifiigs, find_total_lego_minifiigs, find_total_lego_pieces, find_total_lego_sets};
+use crate::domain::repositories::LegoRepo;
 use crate::domain::{models::page::Page, state::State};
 
 use crate::prelude::*;
@@ -24,7 +24,7 @@ pub struct LegoListTemplate<'t> {
     minifigs: &'t [LegoMinifig],
 }
 
-pub async fn render_lego_list_page(state: &impl State) -> Result<()> {
+pub async fn render_lego_page(state: &impl State) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/lego"),
         Some("Lego"),
@@ -33,11 +33,11 @@ pub async fn render_lego_list_page(state: &impl State) -> Result<()> {
 
     let template = LegoListTemplate {
         page: &page,
-        total_sets: find_total_lego_sets(state).await?,
-        total_pieces: find_total_lego_pieces(state).await?,
-        sets: &find_all_lego_sets(state).await?,
-        total_minifigs: find_total_lego_minifiigs(state).await?,
-        minifigs: &find_all_lego_minifiigs(state).await?,
+        total_sets: state.lego_repo().find_total_sets().await?,
+        total_pieces: state.lego_repo().find_total_pieces().await?,
+        sets: &state.lego_repo().find_all_sets().await?,
+        total_minifigs: state.lego_repo().find_total_minifigs().await?,
+        minifigs: &state.lego_repo().find_all_minifigs().await?,
     };
 
     render_page_with_template(state, &page, template).await

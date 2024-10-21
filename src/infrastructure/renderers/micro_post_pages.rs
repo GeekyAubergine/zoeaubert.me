@@ -2,6 +2,7 @@ use askama::Template;
 
 use crate::domain::{
     models::{media::Media, micro_post::MicroPost, page::Page},
+    repositories::MicroPostsRepo,
     state::State,
 };
 
@@ -20,15 +21,21 @@ pub struct MicroPostTemplate<'t> {
     post: &'t MicroPost,
 }
 
-pub async fn render_micro_post_page(state: &impl State, micro_post: &MicroPost) -> Result<()> {
-    let page = Page::new(micro_post.slug.clone(), None, None)
-        .with_date(micro_post.date)
-        .with_tags(micro_post.tags.clone());
+pub async fn render_micro_post_pages(state: &impl State) -> Result<()> {
+    let micro_posts = state.micro_posts_repo().find_all().await?;
 
-    let template = MicroPostTemplate {
-        page: &page,
-        post: micro_post,
-    };
+    for micro_post in micro_posts {
+        let page = Page::new(micro_post.slug.clone(), None, None)
+            .with_date(micro_post.date)
+            .with_tags(micro_post.tags.clone());
 
-    render_page_with_template(state, &page, template).await
+        let template = MicroPostTemplate {
+            page: &page,
+            post: &micro_post,
+        };
+
+        render_page_with_template(state, &page, template).await?;
+    }
+
+    Ok(())
 }

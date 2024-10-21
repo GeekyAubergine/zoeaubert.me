@@ -5,6 +5,9 @@ edition = "2021"
 build = "build.rs"
 rust-version = "1.78.0"
 
+[profile.dev.package.askama_derive]
+opt-level = 3
+
 [dependencies]
 askama = { version = "0.12.1" }
 askama-filters = "0.1.3"

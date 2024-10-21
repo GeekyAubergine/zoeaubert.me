@@ -198,7 +198,7 @@ I had some good opinions, and this was one of them. I still love this game
 
 That time [Dorris](https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-storm-centre/storm-doris) took out a tree
 
---- 
+---
 
 2017-02-28
 
@@ -445,4 +445,3 @@ I owe a lot to this mod (maybe not my windmill design skills). I learned many pr
 [Lockdown with Malcolm Tucker](https://twitter.com/GeekyAubergine/status/1242192735660015616)
 
 ![](https://cdn.geekyaubergine.com/2022/leaving_twitter/lockdown_thick_of_it.png)
-

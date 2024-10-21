@@ -51,7 +51,7 @@ pub trait AboutTextRepo {
 
 #[async_trait::async_trait]
 pub trait BlogPostsRepo {
-    async fn find_all(&self) -> Result<Vec<BlogPost>>;
+    async fn find_all_by_date(&self) -> Result<Vec<BlogPost>>;
 
     async fn find_by_slug(&self, slug: &Slug) -> Result<Option<BlogPost>>;
 
@@ -69,7 +69,7 @@ pub trait MicroPostsRepo {
 
 #[async_trait::async_trait]
 pub trait MastodonPostsRepo {
-    async fn find_all(&self) -> Result<Vec<MastodonPost>>;
+    async fn find_all_by_date(&self) -> Result<Vec<MastodonPost>>;
 
     async fn find_last_updated_at(&self) -> Result<Option<DateTime<Utc>>>;
 

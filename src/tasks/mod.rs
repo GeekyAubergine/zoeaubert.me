@@ -1,1 +1,1 @@
-pub mod build_site;
+pub mod render_site;

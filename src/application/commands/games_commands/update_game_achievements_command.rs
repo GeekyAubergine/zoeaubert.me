@@ -9,7 +9,6 @@ use url::Url;
 use crate::domain::models::games::{
     Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked,
 };
-use crate::domain::queries::games_queries::find_game_by_id;
 use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
 use crate::domain::services::CdnService;
 use crate::domain::state::State;

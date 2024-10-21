@@ -41,7 +41,7 @@ impl MastodonPostRepoDisk {
 
 #[async_trait::async_trait]
 impl MastodonPostsRepo for MastodonPostRepoDisk {
-    async fn find_all(&self) -> Result<Vec<MastodonPost>> {
+    async fn find_all_by_date(&self) -> Result<Vec<MastodonPost>> {
         let data = self.data.read().await;
 
         let mut posts = data

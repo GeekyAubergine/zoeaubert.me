@@ -2,9 +2,7 @@ use askama::Template;
 
 use crate::domain::models::slug::Slug;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
-use crate::domain::queries::about_queries::find_about_text_short;
-use crate::domain::queries::blog_post_queries::find_all_blog_posts;
-use crate::domain::queries::silly_names_queries::find_silly_names;
+use crate::domain::repositories::{AboutTextRepo, BlogPostsRepo, SillyNamesRepo};
 use crate::domain::state::State;
 use crate::prelude::*;
 
@@ -28,19 +26,11 @@ pub struct IndexTemplate<'t, 'p> {
 pub async fn render_home_page(state: &impl State) -> Result<()> {
     let page = Page::new(Slug::new("/"), None, None);
 
-    // let about_text = state.about_repo().get().await.short().to_owned();
+    let silly_names = state.silly_names_repo().find_all().await?;
 
-    // let silly_names = SillyNamesQueryService::find_all(&state)
-    //     .await?
-    //     .values()
-    //     .map(|n| n.name.to_owned())
-    //     .collect();
+    let about_text = state.about_text_repo().find_short().await?;
 
-    let silly_names = find_silly_names(state).await?;
-
-    let about_text = find_about_text_short(state).await?;
-
-    let recent_blog_posts = find_all_blog_posts(state)
+    let recent_blog_posts = state.blog_posts_repo().find_all_by_date()
         .await?
         .iter()
         .take(RECENT_POSTS_COUNT)

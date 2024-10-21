@@ -5,7 +5,7 @@ use crate::domain::models::site_config::PageImage;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::{games::Game, page::Page};
 
-use crate::domain::repositories::GameAchievementsRepo;
+use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
 use crate::prelude::*;
 
 use crate::domain::state::State;
@@ -19,9 +19,21 @@ const RECENTLY_PLAYED_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
 const HEADER_IMAGE_HEIGHT: u32 = 193;
 
+pub async fn render_games_pages(state: &impl State) -> Result<()> {
+    let games = state.games_repo().find_all_games().await?;
+
+    render_games_list_page(state, &games).await?;
+
+    for game in games {
+        render_game_page(state, &game).await?;
+    }
+
+    Ok(())
+}
+
 #[derive(Template)]
 #[template(path = "interests/games/games_list.html")]
-pub struct IndexTemplate<'t> {
+struct IndexTemplate<'t> {
     page: &'t Page<'t>,
     games_by_recently_played: Vec<&'t Game>,
     games_by_most_played: Vec<Game>,
@@ -29,7 +41,7 @@ pub struct IndexTemplate<'t> {
     total_playtime: f32,
 }
 
-pub async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()> {
+async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/games"),
         Some("Games"),
@@ -65,7 +77,7 @@ pub async fn render_games_list_page(state: &impl State, games: &[Game]) -> Resul
 
 #[derive(Template)]
 #[template(path = "interests/games/game.html")]
-pub struct GameTemplate<'t> {
+struct GameTemplate<'t> {
     page: &'t Page<'t>,
     game: &'t Game,
     unlocked_achievements: Vec<&'t GameAchievementUnlocked>,
@@ -73,7 +85,7 @@ pub struct GameTemplate<'t> {
     total_achievements: usize,
 }
 
-pub async fn render_game_page(state: &impl State, game: &Game) -> Result<()> {
+async fn render_game_page(state: &impl State, game: &Game) -> Result<()> {
     let unlocked_achievements = state
         .game_achievements_repo()
         .find_all_unlocked_by_unlocked_date(game.id)

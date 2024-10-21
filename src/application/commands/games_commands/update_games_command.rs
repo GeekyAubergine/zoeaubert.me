@@ -9,9 +9,7 @@ use url::Url;
 
 use crate::application::commands::games_commands::update_game_achievements_command::update_game_achievements_command;
 use crate::domain::models::games::Game;
-use crate::domain::queries::games_queries::{
-    commit_game, find_game_by_id, find_games_last_updated_at,
-};
+use crate::domain::repositories::GamesRepo;
 use crate::domain::services::CdnService;
 use crate::domain::state::State;
 
@@ -79,9 +77,8 @@ async fn process_game(
     client: &reqwest::Client,
     game: SteamOwnedGame,
 ) -> Result<()> {
-    if let Some(stored_game) = find_game_by_id(state, game.appid).await? {
-        if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.last_played
-        {
+    if let Some(stored_game) = state.games_repo().find_by_game_id(game.appid).await? {
+        if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.last_played {
             return Ok(());
         }
     }
@@ -117,7 +114,7 @@ async fn process_game(
     // Do achievments first as if they fail we don't want to commit the game
     update_game_achievements_command(state, &client, &game).await?;
 
-    commit_game(state, &game).await?;
+    state.games_repo().commit(&game).await?;
 
     Ok(())
 }

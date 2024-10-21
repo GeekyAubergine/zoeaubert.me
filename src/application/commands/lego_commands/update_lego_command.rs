@@ -8,7 +8,7 @@ use url::Url;
 use crate::{
     domain::{
         models::lego::{LegoMinifig, LegoSet},
-        queries::lego_queries::{commit_lego_minifig, commit_lego_set, find_lego_last_updated_at},
+        repositories::LegoRepo,
         services::{CacheService, CdnService},
         state::State,
     },
@@ -114,7 +114,7 @@ fn make_get_minifig_url(hash: &str) -> Url {
 }
 
 pub async fn update_lego_command(state: &impl State) -> Result<()> {
-    if let Some(last_updated_at) = find_lego_last_updated_at(state).await? {
+    if let Some(last_updated_at) = state.lego_repo().find_last_updated_at().await? {
         if last_updated_at + ONE_DAY_PERIOD > Utc::now() {
             return Ok(());
         }
@@ -162,7 +162,7 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
                 set.collection.qty_owned,
             );
 
-            commit_lego_set(state, &set).await?;
+            state.lego_repo().commit_set(&set).await?;
         }
     }
 
@@ -190,7 +190,7 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
                 image,
             );
 
-            commit_lego_minifig(state, &minifig).await?;
+            state.lego_repo().commit_minifig(&minifig).await?;
         }
     }
 
