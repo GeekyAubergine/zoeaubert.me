@@ -1,0 +1,13 @@
+<div class="justify-start items-center">
+    <a class="my-0" href="/interests/games/{{ game.id }}/" rel="noopener noreferrer">
+        <!-- <img src="{{ game.header_image.cdn_url() }}" alt="{{ game.name }} steam header image" class="w-full hobbyGridItemImage"> -->
+        {% let image = game.header_image.clone() %}
+        {% include "partials/media/image.html" %}
+    </a>
+    <a class="my-0 no-underline" href="/interests/games/{{ game.id }}/">
+        <p class="my-0 text-center accent">{{ game.name }}</p>
+    </a>
+    <p class="secondary my-0 leading-5">
+        {{ game.playtime_hours().format(1, true) }}h
+    </p>
+</div>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{%- block body %}
+    <main>
+        {% include "partials/navbar.html" %}
+        <div class="width-control mx-auto">
+            {% include "partials/page_header.html" %}
+            {% block content %}{% endblock %}
+            {% include "partials/pagination.html" %}
+        </div>
+        {% include "partials/footer.html" %}
+    {% endblock %}

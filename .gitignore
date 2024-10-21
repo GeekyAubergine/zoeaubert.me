@@ -72,11 +72,28 @@ res/photos/cache/
 
 .photo_cache/
 
-# Eleventy
 _site
 _cache
 .cache
+.archive
+.data
 
 config.js
+config.json
+config copy.json
 
 .vscode/
+
+_assets
+_static
+
+# Added by cargo
+
+/target
+
+test.js
+test.png
+test.jpg
+
+
+output
