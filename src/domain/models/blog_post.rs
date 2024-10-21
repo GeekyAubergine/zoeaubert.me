@@ -13,6 +13,7 @@ pub struct BlogPost {
     pub hero_image: Option<Image>,
     pub content: String,
     pub media: Vec<Media>,
+    pub updated_at: DateTime<Utc>,
 }
 
 impl BlogPost {
@@ -23,6 +24,7 @@ impl BlogPost {
         description: String,
         tags: Vec<Tag>,
         content: String,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             slug,
@@ -33,6 +35,7 @@ impl BlogPost {
             hero_image: None,
             content,
             media: vec![],
+            updated_at,
         }
     }
 

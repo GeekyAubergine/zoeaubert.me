@@ -8,7 +8,7 @@ use crate::domain::state::State;
 use crate::error::*;
 use crate::prelude::*;
 
-async fn download_response(client: &reqwest::Client, url: &Url) -> Result<reqwest::Response> {
+pub async fn download_response(client: &reqwest::Client, url: &Url) -> Result<reqwest::Response> {
     debug!("Making request to: {}", url);
 
     let resp = client

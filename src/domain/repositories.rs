@@ -7,7 +7,7 @@ use super::models::{
     games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
     lego::{LegoMinifig, LegoSet},
     mastodon_post::MastodonPost,
-    micro_post::MicroPost,
+    micro_post::MicroPost, slug::Slug,
 };
 
 #[async_trait::async_trait]
@@ -53,12 +53,16 @@ pub trait AboutTextRepo {
 pub trait BlogPostsRepo {
     async fn find_all(&self) -> Result<Vec<BlogPost>>;
 
+    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<BlogPost>>;
+
     async fn commit(&self, blog_post: &BlogPost) -> Result<()>;
 }
 
 #[async_trait::async_trait]
 pub trait MicroPostsRepo {
     async fn find_all(&self) -> Result<Vec<MicroPost>>;
+
+    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<MicroPost>>;
 
     async fn commit(&self, micro_post: &MicroPost) -> Result<()>;
 }

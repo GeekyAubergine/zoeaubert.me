@@ -9,11 +9,11 @@ use crate::{
     domain::{
         models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
         queries::micro_posts_queries::commit_micro_post,
-        repositories::Profiler,
+        repositories::{MicroPostsRepo, Profiler},
         services::CdnService,
         state::State,
     },
-    infrastructure::utils::file_system::{make_content_file_path, read_json_file},
+    infrastructure::utils::file_system::{get_file_last_modified, make_content_file_path, read_json_file},
     prelude::*,
 };
 
@@ -51,11 +51,7 @@ struct ArchiveFile {
     items: Vec<ArchiveFileItem>,
 }
 
-fn extract_images_from_html(
-    markup: &str,
-    date: &DateTime<Utc>,
-    parent_slug: &Slug,
-) -> Vec<Image> {
+fn extract_images_from_html(markup: &str, date: &DateTime<Utc>, parent_slug: &Slug) -> Vec<Image> {
     let mut images = vec![];
 
     for cap in HTML_IMAGE_REGEX.captures_iter(markup) {
@@ -81,9 +77,25 @@ fn extract_images_from_html(
     images
 }
 
-fn archive_item_to_post(
-    item: ArchiveFileItem,
-) -> Result<Option<MicroPost>> {
+fn slug_for_item(item: &ArchiveFileItem) -> Slug {
+    let id = item
+        .id
+        .split('/')
+        .skip(6)
+        .collect::<Vec<&str>>()
+        .join("/")
+        .replace(".html", "");
+
+    let slug_date = item.date_published.format("%Y/%m/%d").to_string();
+
+    let slug = format!("micros/{}/{}", slug_date, id);
+
+    Slug::new(&slug)
+}
+
+fn archive_item_to_post(item: ArchiveFileItem, updated_at: DateTime<Utc>) -> Result<Option<MicroPost>> {
+    let slug = slug_for_item(&item);
+
     let tags: Vec<String> = match item.tags {
         Some(tags) => tags,
         None => vec![],
@@ -97,20 +109,6 @@ fn archive_item_to_post(
     }
 
     let tags = tags.iter().map(|t| Tag::from_string(t)).collect();
-
-    let id = item
-        .id
-        .split('/')
-        .skip(6)
-        .collect::<Vec<&str>>()
-        .join("/")
-        .replace(".html", "");
-
-    let slug_date = item.date_published.format("%Y/%m/%d").to_string();
-
-    let slug = format!("micros/{}/{}", slug_date, id);
-
-    let slug = Slug::new(&slug);
 
     let content = item
         .content_text
@@ -131,6 +129,7 @@ fn archive_item_to_post(
         content,
         media,
         tags,
+        updated_at
     )))
 }
 
@@ -140,9 +139,21 @@ pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Resu
     let archive_file: ArchiveFile =
         read_json_file(&make_content_file_path(&Path::new(MICRO_POSTS_DIR))).await?;
 
+    let last_modified = get_file_last_modified(&make_content_file_path(&Path::new(MICRO_POSTS_DIR))).await?;
+
     for item in archive_file.items {
         state.profiler().post_processed().await?;
-        if let Some(post) = archive_item_to_post(item)? {
+
+        let slug = slug_for_item(&item);
+
+        let existing = state.micro_posts_repo().find_by_slug(&slug).await?;
+
+        // These never update so if it's here, just skip
+        if existing.is_some() {
+            continue;
+        }
+
+        if let Some(post) = archive_item_to_post(item, last_modified.clone())? {
             commit_micro_post(state, &post).await?;
         }
     }

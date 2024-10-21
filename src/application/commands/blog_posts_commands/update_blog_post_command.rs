@@ -1,12 +1,13 @@
 use std::path::Path;
 
-use crate::domain::repositories::Profiler;
+use crate::domain::repositories::{BlogPostsRepo, Profiler};
 use crate::domain::{models::slug::Slug, queries::blog_post_queries::commit_blog_post};
 use crate::infrastructure::utils::date::parse_date;
+use crate::infrastructure::utils::file_system::get_file_last_modified;
 use crate::infrastructure::utils::image_extractor::extract_images_from_markdown;
 use crate::infrastructure::utils::image_utils::image_from_url;
 use serde::Deserialize;
-use tracing::debug;
+use tracing::{debug, info};
 use url::Url;
 
 use crate::{
@@ -41,7 +42,9 @@ fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
     serde_yaml::from_str(s).map_err(BlogPostError::unparsable_front_matter)
 }
 
-async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()> {
+pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> Result<()> {
+    let file_contents = read_text_file(file_path).await?;
+
     let split = file_contents.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -63,6 +66,16 @@ async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()
 
             let slug = Slug::new(&format!("/blog/{}", front_matter.slug));
 
+            let last_mofied = get_file_last_modified(file_path).await?;
+
+            if let Some(existing) = state.blog_posts_repo().find_by_slug(&slug).await? {
+                if last_mofied == existing.updated_at {
+                    return Ok(());
+                }
+            }
+
+            info!("Updating blog post: [{:?}]", slug);
+
             let mut post = BlogPost::new(
                 slug.clone(),
                 date,
@@ -70,6 +83,7 @@ async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()
                 front_matter.description,
                 tags,
                 content.to_owned().to_owned(),
+                last_mofied,
             );
 
             if let (Some(url), Some(alt), Some(width), Some(height)) = (
@@ -103,12 +117,4 @@ async fn file_to_blog_post(state: &impl State, file_contents: &str) -> Result<()
         }
         _ => Err(BlogPostError::unparsable_blog_post()),
     }
-}
-
-pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> Result<()> {
-    debug!("Updating blog post: [{:?}]", file_path);
-
-    let file_contents = read_text_file(file_path).await?;
-
-    file_to_blog_post(state, &file_contents).await
 }

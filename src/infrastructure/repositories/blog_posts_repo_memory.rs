@@ -46,6 +46,12 @@ impl BlogPostsRepo for BlogPostsRepoMemory {
         Ok(posts)
     }
 
+    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<BlogPost>> {
+        let data = self.data.read().await;
+
+        Ok(data.blog_posts.get(slug).cloned())
+    }
+
     async fn commit(&self, blog_post: &BlogPost) -> Result<()> {
         let mut data = self.data.write().await;
 

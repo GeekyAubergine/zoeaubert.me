@@ -1,6 +1,9 @@
 use std::path::Path;
 
-use crate::{domain::{services::CdnService, state::State}, error::ImageError};
+use crate::{
+    domain::{services::CdnService, state::State},
+    error::ImageError,
+};
 use imagesize::blob_size;
 use url::Url;
 
@@ -15,17 +18,14 @@ pub async fn image_from_url(
     path: &Path,
     alt: &str,
 ) -> Result<Image> {
-    let data = state
+    let (cache_path, data) = state
         .cache_service()
         .get_file_from_cache_or_url(url)
         .await?;
 
     let image_size = blob_size(&data).map_err(ImageError::size_error)?;
 
-    state
-        .cdn_service()
-        .copy_file_from_url_to_cdn(state, &url, &path)
-        .await?;
+    state.cdn_service().upload_file(&cache_path, path).await?;
 
     Ok(Image::new(
         path,

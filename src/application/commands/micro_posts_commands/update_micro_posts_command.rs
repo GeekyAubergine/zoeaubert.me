@@ -10,14 +10,14 @@ use crate::{
     domain::{
         models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
         queries::micro_posts_queries::commit_micro_post,
-        repositories::Profiler,
+        repositories::{MicroPostsRepo, Profiler},
         services::{CacheService, CdnService},
         state::State,
     },
     error::MicroPostError,
     infrastructure::utils::{
         date::parse_date,
-        file_system::{find_files_rescurse, make_content_file_path, read_text_file},
+        file_system::{find_files_rescurse, get_file_last_modified, make_content_file_path, read_text_file},
         image_extractor::extract_images_from_markdown,
     },
 };
@@ -36,11 +36,11 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
     serde_yaml::from_str(s).map_err(MicroPostError::unable_to_parse_front_matter)
 }
 
-async fn file_to_micro_post(
+async fn process_file(
     state: &impl State,
     file_path: &Path,
     content: &str,
-) -> Result<MicroPost> {
+) -> Result<()> {
     let split = content.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -68,6 +68,14 @@ async fn file_to_micro_post(
 
     let slug = Slug::new(&format!("{}/{}", slug_date, file_name));
 
+    let last_modified = get_file_last_modified(file_path).await?;
+
+    if let Some(existing) = state.micro_posts_repo().find_by_slug(&slug).await? {
+        if existing.updated_at == last_modified {
+            return Ok(());
+        }
+    }
+
     let media = extract_images_from_markdown(state, &content, &date, &slug)
         .await?
         .iter()
@@ -80,7 +88,11 @@ async fn file_to_micro_post(
         .map(|tag| Tag::from_string(tag))
         .collect::<Vec<Tag>>();
 
-    Ok(MicroPost::new(slug, date, content.to_string(), media, tags))
+    let micro_post = MicroPost::new(slug, date, content.to_string(), media, tags, last_modified);
+
+    commit_micro_post(state, &micro_post).await?;
+
+    Ok(())
 }
 
 pub async fn update_micro_posts(state: &impl State) -> Result<()> {
@@ -94,9 +106,7 @@ pub async fn update_micro_posts(state: &impl State) -> Result<()> {
         let file = Path::new(&file);
         let content = read_text_file(&file).await?;
 
-        let micro_post = file_to_micro_post(state, &file, &content).await?;
-
-        commit_micro_post(state, &micro_post).await?;
+        process_file(state, &file, &content).await?;
     }
 
     Ok(())

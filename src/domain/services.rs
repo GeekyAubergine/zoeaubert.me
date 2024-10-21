@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use chrono::{DateTime, Utc};
 use url::Url;
@@ -20,19 +20,10 @@ pub trait CacheService {
 
     async fn download_and_cache_file(&self, url: &Url) -> Result<()>;
 
-    async fn get_file_from_cache_or_url(&self, url: &Url) -> Result<Vec<u8>>;
+    async fn get_file_from_cache_or_url(&self, url: &Url) -> Result<(PathBuf, Vec<u8>)>;
 }
 
 #[async_trait::async_trait]
 pub trait CdnService {
     async fn upload_file(&self, source: &Path, destination: &Path) -> Result<()>;
-
-    async fn copy_file_from_url_to_cdn(
-        &self,
-        state: &impl State,
-        source: &Url,
-        destination: &Path,
-    ) -> Result<()>;
-
-    async fn process_queue(&self) -> Result<()>;
 }

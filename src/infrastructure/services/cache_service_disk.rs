@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use image::ImageError;
 use imagesize::{blob_size, ImageSize};
@@ -52,7 +52,7 @@ impl CacheService for CacheServiceDisk {
         Ok(())
     }
 
-    async fn get_file_from_cache_or_url(&self, url: &Url) -> Result<Vec<u8>> {
+    async fn get_file_from_cache_or_url(&self, url: &Url) -> Result<(PathBuf, Vec<u8>)> {
         let url_path = url.path();
 
         let path = Path::new(&url_path);
@@ -60,13 +60,13 @@ impl CacheService for CacheServiceDisk {
         debug!("Getting file from cache or url: {} [{:?}]", url, path);
 
         if let Ok(content) = self.read_file(&path).await {
-            return Ok(content);
+            return Ok((path.to_path_buf(), content));
         }
 
         let content = download_bytes(&self.reqwest_client, url).await?;
 
         self.write_file(&path, &content).await?;
 
-        Ok(content)
+        Ok((path.to_path_buf(), content))
     }
 }

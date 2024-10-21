@@ -3,41 +3,53 @@ use dotenvy_macro::dotenv;
 use reqwest::header::ACCEPT;
 use reqwest::{Body, ClientBuilder};
 use serde::Deserialize;
-use url::Url;
+use std::collections::{HashMap, HashSet};
+use std::fmt::format;
 use std::path::PathBuf;
-use std::sync::{Arc};
+use std::process::exit;
+use std::sync::Arc;
 use std::{fs::read_dir, path::Path};
 use tokio::fs::File;
+use tokio::sync::RwLock;
 use tokio_util::codec::{BytesCodec, FramedRead};
 use tracing::debug;
-use tokio::sync::RwLock;
+use url::Url;
 
 use crate::domain::models::cache_path::CachePath;
 use crate::domain::services::{CacheService, CdnService};
 use crate::domain::state::State;
 use crate::error::{CdnError, FileSystemError, NetworkError};
 use crate::infrastructure::utils::file_system::make_cache_file_path;
+use crate::infrastructure::utils::networking::{download_json, download_response};
 use crate::prelude::*;
 
-fn make_cdn_api_url(path: &str) -> String {
-    format!("{}/{}", dotenv!("BUNNY_CDN_URL"), path)
+fn make_cdn_api_url(path: &str) -> Url {
+    format!("{}{}", dotenv!("BUNNY_CDN_URL"), path)
+        .parse()
+        .unwrap()
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct BunnyCdnFileResponse {
+    #[serde(rename = "StorageZoneName")]
+    storage_zone_name: String,
+    #[serde(rename = "Path")]
+    path: String,
     #[serde(rename = "ObjectName")]
     object_name: String,
 }
 
-#[derive(Debug, Clone)]
-pub struct CopyFileJob {
-    source: Url,
-    destination: PathBuf,
+impl BunnyCdnFileResponse {
+    pub fn path(&self) -> String {
+        let path = format!("{}{}", self.path, self.object_name);
+        let removable_prefix = format!("/{}", self.storage_zone_name);
+        path.replace(&removable_prefix, "")
+    }
 }
 
 pub struct CdnServiceBunny {
     reqwest_client: reqwest::Client,
-    copy_file_jobs: Arc<RwLock<Vec<CopyFileJob>>>,
+    existing_folders_cache: Arc<RwLock<HashSet<String>>>,
 }
 
 impl CdnServiceBunny {
@@ -47,58 +59,83 @@ impl CdnServiceBunny {
             "AccessKey",
             dotenv!("BUNNY_CDN_ACCESS_KEY").parse().unwrap(),
         );
+        headers.insert(ACCEPT, "application/json".parse().unwrap());
 
         Self {
             reqwest_client: ClientBuilder::new()
                 .default_headers(headers)
                 .build()
                 .unwrap(),
-            copy_file_jobs: Arc::new(RwLock::new(vec![])),
+            existing_folders_cache: Arc::new(RwLock::new(HashSet::new())),
         }
     }
 
     async fn query_path(&self, path: &Path) -> Result<Option<Vec<BunnyCdnFileResponse>>> {
-        let path = match path.is_file() {
-            true => path.to_string_lossy().to_string(),
+        let path = match path.to_string_lossy().ends_with("/") {
+            true => path.to_string_lossy().into_owned(),
             false => format!("{}/", path.to_string_lossy()),
         };
 
-        debug!("Querying path in cdn: {}", path);
-        let request = self
-            .reqwest_client
-            .get(make_cdn_api_url(&path))
-            .header(ACCEPT, "application/json");
+        debug!("Querying path in cdn: {:?}", path);
 
-        match request.send().await {
-            Ok(response) => {
-                if response.status().as_u16() == 404 {
-                    return Ok(None);
-                }
+        let response = download_response(
+            &self.reqwest_client,
+            &make_cdn_api_url(&path),
+        )
+        .await?;
 
-                match response.json::<Vec<BunnyCdnFileResponse>>().await {
-                    Ok(response) => Ok(Some(response)),
-                    Err(e) => Err(NetworkError::fetch_error(e)),
-                }
-            }
+        if response.status().as_u16() == 404 {
+            return Ok(None);
+        }
+
+        match response.json::<Vec<BunnyCdnFileResponse>>().await {
+            Ok(response) => Ok(Some(response)),
             Err(e) => Err(NetworkError::fetch_error(e)),
         }
     }
 
     async fn files_names_in_folder(&self, path: &Path) -> Result<Vec<String>> {
-        let folder_path = match path.is_file() {
-            true => path.parent().unwrap(),
-            false => path,
+        debug!(
+            "Querying files in folder: {:?} {:?}",
+            path.to_string_lossy(),
+            path.is_dir()
+        );
+
+        let folder_path = match path.is_dir() {
+            true => path,
+            false => path.parent().unwrap(),
         };
 
         match self.query_path(&folder_path).await {
-            Ok(Some(files)) => Ok(files.iter().map(|f| f.object_name.clone()).collect()),
+            Ok(Some(files)) => {
+                let mut cache = self.existing_folders_cache.write().await;
+
+                for file in files.iter() {
+                    cache.insert(file.path());
+                }
+
+                Ok(files.iter().map(|f| f.object_name.clone()).collect())
+            }
             Ok(None) => Ok(vec![]),
             Err(e) => Err(e),
         }
     }
 
     async fn file_exists(&self, file_name: &Path) -> Result<bool> {
-        debug!("Checking if file exists in cdn: {:?}", file_name);
+        let cache_path = match file_name.to_string_lossy().starts_with("/") {
+            true => file_name.to_string_lossy().into_owned(),
+            false => format!("/{}", file_name.to_string_lossy()),
+        };
+
+        if let Some(file) = self
+            .existing_folders_cache
+            .read()
+            .await
+            .get(&cache_path)
+        {
+            debug!("File exists in cache: {:?}", file);
+            return Ok(true);
+        }
 
         let files = self.files_names_in_folder(&file_name).await?;
 
@@ -123,8 +160,6 @@ impl CdnService for CdnServiceBunny {
             .await
             .map_err(FileSystemError::read_error)?;
 
-        debug!("File opened");
-
         let stream = FramedRead::new(file, BytesCodec::new());
         let file_body = Body::wrap_stream(stream);
 
@@ -140,27 +175,9 @@ impl CdnService for CdnServiceBunny {
             return Err(CdnError::base_status(response.status().as_u16()));
         }
 
-        Ok(())
-    }
+        let mut cache = self.existing_folders_cache.write().await;
 
-    async fn copy_file_from_url_to_cdn(
-        &self,
-        state: &impl State,
-        source: &Url,
-        destination: &Path,
-    ) -> Result<()> {
-        let mut jobs = self.copy_file_jobs.write().await;
-
-        jobs.push(CopyFileJob {
-            source: source.clone(),
-            destination: destination.into(),
-        });
-
-        Ok(())
-    }
-
-    async fn process_queue(&self) -> Result<()> {
-        // TODO
+        cache.insert(destination.to_string_lossy().to_string());
 
         Ok(())
     }

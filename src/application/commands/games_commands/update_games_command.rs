@@ -79,12 +79,12 @@ async fn process_game(
     client: &reqwest::Client,
     game: SteamOwnedGame,
 ) -> Result<()> {
-    // if let Some(stored_game) = find_game_by_id(state, game.appid).await? {
-    //     if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.last_played
-    //     {
-    //         return Ok(());
-    //     }
-    // }
+    if let Some(stored_game) = find_game_by_id(state, game.appid).await? {
+        if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.last_played
+        {
+            return Ok(());
+        }
+    }
 
     let game_header_image_cdn_path = &format!("games/{}-header.jpg", game.appid);
 

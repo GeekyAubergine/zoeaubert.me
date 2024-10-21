@@ -40,11 +40,21 @@ impl MicroPostsRepo for MicroPostsRepoMemory {
     async fn find_all(&self) -> Result<Vec<MicroPost>> {
         let data = self.data.read().await;
 
-        let mut posts = data.micro_posts.values().cloned().collect::<Vec<MicroPost>>();
+        let mut posts = data
+            .micro_posts
+            .values()
+            .cloned()
+            .collect::<Vec<MicroPost>>();
 
         posts.sort_by(|a, b| b.date.cmp(&a.date));
 
         Ok(posts)
+    }
+
+    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<MicroPost>> {
+        let data = self.data.read().await;
+
+        Ok(data.micro_posts.get(slug).cloned())
     }
 
     async fn commit(&self, micro_post: &MicroPost) -> Result<()> {
