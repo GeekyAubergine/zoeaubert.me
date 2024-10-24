@@ -9,10 +9,9 @@ use crate::{
     domain::{
         models::lego::{LegoMinifig, LegoSet},
         repositories::LegoRepo,
-        services::{CacheService, CdnService},
+        services::{CacheService, CdnService, ImageService, NetworkService},
         state::State,
     },
-    infrastructure::utils::{image_utils::image_from_url, networking::download_json},
     ONE_DAY_PERIOD, ONE_HOUR_PERIOD,
 };
 
@@ -122,16 +121,20 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
 
     info!("Updating lego sets and minifigs");
 
-    let client = reqwest::Client::new();
+    let login_reponse = state
+        .network_service()
+        .download_json::<BricksetLoginResponse>(&make_login_url())
+        .await?;
 
-    let login_reponse = download_json::<BricksetLoginResponse>(&client, &make_login_url()).await?;
+    let sets_response = state
+        .network_service()
+        .download_json::<GetSetResponse>(&make_get_set_url(&login_reponse.hash))
+        .await?;
 
-    let sets_response =
-        download_json::<GetSetResponse>(&client, &make_get_set_url(&login_reponse.hash)).await?;
-
-    let minifigs_response =
-        download_json::<GetMinifigsResponse>(&client, &make_get_minifig_url(&login_reponse.hash))
-            .await?;
+    let minifigs_response = state
+        .network_service()
+        .download_json::<GetMinifigsResponse>(&make_get_minifig_url(&login_reponse.hash))
+        .await?;
 
     if sets_response.status == "success" {
         for set in sets_response.sets {
@@ -141,14 +144,19 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
             let thumbnail_cdn_url = format!("lego/{}-thumbnail.jpg", set.set_id);
             let thumbnail_cdn_path = Path::new(&thumbnail_cdn_url);
 
-            let image = image_from_url(state, &set.image.image_url, &cdn_path, &set.name).await?;
-            let thumbnail = image_from_url(
-                state,
-                &set.image.thumbnail_url,
-                &thumbnail_cdn_path,
-                &set.name,
-            )
-            .await?;
+            let image = state
+                .image_service()
+                .copy_image_from_url(state, &set.image.image_url, &cdn_path, &set.name)
+                .await?;
+            let thumbnail = state
+                .image_service()
+                .copy_image_from_url(
+                    state,
+                    &set.image.thumbnail_url,
+                    &thumbnail_cdn_path,
+                    &set.name,
+                )
+                .await?;
 
             let set = LegoSet::new(
                 set.set_id,
@@ -178,7 +186,10 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
             let cdn_path = format!("lego/{}.png", minifig.minifig_number);
             let cdn_path = Path::new(&cdn_path);
 
-            let image = image_from_url(state, &image_url, &cdn_path, &minifig.name).await?;
+            let image = state
+                .image_service()
+                .copy_image_from_url(state, &image_url, &cdn_path, &minifig.name)
+                .await?;
 
             let minifig = LegoMinifig::new(
                 minifig.minifig_number,

@@ -16,11 +16,9 @@ use tracing::debug;
 use url::Url;
 
 use crate::domain::models::cache_path::CachePath;
-use crate::domain::services::{CacheService, CdnService};
+use crate::domain::services::{CacheService, CdnService, FileService};
 use crate::domain::state::State;
 use crate::error::{CdnError, FileSystemError, NetworkError};
-use crate::infrastructure::utils::file_system::make_cache_file_path;
-use crate::infrastructure::utils::networking::{download_json, download_response};
 use crate::prelude::*;
 
 fn make_cdn_api_url(path: &str) -> Url {
@@ -78,11 +76,12 @@ impl CdnServiceBunny {
 
         debug!("Querying path in cdn: {:?}", path);
 
-        let response = download_response(
-            &self.reqwest_client,
-            &make_cdn_api_url(&path),
-        )
-        .await?;
+        let response = self
+            .reqwest_client
+            .get(make_cdn_api_url(&path).as_str())
+            .send()
+            .await
+            .map_err(NetworkError::fetch_error)?;
 
         if response.status().as_u16() == 404 {
             return Ok(None);
@@ -127,12 +126,7 @@ impl CdnServiceBunny {
             false => format!("/{}", file_name.to_string_lossy()),
         };
 
-        if let Some(file) = self
-            .existing_folders_cache
-            .read()
-            .await
-            .get(&cache_path)
-        {
+        if let Some(file) = self.existing_folders_cache.read().await.get(&cache_path) {
             debug!("File exists in cache: {:?}", file);
             return Ok(true);
         }
@@ -147,7 +141,7 @@ impl CdnServiceBunny {
 
 #[async_trait::async_trait]
 impl CdnService for CdnServiceBunny {
-    async fn upload_file(&self, source: &Path, destination: &Path) -> Result<()> {
+    async fn upload_file(&self, state: &impl State, source: &Path, destination: &Path) -> Result<()> {
         debug!("Copying file from {:?} to {:?}", source, destination);
         if self.file_exists(destination).await? {
             debug!("File already exists in destination, skipping");
@@ -156,7 +150,7 @@ impl CdnService for CdnServiceBunny {
 
         debug!("File does not exist in destination, copying");
 
-        let file = File::open(&make_cache_file_path(source))
+        let file = File::open(&state.file_service().make_cache_file_path(source))
             .await
             .map_err(FileSystemError::read_error)?;
 

@@ -6,18 +6,17 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
 use crate::domain::repositories::GamesRepo;
-use crate::infrastructure::utils::file_system::write_json_file;
+use crate::domain::services::FileService;
+use crate::domain::state::State;
+use crate::infrastructure::services::file_service_disk::FileServiceDisk;
 use crate::prelude::*;
 
-use crate::{
-    domain::models::games::Game,
-    infrastructure::utils::file_system::{make_archive_file_path, read_json_file_or_default},
-};
+use crate::domain::models::games::Game;
 
 const FILE_NAME: &str = "games.json";
 
-fn make_file_path() -> PathBuf {
-    make_archive_file_path(&Path::new(FILE_NAME))
+fn make_file_path(file_service: &impl FileService) -> PathBuf {
+    file_service.make_archive_file_path(&Path::new(FILE_NAME))
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -29,14 +28,20 @@ pub struct GamesRepoData {
 #[derive(Debug, Clone)]
 pub struct GamesRepoDisk {
     data: Arc<RwLock<GamesRepoData>>,
+    file_service: FileServiceDisk,
 }
 
 impl GamesRepoDisk {
     pub async fn new() -> Result<Self> {
-        let data = read_json_file_or_default(&make_file_path()).await?;
+        let file_service = FileServiceDisk::new();
+
+        let data = file_service
+            .read_json_file_or_default(&make_file_path(&file_service))
+            .await?;
 
         Ok(Self {
             data: Arc::new(RwLock::new(data)),
+            file_service,
         })
     }
 }
@@ -81,7 +86,9 @@ impl GamesRepo for GamesRepoDisk {
         data.games.insert(game.id, game.clone());
         data.updated_at = Utc::now();
 
-        write_json_file(&make_file_path(), &data.clone()).await?;
+        self.file_service
+            .write_json_file(&make_file_path(&self.file_service), &data.clone())
+            .await?;
 
         Ok(())
     }

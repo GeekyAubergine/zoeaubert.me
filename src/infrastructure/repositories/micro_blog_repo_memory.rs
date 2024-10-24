@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use crate::domain::models::blog_post::BlogPost;
 use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::slug::Slug;
-use crate::domain::repositories::{BlogPostsRepo, MicroPostsRepo};
+use crate::domain::repositories::MicroPostsRepo;
 use crate::prelude::*;
 
 #[derive(Clone, Serialize, Deserialize, Default)]

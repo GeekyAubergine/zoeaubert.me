@@ -1,9 +1,9 @@
 use super::{
     repositories::{AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo},
-    services::{CacheService, CdnService},
+    services::{CacheService, CdnService, FileService, ImageService, MovieService, NetworkService},
 };
 
-pub trait State {
+pub trait State: Sync + Send {
     fn profiler(&self) -> &impl Profiler;
 
     fn silly_names_repo(&self) -> &impl SillyNamesRepo;
@@ -25,4 +25,12 @@ pub trait State {
     fn cache_service(&self) -> &impl CacheService;
 
     fn cdn_service(&self) -> &impl CdnService;
+
+    fn movie_service(&self) -> &impl MovieService;
+
+    fn image_service(&self) -> &impl ImageService;
+
+    fn network_service(&self) -> &impl NetworkService;
+
+    fn file_service(&self) -> &impl FileService;
 }

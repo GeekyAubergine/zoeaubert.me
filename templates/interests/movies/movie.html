@@ -1,0 +1,18 @@
+{% extends "partials/page.html" %} {%- block content %}
+<article>
+    <div class="items-center mb-8">
+        {% let image = movie.poster.clone() %} {% include
+        "partials/media/image.html" %}
+
+        <p>{{ average_score }}/5</p>
+    </div>
+
+    <hr class="pb-4" />
+    <div class="timeline">
+        {% for omni_post in posts %} {% include
+        "partials/omni_post/omni_post.html" %}
+        <hr />
+        {% endfor %}
+    </div>
+</article>
+{% endblock %}

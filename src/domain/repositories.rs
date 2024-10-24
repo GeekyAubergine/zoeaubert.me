@@ -2,12 +2,17 @@ use chrono::{DateTime, Utc};
 
 use crate::prelude::*;
 
-use super::models::{
-    blog_post::BlogPost,
-    games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
-    lego::{LegoMinifig, LegoSet},
-    mastodon_post::MastodonPost,
-    micro_post::MicroPost, slug::Slug,
+use super::{
+    models::{
+        blog_post::BlogPost,
+        games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
+        lego::{LegoMinifig, LegoSet},
+        mastodon_post::MastodonPost,
+        micro_post::MicroPost,
+        slug::Slug,
+    },
+    services::FileService,
+    state::State,
 };
 
 #[async_trait::async_trait]
@@ -119,5 +124,9 @@ pub trait GameAchievementsRepo {
 
     async fn find_all_locked_by_name(&self, game_id: u32) -> Result<Vec<GameAchievementLocked>>;
 
-    async fn commit(&self, game: &Game, achievement: &GameAchievement) -> Result<()>;
+    async fn commit(
+        &self,
+        game: &Game,
+        achievement: &GameAchievement,
+    ) -> Result<()>;
 }

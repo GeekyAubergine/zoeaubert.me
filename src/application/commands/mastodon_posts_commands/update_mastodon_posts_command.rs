@@ -14,11 +14,8 @@ use crate::domain::models::mastodon_post::{
 use crate::domain::models::media::Media;
 use crate::domain::models::tag::Tag;
 use crate::domain::repositories::{MastodonPostsRepo, Profiler};
-use crate::domain::services::{CacheService, CdnService};
+use crate::domain::services::{CacheService, CdnService, FileService, ImageService, NetworkService};
 use crate::domain::state::State;
-use crate::infrastructure::utils::file_system::make_file_path_from_date_and_file;
-use crate::infrastructure::utils::image_utils::image_from_url;
-use crate::infrastructure::utils::networking::*;
 use crate::{prelude::*, ONE_HOUR_PERIOD};
 
 const SELF_URL: &str = "zoeaubert.me";
@@ -141,22 +138,22 @@ impl PostIdBoundaries {
 }
 
 async fn fetch_page(
-    client: &reqwest::Client,
+    state: &impl State,
     boundaries: &PostIdBoundaries,
 ) -> Result<Vec<MastodonStatus>> {
     let url = boundaries.add_to_url(&API_BASE_URL.parse().unwrap());
 
-    download_json(client, &url).await
+    state.network_service().download_json(&url).await
 }
 
 async fn fetch_pages(
-    client: &reqwest::Client,
+    state: &impl State,
     mut boundaries: PostIdBoundaries,
 ) -> Result<Vec<MastodonStatus>> {
     let mut statuses = Vec::new();
 
     loop {
-        let page = fetch_page(client, &boundaries).await?;
+        let page = fetch_page(state, &boundaries).await?;
 
         if page.is_empty() {
             break;
@@ -242,10 +239,15 @@ async fn mastodon_status_to_post(
 
                     let file_name = url_path.file_name().unwrap().to_str().unwrap();
 
-                    let path =
-                        make_file_path_from_date_and_file(&status.created_at, &file_name, None);
+                    let path = state.file_service().make_file_path_from_date_and_file(
+                        &status.created_at,
+                        &file_name,
+                        None,
+                    );
 
-                    let image = image_from_url(state, &url, &path, &description)
+                    let image = state
+                        .image_service()
+                        .copy_image_from_url(state, &url, &path, &description)
                         .await?
                         .with_date(post.created_at())
                         .with_parent_slug(&post.slug());
@@ -256,17 +258,18 @@ async fn mastodon_status_to_post(
 
                             let file_name = url_path.file_name().unwrap().to_str().unwrap();
 
-                            let path = make_file_path_from_date_and_file(
+                            let path = state.file_service().make_file_path_from_date_and_file(
                                 &status.created_at,
                                 file_name,
                                 Some("preview"),
                             );
 
-                            let preview_image =
-                                image_from_url(state, &preview_url, &path, &description)
-                                    .await?
-                                    .with_date(post.created_at())
-                                    .with_parent_slug(&post.slug());
+                            let preview_image = state
+                                .image_service()
+                                .copy_image_from_url(state, &preview_url, &path, &description)
+                                .await?
+                                .with_date(post.created_at())
+                                .with_parent_slug(&post.slug());
 
                             Some(preview_image)
                         }
@@ -322,7 +325,7 @@ pub async fn update_mastodon_posts_command(state: &impl State) -> Result<()> {
         boundaries.set_min_id(min_id);
     }
 
-    let statuses = fetch_pages(&client, boundaries).await?;
+    let statuses = fetch_pages(state, boundaries).await?;
 
     for status in statuses.into_iter() {
         let post = mastodon_status_to_post(state, status).await?;

@@ -6,12 +6,12 @@ use tracing::{debug, info};
 use url::Url;
 
 use crate::{
-    domain::{models::cache_path::CachePath, services::CacheService},
-    error::{FileSystemError, NetworkError},
-    infrastructure::utils::{
-        file_system::{make_cache_file_path, read_file, write_file},
-        networking::download_bytes,
+    domain::{
+        models::cache_path::CachePath,
+        services::{CacheService, FileService, NetworkService},
+        state::State,
     },
+    error::{FileSystemError, NetworkError},
 };
 
 use crate::prelude::*;
@@ -38,34 +38,34 @@ impl CacheService for CacheServiceDisk {
             .map(|_| true)
     }
 
-    async fn read_file(&self, path: &Path) -> Result<Vec<u8>> {
-        read_file(&make_cache_file_path(path)).await
+    async fn read_file(&self, state: &impl State, path: &Path) -> Result<Vec<u8>> {
+        state
+            .file_service()
+            .read_file(&state.file_service().make_cache_file_path(path))
+            .await
     }
 
-    async fn write_file(&self, path: &Path, content: &[u8]) -> Result<()> {
-        write_file(&make_cache_file_path(path), content).await
+    async fn write_file(&self, state: &impl State, path: &Path, content: &[u8]) -> Result<()> {
+        state
+            .file_service()
+            .write_file(&state.file_service().make_cache_file_path(path), content)
+            .await
     }
 
-    async fn download_and_cache_file(&self, url: &Url) -> Result<()> {
-        self.get_file_from_cache_or_url(url).await?;
-
-        Ok(())
-    }
-
-    async fn get_file_from_cache_or_url(&self, url: &Url) -> Result<(PathBuf, Vec<u8>)> {
+    async fn get_file_from_url(&self, state: &impl State, url: &Url) -> Result<(PathBuf, Vec<u8>)> {
         let url_path = url.path();
 
         let path = Path::new(&url_path);
 
         debug!("Getting file from cache or url: {} [{:?}]", url, path);
 
-        if let Ok(content) = self.read_file(&path).await {
+        if let Ok(content) = self.read_file(state, &path).await {
             return Ok((path.to_path_buf(), content));
         }
 
-        let content = download_bytes(&self.reqwest_client, url).await?;
+        let content = state.network_service().download_bytes(&url).await?;
 
-        self.write_file(&path, &content).await?;
+        self.write_file(state, &path, &content).await?;
 
         Ok((path.to_path_buf(), content))
     }

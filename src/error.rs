@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 
+use crate::domain::models::{omni_post::OmniPost, slug::Slug};
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("File System Error: {0}")]
@@ -37,6 +39,9 @@ pub enum Error {
 
     #[error("Image error: {0}")]
     ImageError(#[from] ImageError),
+
+    #[error("Movie error: {0}")]
+    MovieError(#[from] MovieError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -264,5 +269,66 @@ pub enum ImageError {
 impl ImageError {
     pub fn size_error(error: imagesize::ImageError) -> Error {
         Error::ImageError(Self::SizeError(error))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum MovieError {
+    #[error("Unable to parse movie: {0}")]
+    UnableToParseMovie(String),
+
+    #[error("Unable to parse and find movie title: {0}")]
+    UnableToParseAndFindMovieTitle(String),
+
+    #[error("Unable to parse and find movie year: {0}")]
+    UnableToParseAndFindMovieYear(String),
+
+    #[error("Unable to parse and find movie review: {0}")]
+    UnableToParseAndFindMovieReview(String),
+
+    #[error("Unable to parse and find movie score: {0}")]
+    UnableToParseAndFindMovieScore(String),
+
+    #[error("Movie not found")]
+    MovieNotFound(String),
+
+    #[error("Unsupported OmniPost type: {0}")]
+    UnsupportedOmniPostType(Slug),
+
+    #[error("Movie has no poster {0}")]
+    MovieHasNoPoster(u32),
+}
+
+impl MovieError {
+    pub fn unable_to_parse_movie(error: String) -> Error {
+        Error::MovieError(Self::UnableToParseMovie(error))
+    }
+
+    pub fn unable_to_parse_and_find_movie_title(error: String) -> Error {
+        Error::MovieError(Self::UnableToParseAndFindMovieTitle(error))
+    }
+
+    pub fn unable_to_parse_and_find_movie_year(error: String) -> Error {
+        Error::MovieError(Self::UnableToParseAndFindMovieYear(error))
+    }
+
+    pub fn unable_to_parse_and_find_movie_review(error: String) -> Error {
+        Error::MovieError(Self::UnableToParseAndFindMovieReview(error))
+    }
+
+    pub fn unable_to_parse_and_find_movie_score(error: String) -> Error {
+        Error::MovieError(Self::UnableToParseAndFindMovieScore(error))
+    }
+
+    pub fn movie_not_found(error: String) -> Error {
+        Error::MovieError(Self::MovieNotFound(error))
+    }
+
+    pub fn unsupported_omni_post_type(omni_post: &OmniPost) -> Error {
+        Error::MovieError(Self::UnsupportedOmniPostType(omni_post.slug()))
+    }
+
+    pub fn movie_has_no_poster(id: u32) -> Error {
+        Error::MovieError(Self::MovieHasNoPoster(id))
     }
 }

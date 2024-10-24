@@ -10,11 +10,9 @@ use crate::domain::models::games::{
     Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked,
 };
 use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
-use crate::domain::services::CdnService;
+use crate::domain::services::{CdnService, ImageService, NetworkService};
 use crate::domain::state::State;
 use crate::error::GameError;
-use crate::infrastructure::utils::image_utils::image_from_url;
-use crate::infrastructure::utils::networking::download_json;
 
 use crate::prelude::*;
 
@@ -77,12 +75,13 @@ pub struct SteamAvailableGameStatsResponse {
 }
 
 async fn get_steam_game_data(
-    client: &reqwest::Client,
+    state: &impl State,
     appid: u32,
 ) -> Result<Vec<SteamGameDataAcheivement>> {
-    let response =
-        download_json::<SteamAvailableGameStatsResponse>(client, &make_steam_game_data_url(appid))
-            .await?;
+    let response = state
+        .network_service()
+        .download_json::<SteamAvailableGameStatsResponse>(&make_steam_game_data_url(appid))
+        .await?;
 
     match response.game {
         SteamAvailableGameSchemaResponseWrapper::WithGame {
@@ -136,14 +135,13 @@ struct SteamGetPlayerStatsResponse {
 }
 
 async fn get_steam_player_achievements(
-    client: &reqwest::Client,
+    state: &impl State,
     appid: u32,
 ) -> Result<Vec<SteamGamePlayerAchievement>> {
-    let response = download_json::<SteamGetPlayerStatsResponse>(
-        client,
-        &make_get_player_achievements_url(appid),
-    )
-    .await?;
+    let response = state
+        .network_service()
+        .download_json::<SteamGetPlayerStatsResponse>(&make_get_player_achievements_url(appid))
+        .await?;
 
     match response.playerstats {
         SteamGetPlayerAchievementsResponseInner::Achievements { achievements } => Ok(achievements),
@@ -185,14 +183,15 @@ enum SteamGetGlobalAchievementPercentagesResponse {
 }
 
 async fn get_steam_global_achievement_percentage(
-    client: &reqwest::Client,
+    state: &impl State,
     appid: u32,
 ) -> Result<Vec<SteamGameGlobalAchievement>> {
-    let response = download_json::<SteamGetGlobalAchievementPercentagesResponse>(
-        client,
-        &make_get_global_achievement_percentage_url(appid),
-    )
-    .await?;
+    let response = state
+        .network_service()
+        .download_json::<SteamGetGlobalAchievementPercentagesResponse>(
+            &make_get_global_achievement_percentage_url(appid),
+        )
+        .await?;
 
     match response {
         SteamGetGlobalAchievementPercentagesResponse::Empty {} => Ok(vec![]),
@@ -202,22 +201,18 @@ async fn get_steam_global_achievement_percentage(
     }
 }
 
-pub async fn update_game_achievements_command(
-    state: &impl State,
-    client: &reqwest::Client,
-    game: &Game,
-) -> Result<()> {
+pub async fn update_game_achievements_command(state: &impl State, game: &Game) -> Result<()> {
     info!(
         "Updating game achievements for game: {} [{}]",
         game.id, game.name
     );
 
-    let player_achievements = get_steam_player_achievements(client, game.id).await?;
+    let player_achievements = get_steam_player_achievements(state, game.id).await?;
 
-    let game_data = get_steam_game_data(client, game.id).await?;
+    let game_data = get_steam_game_data(state, game.id).await?;
 
     let global_achievement_percentage =
-        get_steam_global_achievement_percentage(client, game.id).await?;
+        get_steam_global_achievement_percentage(state, game.id).await?;
 
     for achievement in game_data {
         let player_achievement = player_achievements
@@ -256,13 +251,15 @@ pub async fn update_game_achievements_command(
 
                 let path = Path::new(&path);
 
-                let image = image_from_url(
-                    state,
-                    &achievement.icon,
-                    &path,
-                    &format!("{} achievement icon", achievement.display_name),
-                )
-                .await?;
+                let image = state
+                    .image_service()
+                    .copy_image_from_url(
+                        state,
+                        &achievement.icon,
+                        &path,
+                        &format!("{} achievement icon", achievement.display_name),
+                    )
+                    .await?;
 
                 GameAchievement::Unlocked(GameAchievementUnlocked::new(
                     achievement.name,
@@ -288,13 +285,15 @@ pub async fn update_game_achievements_command(
                     false => achievement.icon_gray,
                 };
 
-                let image = image_from_url(
-                    state,
-                    &icon,
-                    &path,
-                    &format!("{} achievement icon", achievement.display_name),
-                )
-                .await?;
+                let image = state
+                    .image_service()
+                    .copy_image_from_url(
+                        state,
+                        &icon,
+                        &path,
+                        &format!("{} achievement icon", achievement.display_name),
+                    )
+                    .await?;
 
                 GameAchievement::Locked(GameAchievementLocked::new(
                     achievement.name,

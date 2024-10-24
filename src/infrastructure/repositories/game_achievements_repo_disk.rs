@@ -9,18 +9,17 @@ use crate::domain::models::games::{
     GameAchievement, GameAchievementLocked, GameAchievementUnlocked,
 };
 use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
-use crate::infrastructure::utils::file_system::write_json_file;
+use crate::domain::services::FileService;
+use crate::domain::state::State;
+use crate::infrastructure::services::file_service_disk::FileServiceDisk;
 use crate::prelude::*;
 
-use crate::{
-    domain::models::games::Game,
-    infrastructure::utils::file_system::{make_archive_file_path, read_json_file_or_default},
-};
+use crate::domain::models::games::Game;
 
 const FILE_NAME: &str = "game_achievements.json";
 
-fn make_file_path() -> PathBuf {
-    make_archive_file_path(&Path::new(FILE_NAME))
+fn make_file_path(file_service: &impl FileService) -> PathBuf {
+    file_service.make_archive_file_path(&Path::new(FILE_NAME))
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -37,14 +36,20 @@ pub struct GameAchievementsRepoData {
 
 pub struct GameAchievementsRepoDisk {
     data: Arc<RwLock<GameAchievementsRepoData>>,
+    file_service: FileServiceDisk,
 }
 
 impl GameAchievementsRepoDisk {
     pub async fn new() -> Result<Self> {
-        let data = read_json_file_or_default(&make_file_path()).await?;
+        let file_service = FileServiceDisk::new();
+
+        let data = file_service
+            .read_json_file_or_default(&make_file_path(&file_service))
+            .await?;
 
         Ok(Self {
             data: Arc::new(RwLock::new(data)),
+            file_service,
         })
     }
 }
@@ -125,7 +130,9 @@ impl GameAchievementsRepo for GameAchievementsRepoDisk {
             }
         };
 
-        write_json_file(&make_file_path(), &data.clone()).await?;
+        self.file_service
+            .write_json_file(&make_file_path(&self.file_service), &data.clone())
+            .await?;
 
         Ok(())
     }

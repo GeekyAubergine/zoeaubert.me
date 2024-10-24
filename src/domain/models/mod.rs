@@ -11,3 +11,5 @@ pub mod cache_path;
 pub mod mastodon_post;
 pub mod lego;
 pub mod games;
+pub mod movie;
+pub mod network_response;

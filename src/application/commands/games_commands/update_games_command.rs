@@ -10,11 +10,9 @@ use url::Url;
 use crate::application::commands::games_commands::update_game_achievements_command::update_game_achievements_command;
 use crate::domain::models::games::Game;
 use crate::domain::repositories::GamesRepo;
-use crate::domain::services::CdnService;
+use crate::domain::services::{CdnService, ImageService, NetworkService};
 use crate::domain::state::State;
 
-use crate::infrastructure::utils::image_utils::image_from_url;
-use crate::infrastructure::utils::networking::download_json;
 use crate::{prelude::*, ONE_HOUR_PERIOD};
 
 const GAMES_TO_IGNORE: &[u32] = &[
@@ -72,11 +70,7 @@ pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
     }
 }
 
-async fn process_game(
-    state: &impl State,
-    client: &reqwest::Client,
-    game: SteamOwnedGame,
-) -> Result<()> {
+async fn process_game(state: &impl State, game: SteamOwnedGame) -> Result<()> {
     if let Some(stored_game) = state.games_repo().find_by_game_id(game.appid).await? {
         if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.last_played {
             return Ok(());
@@ -94,13 +88,15 @@ async fn process_game(
     .parse()
     .unwrap();
 
-    let image = image_from_url(
-        state,
-        &image_src_url,
-        &game_header_image_cdn_path,
-        &format!("{} steam header image", &game.name),
-    )
-    .await?;
+    let image = state
+        .image_service()
+        .copy_image_from_url(
+            state,
+            &image_src_url,
+            &game_header_image_cdn_path,
+            &format!("{} steam header image", &game.name),
+        )
+        .await?;
 
     let game = Game::new(
         game.appid,
@@ -112,7 +108,7 @@ async fn process_game(
     );
 
     // Do achievments first as if they fail we don't want to commit the game
-    update_game_achievements_command(state, &client, &game).await?;
+    update_game_achievements_command(state, &game).await?;
 
     state.games_repo().commit(&game).await?;
 
@@ -128,17 +124,17 @@ pub async fn update_games_command(state: &impl State) -> Result<()> {
 
     info!("Fetching steam games data");
 
-    let client = reqwest::Client::new();
-
-    let steam_owned_games_response =
-        download_json::<SteamGetOwnedGamesResponse>(&client, &make_get_games_url()).await?;
+    let steam_owned_games_response = state
+        .network_service()
+        .download_json::<SteamGetOwnedGamesResponse>(&make_get_games_url())
+        .await?;
 
     for steam_game in steam_owned_games_response.response.games {
         if GAMES_TO_IGNORE.contains(&steam_game.appid) {
             continue;
         }
 
-        process_game(state, &client, steam_game).await?;
+        process_game(state, steam_game).await?;
     }
 
     Ok(())

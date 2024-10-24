@@ -1,11 +1,9 @@
 use std::path::Path;
 
+use crate::domain::models::slug::Slug;
 use crate::domain::repositories::{BlogPostsRepo, Profiler};
-use crate::domain::{models::slug::Slug};
+use crate::domain::services::{FileService, ImageService};
 use crate::infrastructure::utils::date::parse_date;
-use crate::infrastructure::utils::file_system::get_file_last_modified;
-use crate::infrastructure::utils::image_extractor::extract_images_from_markdown;
-use crate::infrastructure::utils::image_utils::image_from_url;
 use serde::Deserialize;
 use tracing::{debug, info};
 use url::Url;
@@ -16,7 +14,6 @@ use crate::{
         state::State,
     },
     error::{BlogPostError, Error},
-    infrastructure::utils::file_system::read_text_file,
     prelude::*,
 };
 
@@ -43,7 +40,7 @@ fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
 }
 
 pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> Result<()> {
-    let file_contents = read_text_file(file_path).await?;
+    let file_contents = state.file_service().read_text_file(file_path).await?;
 
     let split = file_contents.split("---").collect::<Vec<&str>>();
 
@@ -66,7 +63,10 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
 
             let slug = Slug::new(&format!("/blog/{}", front_matter.slug));
 
-            let last_mofied = get_file_last_modified(file_path).await?;
+            let last_mofied = state
+                .file_service()
+                .get_file_last_modified(file_path)
+                .await?;
 
             if let Some(existing) = state.blog_posts_repo().find_by_slug(&slug).await? {
                 if last_mofied == existing.updated_at {
@@ -98,7 +98,9 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
 
                 let path = Path::new(&path);
 
-                let image = image_from_url(state, &url, &path, &alt)
+                let image = state
+                    .image_service()
+                    .copy_image_from_url(state, &url, &path, &alt)
                     .await?
                     .with_date(&date)
                     .with_parent_slug(&slug);
@@ -106,8 +108,12 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
                 post = post.with_hero_image(image);
             }
 
-            post =
-                post.with_images(extract_images_from_markdown(state, content, &date, &slug).await?);
+            post = post.with_images(
+                state
+                    .image_service()
+                    .find_images_in_markdown(state, content, &date, &slug)
+                    .await?,
+            );
 
             state.blog_posts_repo().commit(&post).await?;
 

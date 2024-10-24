@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::{
     repositories::{
         about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_memory::BlogPostsRepoMemory,
@@ -6,15 +8,18 @@ use super::{
         micro_blog_repo_memory::MicroPostsRepoMemory, profiler_memory::ProfilerMemory,
         silly_names_repo_memory::SillyNamesRepoMemory,
     },
-    services::{cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny},
+    services::{
+        cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny, file_service_disk::FileServiceDisk, image_service_impl::ImageServiceImpl, movie_service_tmdb::MovieServiceTmdb, network_service_reqwest::NetworkServiceReqwest
+    },
 };
 
 use crate::{
     domain::{
         repositories::{
-            AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo
+            AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo,
+            MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo,
         },
-        services::{CacheService, CdnService},
+        services::{CacheService, CdnService, FileService, ImageService, MovieService, NetworkService},
         state::State,
     },
     prelude::*,
@@ -32,6 +37,10 @@ pub struct AppState {
     game_achievements_repo: GameAchievementsRepoDisk,
     cache_service: CacheServiceDisk,
     cdn_service: CdnServiceBunny,
+    movie_service: MovieServiceTmdb,
+    image_service: ImageServiceImpl,
+    network_service: NetworkServiceReqwest,
+    file_service: FileServiceDisk,
 }
 
 impl AppState {
@@ -48,6 +57,10 @@ impl AppState {
             game_achievements_repo: GameAchievementsRepoDisk::new().await?,
             cache_service: CacheServiceDisk::new(),
             cdn_service: CdnServiceBunny::new(),
+            movie_service: MovieServiceTmdb::new().await?,
+            image_service: ImageServiceImpl::new(),
+            network_service: NetworkServiceReqwest::new(),
+            file_service: FileServiceDisk::new(),
         })
     }
 
@@ -99,5 +112,21 @@ impl State for AppState {
 
     fn cdn_service(&self) -> &impl CdnService {
         &self.cdn_service
+    }
+
+    fn movie_service(&self) -> &impl MovieService {
+        &self.movie_service
+    }
+
+    fn image_service(&self) -> &impl ImageService {
+        &self.image_service
+    }
+
+    fn network_service(&self) -> &impl NetworkService {
+        &self.network_service
+    }
+
+    fn file_service(&self) -> &impl FileService {
+        &self.file_service
     }
 }

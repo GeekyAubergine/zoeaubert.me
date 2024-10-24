@@ -44,3 +44,9 @@ impl Slug {
         Self::new(&slug)
     }
 }
+
+impl std::fmt::Display for Slug {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}

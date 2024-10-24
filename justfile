@@ -6,3 +6,6 @@ test:
 
 check:
     cargo watch -x "check" -w src -w templates -w Cargo.toml
+
+watch-release:
+    cargo watch -x "run --release" -w src -w templates -w Cargo.toml -w assets -w ./content

@@ -5,7 +5,9 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::infrastructure::utils::file_system::write_json_file;
+use crate::domain::services::FileService;
+use crate::domain::state::State;
+use crate::infrastructure::services::file_service_disk::FileServiceDisk;
 use crate::prelude::*;
 
 use crate::{
@@ -13,13 +15,12 @@ use crate::{
         models::lego::{LegoMinifig, LegoSet},
         repositories::LegoRepo,
     },
-    infrastructure::utils::file_system::{make_archive_file_path, read_json_file_or_default},
 };
 
 const FILE_NAME: &str = "lego.json";
 
-fn make_file_path() -> PathBuf {
-    make_archive_file_path(&Path::new(FILE_NAME))
+fn make_file_path(file_service: &impl FileService) -> PathBuf {
+    file_service.make_archive_file_path(&Path::new(FILE_NAME))
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -31,14 +32,20 @@ pub struct LegoRepoData {
 
 pub struct LegoRepoDisk {
     data: Arc<RwLock<LegoRepoData>>,
+    file_service: FileServiceDisk,
 }
 
 impl LegoRepoDisk {
     pub async fn new() -> Result<Self> {
-        let data = read_json_file_or_default(&make_file_path()).await?;
+        let file_service = FileServiceDisk::new();
+
+        let data = file_service
+            .read_json_file_or_default(&make_file_path(&file_service))
+            .await?;
 
         Ok(Self {
             data: Arc::new(RwLock::new(data)),
+            file_service,
         })
     }
 }
@@ -99,7 +106,9 @@ impl LegoRepo for LegoRepoDisk {
         data.sets.insert(set.id, set.clone());
         data.last_updated_at = Some(Utc::now());
 
-        write_json_file(&make_file_path(), &data.clone()).await?;
+        self.file_service
+            .write_json_file(&make_file_path(&self.file_service), &data.clone())
+            .await?;
 
         Ok(())
     }
@@ -110,7 +119,9 @@ impl LegoRepo for LegoRepoDisk {
         data.minifigs.insert(minifig.id.clone(), minifig.clone());
         data.last_updated_at = Some(Utc::now());
 
-        write_json_file(&make_file_path(), &data.clone()).await?;
+        self.file_service
+            .write_json_file(&make_file_path(&self.file_service), &data.clone())
+            .await?;
 
         Ok(())
     }

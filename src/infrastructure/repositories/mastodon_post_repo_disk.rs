@@ -1,22 +1,26 @@
-use std::{collections::HashMap, path::{Path, PathBuf}, sync::Arc};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
 use crate::{
-    domain::{models::mastodon_post::MastodonPost, repositories::MastodonPostsRepo},
-    infrastructure::utils::file_system::{
-        make_archive_file_path, read_json_file_or_default, write_json_file,
+    domain::{
+        models::mastodon_post::MastodonPost, repositories::MastodonPostsRepo, services::FileService,
     },
+    infrastructure::services::file_service_disk::FileServiceDisk,
 };
 
 use crate::prelude::*;
 
 const FILE_NAME: &str = "mastodon_posts.json";
 
-fn make_file_path() -> PathBuf {
-    make_archive_file_path(&Path::new(FILE_NAME))
+fn make_file_path(file_service: &impl FileService) -> PathBuf {
+    file_service.make_archive_file_path(&Path::new(FILE_NAME))
 }
 
 #[derive(Clone, Serialize, Deserialize, Default)]
@@ -27,14 +31,20 @@ pub struct MastodonPostRepoData {
 
 pub struct MastodonPostRepoDisk {
     data: Arc<RwLock<MastodonPostRepoData>>,
+    file_service: FileServiceDisk,
 }
 
 impl MastodonPostRepoDisk {
     pub async fn new() -> Result<Self> {
-        let data = read_json_file_or_default(&make_file_path()).await?;
+        let file_service = FileServiceDisk::new();
+
+        let data = file_service
+            .read_json_file_or_default(&make_file_path(&file_service))
+            .await?;
 
         Ok(Self {
             data: Arc::new(RwLock::new(data)),
+            file_service,
         })
     }
 }
@@ -68,7 +78,9 @@ impl MastodonPostsRepo for MastodonPostRepoDisk {
             .insert(post.id().to_string(), post.clone());
         data.updated_at = Some(Utc::now());
 
-        write_json_file(&make_file_path(), &data.clone()).await?;
+        self.file_service
+            .write_json_file(&make_file_path(&self.file_service), &data.clone())
+            .await?;
 
         Ok(())
     }

@@ -10,15 +10,11 @@ use crate::{
     domain::{
         models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
         repositories::{MicroPostsRepo, Profiler},
-        services::{CacheService, CdnService},
+        services::{CacheService, CdnService, FileService, ImageService},
         state::State,
     },
     error::MicroPostError,
-    infrastructure::utils::{
-        date::parse_date,
-        file_system::{find_files_rescurse, get_file_last_modified, make_content_file_path, read_text_file},
-        image_extractor::extract_images_from_markdown,
-    },
+    infrastructure::utils::date::parse_date,
 };
 
 use crate::prelude::*;
@@ -35,11 +31,7 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
     serde_yaml::from_str(s).map_err(MicroPostError::unable_to_parse_front_matter)
 }
 
-async fn process_file(
-    state: &impl State,
-    file_path: &Path,
-    content: &str,
-) -> Result<()> {
+async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Result<()> {
     let split = content.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -65,9 +57,12 @@ async fn process_file(
         .to_str()
         .ok_or(MicroPostError::invalid_file_name(file_path.to_path_buf()))?;
 
-    let slug = Slug::new(&format!("{}/{}", slug_date, file_name));
+    let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
-    let last_modified = get_file_last_modified(file_path).await?;
+    let last_modified = state
+        .file_service()
+        .get_file_last_modified(file_path)
+        .await?;
 
     if let Some(existing) = state.micro_posts_repo().find_by_slug(&slug).await? {
         if existing.updated_at == last_modified {
@@ -75,7 +70,9 @@ async fn process_file(
         }
     }
 
-    let media = extract_images_from_markdown(state, &content, &date, &slug)
+    let media = state
+        .image_service()
+        .find_images_in_markdown(state, &content, &date, &slug)
         .await?
         .iter()
         .map(|i| Media::from(i))
@@ -97,13 +94,21 @@ async fn process_file(
 pub async fn update_micro_posts(state: &impl State) -> Result<()> {
     info!("Updating micro posts");
 
-    let files = find_files_rescurse(&make_content_file_path(&Path::new(MICRO_POSTS_DIR)), "md")?;
+    let files = state
+        .file_service()
+        .find_files_rescurse(
+            &state
+                .file_service()
+                .make_content_file_path(&Path::new(MICRO_POSTS_DIR)),
+            "md",
+        )
+        .await?;
 
     for file in files {
         state.profiler().post_processed().await?;
 
         let file = Path::new(&file);
-        let content = read_text_file(&file).await?;
+        let content = state.file_service().read_text_file(&file).await?;
 
         process_file(state, &file, &content).await?;
     }

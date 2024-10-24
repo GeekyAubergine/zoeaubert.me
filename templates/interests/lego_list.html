@@ -37,16 +37,18 @@
                 />
             </a>
         </div>
-        <div class="justify-end">
-            <a class="no-underline" href="{{ set.link }}">
+        <div class="items-center p-4 pt-2">
+            <a class="no-underline my-0" href="{{ set.link }}">
                 <p class="my-0 text-center accent">{{ set.name }}</p>
+            </a>
+            <a class="no-underline my-0" href="{{ set.link }}">
                 <p class="secondary my-0 text-center">{{ set.number }}</p>
             </a>
+            <p class="secondary my-0">
+                {{ set.pieces.format(0, true) }} pieces {%- if set.quantity > 1
+                %} x {{ set.quantity }} {% endif %}
+            </p>
         </div>
-        <p class="secondary my-0">
-            {{ set.pieces.format(0, true) }} pieces {%- if set.quantity > 1
-            %} x {{ set.quantity }} {% endif %}
-        </p>
     </div>
     {% endfor %}
 </div>
@@ -73,7 +75,9 @@
         </div>
         <div class="justify-end">
             <a class="no-underline" href="{{ minifig.link() }}">
-                <p class="my-0 text-center accent">{{ minifig.display_name() }}</p>
+                <p class="my-0 text-center accent">
+                    {{ minifig.display_name() }}
+                </p>
             </a>
         </div>
         <p class="secondary my-0">
@@ -88,8 +92,13 @@
     <p>
         Images courtesy of
         <a href="https://www.lego.com/" rel="noopen nofollow">Lego.com</a>,
-        <a href="https://www.brickset.com/" rel="noopen nofollow">Brickset.com</a> and <a
-            href="https://www.bricklink.com/" rel="noopen nofollow">Bricklink.com</a>
+        <a href="https://www.brickset.com/" rel="noopen nofollow"
+            >Brickset.com</a
+        >
+        and
+        <a href="https://www.bricklink.com/" rel="noopen nofollow"
+            >Bricklink.com</a
+        >
     </p>
 </div>
 

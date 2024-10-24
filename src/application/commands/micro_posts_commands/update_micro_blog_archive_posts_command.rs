@@ -9,11 +9,8 @@ use crate::{
     domain::{
         models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
         repositories::{MicroPostsRepo, Profiler},
-        services::CdnService,
+        services::{CdnService, FileService},
         state::State,
-    },
-    infrastructure::utils::file_system::{
-        get_file_last_modified, make_content_file_path, read_json_file,
     },
     prelude::*,
 };
@@ -140,11 +137,23 @@ fn archive_item_to_post(
 pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Result<()> {
     info!("Updating micro blog archive posts");
 
-    let archive_file: ArchiveFile =
-        read_json_file(&make_content_file_path(&Path::new(MICRO_POSTS_DIR))).await?;
+    let archive_file: ArchiveFile = state
+        .file_service()
+        .read_json_file(
+            &state
+                .file_service()
+                .make_content_file_path(&Path::new(MICRO_POSTS_DIR)),
+        )
+        .await?;
 
-    let last_modified =
-        get_file_last_modified(&make_content_file_path(&Path::new(MICRO_POSTS_DIR))).await?;
+    let last_modified = state
+        .file_service()
+        .get_file_last_modified(
+            &state
+                .file_service()
+                .make_content_file_path(&Path::new(MICRO_POSTS_DIR)),
+        )
+        .await?;
 
     for item in archive_file.items {
         state.profiler().post_processed().await?;
