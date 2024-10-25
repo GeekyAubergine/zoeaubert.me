@@ -16,6 +16,7 @@ use crate::infrastructure::renderers::lego_pages::render_lego_page;
 use crate::infrastructure::renderers::mastodon_post_pages::render_mastodon_post_pages;
 use crate::infrastructure::renderers::micro_post_pages::render_micro_post_pages;
 use crate::infrastructure::renderers::movie_pages::render_movie_pages;
+use crate::infrastructure::renderers::photo_pages::render_photos_page;
 use crate::infrastructure::renderers::tags_pages::render_tags_pages;
 use crate::infrastructure::renderers::timeline_pages::render_timeline_page;
 use crate::infrastructure::renderers::tv_show_pages::render_tv_show_pages;
@@ -39,6 +40,7 @@ pub async fn render_site(state: &impl State) -> Result<()> {
         // Timeline and tags
         render_timeline_page(state),
         render_tags_pages(state),
+        render_photos_page(state),
         render_interests_pages(state),
     )?;
 

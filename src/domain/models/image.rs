@@ -134,6 +134,13 @@ impl Image {
     }
 
     pub fn cdn_url(&self) -> Url {
+        // Some legacy thing from microblog is causing headaches with paths getting double cdn
+        let path_as_str = self.path.to_str().unwrap();
+
+        if path_as_str.starts_with("http") {
+            return path_as_str.parse().unwrap();
+        }
+
         let path = self.path.strip_prefix("/").unwrap_or(&self.path);
 
         let path = format!(
