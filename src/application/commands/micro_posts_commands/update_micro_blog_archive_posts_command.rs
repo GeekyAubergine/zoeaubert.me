@@ -135,8 +135,6 @@ fn archive_item_to_post(
 }
 
 pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Result<()> {
-    info!("Updating micro blog archive posts");
-
     let archive_file: ArchiveFile = state
         .file_service()
         .read_json_file(
@@ -168,6 +166,7 @@ pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Resu
         }
 
         if let Some(post) = archive_item_to_post(item, last_modified.clone())? {
+            info!("Updating micro blog archive post {:?}", post.slug);
             state.micro_posts_repo().commit(&post).await?;
         }
     }

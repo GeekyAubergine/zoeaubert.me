@@ -2,14 +2,17 @@ use std::sync::Arc;
 
 use super::{
     repositories::{
-        about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_memory::BlogPostsRepoMemory,
+        about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_disk::BlogPostsRepoDisk,
         game_achievements_repo_disk::GameAchievementsRepoDisk, games_repo_disk::GamesRepoDisk,
         lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk,
-        micro_blog_repo_memory::MicroPostsRepoMemory, profiler_memory::ProfilerMemory,
+        micro_blog_repo_disk::MicroPostsRepoDisk, profiler_memory::ProfilerMemory,
         silly_names_repo_memory::SillyNamesRepoMemory,
     },
     services::{
-        cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny, file_service_disk::FileServiceDisk, image_service_impl::ImageServiceImpl, movie_service_tmdb::MovieServiceTmdb, network_service_reqwest::NetworkServiceReqwest
+        cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny,
+        file_service_disk::FileServiceDisk, image_service_impl::ImageServiceImpl,
+        movie_service_tmdb::MovieServiceTmdb, network_service_reqwest::NetworkServiceReqwest,
+        query_limiting_service_disk::QueryLimitingServiceDisk, tv_shows_service_tmdb::TvShowsServiceTmdb,
     },
 };
 
@@ -19,7 +22,10 @@ use crate::{
             AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo,
             MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo,
         },
-        services::{CacheService, CdnService, FileService, ImageService, MovieService, NetworkService},
+        services::{
+            CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
+            QueryLimitingService, TvShowsService,
+        },
         state::State,
     },
     prelude::*,
@@ -29,8 +35,8 @@ pub struct AppState {
     profiler: ProfilerMemory,
     silly_names_repo: SillyNamesRepoMemory,
     about_text_repo: AboutTextRepoMemory,
-    blog_posts_repo: BlogPostsRepoMemory,
-    micro_posts_repo: MicroPostsRepoMemory,
+    blog_posts_repo: BlogPostsRepoDisk,
+    micro_posts_repo: MicroPostsRepoDisk,
     mastodon_posts_repo: MastodonPostRepoDisk,
     lego_repo: LegoRepoDisk,
     games_repo: GamesRepoDisk,
@@ -41,6 +47,8 @@ pub struct AppState {
     image_service: ImageServiceImpl,
     network_service: NetworkServiceReqwest,
     file_service: FileServiceDisk,
+    query_limiting_service: QueryLimitingServiceDisk,
+    tv_shows_service: TvShowsServiceTmdb,
 }
 
 impl AppState {
@@ -49,8 +57,8 @@ impl AppState {
             profiler: ProfilerMemory::new(),
             silly_names_repo: SillyNamesRepoMemory::new(),
             about_text_repo: AboutTextRepoMemory::new(),
-            blog_posts_repo: BlogPostsRepoMemory::new(),
-            micro_posts_repo: MicroPostsRepoMemory::new(),
+            blog_posts_repo: BlogPostsRepoDisk::new().await?,
+            micro_posts_repo: MicroPostsRepoDisk::new().await?,
             mastodon_posts_repo: MastodonPostRepoDisk::new().await?,
             lego_repo: LegoRepoDisk::new().await?,
             games_repo: GamesRepoDisk::new().await?,
@@ -61,6 +69,8 @@ impl AppState {
             image_service: ImageServiceImpl::new(),
             network_service: NetworkServiceReqwest::new(),
             file_service: FileServiceDisk::new(),
+            query_limiting_service: QueryLimitingServiceDisk::new().await?,
+            tv_shows_service: TvShowsServiceTmdb::new().await?,
         })
     }
 
@@ -128,5 +138,13 @@ impl State for AppState {
 
     fn file_service(&self) -> &impl FileService {
         &self.file_service
+    }
+
+    fn query_limiting_service(&self) -> &impl QueryLimitingService {
+        &self.query_limiting_service
+    }
+
+    fn tv_shows_service(&self) -> &impl TvShowsService {
+        &self.tv_shows_service
     }
 }

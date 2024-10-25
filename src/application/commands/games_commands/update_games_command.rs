@@ -10,10 +10,12 @@ use url::Url;
 use crate::application::commands::games_commands::update_game_achievements_command::update_game_achievements_command;
 use crate::domain::models::games::Game;
 use crate::domain::repositories::GamesRepo;
-use crate::domain::services::{CdnService, ImageService, NetworkService};
+use crate::domain::services::{CdnService, ImageService, NetworkService, QueryLimitingService};
 use crate::domain::state::State;
 
-use crate::{prelude::*, ONE_HOUR_PERIOD};
+use crate::{prelude::*};
+
+const QUERY: &str = "games";
 
 const GAMES_TO_IGNORE: &[u32] = &[
     219540, // Arma 2: Opertion Arrowhead - Beta (Obsolete)
@@ -116,11 +118,9 @@ async fn process_game(state: &impl State, game: SteamOwnedGame) -> Result<()> {
 }
 
 pub async fn update_games_command(state: &impl State) -> Result<()> {
-    // if let Some(last_updated) = find_games_last_updated_at(state).await? {
-    //     if last_updated + ONE_HOUR_PERIOD > Utc::now() {
-    //         return Ok(());
-    //     }
-    // }
+    if !state.query_limiting_service().can_query_within_hour(QUERY).await? {
+        return Ok(());
+    }
 
     info!("Fetching steam games data");
 

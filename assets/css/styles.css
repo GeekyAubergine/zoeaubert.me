@@ -470,7 +470,8 @@
         }
     }
 
-    .hobbyGridItemImage {
+    .hobbyGridItemImage,
+    .border-hover-accent {
         @apply border-[#00000000] border-2 hover:border-accent dark:hover:border-accent-dark rounded-md;
     }
 

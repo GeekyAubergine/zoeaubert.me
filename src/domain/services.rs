@@ -1,4 +1,7 @@
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+    time::Duration,
+};
 
 use chrono::{DateTime, Utc};
 use serde::{de::DeserializeOwned, Serialize};
@@ -13,6 +16,7 @@ use super::{
         network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes},
         omni_post::OmniPost,
         slug::Slug,
+        tv_show::{TvShow, TvShowReview},
     },
     state::State,
 };
@@ -50,6 +54,17 @@ pub trait MovieService {
         state: &impl State,
         post: &OmniPost,
     ) -> Result<MovieReview>;
+}
+
+#[async_trait::async_trait]
+pub trait TvShowsService {
+    async fn find_tv_show(&self, state: &impl State, title: &str) -> Result<Option<TvShow>>;
+
+    async fn tv_show_review_from_omni_post(
+        &self,
+        state: &impl State,
+        post: &OmniPost,
+    ) -> Result<TvShowReview>;
 }
 
 #[async_trait::async_trait]
@@ -125,5 +140,16 @@ pub trait FileService: Sized + Send + Sync {
 
     async fn read_text_file(&self, path: &Path) -> Result<String>;
 
-    async fn write_text_file(&self, path: &Path, data: &str) -> Result<()>;
+    async fn write_text_file_blocking(&self, path: &Path, data: &str) -> Result<()>;
+
+    async fn write_text_file(&self, path: PathBuf, data: String) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait QueryLimitingService {
+    async fn can_query(&self, query: &str, no_query_duration: &Duration) -> Result<bool>;
+
+    async fn can_query_within_hour(&self, query: &str) -> Result<bool>;
+
+    async fn can_query_within_day(&self, query: &str) -> Result<bool>;
 }

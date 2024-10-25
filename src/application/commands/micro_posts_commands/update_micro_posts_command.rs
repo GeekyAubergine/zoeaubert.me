@@ -55,7 +55,8 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
         .file_name()
         .ok_or(MicroPostError::invalid_file_name(file_path.to_path_buf()))?
         .to_str()
-        .ok_or(MicroPostError::invalid_file_name(file_path.to_path_buf()))?;
+        .ok_or(MicroPostError::invalid_file_name(file_path.to_path_buf()))?
+        .replace(".md", "");
 
     let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
@@ -84,6 +85,8 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
         .map(|tag| Tag::from_string(tag))
         .collect::<Vec<Tag>>();
 
+    info!("Updating micro post: {:?}", slug);
+
     let micro_post = MicroPost::new(slug, date, content.to_string(), media, tags, last_modified);
 
     state.micro_posts_repo().commit(&micro_post).await?;
@@ -92,8 +95,6 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
 }
 
 pub async fn update_micro_posts(state: &impl State) -> Result<()> {
-    info!("Updating micro posts");
-
     let files = state
         .file_service()
         .find_files_rescurse(

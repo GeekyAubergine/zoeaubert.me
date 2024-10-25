@@ -19,8 +19,6 @@ use crate::{
 const BLOG_POSTS_DIR: &str = "blogPosts";
 
 pub async fn update_blog_posts_command(state: &impl State) -> Result<()> {
-    info!("Updating blog posts");
-
     let blog_posts_files = state
         .file_service()
         .find_files_rescurse(

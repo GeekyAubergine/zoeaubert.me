@@ -42,6 +42,9 @@ pub enum Error {
 
     #[error("Movie error: {0}")]
     MovieError(#[from] MovieError),
+
+    #[error("Tv shows error: {0}")]
+    TvShowsError(#[from] TvShowsError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -330,5 +333,66 @@ impl MovieError {
 
     pub fn movie_has_no_poster(id: u32) -> Error {
         Error::MovieError(Self::MovieHasNoPoster(id))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum TvShowsError {
+    #[error("Unable to parse tv show: {0}")]
+    UnableToParseTvShow(String),
+
+    #[error("Unable to parse and find tv show title: {0}")]
+    UnableToParseAndFindTvShowTitle(String),
+
+    #[error("Unable to parse and find tv show season: {0}")]
+    UnableToParseAndFindTvShowSeason(String),
+
+    #[error("Unable to parse and find tv show review: {0}")]
+    UnableToParseAndFindTvShowReview(String),
+
+    #[error("Unable to parse and find tv show score: {0}")]
+    UnableToParseAndFindTvShowScore(String),
+
+    #[error("Tv show not found")]
+    TvShowNotFound(String),
+
+    #[error("Unsupported OmniPost type: {0}")]
+    UnsupportedOmniPostType(Slug),
+
+    #[error("Tv show has no poster {0}")]
+    TvShowHasNoPoster(u32),
+}
+
+impl TvShowsError {
+    pub fn unable_to_parse_tv_show(error: String) -> Error {
+        Error::TvShowsError(Self::UnableToParseTvShow(error))
+    }
+
+    pub fn unable_to_parse_and_find_tv_show_title(error: String) -> Error {
+        Error::TvShowsError(Self::UnableToParseAndFindTvShowTitle(error))
+    }
+
+    pub fn unable_to_parse_and_find_tv_show_season(error: String) -> Error {
+        Error::TvShowsError(Self::UnableToParseAndFindTvShowSeason(error))
+    }
+
+    pub fn unable_to_parse_and_find_tv_show_review(error: String) -> Error {
+        Error::TvShowsError(Self::UnableToParseAndFindTvShowReview(error))
+    }
+
+    pub fn unable_to_parse_and_find_tv_show_score(error: String) -> Error {
+        Error::TvShowsError(Self::UnableToParseAndFindTvShowScore(error))
+    }
+
+    pub fn tv_show_not_found(error: String) -> Error {
+        Error::TvShowsError(Self::TvShowNotFound(error))
+    }
+
+    pub fn unsupported_omni_post_type(omni_post: &OmniPost) -> Error {
+        Error::TvShowsError(Self::UnsupportedOmniPostType(omni_post.slug()))
+    }
+
+    pub fn tv_show_has_no_poster(id: u32) -> Error {
+        Error::TvShowsError(Self::TvShowHasNoPoster(id))
     }
 }

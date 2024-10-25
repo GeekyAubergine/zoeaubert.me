@@ -74,7 +74,7 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
                 }
             }
 
-            info!("Updating blog post: [{:?}]", slug);
+            info!("Updating blog post: {:?}", slug);
 
             let mut post = BlogPost::new(
                 slug.clone(),

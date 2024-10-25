@@ -1,17 +1,17 @@
 use std::collections::HashMap;
 
 use askama::Template;
-use tracing::error;
+use tracing::{error, warn};
 
 use crate::{
     domain::{
         models::{
+            media::Media,
             movie::{Movie, MovieId, MovieReview},
             omni_post::OmniPost,
             page::Page,
             slug::Slug,
             tag::Tag,
-            media::Media,
         },
         queries::omni_post_queries::find_all_omni_posts_by_tag,
         services::MovieService,
@@ -41,7 +41,7 @@ pub async fn render_movie_pages(state: &impl State) -> Result<()> {
         {
             Ok(review) => reviews.push(review),
             Err(_) => {
-                error!(
+                warn!(
                     "Could not create movie review from post with slug: {}",
                     post.slug()
                 );
@@ -77,7 +77,7 @@ pub async fn render_movie_pages(state: &impl State) -> Result<()> {
 
 struct AverageReviewForMovie {
     movie: Movie,
-    average_score: u8,
+    average_score: f32,
     most_recent_review: MovieReview,
 }
 
@@ -94,12 +94,12 @@ async fn render_movies_list_page(
     movies_by_id: &HashMap<MovieId, Movie>,
     reviews_by_id: &HashMap<MovieId, Vec<MovieReview>>,
 ) -> Result<()> {
-    let average_score_by_id: HashMap<MovieId, u8> = reviews_by_id
+    let average_score_by_id: HashMap<MovieId, f32> = reviews_by_id
         .iter()
         .map(|(id, reviews)| {
             let total_score: u16 = reviews.iter().map(|r| r.score as u16).sum();
-            let average_score = (total_score as f32 / reviews.len() as f32).floor();
-            (*id, average_score as u8)
+            let average_score = (total_score as f32 / reviews.len() as f32);
+            (*id, average_score)
         })
         .collect();
 
@@ -150,7 +150,7 @@ async fn render_movies_list_page(
 pub struct MoviePageTempalte<'t> {
     page: &'t Page<'t>,
     movie: Movie,
-    average_score: u8,
+    average_score: f32,
     posts: Vec<&'t OmniPost>,
 }
 
@@ -159,10 +159,9 @@ async fn render_movie_page(
     movie: &Movie,
     reviews: &[MovieReview],
 ) -> Result<()> {
-    let average_score: u8 = {
+    let average_score: f32 = {
         let total_score: u16 = reviews.iter().map(|r| r.score as u16).sum();
-        let average_score = (total_score as f32 / reviews.len() as f32).floor();
-        average_score as u8
+        (total_score as f32 / reviews.len() as f32)
     };
 
     let posts = reviews.iter().map(|r| &r.post).collect::<Vec<&OmniPost>>();

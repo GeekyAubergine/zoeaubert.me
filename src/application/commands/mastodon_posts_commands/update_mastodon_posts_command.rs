@@ -4,7 +4,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 use std::path::Path;
-use tracing::debug;
+use tracing::{debug, info};
 use url::Url;
 
 use crate::domain::models::image::Image;
@@ -14,10 +14,11 @@ use crate::domain::models::mastodon_post::{
 use crate::domain::models::media::Media;
 use crate::domain::models::tag::Tag;
 use crate::domain::repositories::{MastodonPostsRepo, Profiler};
-use crate::domain::services::{CacheService, CdnService, FileService, ImageService, NetworkService};
+use crate::domain::services::{CacheService, CdnService, FileService, ImageService, NetworkService, QueryLimitingService};
 use crate::domain::state::State;
-use crate::{prelude::*, ONE_HOUR_PERIOD};
+use crate::{prelude::*};
 
+const QUERY: &str = "mastodon";
 const SELF_URL: &str = "zoeaubert.me";
 const APPLICATIONS_TO_IGNORE: [&str; 2] = ["Micro.blog", "status.lol"];
 
@@ -289,11 +290,11 @@ async fn mastodon_status_to_post(
 }
 
 pub async fn update_mastodon_posts_command(state: &impl State) -> Result<()> {
-    if let Some(last_updated) = state.mastodon_posts_repo().find_last_updated_at().await? {
-        if last_updated + ONE_HOUR_PERIOD > Utc::now() {
-            return Ok(());
-        }
+    if !state.query_limiting_service().can_query_within_hour(QUERY).await? {
+        return Ok(());
     }
+
+    info!("Fetching mastodon posts data");
 
     let posts = state.mastodon_posts_repo().find_all_by_date().await?;
 

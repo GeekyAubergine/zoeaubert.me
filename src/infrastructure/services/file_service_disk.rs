@@ -1,8 +1,12 @@
-use std::{fs::read_dir, path::{Path, PathBuf}};
+use std::{
+    fs::read_dir,
+    path::{Path, PathBuf},
+};
 
 use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use serde::{de::DeserializeOwned, Serialize};
+use tokio::spawn;
 use tracing::debug;
 
 use crate::{
@@ -187,9 +191,26 @@ impl FileService for FileServiceDisk {
             .map_err(FileSystemError::read_error)
     }
 
-    async fn write_text_file(&self, path: &Path, data: &str) -> Result<()> {
+    async fn write_text_file_blocking(&self, path: &Path, data: &str) -> Result<()> {
         let data: Vec<u8> = data.as_bytes().to_vec();
 
         self.write_file(path, &data).await
+    }
+
+    async fn write_text_file(&self, path: PathBuf, data: String) -> Result<()> {
+        let data: Vec<u8> = data.as_bytes().to_vec();
+        spawn(async {
+            let parent_dir = path.parent().unwrap();
+
+            tokio::fs::create_dir_all(parent_dir)
+                .await
+                .map_err(FileSystemError::create_dir_error)?;
+
+            tokio::fs::write(path, data)
+                .await
+                .map_err(FileSystemError::write_error)
+        });
+
+        Ok(())
     }
 }

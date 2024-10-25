@@ -8,39 +8,36 @@ use url::Url;
 
 use serde::{Deserialize, Serialize};
 
-use crate::domain::models::movie::{MovieId, MovieReview};
 use crate::domain::models::omni_post::OmniPost;
-use crate::domain::services::{FileService, ImageService, NetworkService};
+use crate::domain::models::tv_show::{TvShow, TvShowId, TvShowReview};
+use crate::domain::services::{FileService, ImageService, NetworkService, TvShowsService};
 use crate::domain::state::State;
-use crate::domain::{models::movie::Movie, services::MovieService};
 
-use crate::error::MovieError;
+use crate::error::TvShowsError;
 use crate::infrastructure::utils::date::parse_date;
 use crate::infrastructure::utils::parse_omni_post_content_into_movie_review::parse_omni_post_into_movie_review;
+use crate::infrastructure::utils::parse_omni_post_into_tv_show_reviews::{
+    self, parse_omni_post_into_tv_show_review,
+};
 use crate::prelude::*;
 
 use super::file_service_disk::FileServiceDisk;
 
-const FILE_NAME: &str = "movie_cache.json";
-const TMDB_LINK_URL: &str = "https://www.themoviedb.org/movie/";
+const FILE_NAME: &str = "tv_shows_cache.json";
+const TMDB_LINK_URL: &str = "https://www.themoviedb.org/tv/";
 const TMDB_IMAGE_URL: &str = "https://image.tmdb.org/t/p/w200";
 
 fn make_file_path(file_service: &impl FileService) -> PathBuf {
     file_service.make_archive_file_path(&Path::new(FILE_NAME))
 }
 
-fn name_and_year_to_key(name: &str, year: u16) -> String {
-    format!("{} ({})", name, year)
-}
-
-fn make_search_url(title: &str, year: u16) -> Url {
+fn make_search_url(title: &str) -> Url {
     let title = title.replace('&', "").replace(' ', "+");
 
     format!(
-        "https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}",
+        "https://api.themoviedb.org/3/search/tv?api_key={}&query={}",
         dotenv!("TMDB_KEY"),
         title,
-        year
     )
     .parse()
     .unwrap()
@@ -49,9 +46,8 @@ fn make_search_url(title: &str, year: u16) -> Url {
 #[derive(Debug, Clone, Deserialize)]
 struct TmdbSearchResponseSingle {
     id: u32,
-    title: String,
+    name: String,
     poster_path: Option<String>,
-    release_date: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -64,16 +60,16 @@ struct TmdbSearchResponse {
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct SearchCacheData {
-    movies: HashMap<String, Movie>,
+    movies: HashMap<String, TvShow>,
 }
 
-pub struct MovieServiceTmdb {
+pub struct TvShowsServiceTmdb {
     client: reqwest::Client,
     data: Arc<RwLock<SearchCacheData>>,
     file_service: FileServiceDisk,
 }
 
-impl MovieServiceTmdb {
+impl TvShowsServiceTmdb {
     pub async fn new() -> Result<Self> {
         let file_service = FileServiceDisk::new();
 
@@ -90,22 +86,15 @@ impl MovieServiceTmdb {
 }
 
 #[async_trait::async_trait]
-impl MovieService for MovieServiceTmdb {
-    async fn find_movie(
-        &self,
-        state: &impl State,
-        title: &str,
-        year: u16,
-    ) -> Result<Option<Movie>> {
-        let key = name_and_year_to_key(title, year);
-
-        if let Some(movie) = self.data.read().await.movies.get(&key) {
-            return Ok(Some(movie.clone()));
+impl TvShowsService for TvShowsServiceTmdb {
+    async fn find_tv_show(&self, state: &impl State, title: &str) -> Result<Option<TvShow>> {
+        if let Some(tv_show) = self.data.read().await.movies.get(title) {
+            return Ok(Some(tv_show.clone()));
         }
 
         let results = state
             .network_service()
-            .download_json::<TmdbSearchResponse>(&make_search_url(title, year))
+            .download_json::<TmdbSearchResponse>(&make_search_url(title))
             .await?;
 
         let results = results
@@ -115,15 +104,15 @@ impl MovieService for MovieServiceTmdb {
             .collect::<Vec<_>>();
 
         match results.first() {
-            Some(movie) => {
-                let poster = movie
+            Some(tv_show) => {
+                let poster = tv_show
                     .poster_path
                     .as_ref()
-                    .ok_or(MovieError::movie_has_no_poster(movie.id))?;
+                    .ok_or(TvShowsError::tv_show_has_no_poster(tv_show.id))?;
 
                 let image_url = format!("{}{}", TMDB_IMAGE_URL, poster).parse().unwrap();
 
-                let image_path = &format!("movies/{}-poster-200.jpg", movie.id);
+                let image_path = &format!("tv/{}-poster-400.jpg", tv_show.id);
                 let image_path = Path::new(&image_path);
 
                 let image = state
@@ -132,50 +121,47 @@ impl MovieService for MovieServiceTmdb {
                         state,
                         &image_url,
                         &image_path,
-                        &format!("{} movie poster", movie.title),
+                        &format!("{} movie poster", tv_show.name),
                     )
                     .await?;
 
                 println!("Image: {:?}", image);
 
-                let date = parse_date(&movie.release_date)?;
-
-                let movie = Movie {
-                    title: movie.title.clone(),
-                    year: date.year() as u16,
+                let tv_show = TvShow {
+                    title: tv_show.name.clone(),
                     poster: image,
-                    id: MovieId::tmdb(movie.id),
-                    link: format!("{}{}", TMDB_LINK_URL, movie.id).parse().unwrap(),
+                    id: TvShowId::tmdb(tv_show.id),
+                    link: format!("{}{}", TMDB_LINK_URL, tv_show.id).parse().unwrap(),
                 };
 
                 let mut data = self.data.write().await;
-                data.movies.insert(key, movie.clone());
+                data.movies.insert(title.to_string(), tv_show.clone());
 
                 self.file_service
                     .write_json_file(&make_file_path(&self.file_service), &data.clone())
                     .await?;
 
-                Ok(Some(movie))
+                Ok(Some(tv_show))
             }
             None => Ok(None),
         }
     }
 
-    async fn movie_review_from_omni_post(
+    async fn tv_show_review_from_omni_post(
         &self,
         state: &impl State,
         post: &OmniPost,
-    ) -> Result<MovieReview> {
-        let review = parse_omni_post_into_movie_review(post)?;
+    ) -> Result<TvShowReview> {
+        let review = parse_omni_post_into_tv_show_review(post)?;
 
-        let movie = self
-            .find_movie(state, &review.title, review.year)
+        let tv_show = self
+            .find_tv_show(state, &review.title)
             .await?
-            .ok_or(MovieError::movie_not_found(review.title))?;
+            .ok_or(TvShowsError::tv_show_not_found(review.title))?;
 
-        Ok(MovieReview {
-            movie,
-            score: review.score,
+        Ok(TvShowReview {
+            tv_show,
+            scores: review.scores,
             review: review.review,
             post: post.clone(),
         })

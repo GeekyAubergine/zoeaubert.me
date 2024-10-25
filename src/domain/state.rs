@@ -1,6 +1,12 @@
 use super::{
-    repositories::{AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo},
-    services::{CacheService, CdnService, FileService, ImageService, MovieService, NetworkService},
+    repositories::{
+        AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo,
+        MicroPostsRepo, Profiler, SillyNamesRepo,
+    },
+    services::{
+        CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
+        QueryLimitingService, TvShowsService,
+    },
 };
 
 pub trait State: Sync + Send {
@@ -33,4 +39,8 @@ pub trait State: Sync + Send {
     fn network_service(&self) -> &impl NetworkService;
 
     fn file_service(&self) -> &impl FileService;
+
+    fn query_limiting_service(&self) -> &impl QueryLimitingService;
+
+    fn tv_shows_service(&self) -> &impl TvShowsService;
 }

@@ -5,17 +5,16 @@ use std::path::Path;
 use tracing::info;
 use url::Url;
 
-use crate::{
-    domain::{
-        models::lego::{LegoMinifig, LegoSet},
-        repositories::LegoRepo,
-        services::{CacheService, CdnService, ImageService, NetworkService},
-        state::State,
-    },
-    ONE_DAY_PERIOD, ONE_HOUR_PERIOD,
+use crate::domain::{
+    models::lego::{LegoMinifig, LegoSet},
+    repositories::LegoRepo,
+    services::{CacheService, CdnService, ImageService, NetworkService, QueryLimitingService},
+    state::State,
 };
 
 use crate::prelude::*;
+
+const QUERY_KEY: &str = "lego";
 
 const LOGIN_URL: &str = "https://brickset.com/api/v3.asmx/login";
 const GET_SET_URL: &str = "https://brickset.com/api/v3.asmx/getSets";
@@ -113,10 +112,12 @@ fn make_get_minifig_url(hash: &str) -> Url {
 }
 
 pub async fn update_lego_command(state: &impl State) -> Result<()> {
-    if let Some(last_updated_at) = state.lego_repo().find_last_updated_at().await? {
-        if last_updated_at + ONE_DAY_PERIOD > Utc::now() {
-            return Ok(());
-        }
+    if !state
+        .query_limiting_service()
+        .can_query_within_day(QUERY_KEY)
+        .await?
+    {
+        return Ok(());
     }
 
     info!("Updating lego sets and minifigs");

@@ -4,3 +4,5 @@ pub mod movie_service_tmdb;
 pub mod image_service_impl;
 pub mod network_service_reqwest;
 pub mod file_service_disk;
+pub mod query_limiting_service_disk;
+pub mod tv_shows_service_tmdb;
