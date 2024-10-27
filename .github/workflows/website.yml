@@ -32,6 +32,7 @@ jobs:
                   envkey_BRICKSET_PASSWORD: ${{ secrets.BRICKSET_PASSWORD }}
                   envkey_STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
                   envkey_STEAM_ID: ${{ secrets.STEAM_ID }}
+                  envkey_TMDB_KEY: ${{ secrets.TMDB_KEY }}
 
             - name: Install rust
               uses: actions-rs/toolchain@v1
