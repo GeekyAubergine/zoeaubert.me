@@ -5,14 +5,17 @@ use super::{
         about_text_repo_memory::AboutTextRepoMemory, blog_posts_repo_disk::BlogPostsRepoDisk,
         game_achievements_repo_disk::GameAchievementsRepoDisk, games_repo_disk::GamesRepoDisk,
         lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk,
-        micro_blog_repo_disk::MicroPostsRepoDisk, profiler_memory::ProfilerMemory,
+        micro_blog_repo_disk::MicroPostsRepoDisk,
+        movie_reviews_repo_memory::MovieReviewsRepoMemory, profiler_memory::ProfilerMemory,
         silly_names_repo_memory::SillyNamesRepoMemory,
+        tv_show_reviews_repo_memory::TvShowReviewsRepoMemory,
     },
     services::{
         cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny,
         file_service_disk::FileServiceDisk, image_service_impl::ImageServiceImpl,
         movie_service_tmdb::MovieServiceTmdb, network_service_reqwest::NetworkServiceReqwest,
-        query_limiting_service_disk::QueryLimitingServiceDisk, tv_shows_service_tmdb::TvShowsServiceTmdb,
+        query_limiting_service_disk::QueryLimitingServiceDisk,
+        tv_shows_service_tmdb::TvShowsServiceTmdb,
     },
 };
 
@@ -20,7 +23,8 @@ use crate::{
     domain::{
         repositories::{
             AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo,
-            MastodonPostsRepo, MicroPostsRepo, Profiler, SillyNamesRepo,
+            MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, Profiler, SillyNamesRepo,
+            TvShowReviewsRepo,
         },
         services::{
             CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
@@ -41,6 +45,8 @@ pub struct AppState {
     lego_repo: LegoRepoDisk,
     games_repo: GamesRepoDisk,
     game_achievements_repo: GameAchievementsRepoDisk,
+    movie_reviews_repo: MovieReviewsRepoMemory,
+    tv_show_reviews_repo: TvShowReviewsRepoMemory,
     cache_service: CacheServiceDisk,
     cdn_service: CdnServiceBunny,
     movie_service: MovieServiceTmdb,
@@ -63,6 +69,8 @@ impl AppState {
             lego_repo: LegoRepoDisk::new().await?,
             games_repo: GamesRepoDisk::new().await?,
             game_achievements_repo: GameAchievementsRepoDisk::new().await?,
+            movie_reviews_repo: MovieReviewsRepoMemory::new(),
+            tv_show_reviews_repo: TvShowReviewsRepoMemory::new(),
             cache_service: CacheServiceDisk::new(),
             cdn_service: CdnServiceBunny::new(),
             movie_service: MovieServiceTmdb::new().await?,
@@ -114,6 +122,14 @@ impl State for AppState {
 
     fn game_achievements_repo(&self) -> &impl GameAchievementsRepo {
         &self.game_achievements_repo
+    }
+
+    fn movie_reviews_repo(&self) -> &impl MovieReviewsRepo {
+        &self.movie_reviews_repo
+    }
+
+    fn tv_show_reviews_repo(&self) -> &impl TvShowReviewsRepo {
+        &self.tv_show_reviews_repo
     }
 
     fn cache_service(&self) -> &impl CacheService {

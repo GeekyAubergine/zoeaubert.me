@@ -44,7 +44,7 @@ impl PartialEq for Movie {
 
 impl Eq for Movie {}
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MovieReview {
     pub movie: Movie,
     pub score: u8,

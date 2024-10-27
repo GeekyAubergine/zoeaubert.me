@@ -43,7 +43,7 @@ impl PartialEq for TvShow {
 
 impl Eq for TvShow {}
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct TvShowReview {
     pub tv_show: TvShow,
     pub scores: Vec<u8>,

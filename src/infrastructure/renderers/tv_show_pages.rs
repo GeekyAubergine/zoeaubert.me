@@ -15,6 +15,7 @@ use crate::{
             tv_show::{TvShow, TvShowId, TvShowReview},
         },
         queries::omni_post_queries::find_all_omni_posts_by_tag,
+        repositories::TvShowReviewsRepo,
         services::{MovieService, TvShowsService},
         state::State,
     },
@@ -30,51 +31,16 @@ use super::render_page_with_template;
 const TV_TAG: &str = "TV";
 
 pub async fn render_tv_show_pages(state: &impl State) -> Result<()> {
-    let posts = find_all_omni_posts_by_tag(state, &Tag::from_string(TV_TAG)).await?;
+    let reviews_by_id = state
+        .tv_show_reviews_repo()
+        .find_all_grouped_by_tv_show_id()
+        .await?;
 
-    println!("Found {} posts with tag: {}", posts.len(), TV_TAG);
+    render_tv_show_list_page(state, &reviews_by_id).await?;
 
-    let mut reviews = Vec::new();
-
-    for post in posts {
-        match state
-            .tv_shows_service()
-            .tv_show_review_from_omni_post(state, &post)
-            .await
-        {
-            Ok(review) => {
-                reviews.push(review);
-            }
-            Err(e) => {
-                warn!(
-                    "Could not create tv show review from post with slug: {} {:?}",
-                    post.slug(),
-                    e,
-                );
-            }
-        }
-    }
-
-    let tv_shows_by_id: HashMap<TvShowId, TvShow> =
-        reviews.iter().fold(HashMap::new(), |mut acc, review| {
-            acc.insert(review.tv_show.id, review.tv_show.clone());
-            acc
-        });
-
-    let reviews_by_id: HashMap<TvShowId, Vec<TvShowReview>> =
-        reviews.iter().fold(HashMap::new(), |mut acc, review| {
-            acc.entry(review.tv_show.id)
-                .or_insert_with(Vec::new)
-                .push(review.clone());
-            acc
-        });
-
-    render_tv_show_list_page(state, &reviews, &tv_shows_by_id, &reviews_by_id).await?;
-
-    for tv_show in tv_shows_by_id.values() {
-        match reviews_by_id.get(&tv_show.id) {
-            Some(reviews) => render_tv_show_page(state, &tv_show, &reviews).await?,
-            None => {}
+    for reviews in reviews_by_id.values() {
+        if let Some(tv_show) = reviews.first().map(|r| r.tv_show.clone()) {
+            render_tv_show_page(state, &tv_show, reviews).await?;
         }
     }
 
@@ -96,13 +62,11 @@ pub struct TvShowListTempalte<'t> {
 
 async fn render_tv_show_list_page(
     state: &impl State,
-    reviews: &[TvShowReview],
-    movies_by_id: &HashMap<TvShowId, TvShow>,
     reviews_by_id: &HashMap<TvShowId, Vec<TvShowReview>>,
 ) -> Result<()> {
-    let average_score_by_id: HashMap<TvShowId, f32> = reviews_by_id
+    let mut tv_shows: Vec<AverageReviewForTvShow> = reviews_by_id
         .iter()
-        .map(|(id, reviews)| {
+        .filter_map(|(id, reviews)| {
             let total_scores = reviews
                 .iter()
                 .map(|r| r.scores.clone())
@@ -112,30 +76,19 @@ async fn render_tv_show_list_page(
             let average_score: f32 =
                 total_scores.iter().sum::<u8>() as f32 / total_scores.len() as f32;
 
-            (*id, average_score)
-        })
-        .collect();
-
-    let most_recent_review_by_id: HashMap<TvShowId, TvShowReview> = reviews_by_id
-        .iter()
-        .map(|(id, reviews)| {
-            let most_recent_review = reviews.iter().max_by_key(|r| r.post.date()).unwrap();
-            (*id, most_recent_review.clone())
-        })
-        .collect();
-
-    let mut tv_shows = movies_by_id
-        .iter()
-        .map(|(id, tv_show)| {
-            let average_score = average_score_by_id[id];
-            let most_recent_review = most_recent_review_by_id[id].clone();
-            AverageReviewForTvShow {
-                tv_show: tv_show.clone(),
-                average_score,
-                most_recent_review,
+            match reviews.iter().max_by_key(|r| r.post.date()) {
+                Some(most_recent_review) => Some(AverageReviewForTvShow {
+                    tv_show: most_recent_review.tv_show.clone(),
+                    average_score,
+                    most_recent_review: most_recent_review.clone(),
+                }),
+                None => {
+                    error!("No reviews found for tv show with id: {:?}", id);
+                    return None;
+                }
             }
         })
-        .collect::<Vec<_>>();
+        .collect();
 
     tv_shows.sort_by(|a, b| {
         b.most_recent_review

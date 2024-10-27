@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use chrono::{DateTime, Utc};
 
 use crate::prelude::*;
@@ -9,7 +11,9 @@ use super::{
         lego::{LegoMinifig, LegoSet},
         mastodon_post::MastodonPost,
         micro_post::MicroPost,
+        movie::{MovieId, MovieReview},
         slug::Slug,
+        tv_show::{TvShowId, TvShowReview},
     },
     services::FileService,
     state::State,
@@ -124,9 +128,27 @@ pub trait GameAchievementsRepo {
 
     async fn find_all_locked_by_name(&self, game_id: u32) -> Result<Vec<GameAchievementLocked>>;
 
-    async fn commit(
+    async fn commit(&self, game: &Game, achievement: &GameAchievement) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait MovieReviewsRepo {
+    async fn find_by_movie_id(&self, movie_id: &MovieId) -> Result<Vec<MovieReview>>;
+
+    async fn find_all_grouped_by_movie_id(
         &self,
-        game: &Game,
-        achievement: &GameAchievement,
-    ) -> Result<()>;
+    ) -> Result<HashMap<MovieId, Vec<MovieReview>>>;
+
+    async fn commit(&self, movie_review: &MovieReview) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait TvShowReviewsRepo {
+    async fn find_by_tv_show_id(&self, tv_show_id: &TvShowId) -> Result<Vec<TvShowReview>>;
+
+    async fn find_all_grouped_by_tv_show_id(
+        &self,
+    ) -> Result<HashMap<TvShowId, Vec<TvShowReview>>>;
+
+    async fn commit(&self, tv_show_review: &TvShowReview) -> Result<()>;
 }

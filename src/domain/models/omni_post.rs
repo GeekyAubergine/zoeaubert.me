@@ -9,7 +9,7 @@ use super::{
     slug::Slug, tag::Tag,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum OmniPost {
     // StatusLol(StatusLolPost),
     // UnlockedGameAchievement {
