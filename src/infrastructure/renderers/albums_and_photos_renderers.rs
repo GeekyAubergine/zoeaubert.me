@@ -202,7 +202,7 @@ pub async fn render_album_photo_page(
     total_photos: usize,
 ) -> Result<()> {
     let page = Page::new(photo.slug.clone(), Some(&photo.description), None)
-        .with_image(photo.small_image.into());
+        .with_image(photo.small_image.clone().into());
 
     let template = AlbumPhotoPage {
         page: &page,

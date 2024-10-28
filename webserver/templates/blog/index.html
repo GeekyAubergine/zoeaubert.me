@@ -1,9 +1,0 @@
-{% extends "partials/page.html" %}
-
-{%- block content %}
-    <div class="blog-posts">
-        {%- for post in blog_posts %}
-            {% include "partials/blog_post_list_item.html" %}
-        {% endfor %}
-    </div>
-{% endblock %}

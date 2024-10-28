@@ -1,9 +1,0 @@
-pub mod about;
-pub mod blog_posts;
-pub mod faq;
-pub mod games;
-pub mod lego;
-pub mod mastodon_posts;
-pub mod status_lol;
-pub mod cdn;
-pub mod albums;

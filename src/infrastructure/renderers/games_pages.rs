@@ -122,7 +122,7 @@ async fn render_game_page(state: &impl State, game: &Game) -> Result<()> {
         Some(title.as_str()),
         Some(description.as_str()),
     )
-    .with_image(&image);
+    .with_image(image);
 
     let template = GameTemplate {
         page: &page,
