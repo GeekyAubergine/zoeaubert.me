@@ -189,7 +189,7 @@ async fn mastodon_status_to_post(
     state: &impl State,
     status: MastodonStatus,
 ) -> Result<Option<MastodonPost>> {
-    state.profiler().post_processed().await?;
+    state.profiler().entity_processed().await?;
 
     if let Some(application) = &status.application {
         if APPLICATIONS_TO_IGNORE.contains(&application.name.as_str()) {

@@ -2,33 +2,33 @@
 
 {%- block content %}
     <div class="items-end">
-        <a href="/albums/all">All Album Photos</a>
+        <a href="/albums/all/">All Album Photos</a>
     </div>
 
-    {% for year in albums_by_year %}
-        <h2>{{ year.year() }}</h2>
+    {% for (year, items) in albums_by_year %}
+        <h2>{{ year }}</h2>
         <div class="album-grid">
-            {% for album in year.albums() %}
-                <a href="{{ album.permalink() }}" class="album">
-                    {% if album
-                        .cover_images()
+            {% for item in items %}
+                <a href="{{ item.album.slug.relative_link() }}" class="album">
+                    {% if item
+                        .cover_images
                         .len() > 1 %}
                         <div class="preview-multi">
-                            {% for image in album.cover_images() %}
+                            {% for image in item.cover_images %}
                                 {% include "partials/media/image.html" %}
                             {% endfor %}
                         </div>
                     {% else %}
                         <div class="preview-single">
-                            {% for image in album.cover_images() %}
+                            {% for image in item.cover_images %}
                                 {% include "partials/media/image.html" %}
                             {% endfor %}
                         </div>
                     {% endif %}
                     <div class="title-and-date">
-                        <h3 class="title">{{ album.title() }}</h3>
-                        <date date="{{ album.date().without_time() }}">
-                            {{ album.date().without_time() }}
+                        <h3 class="title">{{ item.album.title }}</h3>
+                        <date date="{{ item.album.date.without_time() }}">
+                            {{ item.album.date.without_time() }}
                         </date>
                     </div>
                 </a>

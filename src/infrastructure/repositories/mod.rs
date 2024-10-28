@@ -9,3 +9,4 @@ pub mod games_repo_disk;
 pub mod game_achievements_repo_disk;
 pub mod movie_reviews_repo_memory;
 pub mod tv_show_reviews_repo_memory;
+pub mod albums_repo_disk;

@@ -117,7 +117,7 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
 
             state.blog_posts_repo().commit(&post).await?;
 
-            state.profiler().post_processed().await?;
+            state.profiler().entity_processed().await?;
 
             Ok(())
         }

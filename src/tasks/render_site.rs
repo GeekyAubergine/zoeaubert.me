@@ -8,6 +8,7 @@ use crate::domain::queries::tags_queries::find_tag_counts;
 use crate::domain::repositories::Profiler;
 use crate::domain::state::State;
 
+use crate::infrastructure::renderers::albums_and_photos_renderers::render_albums_and_photo_pages;
 use crate::infrastructure::renderers::blog_pages::render_blog_pages;
 use crate::infrastructure::renderers::games_pages::render_games_pages;
 use crate::infrastructure::renderers::home_page::render_home_page;
@@ -42,6 +43,7 @@ pub async fn render_site(state: &impl State) -> Result<()> {
         render_tags_pages(state),
         render_photos_page(state),
         render_interests_pages(state),
+        render_albums_and_photo_pages(state)
     )?;
 
     state.profiler().page_generation_finished().await?;

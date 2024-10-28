@@ -6,6 +6,7 @@ use crate::prelude::*;
 
 use super::{
     models::{
+        album::Album,
         blog_post::BlogPost,
         games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
         lego::{LegoMinifig, LegoSet},
@@ -21,11 +22,11 @@ use super::{
 
 #[async_trait::async_trait]
 pub trait Profiler {
-    async fn post_processing_started(&self) -> Result<()>;
+    async fn entity_processing_started(&self) -> Result<()>;
 
-    async fn post_processed(&self) -> Result<()>;
+    async fn entity_processed(&self) -> Result<()>;
 
-    async fn post_processing_finished(&self) -> Result<()>;
+    async fn entity_processing_finished(&self) -> Result<()>;
 
     async fn page_generation_started(&self) -> Result<()>;
 
@@ -135,9 +136,7 @@ pub trait GameAchievementsRepo {
 pub trait MovieReviewsRepo {
     async fn find_by_movie_id(&self, movie_id: &MovieId) -> Result<Vec<MovieReview>>;
 
-    async fn find_all_grouped_by_movie_id(
-        &self,
-    ) -> Result<HashMap<MovieId, Vec<MovieReview>>>;
+    async fn find_all_grouped_by_movie_id(&self) -> Result<HashMap<MovieId, Vec<MovieReview>>>;
 
     async fn commit(&self, movie_review: &MovieReview) -> Result<()>;
 }
@@ -146,9 +145,18 @@ pub trait MovieReviewsRepo {
 pub trait TvShowReviewsRepo {
     async fn find_by_tv_show_id(&self, tv_show_id: &TvShowId) -> Result<Vec<TvShowReview>>;
 
-    async fn find_all_grouped_by_tv_show_id(
-        &self,
-    ) -> Result<HashMap<TvShowId, Vec<TvShowReview>>>;
+    async fn find_all_grouped_by_tv_show_id(&self) -> Result<HashMap<TvShowId, Vec<TvShowReview>>>;
 
     async fn commit(&self, tv_show_review: &TvShowReview) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait AlbumsRepo {
+    async fn find_all_by_date(&self) -> Result<Vec<Album>>;
+
+    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<Album>>;
+
+    async fn find_grouped_by_year(&self) -> Result<Vec<(u16, Vec<Album>)>>;
+
+    async fn commit(&self, album: &Album) -> Result<()>;
 }

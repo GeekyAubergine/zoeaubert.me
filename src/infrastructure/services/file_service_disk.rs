@@ -11,7 +11,7 @@ use tracing::debug;
 
 use crate::{
     domain::services::FileService,
-    error::{CsvError, FileSystemError, JsonError},
+    error::{CsvError, FileSystemError, JsonError, YamlError},
     prelude::*,
 };
 
@@ -212,5 +212,16 @@ impl FileService for FileServiceDisk {
         });
 
         Ok(())
+    }
+
+    async fn read_yaml_file<D>(&self, path: &Path) -> Result<D>
+    where
+        D: DeserializeOwned,
+    {
+        let data = self.read_file(path).await?;
+
+        let data = serde_yaml::from_slice(&data).map_err(YamlError::parse_error)?;
+
+        Ok(data)
     }
 }

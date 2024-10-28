@@ -106,7 +106,7 @@ pub async fn update_micro_posts(state: &impl State) -> Result<()> {
         .await?;
 
     for file in files {
-        state.profiler().post_processed().await?;
+        state.profiler().entity_processed().await?;
 
         let file = Path::new(&file);
         let content = state.file_service().read_text_file(&file).await?;

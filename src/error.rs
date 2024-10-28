@@ -16,6 +16,9 @@ pub enum Error {
     #[error("CSV Error: {0}")]
     CsvError(#[from] CsvError),
 
+    #[error("Yaml Error: {0}")]
+    YamlError(#[from] YamlError),
+
     #[error("Blog post error: {0}")]
     BlogPostError(#[from] BlogPostError),
 
@@ -45,6 +48,9 @@ pub enum Error {
 
     #[error("Tv shows error: {0}")]
     TvShowsError(#[from] TvShowsError),
+
+    #[error("Album error: {0}")]
+    AlbumError(#[from] AlbumError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -134,6 +140,25 @@ impl CsvError {
 
     pub fn parse_error(error: csv::Error) -> Error {
         Error::CsvError(Self::ParseError(error))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum YamlError {
+    #[error("Unable to parse yaml: {0}")]
+    ParseError(serde_yaml::Error),
+
+    #[error("Unable to stringify to yaml: {0}")]
+    StringifyError(serde_yaml::Error),
+}
+
+impl YamlError {
+    pub fn parse_error(error: serde_yaml::Error) -> Error {
+        Error::YamlError(Self::ParseError(error))
+    }
+
+    pub fn stringify_error(error: serde_yaml::Error) -> Error {
+        Error::YamlError(Self::StringifyError(error))
     }
 }
 
@@ -267,11 +292,32 @@ impl GameError {
 pub enum ImageError {
     #[error("Unable to get image size: {0}")]
     SizeError(imagesize::ImageError),
+
+    #[error("Unable to parse image format {0}")]
+    ParseError(std::io::Error),
+
+    #[error("Unable to decode image {0}")]
+    DecodeError(image::ImageError),
+
+    #[error("Unable to encode image {0}")]
+    EncodeError(image::ImageError),
 }
 
 impl ImageError {
     pub fn size_error(error: imagesize::ImageError) -> Error {
         Error::ImageError(Self::SizeError(error))
+    }
+
+    pub fn parse_format_error(error: std::io::Error) -> Error {
+        Error::ImageError(Self::ParseError(error))
+    }
+
+    pub fn decode_error(error: image::ImageError) -> Error {
+        Error::ImageError(Self::DecodeError(error))
+    }
+
+    pub fn encode_error(error: image::ImageError) -> Error {
+        Error::ImageError(Self::EncodeError(error))
     }
 }
 
@@ -394,5 +440,17 @@ impl TvShowsError {
 
     pub fn tv_show_has_no_poster(id: u32) -> Error {
         Error::TvShowsError(Self::TvShowHasNoPoster(id))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum AlbumError {
+    #[error("Invalid file name {0}")]
+    InvalidFileName(PathBuf),
+}
+
+impl AlbumError {
+    pub fn invalid_file_name(file_name: PathBuf) -> Error {
+        Error::AlbumError(Self::InvalidFileName(file_name))
     }
 }

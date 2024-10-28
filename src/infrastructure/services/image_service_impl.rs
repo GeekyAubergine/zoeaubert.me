@@ -1,15 +1,17 @@
 use std::path::Path;
 
 use chrono::{DateTime, Utc};
+use image::ImageReader;
 use imagesize::blob_size;
 use once_cell::sync::Lazy;
 use regex::Regex;
+use std::io::Cursor;
 use url::Url;
 
-use crate::domain::models::image::Image;
+use crate::domain::models::image::{Image, ImageDimensions};
 use crate::domain::models::slug::Slug;
 
-use crate::domain::services::ImageService;
+use crate::domain::services::{ImageService, NetworkService};
 use crate::prelude::*;
 use crate::{
     domain::{services::CacheService, services::CdnService, state::State},
@@ -36,20 +38,21 @@ impl ImageService for ImageServiceImpl {
         path: &Path,
         alt: &str,
     ) -> Result<Image> {
-        let (cache_path, data) = state
+        let data = state.network_service().download_bytes(&url).await?;
+
+        state
             .cache_service()
-            .get_file_from_url(state, url)
+            .write_file(state, &path, &data)
             .await?;
 
         let image_size = blob_size(&data).map_err(ImageError::size_error)?;
 
-        state.cdn_service().upload_file(state, &cache_path, path).await?;
+        state.cdn_service().upload_file(state, &path, path).await?;
 
         Ok(Image::new(
             path,
             alt,
-            image_size.width as u32,
-            image_size.height as u32,
+            &ImageDimensions::new(image_size.width as u32, image_size.height as u32),
         ))
     }
 
@@ -82,5 +85,57 @@ impl ImageService for ImageServiceImpl {
         }
 
         Ok(media)
+    }
+
+    async fn copy_and_resize_image_from_url(
+        &self,
+        state: &impl State,
+        url: &Url,
+        path: &Path,
+        alt: &str,
+        new_size: &ImageDimensions,
+    ) -> Result<Image> {
+        let original_bytes = state.network_service().download_bytes(&url).await?;
+
+        state
+            .cache_service()
+            .write_file(state, &path, &original_bytes)
+            .await?;
+
+        let image = ImageReader::new(Cursor::new(&original_bytes))
+            .with_guessed_format()
+            .map_err(ImageError::parse_format_error)?
+            .decode()
+            .map_err(ImageError::decode_error)?;
+
+        let resized = image.resize(
+            new_size.width,
+            new_size.height,
+            image::imageops::FilterType::Lanczos3,
+        );
+
+        let url_path = url.path();
+
+        let cache_path = Path::new(&url_path);
+
+        let mut resized_image_data = vec![];
+        resized
+            .write_to(
+                &mut Cursor::new(&mut resized_image_data),
+                image::ImageFormat::Jpeg,
+            )
+            .map_err(ImageError::encode_error)?;
+
+        state
+            .cache_service()
+            .write_file(state, &path, &resized_image_data)
+            .await?;
+
+        state
+            .cdn_service()
+            .upload_file(state, &path, path)
+            .await?;
+
+        Ok(Image::new(path, alt, new_size))
     }
 }

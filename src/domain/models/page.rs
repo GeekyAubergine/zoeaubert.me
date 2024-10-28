@@ -82,7 +82,7 @@ pub struct Page<'a> {
     pub title: String,
     pub description: String,
     pub author: &'a str,
-    pub image: &'a PageImage,
+    pub image: PageImage,
     pub language: &'a str,
     pub build_date: &'a str,
     pub navigation_links: Vec<NavigationLink>,
@@ -113,7 +113,7 @@ impl<'a> Page<'a> {
             title,
             description,
             author: &SITE_CONFIG.author,
-            image: &SITE_CONFIG.image,
+            image: SITE_CONFIG.image.clone(),
             language: &SITE_CONFIG.language,
             build_date: BUILD_DATE,
             navigation_links: SITE_CONFIG
@@ -134,7 +134,7 @@ impl<'a> Page<'a> {
         }
     }
 
-    pub fn with_image(mut self, image: &'a PageImage) -> Self {
+    pub fn with_image(mut self, image: PageImage) -> Self {
         self.image = image;
         self
     }

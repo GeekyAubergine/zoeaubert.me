@@ -51,22 +51,4 @@ impl CacheService for CacheServiceDisk {
             .write_file(&state.file_service().make_cache_file_path(path), content)
             .await
     }
-
-    async fn get_file_from_url(&self, state: &impl State, url: &Url) -> Result<(PathBuf, Vec<u8>)> {
-        let url_path = url.path();
-
-        let path = Path::new(&url_path);
-
-        debug!("Getting file from cache or url: {} [{:?}]", url, path);
-
-        if let Ok(content) = self.read_file(state, &path).await {
-            return Ok((path.to_path_buf(), content));
-        }
-
-        let content = state.network_service().download_bytes(&url).await?;
-
-        self.write_file(state, &path, &content).await?;
-
-        Ok((path.to_path_buf(), content))
-    }
 }

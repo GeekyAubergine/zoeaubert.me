@@ -9,7 +9,7 @@ use url::Url;
 use crate::domain::models::games::{
     Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked,
 };
-use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
+use crate::domain::repositories::{GameAchievementsRepo, GamesRepo, Profiler};
 use crate::domain::services::{CdnService, ImageService, NetworkService};
 use crate::domain::state::State;
 use crate::error::GameError;
@@ -215,6 +215,8 @@ pub async fn update_game_achievements_command(state: &impl State, game: &Game) -
         get_steam_global_achievement_percentage(state, game.id).await?;
 
     for achievement in game_data {
+        state.profiler().entity_processed().await?;
+
         let player_achievement = player_achievements
             .iter()
             .find(|player_achievement| player_achievement.apiname == achievement.name);

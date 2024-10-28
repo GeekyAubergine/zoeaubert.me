@@ -15,7 +15,7 @@ pub struct ProfilerBlock {
 
 #[derive(Debug, Default)]
 pub struct ProfierData {
-    posts: ProfilerBlock,
+    entities: ProfilerBlock,
     pages: ProfilerBlock,
     queue: ProfilerBlock,
 }
@@ -34,21 +34,21 @@ impl ProfilerMemory {
 
 #[async_trait::async_trait]
 impl Profiler for ProfilerMemory {
-    async fn post_processing_started(&self) -> Result<()> {
+    async fn entity_processing_started(&self) -> Result<()> {
         let mut data = self.data.write().await;
-        data.posts.started_at = Some(std::time::Instant::now());
+        data.entities.started_at = Some(std::time::Instant::now());
         Ok(())
     }
 
-    async fn post_processed(&self) -> Result<()> {
+    async fn entity_processed(&self) -> Result<()> {
         let mut data = self.data.write().await;
-        data.posts.entities_processed += 1;
+        data.entities.entities_processed += 1;
         Ok(())
     }
 
-    async fn post_processing_finished(&self) -> Result<()> {
+    async fn entity_processing_finished(&self) -> Result<()> {
         let mut data = self.data.write().await;
-        data.posts.finished_at = Some(std::time::Instant::now());
+        data.entities.finished_at = Some(std::time::Instant::now());
         Ok(())
     }
 
@@ -93,11 +93,11 @@ impl Profiler for ProfilerMemory {
 
         let mut total_duration = std::time::Duration::new(0, 0);
 
-        if let Some(started_at) = data.posts.started_at {
-            if let Some(finished_at) = data.posts.finished_at {
+        if let Some(started_at) = data.entities.started_at {
+            if let Some(finished_at) = data.entities.finished_at {
                 let posts_duration = finished_at.duration_since(started_at);
-                println!("Posts processed: {}", data.posts.entities_processed);
-                println!("Post processing duration: {:?}", posts_duration);
+                println!("Entities processed: {}", data.entities.entities_processed);
+                println!("Entity processing duration: {:?}", posts_duration);
                 total_duration += posts_duration;
             }
         }

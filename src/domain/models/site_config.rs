@@ -4,6 +4,8 @@ use once_cell::sync::Lazy;
 use serde::Deserialize;
 use url::Url;
 
+use super::image::Image;
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct NavigationLink {
     pub name: String,
@@ -35,6 +37,17 @@ impl PageImage {
             alt: alt.to_owned(),
             width,
             height,
+        }
+    }
+}
+
+impl From<Image> for PageImage {
+    fn from(image: Image) -> Self {
+        Self {
+            url: image.cdn_url().as_str().to_string(),
+            alt: image.alt,
+            width: image.dimensions.width,
+            height: image.dimensions.height,
         }
     }
 }

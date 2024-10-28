@@ -136,8 +136,6 @@ impl MovieService for MovieServiceTmdb {
                     )
                     .await?;
 
-                println!("Image: {:?}", image);
-
                 let date = parse_date(&movie.release_date)?;
 
                 let movie = Movie {

@@ -1,0 +1,28 @@
+{% extends "partials/base.html" %} {%- block body %} {% include
+"partials/navbar.html" %} {% include "partials/page_header.html" %}
+
+<div class="wide">
+    {% for album in albums %}
+    <div>
+        <a href="{{ album.slug.relative_link() }}" class="no-underline">
+            <h2 class="accent">
+                {{ album.date.without_time() }} - {{ album.title }}
+            </h2>
+        </a>
+        <div class="photogrid">
+            {% for photo in album.photos %} {% let image = photo.small_image.clone() %}
+            <div class="grid-element {{ image.dimensions.orientation().to_string() }}">
+                <a href="{{ photo.slug.relative_link() }}">
+                    {% include "partials/media/image.html" %}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="width-control mx-auto">
+    {% include "partials/pagination.html" %}
+</div>
+{% include "partials/footer.html" %} {% endblock %}

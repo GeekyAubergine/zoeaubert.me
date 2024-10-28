@@ -10,7 +10,7 @@ use url::Url;
 use super::{
     models::{
         cache_path::CachePath,
-        image::Image,
+        image::{Image, ImageDimensions},
         media::Media,
         movie::{Movie, MovieReview},
         network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes},
@@ -30,8 +30,6 @@ pub trait CacheService {
     async fn read_file(&self, state: &impl State, path: &Path) -> Result<Vec<u8>>;
 
     async fn write_file(&self, state: &impl State, path: &Path, content: &[u8]) -> Result<()>;
-
-    async fn get_file_from_url(&self, state: &impl State, url: &Url) -> Result<(PathBuf, Vec<u8>)>;
 }
 
 #[async_trait::async_trait]
@@ -84,6 +82,15 @@ pub trait ImageService {
         date: &DateTime<Utc>,
         parent_slug: &Slug,
     ) -> Result<Vec<Image>>;
+
+    async fn copy_and_resize_image_from_url(
+        &self,
+        state: &impl State,
+        url: &Url,
+        path: &Path,
+        alt: &str,
+        new_size: &ImageDimensions
+    ) -> Result<Image>;
 }
 
 #[async_trait::async_trait]
@@ -143,6 +150,10 @@ pub trait FileService: Sized + Send + Sync {
     async fn write_text_file_blocking(&self, path: &Path, data: &str) -> Result<()>;
 
     async fn write_text_file(&self, path: PathBuf, data: String) -> Result<()>;
+
+    async fn read_yaml_file<D>(&self, path: &Path) -> Result<D>
+    where
+        D: DeserializeOwned;
 }
 
 #[async_trait::async_trait]

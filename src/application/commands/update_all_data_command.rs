@@ -4,6 +4,7 @@ use tracing::info;
 use crate::application::commands::about_text_commands::update_about_text_command::{
     self, update_about_text_command,
 };
+use crate::application::commands::album_commands::update_albums_command::update_albums_command;
 use crate::application::commands::blog_posts_commands::update_blog_posts_command::update_blog_posts_command;
 use crate::application::commands::games_commands::update_games_command::update_games_command;
 use crate::application::commands::lego_commands::update_lego_command::update_lego_command;
@@ -20,7 +21,7 @@ use super::silly_names_commands::update_silly_names::update_silly_names_command;
 pub async fn update_all_data_command(state: &impl State) -> Result<()> {
     info!("Processing data");
 
-    state.profiler().post_processing_started().await?;
+    state.profiler().entity_processing_started().await?;
 
     try_join!(
         update_silly_names_command(state),
@@ -31,11 +32,12 @@ pub async fn update_all_data_command(state: &impl State) -> Result<()> {
         update_mastodon_posts_command(state),
         update_lego_command(state),
         update_games_command(state),
+        update_albums_command(state),
     )?;
 
     update_derived_data_command(state).await?;
 
-    state.profiler().post_processing_finished().await?;
+    state.profiler().entity_processing_finished().await?;
 
     Ok(())
 }

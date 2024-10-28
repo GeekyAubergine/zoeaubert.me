@@ -722,14 +722,10 @@
             }
 
             & .nav {
-                @apply flex-row w-full justify-between items-center my-0;
+                @apply flex-row w-full justify-evenly items-center my-0;
 
-                & .arrow-left {
-                    @apply flex-1 link no-underline h-8 items-center text-lg m-0 mr-4;
-                }
-
-                & .arrow-right {
-                    @apply flex-1 justify-end link no-underline h-8 pl-4 items-center text-lg m-0;
+                & .arrow {
+                    @apply link no-underline h-8 w-8 justify-center items-center text-lg m-0;
                 }
             }
 

@@ -1,6 +1,6 @@
 use super::{
     repositories::{
-        AboutTextRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, Profiler, SillyNamesRepo, TvShowReviewsRepo
+        AboutTextRepo, AlbumsRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, Profiler, SillyNamesRepo, TvShowReviewsRepo
     },
     services::{
         CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
@@ -30,6 +30,8 @@ pub trait State: Sync + Send {
     fn movie_reviews_repo(&self) -> &impl MovieReviewsRepo;
 
     fn tv_show_reviews_repo(&self) -> &impl TvShowReviewsRepo;
+
+    fn albums_repo(&self) -> &impl AlbumsRepo;
 
     fn cache_service(&self) -> &impl CacheService;
 

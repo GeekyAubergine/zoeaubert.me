@@ -14,3 +14,4 @@ pub mod games;
 pub mod movie;
 pub mod network_response;
 pub mod tv_show;
+pub mod album;
