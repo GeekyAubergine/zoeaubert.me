@@ -1,4 +1,7 @@
+use std::collections::HashMap;
+
 use bitflags::bitflags;
+use chrono::Datelike;
 
 use crate::domain::repositories::{AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo};
 use crate::prelude::*;
@@ -121,4 +124,21 @@ pub async fn find_all_omni_posts_by_tag(state: &impl State, tag: &Tag) -> Result
         .collect::<Vec<OmniPost>>();
 
     Ok(filtered_posts)
+}
+
+pub async fn find_omni_posts_grouped_by_year(
+    state: &impl State,
+    filter_flags: OmniPostFilterFlags,
+) -> Result<HashMap<u16, Vec<OmniPost>>> {
+    let posts = find_all_omni_posts(state, filter_flags).await?;
+
+    let years: HashMap<u16, Vec<OmniPost>> =
+        posts.into_iter().fold(HashMap::new(), |mut acc, post| {
+            acc.entry(post.date().year() as u16)
+                .or_insert_with(Vec::new)
+                .push(post);
+            acc
+        });
+
+    Ok(years)
 }

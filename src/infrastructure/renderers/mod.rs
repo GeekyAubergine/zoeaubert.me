@@ -24,6 +24,7 @@ pub mod timeline_pages;
 pub mod tv_show_pages;
 pub mod photo_pages;
 pub mod albums_and_photos_renderers;
+pub mod years_pages;
 
 pub async fn render_page_with_template<'p, T>(
     state: &impl State,
