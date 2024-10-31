@@ -94,6 +94,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(30, 20)),
@@ -105,6 +106,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_2"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_2"), "", &ImageDimensions::new(20, 30)),
@@ -116,6 +118,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_3"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_3"), "", &ImageDimensions::new(30, 20)),
@@ -141,6 +144,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(20, 30)),
@@ -152,6 +156,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_2"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_2"), "", &ImageDimensions::new(20, 30)),
@@ -163,6 +168,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_3"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_3"), "", &ImageDimensions::new(20, 30)),
@@ -189,6 +195,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(20, 30)),
@@ -200,6 +207,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_2"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(20, 30)),
@@ -211,6 +219,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_3"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(30, 20)),
@@ -237,6 +246,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(20, 30)),
@@ -248,6 +258,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_2"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_2"), "", &ImageDimensions::new(20, 30)),
@@ -259,6 +270,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_3"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_3"), "", &ImageDimensions::new(30, 20)),
@@ -285,6 +297,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(20, 30)),
@@ -296,6 +309,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_2"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_2"), "", &ImageDimensions::new(20, 30)),
@@ -307,6 +321,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_3"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_3"), "", &ImageDimensions::new(20, 30)),
@@ -333,6 +348,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(20, 30)),
@@ -358,6 +374,7 @@ mod test {
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
+                "".to_string(),
                 Utc::now(),
                 vec![],
                 Image::new(&Path::new("file_1"), "", &ImageDimensions::new(20, 30)),
