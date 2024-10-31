@@ -76,4 +76,15 @@ impl Album {
     pub fn add_photo(&mut self, photo: AlbumPhoto) {
         self.photos.push(photo);
     }
+
+    pub fn cover_images(&self) -> Vec<Image> {
+        let cover_photos = cover_photos_for_album(&self);
+
+        let cover_images = cover_photos
+            .into_iter()
+            .map(|photo| photo.small_image.clone())
+            .collect::<Vec<_>>();
+
+        cover_images
+    }
 }

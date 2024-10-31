@@ -7,6 +7,8 @@ const ASSETS_DIR: &str = "_assets";
 fn main() {
     let build_date = make_build_date_string();
 
+    println!("Build date: {}", build_date);
+
     build_data(&build_date);
 
     compile_assets(&build_date);

@@ -1,0 +1,24 @@
+<a
+    href="{{ album.slug.relative_link() }}"
+    rel="noopener"
+    class="no-underline mb-0"
+>
+    <h2>{{ album.title }}</h2>
+</a>
+<div class="media pb-6">
+{% let cover_images = album.cover_images() %}
+{% if cover_images
+    .len() > 1 %}
+    <div class="media-grid">
+        {% for image in cover_images %}
+            {% include "partials/media/image.html" %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="justify-between my-2">
+        {% for image in cover_images %}
+            {% include "partials/media/image.html" %}
+        {% endfor %}
+    </div>
+{% endif %}
+</div>

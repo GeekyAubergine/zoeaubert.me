@@ -1,6 +1,6 @@
 use bitflags::bitflags;
 
-use crate::domain::repositories::{BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo};
+use crate::domain::repositories::{AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo};
 use crate::prelude::*;
 
 use crate::domain::{models::omni_post::OmniPost, models::tag::Tag, state::State};
@@ -23,17 +23,19 @@ impl OmniPostFilterFlags {
         OmniPostFilterFlags::all()
     }
 
-    pub fn filter_non_album() -> OmniPostFilterFlags {
-        Self::filter_all() - OmniPostFilterFlags::ALBUM
-    }
-
-    pub fn filter_non_album_photo() -> OmniPostFilterFlags {
-        Self::filter_all() - OmniPostFilterFlags::ALBUM_PHOTO
-    }
-
     pub fn filter_main_timeline() -> OmniPostFilterFlags {
         Self::filter_all()
             - OmniPostFilterFlags::ALBUM_PHOTO
+            - OmniPostFilterFlags::UNLOCKED_GAME_ACHIEVEMENT
+    }
+
+    pub fn filter_photos_page() -> OmniPostFilterFlags {
+        Self::filter_all() - OmniPostFilterFlags::ALBUM
+    }
+
+    pub fn filter_tags_page() -> OmniPostFilterFlags {
+        Self::filter_all()
+            - OmniPostFilterFlags::ALBUM
             - OmniPostFilterFlags::UNLOCKED_GAME_ACHIEVEMENT
     }
 }
@@ -78,6 +80,30 @@ pub async fn find_all_omni_posts(
             .collect::<Vec<OmniPost>>();
 
         omni_posts.extend(mastodon_posts);
+    }
+
+    if filter_flags.contains(OmniPostFilterFlags::ALBUM_PHOTO) {
+        let album_photos = state
+            .albums_repo()
+            .find_all_album_photos()
+            .await?
+            .iter()
+            .map(|p| p.into())
+            .collect::<Vec<OmniPost>>();
+
+        omni_posts.extend(album_photos);
+    }
+
+    if filter_flags.contains(OmniPostFilterFlags::ALBUM) {
+        let albums = state
+            .albums_repo()
+            .find_all_by_date()
+            .await?
+            .iter()
+            .map(|p| p.into())
+            .collect::<Vec<OmniPost>>();
+
+        omni_posts.extend(albums);
     }
 
     omni_posts.sort_by(|a, b| b.date().cmp(&a.date()));

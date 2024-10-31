@@ -6,7 +6,7 @@ use crate::prelude::*;
 
 use super::{
     models::{
-        album::Album,
+        album::{Album, AlbumPhoto},
         blog_post::BlogPost,
         games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
         lego::{LegoMinifig, LegoSet},
@@ -157,6 +157,8 @@ pub trait AlbumsRepo {
     async fn find_by_slug(&self, slug: &Slug) -> Result<Option<Album>>;
 
     async fn find_grouped_by_year(&self) -> Result<Vec<(u16, Vec<Album>)>>;
+
+    async fn find_all_album_photos(&self) -> Result<Vec<AlbumPhoto>>;
 
     async fn commit(&self, album: &Album) -> Result<()>;
 }

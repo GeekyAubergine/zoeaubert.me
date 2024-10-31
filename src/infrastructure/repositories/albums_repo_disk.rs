@@ -6,7 +6,7 @@ use chrono::Datelike;
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::domain::models::album::Album;
+use crate::domain::models::album::{Album, AlbumPhoto};
 use crate::domain::models::slug::Slug;
 use crate::domain::repositories::AlbumsRepo;
 use crate::domain::services::FileService;
@@ -94,6 +94,15 @@ impl AlbumsRepo for AlbumsRepoDisk {
         years.sort_by(|a, b| b.0.cmp(&a.0));
 
         Ok(years)
+    }
+
+    async fn find_all_album_photos(&self) -> Result<Vec<AlbumPhoto>> {
+        let data = self.data.read().await;
+        let mut photos = Vec::new();
+        for album in data.albums.values() {
+            photos.extend(album.photos.clone());
+        }
+        Ok(photos)
     }
 
     async fn commit(&self, album: &Album) -> Result<()> {

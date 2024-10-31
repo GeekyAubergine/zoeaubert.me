@@ -34,7 +34,7 @@ pub struct PhotosPage<'t> {
 
 pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
     let omni_posts =
-        find_all_omni_posts(state, OmniPostFilterFlags::filter_main_timeline()).await?;
+        find_all_omni_posts(state, OmniPostFilterFlags::filter_photos_page()).await?;
 
     let photos = omni_posts
         .iter()

@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
-    blog_post::BlogPost, mastodon_post::MastodonPost, media::Media, micro_post::MicroPost,
-    slug::Slug, tag::Tag,
+    album::{Album, AlbumPhoto}, blog_post::BlogPost, mastodon_post::MastodonPost, media::Media,
+    micro_post::MicroPost, slug::Slug, tag::Tag,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -19,6 +19,8 @@ pub enum OmniPost {
     BlogPost(BlogPost),
     MicroPost(MicroPost),
     MastodonPost(MastodonPost),
+    AlbumPhoto(AlbumPhoto),
+    Album(Album),
 }
 
 impl OmniPost {
@@ -29,6 +31,8 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.slug.clone(),
             Self::MicroPost(micro_post) => micro_post.slug.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug(),
+            Self::AlbumPhoto(album_photo) => album_photo.slug.clone(),
+            Self::Album(album) => album.slug.clone(),
         }
     }
 
@@ -49,6 +53,8 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
             Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_link(),
+            Self::AlbumPhoto(album_photo) => album_photo.slug.relative_link(),
+            Self::Album(album) => album.slug.relative_link(),
         }
     }
 
@@ -59,20 +65,23 @@ impl OmniPost {
             Self::BlogPost(blog_post) => &blog_post.date,
             Self::MicroPost(micro_post) => &micro_post.date,
             Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
+            Self::AlbumPhoto(album_photo) => &album_photo.date,
+            Self::Album(album) => &album.date,
         }
     }
 
-    pub fn media(&self) -> &Vec<Media> {
+    pub fn media(&self) -> Vec<Media> {
         match self {
             // Self::StatusLol(status_lol) => vec![],
             // Self::UnlockedGameAchievement { .. } => vec![],
-            Self::BlogPost(blog_post) => &blog_post.media,
-            Self::MicroPost(micro_post) => &micro_post.media,
-            Self::MastodonPost(mastodon_post) => mastodon_post.media(), //     .media()
-                                                                        //     .iter()
-                                                                        //     .map(|media| media.uuid())
-                                                                        //     .cloned()
-                                                                        //     .collect(),
+            Self::BlogPost(blog_post) => blog_post.media.clone(),
+            Self::MicroPost(micro_post) => micro_post.media.clone(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.media(),
+            Self::AlbumPhoto(album_photo) => {
+                vec![album_photo.small_image.clone().into()]
+            },
+            // It does it's own thing
+            Self::Album(_) => vec![],
         }
     }
 
@@ -83,6 +92,11 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.optimised_media(),
+            Self::AlbumPhoto(album_photo) => {
+                vec![album_photo.small_image.clone().into()]
+            }
+            // It does it's own thing
+            Self::Album(_) => vec![],
         }
     }
 
@@ -93,6 +107,8 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.tags.clone(),
             Self::MicroPost(micro_post) => micro_post.tags.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.tags().clone(),
+            Self::AlbumPhoto(album_photo) => album_photo.tags.clone(),
+            Self::Album(album) => vec![],
         }
     }
 }
@@ -130,5 +146,29 @@ impl From<MastodonPost> for OmniPost {
 impl From<&MastodonPost> for OmniPost {
     fn from(mastodon_post: &MastodonPost) -> Self {
         Self::MastodonPost(mastodon_post.clone())
+    }
+}
+
+impl From<AlbumPhoto> for OmniPost {
+    fn from(album_photo: AlbumPhoto) -> Self {
+        Self::AlbumPhoto(album_photo)
+    }
+}
+
+impl From<&AlbumPhoto> for OmniPost {
+    fn from(album_photo: &AlbumPhoto) -> Self {
+        Self::AlbumPhoto(album_photo.clone())
+    }
+}
+
+impl From<Album> for OmniPost {
+    fn from(album: Album) -> Self {
+        Self::Album(album)
+    }
+}
+
+impl From<&Album> for OmniPost {
+    fn from(album: &Album) -> Self {
+        Self::Album(album.clone())
     }
 }

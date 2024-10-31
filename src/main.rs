@@ -10,12 +10,13 @@ pub mod tasks;
 use std::{path::Path, process::Command, time::Duration};
 
 use application::commands::update_all_data_command::update_all_data_command;
+use build_data::BUILD_DATE;
 use domain::{repositories::Profiler, state::State};
 use dotenvy_macro::dotenv;
 use error::FileSystemError;
 use infrastructure::app_state::AppState;
 use tasks::render_site::render_site;
-use tracing::Level;
+use tracing::{info, Level};
 
 use crate::prelude::*;
 
@@ -76,6 +77,8 @@ async fn process_queue(state: &impl State) -> Result<()> {
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt().with_max_level(Level::INFO).init();
+
+    info!("Build date: {}", BUILD_DATE);
 
     prepare_folders().await?;
     let state = prepare_state().await?;

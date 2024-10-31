@@ -72,16 +72,9 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
             let albums = albums
                 .into_iter()
                 .map(|album| {
-                    let cover_photos = cover_photos_for_album(&album);
-
-                    let cover_images = cover_photos
-                        .into_iter()
-                        .map(|photo| photo.small_image.clone())
-                        .collect::<Vec<_>>();
-
                     Ok(AlbumListItem {
+                        cover_images: album.cover_images(),
                         album,
-                        cover_images,
                     })
                 })
                 .collect::<Result<Vec<_>>>();

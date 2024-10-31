@@ -6,6 +6,10 @@
 {% include "partials/omni_post/omni_post_micro_post.html" %}
 {% when OmniPost::MastodonPost with (post) %}
 {% include "partials/omni_post/omni_post_mastodon_post.html" %}
+{% when OmniPost::AlbumPhoto with (photo) %}
+{% include "partials/omni_post/omni_post_album_photo.html" %}
+{% when OmniPost::Album with (album) %}
+{% include "partials/omni_post/omni_post_album.html" %}
 {% endmatch %}
 {%- block content %}
 {%- endblock %}

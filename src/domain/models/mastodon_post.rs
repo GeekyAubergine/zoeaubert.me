@@ -121,10 +121,10 @@ impl MastodonPost {
         }
     }
 
-    pub fn media(&self) -> &Vec<Media> {
+    pub fn media(&self) -> Vec<Media> {
         match self {
-            MastodonPost::NonSpoiler(post) => &post.media,
-            MastodonPost::Spoiler(post) => &post.media,
+            MastodonPost::NonSpoiler(post) => post.media.clone(),
+            MastodonPost::Spoiler(post) => post.media.clone(),
         }
     }
 
