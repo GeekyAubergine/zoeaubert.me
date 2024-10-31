@@ -7,8 +7,9 @@ use super::{
         game_achievements_repo_disk::GameAchievementsRepoDisk, games_repo_disk::GamesRepoDisk,
         lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk,
         micro_blog_repo_disk::MicroPostsRepoDisk,
-        movie_reviews_repo_memory::MovieReviewsRepoMemory, profiler_memory::ProfilerMemory,
-        referrary_repo_memory::ReferralsRepoMemory, silly_names_repo_memory::SillyNamesRepoMemory,
+        movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo::NowTextRepoMemory,
+        profiler_memory::ProfilerMemory, referrary_repo_memory::ReferralsRepoMemory,
+        silly_names_repo_memory::SillyNamesRepoMemory,
         tv_show_reviews_repo_memory::TvShowReviewsRepoMemory,
     },
     services::{
@@ -24,8 +25,8 @@ use crate::{
     domain::{
         repositories::{
             AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, GameAchievementsRepo, GamesRepo,
-            LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, Profiler, ReferralsRepo,
-            SillyNamesRepo, TvShowReviewsRepo,
+            LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, Profiler,
+            ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo,
         },
         services::{
             CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
@@ -51,6 +52,7 @@ pub struct AppState {
     albums_repo: AlbumsRepoDisk,
     referrals_repo: ReferralsRepoMemory,
     faq_repo: FaqRepoMemory,
+    now_text_repo: NowTextRepoMemory,
     // services
     cache_service: CacheServiceDisk,
     cdn_service: CdnServiceBunny,
@@ -79,6 +81,7 @@ impl AppState {
             albums_repo: AlbumsRepoDisk::new().await?,
             referrals_repo: ReferralsRepoMemory::new(),
             faq_repo: FaqRepoMemory::new(),
+            now_text_repo: NowTextRepoMemory::new(),
             // services
             cache_service: CacheServiceDisk::new(),
             cdn_service: CdnServiceBunny::new(),
@@ -152,6 +155,12 @@ impl State for AppState {
     fn faq_repo(&self) -> &impl FaqRepo {
         &self.faq_repo
     }
+
+    fn now_text_repo(&self) -> &impl NowTextRepo {
+        &self.now_text_repo
+    }
+
+    // services
 
     fn cache_service(&self) -> &impl CacheService {
         &self.cache_service

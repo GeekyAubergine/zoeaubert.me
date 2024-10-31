@@ -167,3 +167,10 @@ pub trait FaqRepo {
 
     async fn commit(&self, faq: String) -> Result<()>;
 }
+
+#[async_trait::async_trait]
+pub trait NowTextRepo {
+    async fn find(&self) -> Result<String>;
+
+    async fn commit(&self, now_text: String) -> Result<()>;
+}

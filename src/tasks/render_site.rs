@@ -21,6 +21,7 @@ use crate::infrastructure::renderers::lego_pages::render_lego_page;
 use crate::infrastructure::renderers::mastodon_post_pages::render_mastodon_post_pages;
 use crate::infrastructure::renderers::micro_post_pages::render_micro_post_pages;
 use crate::infrastructure::renderers::movie_pages::render_movie_pages;
+use crate::infrastructure::renderers::now_page_renderer::render_now_page;
 use crate::infrastructure::renderers::photo_pages::render_photos_page;
 use crate::infrastructure::renderers::render_page_with_template;
 use crate::infrastructure::renderers::save_pages::render_save_page;
@@ -57,6 +58,7 @@ pub async fn render_site(state: &impl State) -> Result<()> {
         render_404_page(state),
         render_save_page(state),
         render_faq_page(state),
+        render_now_page(state)
     )?;
 
     state.profiler().page_generation_finished().await?;

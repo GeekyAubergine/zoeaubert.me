@@ -10,3 +10,4 @@ pub mod update_derived_data_command;
 pub mod album_commands;
 pub mod referrals_commands;
 pub mod faq_commands;
+pub mod now_text_commands;
