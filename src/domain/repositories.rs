@@ -160,3 +160,10 @@ pub trait ReferralsRepo {
     async fn find_all(&self) -> Result<Vec<Referral>>;
     async fn commit(&self, referrals: Vec<Referral>) -> Result<()>;
 }
+
+#[async_trait::async_trait]
+pub trait FaqRepo {
+    async fn find(&self) -> Result<String>;
+
+    async fn commit(&self, faq: String) -> Result<()>;
+}

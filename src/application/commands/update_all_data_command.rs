@@ -6,6 +6,7 @@ use crate::application::commands::about_text_commands::update_about_text_command
 };
 use crate::application::commands::album_commands::update_albums_command::update_albums_command;
 use crate::application::commands::blog_posts_commands::update_blog_posts_command::update_blog_posts_command;
+use crate::application::commands::faq_commands::update_faq_command::update_faq_command;
 use crate::application::commands::games_commands::update_games_command::update_games_command;
 use crate::application::commands::lego_commands::update_lego_command::update_lego_command;
 use crate::application::commands::mastodon_posts_commands::update_mastodon_posts_command::update_mastodon_posts_command;
@@ -35,6 +36,7 @@ pub async fn update_all_data_command(state: &impl State) -> Result<()> {
         update_games_command(state),
         update_albums_command(state),
         update_referrals_command(state),
+        update_faq_command(state),
     )?;
 
     update_derived_data_command(state).await?;

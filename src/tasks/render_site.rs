@@ -13,6 +13,7 @@ use crate::domain::state::State;
 
 use crate::infrastructure::renderers::albums_and_photos_renderers::render_albums_and_photo_pages;
 use crate::infrastructure::renderers::blog_pages::render_blog_pages;
+use crate::infrastructure::renderers::faq_page_renderer::render_faq_page;
 use crate::infrastructure::renderers::games_pages::render_games_pages;
 use crate::infrastructure::renderers::home_page::render_home_page;
 use crate::infrastructure::renderers::interests_page::render_interests_list_page;
@@ -55,6 +56,7 @@ pub async fn render_site(state: &impl State) -> Result<()> {
         // Single pages
         render_404_page(state),
         render_save_page(state),
+        render_faq_page(state),
     )?;
 
     state.profiler().page_generation_finished().await?;
