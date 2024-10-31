@@ -6,15 +6,7 @@ use crate::prelude::*;
 
 use super::{
     models::{
-        album::{Album, AlbumPhoto},
-        blog_post::BlogPost,
-        games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
-        lego::{LegoMinifig, LegoSet},
-        mastodon_post::MastodonPost,
-        micro_post::MicroPost,
-        movie::{MovieId, MovieReview},
-        slug::Slug,
-        tv_show::{TvShowId, TvShowReview},
+        album::{Album, AlbumPhoto}, blog_post::BlogPost, games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked}, lego::{LegoMinifig, LegoSet}, mastodon_post::MastodonPost, micro_post::MicroPost, movie::{MovieId, MovieReview}, referral::Referral, slug::Slug, tv_show::{TvShowId, TvShowReview}
     },
     services::FileService,
     state::State,
@@ -161,4 +153,10 @@ pub trait AlbumsRepo {
     async fn find_all_album_photos(&self) -> Result<Vec<AlbumPhoto>>;
 
     async fn commit(&self, album: &Album) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait ReferralsRepo {
+    async fn find_all(&self) -> Result<Vec<Referral>>;
+    async fn commit(&self, referrals: Vec<Referral>) -> Result<()>;
 }

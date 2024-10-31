@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use super::{
     repositories::{
-        about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk, blog_posts_repo_disk::BlogPostsRepoDisk, game_achievements_repo_disk::GameAchievementsRepoDisk, games_repo_disk::GamesRepoDisk, lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk, movie_reviews_repo_memory::MovieReviewsRepoMemory, profiler_memory::ProfilerMemory, silly_names_repo_memory::SillyNamesRepoMemory, tv_show_reviews_repo_memory::TvShowReviewsRepoMemory
+        about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk, blog_posts_repo_disk::BlogPostsRepoDisk, game_achievements_repo_disk::GameAchievementsRepoDisk, games_repo_disk::GamesRepoDisk, lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk, movie_reviews_repo_memory::MovieReviewsRepoMemory, profiler_memory::ProfilerMemory, referrary_repo_memory::ReferralsRepoMemory, silly_names_repo_memory::SillyNamesRepoMemory, tv_show_reviews_repo_memory::TvShowReviewsRepoMemory
     },
     services::{
         cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny,
@@ -16,7 +16,7 @@ use super::{
 use crate::{
     domain::{
         repositories::{
-            AboutTextRepo, AlbumsRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, Profiler, SillyNamesRepo, TvShowReviewsRepo
+            AboutTextRepo, AlbumsRepo, BlogPostsRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, Profiler, ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo
         },
         services::{
             CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
@@ -40,6 +40,7 @@ pub struct AppState {
     movie_reviews_repo: MovieReviewsRepoMemory,
     tv_show_reviews_repo: TvShowReviewsRepoMemory,
     albums_repo: AlbumsRepoDisk,
+    referrals_repo: ReferralsRepoMemory,
     cache_service: CacheServiceDisk,
     cdn_service: CdnServiceBunny,
     movie_service: MovieServiceTmdb,
@@ -65,6 +66,7 @@ impl AppState {
             movie_reviews_repo: MovieReviewsRepoMemory::new(),
             tv_show_reviews_repo: TvShowReviewsRepoMemory::new(),
             albums_repo: AlbumsRepoDisk::new().await?,
+            referrals_repo: ReferralsRepoMemory::new(),
             cache_service: CacheServiceDisk::new(),
             cdn_service: CdnServiceBunny::new(),
             movie_service: MovieServiceTmdb::new().await?,
@@ -128,6 +130,10 @@ impl State for AppState {
 
     fn albums_repo(&self) -> &impl AlbumsRepo {
         &self.albums_repo
+    }
+
+    fn referrals_repo(&self) -> &impl ReferralsRepo {
+        &self.referrals_repo
     }
 
     fn cache_service(&self) -> &impl CacheService {

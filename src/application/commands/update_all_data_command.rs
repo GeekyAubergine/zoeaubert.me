@@ -11,6 +11,7 @@ use crate::application::commands::lego_commands::update_lego_command::update_leg
 use crate::application::commands::mastodon_posts_commands::update_mastodon_posts_command::update_mastodon_posts_command;
 use crate::application::commands::micro_posts_commands::update_micro_blog_archive_posts_command::update_micro_blog_archive_posts_command;
 use crate::application::commands::micro_posts_commands::update_micro_posts_command::update_micro_posts;
+use crate::application::commands::referrals_commands::update_referrals_command::update_referrals_command;
 use crate::application::commands::update_derived_data_command::update_derived_data_command;
 use crate::domain::repositories::Profiler;
 use crate::domain::state::State;
@@ -33,6 +34,7 @@ pub async fn update_all_data_command(state: &impl State) -> Result<()> {
         update_lego_command(state),
         update_games_command(state),
         update_albums_command(state),
+        update_referrals_command(state),
     )?;
 
     update_derived_data_command(state).await?;

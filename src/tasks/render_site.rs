@@ -22,6 +22,7 @@ use crate::infrastructure::renderers::micro_post_pages::render_micro_post_pages;
 use crate::infrastructure::renderers::movie_pages::render_movie_pages;
 use crate::infrastructure::renderers::photo_pages::render_photos_page;
 use crate::infrastructure::renderers::render_page_with_template;
+use crate::infrastructure::renderers::save_pages::render_save_page;
 use crate::infrastructure::renderers::tags_pages::render_tags_pages;
 use crate::infrastructure::renderers::timeline_pages::render_timeline_page;
 use crate::infrastructure::renderers::tv_show_pages::render_tv_show_pages;
@@ -39,7 +40,6 @@ pub async fn render_site(state: &impl State) -> Result<()> {
 
     try_join!(
         render_home_page(state),
-        render_404_page(state),
         // Posts
         render_blog_pages(state),
         render_micro_post_pages(state),
@@ -51,7 +51,10 @@ pub async fn render_site(state: &impl State) -> Result<()> {
         render_years_pages(state),
         // Interests
         render_interests_pages(state),
-        render_albums_and_photo_pages(state)
+        render_albums_and_photo_pages(state),
+        // Single pages
+        render_404_page(state),
+        render_save_page(state),
     )?;
 
     state.profiler().page_generation_finished().await?;
