@@ -3,10 +3,9 @@ use askama::Template;
 use crate::domain::{
     models::{mastodon_post::MastodonPost, media::Media, micro_post::MicroPost, page::Page},
     repositories::MastodonPostsRepo,
+    services::PageRenderingService,
     state::State,
 };
-
-use super::render_page_with_template;
 
 use crate::prelude::*;
 
@@ -16,9 +15,9 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 #[derive(Template)]
 #[template(path = "mastodon_posts/post.html")]
-pub struct MastodonPostTemplate<'t> {
-    page: &'t Page<'t>,
-    post: &'t MastodonPost,
+pub struct MastodonPostTemplate {
+    page: Page,
+    post: MastodonPost,
 }
 
 pub async fn render_mastodon_post_pages(state: &impl State) -> Result<()> {
@@ -30,11 +29,14 @@ pub async fn render_mastodon_post_pages(state: &impl State) -> Result<()> {
             .with_tags(mastodon_post.tags().clone());
 
         let template = MastodonPostTemplate {
-            page: &page,
-            post: &mastodon_post,
+            page,
+            post: mastodon_post,
         };
 
-        render_page_with_template(state, &page, template).await?;
+        state
+            .page_rendering_service()
+            .add_page(state, template.page.slug.clone(), template)
+            .await?;
     }
 
     Ok(())

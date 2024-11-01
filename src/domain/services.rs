@@ -3,6 +3,7 @@ use std::{
     time::Duration,
 };
 
+use askama::{DynTemplate, Template};
 use chrono::{DateTime, Utc};
 use serde::{de::DeserializeOwned, Serialize};
 use url::Url;
@@ -15,6 +16,7 @@ use super::{
         movie::{Movie, MovieReview},
         network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes},
         omni_post::OmniPost,
+        page::Page,
         slug::Slug,
         tv_show::{TvShow, TvShowReview},
     },
@@ -89,7 +91,7 @@ pub trait ImageService {
         url: &Url,
         path: &Path,
         alt: &str,
-        new_size: &ImageDimensions
+        new_size: &ImageDimensions,
     ) -> Result<Image>;
 }
 
@@ -163,4 +165,13 @@ pub trait QueryLimitingService {
     async fn can_query_within_hour(&self, query: &str) -> Result<bool>;
 
     async fn can_query_within_day(&self, query: &str) -> Result<bool>;
+}
+
+#[async_trait::async_trait]
+pub trait PageRenderingService {
+    async fn add_page<T>(&self, state: &impl State, slug: Slug, template: T) -> Result<()>
+    where
+        T: Template + Send + Sync + 'static;
+
+    async fn render_pages(&self, state: &impl State) -> Result<()>;
 }

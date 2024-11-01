@@ -4,20 +4,21 @@ use askama::Template;
 
 use crate::{
     domain::{
-        models::{omni_post::OmniPost, page::Page, slug::Slug}, queries::{omni_post_queries::find_all_omni_posts_by_tag, tags_queries::find_tag_counts}, state::State
+        models::{omni_post::OmniPost, page::Page, slug::Slug},
+        queries::{omni_post_queries::find_all_omni_posts_by_tag, tags_queries::find_tag_counts},
+        services::PageRenderingService,
+        state::State,
     },
     infrastructure::utils::paginator::{paginate, PaginatorPage},
     prelude::*,
 };
 
+use crate::domain::models::media::Media;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
-use crate::domain::models::media::Media;
 
 use crate::domain::models::tag::Tag;
-
-use super::render_page_with_template;
 
 const DEFAULT_PAGINATION_SIZE: usize = 25;
 
@@ -46,15 +47,12 @@ pub async fn render_tags_pages(state: &impl State) -> Result<()> {
 
 #[derive(Template)]
 #[template(path = "tags/index.html")]
-struct TagsListTemplate<'t> {
-    page: &'t Page<'t>,
+struct TagsListTemplate {
+    page: Page,
     tags: Vec<TagCount>,
 }
 
-async fn render_tags_list_page(
-    state: &impl State,
-    tag_counts: &HashMap<Tag, usize>,
-) -> Result<()> {
+async fn render_tags_list_page(state: &impl State, tag_counts: &HashMap<Tag, usize>) -> Result<()> {
     let mut tags = tag_counts
         .into_iter()
         .map(|(tag, count)| TagCount {
@@ -66,16 +64,19 @@ async fn render_tags_list_page(
 
     let page = Page::new(Slug::new("tags"), Some("Tags"), Some("All Tags"));
 
-    let template = TagsListTemplate { page: &page, tags };
+    let template = TagsListTemplate { page, tags };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }
 
 #[derive(Template)]
 #[template(path = "tags/tag.html")]
-struct TagPostsTemplate<'t> {
-    page: &'t Page<'t>,
-    posts: &'t [OmniPost],
+struct TagPostsTemplate {
+    page: Page,
+    posts: Vec<OmniPost>,
 }
 
 async fn render_tag_page<'d>(
@@ -91,9 +92,12 @@ async fn render_tag_page<'d>(
     .with_pagination_from_paginator(paginator_page, "Posts");
 
     let template = TagPostsTemplate {
-        page: &page,
-        posts: paginator_page.data,
+        page,
+        posts: paginator_page.data.to_vec(),
     };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }

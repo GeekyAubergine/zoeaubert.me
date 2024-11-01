@@ -16,7 +16,7 @@ use crate::{
         },
         queries::omni_post_queries::find_all_omni_posts_by_tag,
         repositories::TvShowReviewsRepo,
-        services::{MovieService, TvShowsService},
+        services::{MovieService, PageRenderingService, TvShowsService},
         state::State,
     },
     prelude::*,
@@ -25,8 +25,6 @@ use crate::{
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
-
-use super::render_page_with_template;
 
 const TV_TAG: &str = "TV";
 
@@ -55,8 +53,8 @@ struct AverageReviewForTvShow {
 
 #[derive(Template)]
 #[template(path = "interests/tv/tv_show_list.html")]
-pub struct TvShowListTempalte<'t> {
-    page: &'t Page<'t>,
+pub struct TvShowListTemplate {
+    page: Page,
     tv_shows: Vec<AverageReviewForTvShow>,
 }
 
@@ -103,21 +101,21 @@ async fn render_tv_show_list_page(
         Some("Tv shows I've watched"),
     );
 
-    let template = TvShowListTempalte {
-        page: &page,
-        tv_shows,
-    };
+    let template = TvShowListTemplate { page, tv_shows };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }
 
 #[derive(Template)]
 #[template(path = "interests/tv/tv_show.html")]
-pub struct TvShowPageTempalte<'t> {
-    page: &'t Page<'t>,
+pub struct TvShowPageTemplate {
+    page: Page,
     tv_show: TvShow,
     average_score: f32,
-    posts: Vec<&'t OmniPost>,
+    posts: Vec<OmniPost>,
 }
 
 async fn render_tv_show_page(
@@ -133,16 +131,22 @@ async fn render_tv_show_page(
 
     let average_score: f32 = total_scores.iter().sum::<u8>() as f32 / total_scores.len() as f32;
 
-    let posts = reviews.iter().map(|r| &r.post).collect::<Vec<&OmniPost>>();
+    let posts = reviews
+        .iter()
+        .map(|r| r.post.clone())
+        .collect::<Vec<OmniPost>>();
 
     let page = Page::new(tv_show.slug(), Some(&tv_show.title), None);
 
-    let template = TvShowPageTempalte {
-        page: &page,
+    let template = TvShowPageTemplate {
+        page,
         tv_show: tv_show.clone(),
         average_score,
         posts,
     };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }

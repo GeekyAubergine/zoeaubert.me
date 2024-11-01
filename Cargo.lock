@@ -3456,6 +3456,7 @@ dependencies = [
  "lazy_static",
  "markdown",
  "once_cell",
+ "rayon",
  "regex",
  "reqwest",
  "serde",

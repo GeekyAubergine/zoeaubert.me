@@ -6,14 +6,15 @@ use crate::{
             omni_post::OmniPost,
             page::{Page, PagePagination},
             slug::Slug,
-        }, queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags}, state::State
+        },
+        queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags},
+        services::PageRenderingService,
+        state::State,
     },
     infrastructure::utils::paginator::{paginate, PaginatorPage},
 };
 
 use crate::prelude::*;
-
-use super::render_page_with_template;
 
 use crate::domain::models::media::Media;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
@@ -24,9 +25,9 @@ const DEFAULT_PAGINATION_SIZE: usize = 25;
 
 #[derive(Template)]
 #[template(path = "timeline/index.html")]
-pub struct TimelineTemplate<'t> {
-    page: &'t Page<'t>,
-    posts: &'t [OmniPost],
+pub struct TimelineTemplate {
+    page: Page,
+    posts: Vec<OmniPost>,
 }
 
 pub async fn render_timeline_page<'d>(state: &impl State) -> Result<()> {
@@ -40,11 +41,14 @@ pub async fn render_timeline_page<'d>(state: &impl State) -> Result<()> {
             .with_pagination_from_paginator(&paginator_page, "Posts");
 
         let template = TimelineTemplate {
-            page: &page,
-            posts: paginator_page.data,
+            page,
+            posts: paginator_page.data.to_vec(),
         };
 
-        render_page_with_template(state, &page, template).await?;
+        state
+            .page_rendering_service()
+            .add_page(state, template.page.slug.clone(), template)
+            .await?;
     }
 
     Ok(())

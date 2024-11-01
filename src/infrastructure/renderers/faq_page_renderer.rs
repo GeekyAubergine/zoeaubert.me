@@ -7,6 +7,7 @@ use crate::{
         models::{omni_post::OmniPost, page::Page, referral::Referral, slug::Slug},
         queries::{omni_post_queries::find_all_omni_posts_by_tag, tags_queries::find_tag_counts},
         repositories::{FaqRepo, ReferralsRepo},
+        services::PageRenderingService,
         state::State,
     },
     infrastructure::utils::paginator::{paginate, PaginatorPage},
@@ -20,13 +21,11 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 use crate::domain::models::tag::Tag;
 
-use super::render_page_with_template;
-
 #[derive(Template)]
 #[template(path = "faq.html")]
-struct FaqTemplate<'t> {
-    page: &'t Page<'t>,
-    faq: String
+struct FaqTemplate {
+    page: Page,
+    faq: String,
 }
 
 pub async fn render_faq_page(state: &impl State) -> Result<()> {
@@ -34,7 +33,10 @@ pub async fn render_faq_page(state: &impl State) -> Result<()> {
 
     let page = Page::new(Slug::new("faq"), Some("FAQ"), None);
 
-    let template = FaqTemplate { page: &page, faq };
+    let template = FaqTemplate { page, faq };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }

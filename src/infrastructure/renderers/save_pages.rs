@@ -7,6 +7,7 @@ use crate::{
         models::{omni_post::OmniPost, page::Page, referral::Referral, slug::Slug},
         queries::{omni_post_queries::find_all_omni_posts_by_tag, tags_queries::find_tag_counts},
         repositories::ReferralsRepo,
+        services::PageRenderingService,
         state::State,
     },
     infrastructure::utils::paginator::{paginate, PaginatorPage},
@@ -20,12 +21,10 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 use crate::domain::models::tag::Tag;
 
-use super::render_page_with_template;
-
 #[derive(Template)]
 #[template(path = "save.html")]
-struct SaveTemplate<'t> {
-    page: &'t Page<'t>,
+struct SaveTemplate {
+    page: Page,
     referrals: Vec<Referral>,
 }
 
@@ -34,7 +33,10 @@ pub async fn render_save_page(state: &impl State) -> Result<()> {
 
     let page = Page::new(Slug::new("save"), Some("Save"), None);
 
-    let template = SaveTemplate { page: &page, referrals };
+    let template = SaveTemplate { page, referrals };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }

@@ -6,3 +6,4 @@ pub mod network_service_reqwest;
 pub mod file_service_disk;
 pub mod query_limiting_service_disk;
 pub mod tv_shows_service_tmdb;
+pub mod page_rendering_service_impl;

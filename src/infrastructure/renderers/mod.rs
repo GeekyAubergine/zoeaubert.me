@@ -29,59 +29,59 @@ pub mod save_pages;
 pub mod faq_page_renderer;
 pub mod now_page_renderer;
 
-pub async fn render_page_with_template<'p, T>(
-    state: &impl State,
-    page: &Page<'p>,
-    template: T,
-) -> Result<()>
-where
-    T: askama::Template,
-{
-    debug!("Rendering page: {}", page.slug.relative_link());
+// pub async fn render_page_with_template<'p, T>(
+//     state: &impl State,
+//     page: &Page<'p>,
+//     template: T,
+// ) -> Result<()>
+// where
+//     T: askama::Template,
+// {
+//     debug!("Rendering page: {}", page.slug.relative_link());
 
-    let rendered = template.render().map_err(TemplateError::render_error)?;
+//     let rendered = template.render().map_err(TemplateError::render_error)?;
 
-    let path = format!("{}index.html", page.slug.relative_link());
+//     let path = format!("{}index.html", page.slug.relative_link());
 
-    let path = state
-        .file_service()
-        .make_output_file_path(&Path::new(&path));
+//     let path = state
+//         .file_service()
+//         .make_output_file_path(&Path::new(&path));
 
-    state
-        .file_service()
-        .write_text_file_blocking(&path, &rendered)
-        .await?;
+//     state
+//         .file_service()
+//         .write_text_file_blocking(&path, &rendered)
+//         .await?;
 
-    state.profiler().page_generated().await?;
+//     state.profiler().page_generated().await?;
 
-    Ok(())
-}
+//     Ok(())
+// }
 
 
-pub async fn render_page_with_template2<'p, T>(
-    state: &impl State,
-    page: Page<'p>,
-    template: T,
-) -> Result<()>
-where
-    T: askama::Template,
-{
-    debug!("Rendering page: {}", page.slug.relative_link());
+// pub async fn render_page_with_template2<T>(
+//     state: &impl State,
+//     page: Page,
+//     template: T,
+// ) -> Result<()>
+// where
+//     T: askama::Template,
+// {
+//     debug!("Rendering page: {}", page.slug.relative_link());
 
-    let rendered = template.render().map_err(TemplateError::render_error)?;
+//     let rendered = template.render().map_err(TemplateError::render_error)?;
 
-    let path = format!("{}index.html", page.slug.relative_link());
+//     let path = format!("{}index.html", page.slug.relative_link());
 
-    let path = state
-        .file_service()
-        .make_output_file_path(&Path::new(&path));
+//     let path = state
+//         .file_service()
+//         .make_output_file_path(&Path::new(&path));
 
-    state
-        .file_service()
-        .write_text_file_blocking(&path, &rendered)
-        .await?;
+//     state
+//         .file_service()
+//         .write_text_file_blocking(&path, &rendered)
+//         .await?;
 
-    state.profiler().page_generated().await?;
+//     state.profiler().page_generated().await?;
 
-    Ok(())
-}
+//     Ok(())
+// }

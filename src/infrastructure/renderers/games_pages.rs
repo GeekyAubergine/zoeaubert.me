@@ -6,14 +6,13 @@ use crate::domain::models::slug::Slug;
 use crate::domain::models::{games::Game, page::Page};
 
 use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
+use crate::domain::services::PageRenderingService;
 use crate::prelude::*;
 
 use crate::domain::state::State;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
-
-use super::render_page_with_template;
 
 const RECENTLY_PLAYED_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
@@ -33,9 +32,9 @@ pub async fn render_games_pages(state: &impl State) -> Result<()> {
 
 #[derive(Template)]
 #[template(path = "interests/games/games_list.html")]
-struct IndexTemplate<'t> {
-    page: &'t Page<'t>,
-    games_by_recently_played: Vec<&'t Game>,
+struct IndexTemplate {
+    page: Page,
+    games_by_recently_played: Vec<Game>,
     games_by_most_played: Vec<Game>,
     total_games: usize,
     total_playtime: f32,
@@ -59,29 +58,33 @@ async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()
     let games_by_recently_played = games_by_recently_played
         .iter()
         .take(RECENTLY_PLAYED_GAMES_COUNT)
+        .cloned()
         .collect::<Vec<_>>();
 
     let total_games = games.len();
     let total_playtime = games.iter().map(|g| g.playtime_hours()).sum::<f32>();
 
     let template = IndexTemplate {
-        page: &page,
+        page,
         games_by_recently_played,
         games_by_most_played,
         total_games,
         total_playtime,
     };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }
 
 #[derive(Template)]
 #[template(path = "interests/games/game.html")]
-struct GameTemplate<'t> {
-    page: &'t Page<'t>,
-    game: &'t Game,
-    unlocked_achievements: Vec<&'t GameAchievementUnlocked>,
-    locked_achievements: Vec<&'t GameAchievementLocked>,
+struct GameTemplate {
+    page: Page,
+    game: Game,
+    unlocked_achievements: Vec<GameAchievementUnlocked>,
+    locked_achievements: Vec<GameAchievementLocked>,
     total_achievements: usize,
 }
 
@@ -125,12 +128,15 @@ async fn render_game_page(state: &impl State, game: &Game) -> Result<()> {
     .with_image(image);
 
     let template = GameTemplate {
-        page: &page,
-        game,
-        unlocked_achievements: unlocked_achievements.iter().collect(),
-        locked_achievements: locked_achievements.iter().collect(),
+        page,
+        game: game.clone(),
+        unlocked_achievements,
+        locked_achievements,
         total_achievements,
     };
 
-    render_page_with_template(state, &page, template).await
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await
 }

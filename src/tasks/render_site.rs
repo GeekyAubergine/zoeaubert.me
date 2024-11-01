@@ -9,6 +9,7 @@ use crate::domain::queries::omni_post_queries::{
 };
 use crate::domain::queries::tags_queries::find_tag_counts;
 use crate::domain::repositories::Profiler;
+use crate::domain::services::PageRenderingService;
 use crate::domain::state::State;
 
 use crate::infrastructure::renderers::albums_and_photos_renderers::render_albums_and_photo_pages;
@@ -23,7 +24,6 @@ use crate::infrastructure::renderers::micro_post_pages::render_micro_post_pages;
 use crate::infrastructure::renderers::movie_pages::render_movie_pages;
 use crate::infrastructure::renderers::now_page_renderer::render_now_page;
 use crate::infrastructure::renderers::photo_pages::render_photos_page;
-use crate::infrastructure::renderers::render_page_with_template;
 use crate::infrastructure::renderers::save_pages::render_save_page;
 use crate::infrastructure::renderers::tags_pages::render_tags_pages;
 use crate::infrastructure::renderers::timeline_pages::render_timeline_page;
@@ -61,6 +61,8 @@ pub async fn render_site(state: &impl State) -> Result<()> {
         render_now_page(state)
     )?;
 
+    state.page_rendering_service().render_pages(state).await?;
+
     state.profiler().page_generation_finished().await?;
     state.profiler().print_results().await?;
 
@@ -82,12 +84,15 @@ async fn render_interests_pages(state: &impl State) -> Result<()> {
 
 #[derive(Template)]
 #[template(path = "404.html")]
-pub struct FourOFourTemplate<'t, 'p> {
-    page: &'t Page<'p>,
+pub struct FourOFourTemplate {
+    page: Page,
 }
 
 async fn render_404_page(state: &impl State) -> Result<()> {
     let page = Page::new(Slug::new("/404"), None, None);
 
-    render_page_with_template(state, &page, FourOFourTemplate { page: &page }).await
+    state
+        .page_rendering_service()
+        .add_page(state, page.slug.clone(), FourOFourTemplate { page })
+        .await
 }

@@ -6,18 +6,14 @@ use crate::{
             omni_post::OmniPost,
             page::{Page, PagePagination},
             slug::Slug,
-        },
-        queries::omni_post_queries::{
+        }, queries::omni_post_queries::{
             find_all_omni_posts, find_omni_posts_grouped_by_year, OmniPostFilterFlags,
-        },
-        state::State,
+        }, services::PageRenderingService, state::State
     },
     infrastructure::utils::paginator::{paginate, PaginatorPage},
 };
 
 use crate::prelude::*;
-
-use super::render_page_with_template;
 
 use crate::domain::models::media::Media;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
@@ -39,10 +35,10 @@ pub async fn render_years_pages<'d>(state: &impl State) -> Result<()> {
 
 #[derive(Template)]
 #[template(path = "years/year.html")]
-pub struct YearTemplate<'t> {
-    page: &'t Page<'t>,
+pub struct YearTemplate {
+    page: Page,
     year: u16,
-    posts: &'t [OmniPost],
+    posts:  Vec<OmniPost>,
 }
 
 async fn render_year_pages<'d>(state: &impl State, year: u16, posts: &[OmniPost]) -> Result<()> {
@@ -55,12 +51,14 @@ async fn render_year_pages<'d>(state: &impl State, year: u16, posts: &[OmniPost]
         .with_pagination_from_paginator(&paginator_page, "Posts");
 
         let template = YearTemplate {
-            page: &page,
+            page,
             year,
-            posts: paginator_page.data,
+            posts: paginator_page.data.to_vec(),
         };
 
-        render_page_with_template(state, &page, template).await?;
+        state
+            .page_rendering_service()
+            .add_page(state, template.page.slug.clone(), template).await?;
     }
 
     Ok(())

@@ -16,6 +16,7 @@ use super::{
         cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny,
         file_service_disk::FileServiceDisk, image_service_impl::ImageServiceImpl,
         movie_service_tmdb::MovieServiceTmdb, network_service_reqwest::NetworkServiceReqwest,
+        page_rendering_service_impl::PageRenderingServiceImpl,
         query_limiting_service_disk::QueryLimitingServiceDisk,
         tv_shows_service_tmdb::TvShowsServiceTmdb,
     },
@@ -29,8 +30,7 @@ use crate::{
             ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo,
         },
         services::{
-            CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
-            QueryLimitingService, TvShowsService,
+            CacheService, CdnService, FileService, ImageService, MovieService, NetworkService, PageRenderingService, QueryLimitingService, TvShowsService
         },
         state::State,
     },
@@ -62,6 +62,7 @@ pub struct AppState {
     file_service: FileServiceDisk,
     query_limiting_service: QueryLimitingServiceDisk,
     tv_shows_service: TvShowsServiceTmdb,
+    page_rendering_service: PageRenderingServiceImpl,
 }
 
 impl AppState {
@@ -91,6 +92,7 @@ impl AppState {
             file_service: FileServiceDisk::new(),
             query_limiting_service: QueryLimitingServiceDisk::new().await?,
             tv_shows_service: TvShowsServiceTmdb::new().await?,
+            page_rendering_service: PageRenderingServiceImpl::new(),
         })
     }
 
@@ -192,5 +194,9 @@ impl State for AppState {
 
     fn tv_shows_service(&self) -> &impl TvShowsService {
         &self.tv_shows_service
+    }
+
+    fn page_rendering_service(&self) -> &impl PageRenderingService {
+        &self.page_rendering_service
     }
 }

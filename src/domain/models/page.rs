@@ -77,14 +77,14 @@ pub struct PageConfig {
 }
 
 #[derive(Debug, Clone)]
-pub struct Page<'a> {
+pub struct Page {
     pub slug: Slug,
     pub title: String,
     pub description: String,
-    pub author: &'a str,
+    pub author: String,
     pub image: PageImage,
-    pub language: &'a str,
-    pub build_date: &'a str,
+    pub language: String,
+    pub build_date: String,
     pub navigation_links: Vec<NavigationLink>,
     pub social_links: Vec<SocialNetworkLink>,
     pub heading: Option<String>,
@@ -94,7 +94,7 @@ pub struct Page<'a> {
     pub page_pagination: Option<PagePagination>,
 }
 
-impl<'a> Page<'a> {
+impl Page {
     pub fn new(slug: Slug, title: Option<&str>, description: Option<&str>) -> Self {
         let heading = title.map(|t| t.to_owned());
 
@@ -112,10 +112,10 @@ impl<'a> Page<'a> {
             slug,
             title,
             description,
-            author: &SITE_CONFIG.author,
+            author: SITE_CONFIG.author.to_string(),
             image: SITE_CONFIG.image.clone(),
-            language: &SITE_CONFIG.language,
-            build_date: BUILD_DATE,
+            language: SITE_CONFIG.language.to_string(),
+            build_date: BUILD_DATE.to_string(),
             navigation_links: SITE_CONFIG
                 .navigation_links
                 .iter()

@@ -6,6 +6,7 @@ use crate::{
             slug::Slug,
         },
         repositories::AlbumsRepo,
+        services::PageRenderingService,
         state::State,
     },
     infrastructure::utils::cover_photos_for_album::cover_photos_for_album,
@@ -20,8 +21,6 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 use crate::domain::models::page::Page;
 
-use super::render_page_with_template;
-
 pub async fn render_albums_and_photo_pages(state: &impl State) -> Result<()> {
     render_album_list_page(state).await?;
     render_all_albums_page(state).await?;
@@ -31,16 +30,6 @@ pub async fn render_albums_and_photo_pages(state: &impl State) -> Result<()> {
     for album in albums {
         render_album_page(state, album).await?;
     }
-
-    // for album in albums {
-    //     let page = Page::new(album.permalink.clone(), None, None)
-    //         .with_date(album.date)
-    //         .with_tags(album.tags.clone());
-
-    //     let template = AlbumListPage { page: &page };
-
-    //     render_page_with_template(state, &page, template).await?;
-    // }
 
     Ok(())
 }
@@ -52,8 +41,8 @@ struct AlbumListItem {
 
 #[derive(Template)]
 #[template(path = "albums/album_list.html")]
-struct AlbumListPage<'t> {
-    page: &'t Page<'t>,
+struct AlbumListPage {
+    page: Page,
     albums_by_year: Vec<(u16, Vec<AlbumListItem>)>,
 }
 
@@ -84,19 +73,22 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
         .collect::<Result<Vec<_>>>()?;
 
     let template = AlbumListPage {
-        page: &page,
+        page,
         albums_by_year,
     };
 
-    render_page_with_template(state, &page, template).await?;
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await?;
 
     Ok(())
 }
 
 #[derive(Template)]
 #[template(path = "albums/all_albums.html")]
-struct AllAlbumsPage<'t> {
-    page: &'t Page<'t>,
+struct AllAlbumsPage {
+    page: Page,
     albums: Vec<Album>,
 }
 
@@ -109,58 +101,45 @@ async fn render_all_albums_page(state: &impl State) -> Result<()> {
 
     let albums = state.albums_repo().find_all_by_date().await?;
 
-    let template = AllAlbumsPage {
-        page: &page,
-        albums,
-    };
+    let template = AllAlbumsPage { page, albums };
 
-    render_page_with_template(state, &page, template).await?;
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await?;
 
     Ok(())
 }
 
 #[derive(Template)]
 #[template(path = "albums/album.html")]
-struct AlbumPage<'t> {
-    page: &'t Page<'t>,
+struct AlbumPage {
+    page: Page,
     album: Album,
     description: String,
 }
 
 pub async fn render_album_page(state: &impl State, album: Album) -> Result<()> {
-    let description = album.description.clone().unwrap_or("".to_string());
-
-    let page =
-        Page::new(album.slug.clone(), Some(&album.title), Some(&description)).with_date(album.date);
-
-    let template = AlbumPage {
-        page: &page,
-        album: album.clone(),
-        description,
-    };
-
-    render_page_with_template(state, &page, template).await?;
-
     let total_photos = album.photos.len();
 
-    for i in 0..album.photos.len() {
-        let photo = &album.photos[i];
+    for i in 0..total_photos {
+        let photo = album.photos[i].clone();
 
         let previous_photo = if i > 0 {
-            Some(&album.photos[i - 1])
+            Some(album.photos[i - 1].clone())
         } else {
             None
         };
 
         let next_photo = if i < album.photos.len() - 1 {
-            Some(&album.photos[i + 1])
+            Some(album.photos[i + 1].clone())
         } else {
             None
         };
 
         render_album_photo_page(
             state,
-            &album,
+            album.clone(),
             photo,
             previous_photo,
             next_photo,
@@ -170,27 +149,43 @@ pub async fn render_album_page(state: &impl State, album: Album) -> Result<()> {
         .await?;
     }
 
+    let description = album.description.clone().unwrap_or("".to_string());
+
+    let page =
+        Page::new(album.slug.clone(), Some(&album.title), Some(&description)).with_date(album.date);
+
+    let template = AlbumPage {
+        page,
+        album: album.clone(),
+        description,
+    };
+
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await?;
+
     Ok(())
 }
 
 #[derive(Template)]
 #[template(path = "albums/album_photo.html")]
-struct AlbumPhotoPage<'t> {
-    page: &'t Page<'t>,
-    album: &'t Album,
-    photo: &'t AlbumPhoto,
-    previous_photo: Option<&'t AlbumPhoto>,
-    next_photo: Option<&'t AlbumPhoto>,
+struct AlbumPhotoPage {
+    page: Page,
+    album: Album,
+    photo: AlbumPhoto,
+    previous_photo: Option<AlbumPhoto>,
+    next_photo: Option<AlbumPhoto>,
     index: usize,
     total_photos: usize,
 }
 
 pub async fn render_album_photo_page(
     state: &impl State,
-    album: &Album,
-    photo: &AlbumPhoto,
-    previous_photo: Option<&AlbumPhoto>,
-    next_photo: Option<&AlbumPhoto>,
+    album: Album,
+    photo: AlbumPhoto,
+    previous_photo: Option<AlbumPhoto>,
+    next_photo: Option<AlbumPhoto>,
     index: usize,
     total_photos: usize,
 ) -> Result<()> {
@@ -198,7 +193,7 @@ pub async fn render_album_photo_page(
         .with_image(photo.small_image.clone().into());
 
     let template = AlbumPhotoPage {
-        page: &page,
+        page,
         album,
         photo,
         previous_photo,
@@ -207,7 +202,10 @@ pub async fn render_album_photo_page(
         total_photos,
     };
 
-    render_page_with_template(state, &page, template).await?;
+    state
+        .page_rendering_service()
+        .add_page(state, template.page.slug.clone(), template)
+        .await?;
 
     Ok(())
 }
