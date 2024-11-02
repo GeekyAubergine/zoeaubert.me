@@ -36,9 +36,8 @@ const DEFAULT_PAGINATION_SIZE: usize = 25;
 
 pub async fn render_site(state: &impl State) -> Result<()> {
     info!("Building site");
-    state.profiler().page_generation_started().await?;
 
-    let home_page = render_home_page(state);
+    let start = std::time::Instant::now();
 
     try_join!(
         render_home_page(state),
@@ -61,9 +60,15 @@ pub async fn render_site(state: &impl State) -> Result<()> {
         render_now_page(state)
     )?;
 
+    let duration = start.elapsed();
+
+    state
+        .profiler()
+        .set_page_generation_duration(duration)
+        .await?;
+
     state.page_rendering_service().render_pages(state).await?;
 
-    state.profiler().page_generation_finished().await?;
     state.profiler().print_results().await?;
 
     Ok(())

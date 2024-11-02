@@ -66,14 +66,6 @@ async fn prepare_state() -> Result<AppState> {
     Ok(state)
 }
 
-async fn process_queue(state: &impl State) -> Result<()> {
-    state.profiler().queue_processing_started().await?;
-
-    state.profiler().queue_processing_finished().await?;
-
-    Ok(())
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt().with_max_level(Level::INFO).init();
@@ -84,8 +76,6 @@ async fn main() -> Result<()> {
     let state = prepare_state().await?;
 
     render_site(&state).await?;
-
-    process_queue(&state).await?;
 
     Ok(())
 }

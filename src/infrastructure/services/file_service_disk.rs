@@ -6,7 +6,7 @@ use std::{
 use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use serde::{de::DeserializeOwned, Serialize};
-use tokio::spawn;
+use tokio::{spawn, task::JoinSet};
 use tracing::debug;
 
 use crate::{
@@ -197,9 +197,9 @@ impl FileService for FileServiceDisk {
         self.write_file(path, &data).await
     }
 
-    async fn write_text_file(&self, path: PathBuf, data: String) -> Result<()> {
+    async fn write_text_file(&self, path: PathBuf, data: String, join_set: &mut JoinSet<Result<()>>) -> Result<()> {
         let data: Vec<u8> = data.as_bytes().to_vec();
-        spawn(async {
+        join_set.spawn(async {
             let parent_dir = path.parent().unwrap();
 
             tokio::fs::create_dir_all(parent_dir)

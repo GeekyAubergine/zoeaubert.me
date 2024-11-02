@@ -1,6 +1,8 @@
 use std::path::Path;
 use std::sync::Arc;
 
+use rayon::prelude::*;
+
 use askama::{DynTemplate, Template};
 use futures::lock::Mutex;
 use tokio::sync::RwLock;
@@ -14,9 +16,10 @@ use crate::domain::{models::page::Page, state::State};
 use crate::error::TemplateError;
 use crate::prelude::*;
 
+#[derive(Clone)]
 struct RenderingJob {
     slug: Slug,
-    render_fn: Box<dyn Fn() -> Result<String> + Send + Sync>,
+    render_fn: Arc<dyn Fn() -> Result<String> + Send + Sync>,
 }
 
 struct FileWriteJob {
@@ -44,7 +47,7 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
     {
         let job = RenderingJob {
             slug,
-            render_fn: Box::new(move || template.render().map_err(TemplateError::render_error)),
+            render_fn: Arc::new(move || template.render().map_err(TemplateError::render_error)),
         };
 
         self.rendering_jobs.write().await.push(job);
@@ -53,30 +56,27 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
     }
 
     async fn render_pages(&self, state: &impl State) -> Result<()> {
-        let now = std::time::Instant::now();
-
         let jobs = self.rendering_jobs.read().await;
 
-        info!("Building {} pages", jobs.len());
-
-        let mut file_writes: Vec<FileWriteJob> = vec![];
+        println!("Building {} pages", jobs.len());
 
         let render_start = std::time::Instant::now();
 
-        for job in jobs.iter() {
-            debug!("Rendering page: {}", job.slug.relative_link());
+        let mut file_writes: Vec<FileWriteJob> = jobs
+            .iter()
+            .cloned()
+            .par_bridge()
+            .map(|job| {
+                let rendered = (job.render_fn)()?;
 
-            let rendered = (job.render_fn)()?;
-
-            file_writes.push(FileWriteJob {
-                slug: job.slug.clone(),
-                content: rendered,
-            });
-        }
+                Ok(FileWriteJob {
+                    slug: job.slug.clone(),
+                    content: rendered,
+                })
+            })
+            .collect::<Result<Vec<FileWriteJob>>>()?;
 
         let render_elapsed = render_start.elapsed();
-
-        info!("Pages rendered in {:?}", render_elapsed);
 
         let write_start = std::time::Instant::now();
 
@@ -93,17 +93,22 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
                 .file_service()
                 .write_text_file_blocking(&path, &job.content)
                 .await?;
-
-            state.profiler().page_generated().await?;
         }
 
         let write_elapsed = write_start.elapsed();
 
-        info!("Pages written in {:?}", write_elapsed);
-
-        let elapsed = now.elapsed();
-
-        info!("Pages built in {:?}", elapsed);
+        state
+            .profiler()
+            .set_page_write_duration(write_elapsed)
+            .await?;
+        state
+            .profiler()
+            .set_page_rendering_duration(render_elapsed)
+            .await?;
+        state
+            .profiler()
+            .set_number_of_pages_written(file_writes.len() as u32)
+            .await?;
 
         Ok(())
     }

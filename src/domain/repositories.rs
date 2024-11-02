@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+use std::time::Duration;
 use chrono::{DateTime, Utc};
 
 use crate::prelude::*;
@@ -20,17 +20,13 @@ pub trait Profiler {
 
     async fn entity_processing_finished(&self) -> Result<()>;
 
-    async fn page_generation_started(&self) -> Result<()>;
+    async fn set_page_generation_duration(&self, duration: Duration) -> Result<()>;
 
-    async fn page_generated(&self) -> Result<()>;
+    async fn set_page_rendering_duration(&self, duration: Duration) -> Result<()>;
 
-    async fn page_generation_finished(&self) -> Result<()>;
+    async fn set_page_write_duration(&self, duration: Duration) -> Result<()>;
 
-    async fn queue_processing_started(&self) -> Result<()>;
-
-    async fn queue_processed(&self) -> Result<()>;
-
-    async fn queue_processing_finished(&self) -> Result<()>;
+    async fn set_number_of_pages_written(&self, number_of_pages: u32) -> Result<()>;
 
     async fn print_results(&self) -> Result<()>;
 }

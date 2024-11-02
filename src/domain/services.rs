@@ -6,6 +6,7 @@ use std::{
 use askama::{DynTemplate, Template};
 use chrono::{DateTime, Utc};
 use serde::{de::DeserializeOwned, Serialize};
+use tokio::task::JoinSet;
 use url::Url;
 
 use super::{
@@ -151,7 +152,12 @@ pub trait FileService: Sized + Send + Sync {
 
     async fn write_text_file_blocking(&self, path: &Path, data: &str) -> Result<()>;
 
-    async fn write_text_file(&self, path: PathBuf, data: String) -> Result<()>;
+    async fn write_text_file(
+        &self,
+        path: PathBuf,
+        data: String,
+        join_set: &mut JoinSet<Result<()>>,
+    ) -> Result<()>;
 
     async fn read_yaml_file<D>(&self, path: &Path) -> Result<D>
     where
