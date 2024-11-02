@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::{collections::VecDeque, ops::Deref};
 
 use serde::{Deserialize, Serialize};
 
@@ -9,14 +9,11 @@ pub struct Slug(String);
 
 impl Slug {
     pub fn new(slug: &str) -> Self {
-        let slug = match slug.starts_with("/") {
-            true => slug,
-            false => &format!("/{}", slug),
-        };
-
-        let slug = match slug.ends_with("/") {
-            true => slug.to_string(),
-            false => format!("{}/", slug),
+        let slug = match (slug.starts_with("/"), slug.ends_with("/")) {
+            (true, true) => slug.to_owned(),
+            (true, false) => format!("{}/", slug),
+            (false, true) => format!("/{}", slug),
+            (false, false) => format!("/{}/", slug),
         };
 
         let slug = match slug.starts_with("http") {

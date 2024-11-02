@@ -134,6 +134,27 @@ impl Page {
         }
     }
 
+    pub fn from_page_and_pagination_page<'d, D>(
+        page: &Self,
+        paginator_page: &PaginatorPage<'d, D>,
+        entity_name: &str,
+    ) -> Self {
+        let mut page = page.clone();
+
+        let pagination =
+            PagePagination::from_slug_and_pagniator_page(&page.slug, paginator_page, entity_name);
+
+        page.page_pagination = Some(pagination);
+
+        if paginator_page.page_number > 1 {
+            page.slug = page
+                .slug
+                .append(&format!("page-{}", paginator_page.page_number));
+        }
+
+        page
+    }
+
     pub fn with_image(mut self, image: PageImage) -> Self {
         self.image = image;
         self
@@ -159,22 +180,24 @@ impl Page {
         self
     }
 
-    pub fn with_pagination_from_paginator<'d, D>(
-        mut self,
-        paginator_page: &PaginatorPage<'d, D>,
-        entity_name: &str,
-    ) -> Self {
-        let pagination =
-            PagePagination::from_slug_and_pagniator_page(&self.slug, paginator_page, entity_name);
+    // pub fn with_pagination_from_paginator<'d, D>(
+    //     mut self,
+    //     paginator_page: &PaginatorPage<'d, D>,
+    //     entity_name: &str,
+    // ) -> Self {
+    //     let pagination =
+    //         PagePagination::from_slug_and_pagniator_page(&self.slug, paginator_page, entity_name);
 
-        self.page_pagination = Some(pagination);
+    //     self.page_pagination = Some(pagination);
 
-        if paginator_page.page_number > 1 {
-            self.slug = self.slug.append(&format!("page-{}", paginator_page.page_number));
-        }
+    //     if paginator_page.page_number > 1 {
+    //         self.slug = self
+    //             .slug
+    //             .append(&format!("page-{}", paginator_page.page_number));
+    //     }
 
-        self
-    }
+    //     self
+    // }
 
     pub fn hide_heading(&mut self) {
         self.heading = None;

@@ -5,7 +5,7 @@ use askama::Template;
 use crate::{
     domain::{
         models::{omni_post::OmniPost, page::Page, slug::Slug},
-        queries::{omni_post_queries::find_all_omni_posts_by_tag, tags_queries::find_tag_counts},
+        queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags},
         services::PageRenderingService,
         state::State,
     },
@@ -22,23 +22,49 @@ use crate::domain::models::tag::Tag;
 
 const DEFAULT_PAGINATION_SIZE: usize = 25;
 
+fn group_posts_by_tag(posts: Vec<OmniPost>) -> HashMap<Tag, Vec<OmniPost>> {
+    let mut grouped = HashMap::new();
+
+    for post in posts {
+        for tag in post.tags() {
+            grouped
+                .entry(tag)
+                .or_insert_with(Vec::new)
+                .push(post.clone());
+        }
+    }
+
+    grouped
+}
+
 pub struct TagCount {
     pub tag: Tag,
     pub count: usize,
 }
 
 pub async fn render_tags_pages(state: &impl State) -> Result<()> {
-    let tag_counts = find_tag_counts(state).await?;
+    let posts = find_all_omni_posts(state, OmniPostFilterFlags::filter_tags_page()).await?;
+
+    let grouped = group_posts_by_tag(posts);
+
+    let tag_counts = grouped
+        .iter()
+        .map(|(tag, posts)| (tag.clone(), posts.len()))
+        .collect::<HashMap<Tag, usize>>();
 
     render_tags_list_page(state, &tag_counts).await?;
 
-    for tag in tag_counts.keys() {
-        let posts = find_all_omni_posts_by_tag(state, tag).await?;
-
+    for (tag, posts) in grouped {
         let paginated = paginate(&posts, DEFAULT_PAGINATION_SIZE);
 
+        let base_page = Page::new(
+            Slug::new(&format!("tags/{}", tag.slug())),
+            Some(&format!("{} Posts", tag.title())),
+            Some(&format!("#{} posts", tag.title())),
+        );
+
         for page in paginated {
-            render_tag_page(state, tag, &page).await?;
+            render_tag_page(state, &base_page, &tag, &page).await?;
         }
     }
 
@@ -81,15 +107,11 @@ struct TagPostsTemplate {
 
 async fn render_tag_page<'d>(
     state: &impl State,
+    base_page: &Page,
     tag: &Tag,
     paginator_page: &PaginatorPage<'d, OmniPost>,
 ) -> Result<()> {
-    let page = Page::new(
-        Slug::new(&format!("tags/{}", tag.slug())),
-        Some(&format!("{} Posts", tag.title())),
-        Some(&format!("#{} posts", tag.title())),
-    )
-    .with_pagination_from_paginator(paginator_page, "Posts");
+    let page = Page::from_page_and_pagination_page(base_page, paginator_page, "Posts");
 
     let template = TagPostsTemplate {
         page,

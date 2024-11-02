@@ -36,9 +36,10 @@ pub async fn render_timeline_page<'d>(state: &impl State) -> Result<()> {
 
     let paginated = paginate(&omni_posts, DEFAULT_PAGINATION_SIZE);
 
+    let page = Page::new(Slug::new("timeline"), Some("Timeline"), Some("My timeline"));
+
     for paginator_page in paginated {
-        let page = Page::new(Slug::new("timeline"), Some("Timeline"), Some("My timeline"))
-            .with_pagination_from_paginator(&paginator_page, "Posts");
+        let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
 
         let template = TimelineTemplate {
             page,
