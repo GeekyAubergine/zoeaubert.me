@@ -1,13 +1,13 @@
-name: website
+name: website-build-and-deploy
 
 on:
-    push:
-        branches: ['main']
-    pull_request:
     workflow_run:
         workflows: ["website-check-and-test"]
         types:
             - completed
+    push:
+        branches:: ['main']
+    pull_request
 
 env:
     CARGO_TERM_COLOR: always

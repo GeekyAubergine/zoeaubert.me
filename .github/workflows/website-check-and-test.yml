@@ -1,4 +1,4 @@
-name: website
+name: website-check-and-test
 
 on:
     push:
