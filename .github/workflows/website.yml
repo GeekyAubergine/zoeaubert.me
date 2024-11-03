@@ -19,23 +19,23 @@ jobs:
             - name: Make envfile
               uses: SpicyPizza/create-envfile@v2.0
               with:
-                  envkey_CACHE_DIR: ${{ secrets.CACHE_DIR }}
-                  envkey_CONTENT_DIR: ${{ vars.CONTENT_DIR }}
-                  envkey_ARCHIVE_DIR: ${{ secrets.ARCHIVE_DIR }}
-                  envkey_OUTPUT_DIR: ${{ vars.OUTPUT_DIR }}
-                  envkey_MASTODON_ACCOUNT_ID: ${{ secrets.MASTODON_ACCOUNT_ID }}
-                  envkey_CDN_URL: ${{ vars.CDN_URL }}
-                  envkey_BUNNY_CDN_URL: ${{ secrets.BUNNY_CDN_URL}}
-                  envkey_BUNNY_CDN_ACCESS_KEY: ${{ secrets.BUNNY_CDN_ACCESS_KEY }}
-                  envkey_BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY }}
-                  envkey_BRICKSET_USERNAME: ${{ secrets.BRICKSET_USERNAME }}
-                  envkey_BRICKSET_PASSWORD: ${{ secrets.BRICKSET_PASSWORD }}
-                  envkey_STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
-                  envkey_STEAM_ID: ${{ secrets.STEAM_ID }}
-                  envkey_TMDB_KEY: ${{ secrets.TMDB_KEY }}
+                  envkey_CACHE_DIR: ""
+                  envkey_CONTENT_DIR: ""
+                  envkey_ARCHIVE_DIR: ""
+                  envkey_OUTPUT_DIR: ""
+                  envkey_MASTODON_ACCOUNT_ID: ""
+                  envkey_CDN_URL: ""
+                  envkey_BUNNY_CDN_URL: ""
+                  envkey_BUNNY_CDN_ACCESS_KEY: ""
+                  envkey_BRICKSET_API_KEY: ""
+                  envkey_BRICKSET_USERNAME: ""
+                  envkey_BRICKSET_PASSWORD: ""
+                  envkey_STEAM_API_KEY: ""
+                  envkey_STEAM_ID: ""
+                  envkey_TMDB_KEY: ""
 
             - name: Install rust
-              uses: actions-rs/toolchain@v1
+              uses: dtolnay/rust-toolchain@stable
               with:
                   toolchain: stable
                   override: true
@@ -60,7 +60,7 @@ jobs:
         needs:
           - check-and-test
 
-        if: ${{ always() && !cancelled() && needs.build.result == 'success' }}
+        if: ${{ always() && needs.build.result == 'success' }}
 
         steps:
             - uses: actions/checkout@v4
