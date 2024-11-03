@@ -60,7 +60,7 @@ jobs:
         needs:
           - check-and-test
 
-        if: ${{ always() && needs.build.result == 'success' }}
+        if: ${{ needs.build.result == 'success' }}
 
         steps:
             - uses: actions/checkout@v4
