@@ -10,7 +10,7 @@ env:
     CARGO_TERM_COLOR: always
 
 jobs:
-    check:
+    check-and-test:
         runs-on: ubuntu-latest
 
         steps:
@@ -19,7 +19,7 @@ jobs:
             - name: Make envfile
               uses: SpicyPizza/create-envfile@v2.0
               with:
-                  envkey_CACHE_DIR: ${{ secrets.CACHE_DIR }}
+                  envkey_CACHE_DIR: ""
                   envkey_CONTENT_DIR: ${{ vars.CONTENT_DIR }}
                   envkey_ARCHIVE_DIR: ${{ secrets.ARCHIVE_DIR }}
                   envkey_OUTPUT_DIR: ${{ vars.OUTPUT_DIR }}
