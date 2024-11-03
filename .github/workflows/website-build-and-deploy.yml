@@ -2,12 +2,13 @@ name: website-build-and-deploy
 
 on:
     workflow_run:
-        workflows: ['website-check-and-test']
+        workflows:
+            - website-check-and-test
         types:
             - completed
-    push:
-        branches: ['main']
-    pull_request:
+        branches:
+            - main
+            - F/crab-time
 
 env:
     CARGO_TERM_COLOR: always
