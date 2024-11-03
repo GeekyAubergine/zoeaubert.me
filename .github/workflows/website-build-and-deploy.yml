@@ -6,9 +6,9 @@ on:
             - website-check-and-test
         types:
             - completed
-        branches:
-            - main
-            - F/crab-time
+        # branches:
+        #     - main
+        #     - F/crab-time
 
 env:
     CARGO_TERM_COLOR: always
@@ -55,14 +55,3 @@ jobs:
 
             - name: Build
               run: cargo build --release
-
-            - name: Deploy
-              run: |
-                  mkdir -p ${{ vars.OUTPUT_DIR }}
-                  cp target/release/website ${{ vars.OUTPUT_DIR }}
-                  cp -r static ${{ vars.OUTPUT_DIR }}
-                  cp -r templates ${{ vars.OUTPUT_DIR }}
-                  cp -r ${{ vars.CONTENT_DIR }} ${{ vars.OUTPUT_DIR }}
-                  cp -r ${{ secrets.ARCHIVE_DIR }} ${{ vars.OUTPUT_DIR }}
-                  cp -r ${{ vars.CDN_URL }} ${{ vars.OUTPUT_DIR }}
-                  cp -r ${{ secrets.BUNNY_CDN_URL }}
