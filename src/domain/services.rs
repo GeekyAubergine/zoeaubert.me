@@ -179,5 +179,9 @@ pub trait PageRenderingService {
     where
         T: Template + Send + Sync + 'static;
 
+    async fn add_file<T>(&self, state: &impl State, path: PathBuf, template: T) -> Result<()>
+    where
+        T: Template + Send + Sync + 'static;
+
     async fn render_pages(&self, state: &impl State) -> Result<()>;
 }

@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use rayon::prelude::*;
@@ -17,13 +17,19 @@ use crate::error::TemplateError;
 use crate::prelude::*;
 
 #[derive(Clone)]
+pub enum RenderingJobSaveLocation {
+    Slug(Slug),
+    Path(PathBuf),
+}
+
+#[derive(Clone)]
 struct RenderingJob {
-    slug: Slug,
+    save_location: RenderingJobSaveLocation,
     render_fn: Arc<dyn Fn() -> Result<String> + Send + Sync>,
 }
 
 struct FileWriteJob {
-    slug: Slug,
+    save_location: RenderingJobSaveLocation,
     content: String,
 }
 
@@ -46,7 +52,21 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
         T: Template + Send + Sync + 'static,
     {
         let job = RenderingJob {
-            slug,
+            save_location: RenderingJobSaveLocation::Slug(slug),
+            render_fn: Arc::new(move || template.render().map_err(TemplateError::render_error)),
+        };
+
+        self.rendering_jobs.write().await.push(job);
+
+        Ok(())
+    }
+
+    async fn add_file<T>(&self, state: &impl State, path: PathBuf, template: T) -> Result<()>
+    where
+        T: Template + Send + Sync + 'static,
+    {
+        let job = RenderingJob {
+            save_location: RenderingJobSaveLocation::Path(path),
             render_fn: Arc::new(move || template.render().map_err(TemplateError::render_error)),
         };
 
@@ -70,7 +90,7 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
                 let rendered = (job.render_fn)()?;
 
                 Ok(FileWriteJob {
-                    slug: job.slug.clone(),
+                    save_location: job.save_location,
                     content: rendered,
                 })
             })
@@ -81,9 +101,14 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
         let write_start = std::time::Instant::now();
 
         for job in file_writes.iter() {
-            debug!("Writing page: {}", job.slug.relative_link());
+            let path = match &job.save_location {
+                RenderingJobSaveLocation::Slug(slug) => {
+                    format!("{}index.html", slug.relative_link())
+                }
+                RenderingJobSaveLocation::Path(path) => path.to_string_lossy().to_string(),
+            };
 
-            let path = format!("{}index.html", job.slug.relative_link());
+            debug!("Writing page: {}", path);
 
             let path = state
                 .file_service()

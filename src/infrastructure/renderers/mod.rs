@@ -28,6 +28,7 @@ pub mod years_pages;
 pub mod save_pages;
 pub mod faq_page_renderer;
 pub mod now_page_renderer;
+pub mod feed_renderers;
 
 // pub async fn render_page_with_template<'p, T>(
 //     state: &impl State,

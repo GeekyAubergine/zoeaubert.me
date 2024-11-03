@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:base="https://zoeaubert.me" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Zoe Aubert</title>
+    <link>https://zoeaubert.me</link>
+    <atom:link href="{{ feed_permalnk }}" rel="self" type="application/rss+xml"/>
+    <description>{{ site_description }}</description>
+    <language>en-gb</language>
+    {%- for post in blog_posts %}
+      <item>
+        <title>{{ post.title }}</title>
+        <link>{{ post.slug.permalink() }}</link>
+        <description>{{ post.content.to_html().format_relative_to_absolute_urls()}}</description>
+        <pubDate>{{ post.date.to_rfc2822() }}</pubDate>
+        <dc:creator>Zoe Aubert | GeekyAubergine</dc:creator>
+        <guid>{{ post.slug.permalink() }}</guid>
+      </item>
+    {%- endfor %}
+  </channel>
+</rss>

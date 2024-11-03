@@ -21,11 +21,14 @@ impl Slug {
             false => slug,
         };
 
-        Self(slug)
+        Self(slug.replace("//", "/"))
     }
 
     pub fn permalink(&self) -> String {
-        format!("{}/{}", SITE_CONFIG.url, self.0)
+        if self.0.starts_with("http") {
+            return self.0.clone();
+        }
+        format!("{}{}", SITE_CONFIG.url, self.0)
     }
 
     pub fn relative_link(&self) -> String {
@@ -37,7 +40,7 @@ impl Slug {
     }
 
     pub fn append(&self, suffix: &str) -> Self {
-        let slug = format!("{}{}", self.0, suffix);
+        let slug = format!("{}{}", self.0, suffix).replace("//", "/");
         Self::new(&slug)
     }
 }

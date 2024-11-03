@@ -55,10 +55,10 @@
             "url": "/faq/"
         },
         {
-            "name": "RSS",
+            "name": "Feeds",
             "target": "",
             "rel": "",
-            "url": "/subscribe/"
+            "url": "/feeds/"
         }
     ],
     "social_links": [
