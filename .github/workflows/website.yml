@@ -71,11 +71,11 @@ jobs:
               uses: SpicyPizza/create-envfile@v2.0
               with:
                   envkey_CACHE_DIR: ${{ secrets.CACHE_DIR }}
-                  envkey_CONTENT_DIR: ${{ vars.CONTENT_DIR }}
+                  envkey_CONTENT_DIR: ${{ secrets.CONTENT_DIR }}
                   envkey_ARCHIVE_DIR: ${{ secrets.ARCHIVE_DIR }}
-                  envkey_OUTPUT_DIR: ${{ vars.OUTPUT_DIR }}
+                  envkey_OUTPUT_DIR: ${{ secrets.OUTPUT_DIR }}
                   envkey_MASTODON_ACCOUNT_ID: ${{ secrets.MASTODON_ACCOUNT_ID }}
-                  envkey_CDN_URL: ${{ vars.CDN_URL }}
+                  envkey_CDN_URL: ${{ secrets.CDN_URL }}
                   envkey_BUNNY_CDN_URL: ${{ secrets.BUNNY_CDN_URL}}
                   envkey_BUNNY_CDN_ACCESS_KEY: ${{ secrets.BUNNY_CDN_ACCESS_KEY }}
                   envkey_BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY }}
@@ -106,5 +106,5 @@ jobs:
             - name: Deploy
               run: |
                   scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null target/release/zoeaubert-website ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}/builder
-                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r content ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}/content
+                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ${{ secrets.CONTENT_DIR }}  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}/${{ secrets.CONTENT_DIR }}
                   ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }} "cd ${{ secrets.BUILD_SERVER_DIR }} && ./build.sh"
