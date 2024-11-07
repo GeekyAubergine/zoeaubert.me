@@ -61,6 +61,11 @@ jobs:
           - check-and-test
 
         steps:
+            - name: Install SSH key
+              uses: webfactory/ssh-agent@v0.9.0
+              with:
+                  ssh-private-key: ${{ secrets.BUILD_SERVER_PRIVATE_KEY }}
+
             - uses: actions/checkout@v4
 
             - name: Make envfile
@@ -80,10 +85,6 @@ jobs:
                   envkey_STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
                   envkey_STEAM_ID: ${{ secrets.STEAM_ID }}
                   envkey_TMDB_KEY: ${{ secrets.TMDB_KEY }}
-
-            - uses: webfactory/ssh-agent@v0.8.0
-              with:
-                  ssh-private-key: ${{ secrets.BUILD_SERVER_PRIVATE_KEY }}
 
             - name: Install rust
               uses: actions-rs/toolchain@v1
