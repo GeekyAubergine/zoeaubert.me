@@ -3,6 +3,7 @@ use std::fs;
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 use url::Url;
+use dotenvy_macro::dotenv;
 
 use super::image::Image;
 
@@ -65,7 +66,7 @@ pub struct PageConfig {
 }
 
 pub static SITE_CONFIG: Lazy<PageConfig> = Lazy::new(|| {
-    let contents = fs::read_to_string("./site_config.json").unwrap();
+    let contents = fs::read_to_string(dotenv!("ARCHIVE_DIR")).unwrap();
 
     serde_json::from_str(&contents).unwrap()
 });
