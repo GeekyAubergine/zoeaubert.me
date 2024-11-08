@@ -47,7 +47,7 @@ struct AlbumListPage {
 }
 
 async fn render_album_list_page(state: &impl State) -> Result<()> {
-    let page = Page::new(
+    let mut page = Page::new(
         Slug::new("/albums"),
         Some("Albums"),
         Some("My photo albums"),
@@ -72,6 +72,14 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
         })
         .collect::<Result<Vec<_>>>()?;
 
+    if let Some((_, albums)) = albums_by_year.first() {
+        if let Some(album) = albums.first() {
+            if let Some(cover_image) = album.album.cover_images().first() {
+                page = page.with_image(cover_image.clone().into());
+            }
+        }
+    }
+
     let template = AlbumListPage {
         page,
         albums_by_year,
@@ -93,13 +101,19 @@ struct AllAlbumsPage {
 }
 
 async fn render_all_albums_page(state: &impl State) -> Result<()> {
-    let page = Page::new(
+    let mut page = Page::new(
         Slug::new("/albums/all"),
         Some("All Albums"),
         Some("All photo albums"),
     );
 
     let albums = state.albums_repo().find_all_by_date().await?;
+
+    if let Some(album) = albums.first() {
+        if let Some(cover_image) = album.cover_images().first() {
+            page = page.with_image(cover_image.clone().into());
+        }
+    }
 
     let template = AllAlbumsPage { page, albums };
 
@@ -151,8 +165,14 @@ pub async fn render_album_page(state: &impl State, album: Album) -> Result<()> {
 
     let description = album.description.clone().unwrap_or("".to_string());
 
-    let page =
+    let mut page =
         Page::new(album.slug.clone(), Some(&album.title), Some(&description)).with_date(album.date);
+
+    let cover_images = album.cover_images();
+
+    if let Some(cover_image) = cover_images.first() {
+        page = page.with_image(cover_image.clone().into());
+    }
 
     let template = AlbumPage {
         page,
@@ -189,8 +209,12 @@ pub async fn render_album_photo_page(
     index: usize,
     total_photos: usize,
 ) -> Result<()> {
-    let page = Page::new(photo.slug.clone(), Some(&photo.description), None)
-        .with_image(photo.small_image.clone().into());
+    let page = Page::new(
+        photo.slug.clone(),
+        Some(&photo.description),
+        Some(&photo.small_image.alt),
+    )
+    .with_image(photo.small_image.clone().into());
 
     let template = AlbumPhotoPage {
         page,
