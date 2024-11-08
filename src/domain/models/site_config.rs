@@ -66,7 +66,7 @@ pub struct PageConfig {
 }
 
 pub static SITE_CONFIG: Lazy<PageConfig> = Lazy::new(|| {
-    let contents = fs::read_to_string(dotenv!("ARCHIVE_DIR")).unwrap();
+    let contents = fs::read_to_string(dotenv!("SITE_CONFIG")).unwrap();
 
     serde_json::from_str(&contents).unwrap()
 });
