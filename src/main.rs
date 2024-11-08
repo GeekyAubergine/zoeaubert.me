@@ -33,13 +33,13 @@ async fn prepare_folders() -> Result<()> {
 
     Command::new("mkdir")
         .arg("-p")
-        .arg("./output/assets")
+        .arg("./output/assets/.")
         .output()
         .expect("Failed to create assets directory");
 
     Command::new("cp")
         .arg("-r")
-        .arg("./assets/")
+        .arg("./assets/.")
         .arg("./output/assets/")
         .output()
         .expect("Failed to copy assets");
