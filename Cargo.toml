@@ -21,6 +21,7 @@ comrak = { version = "0.24.1", features = [
     "arbitrary",
 ] }
 csv = "1.3.0"
+dircpy = "0.3.19"
 dotenvy = "0.15.7"
 dotenvy_macro = "0.15.7"
 futures = "0.3.31"

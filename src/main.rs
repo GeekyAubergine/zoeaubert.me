@@ -11,6 +11,7 @@ use std::{path::Path, process::Command, time::Duration};
 
 use application::commands::update_all_data_command::update_all_data_command;
 use build_data::BUILD_DATE;
+use dircpy::copy_dir;
 use domain::{repositories::Profiler, state::State};
 use dotenvy_macro::dotenv;
 use error::FileSystemError;
@@ -37,19 +38,22 @@ async fn prepare_folders() -> Result<()> {
         .output()
         .expect("Failed to create assets directory");
 
-    Command::new("cp")
-        .arg("-r")
-        .arg("./assets/.")
-        .arg("./output/assets/")
-        .output()
-        .expect("Failed to copy assets");
+    copy_dir("assets", "output/assets");
+    copy_dir("_assets", "output/assets");
 
-    Command::new("cp")
-        .arg("-r")
-        .arg("./_assets/.")
-        .arg("./output/assets/")
-        .output()
-        .expect("Failed to copy assets");
+    // Command::new("cp")
+    //     .arg("-r")
+    //     .arg("./assets/.")
+    //     .arg("./output/assets/")
+    //     .output()
+    //     .expect("Failed to copy assets");
+
+    // Command::new("cp")
+    //     .arg("-r")
+    //     .arg("./_assets/.")
+    //     .arg("./output/assets/")
+    //     .output()
+    //     .expect("Failed to copy assets");
 
     tokio::fs::create_dir_all(Path::new("./output"))
         .await
