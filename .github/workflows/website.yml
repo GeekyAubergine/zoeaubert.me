@@ -32,6 +32,7 @@ jobs:
                   envkey_STEAM_API_KEY: ''
                   envkey_STEAM_ID: ''
                   envkey_TMDB_KEY: ''
+                  envkey_SITE_CONFIG: ''
 
             - name: Install rust
               uses: dtolnay/rust-toolchain@stable
@@ -84,6 +85,7 @@ jobs:
                   envkey_STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
                   envkey_STEAM_ID: ${{ secrets.STEAM_ID }}
                   envkey_TMDB_KEY: ${{ secrets.TMDB_KEY }}
+                  envkey_SITE_CONFIG: ${{ secrets.SITE_CONFIG }}
 
             - name: Install rust
               uses: actions-rs/toolchain@v1
