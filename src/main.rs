@@ -46,7 +46,7 @@ async fn prepare_folders() -> Result<()> {
 
     Command::new("cp")
         .arg("-r")
-        .arg("./_assets/")
+        .arg("./_assets/.")
         .arg("./output/assets/")
         .output()
         .expect("Failed to copy assets");
