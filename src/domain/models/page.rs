@@ -2,7 +2,12 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use url::Url;
 
-use crate::{build_data::BUILD_DATE, infrastructure::utils::paginator::PaginatorPage};
+use crate::{
+    build_data::BUILD_DATE,
+    infrastructure::{
+        renderers::formatters_renderer::format_date::FormatDate, utils::paginator::PaginatorPage,
+    },
+};
 
 use super::{
     site_config::{NavigationLink, PageImage, SocialNetworkLink, SITE_CONFIG},
@@ -162,6 +167,11 @@ impl Page {
 
     pub fn with_date(mut self, date: DateTime<Utc>) -> Self {
         self.date = Some(date);
+
+        if !self.title.contains(" | ") {
+            self.title = format!("{} | {}", date.short_iso(), self.title);
+        }
+
         self
     }
 

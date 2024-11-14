@@ -18,9 +18,9 @@ use crate::{
 use crate::prelude::*;
 
 use crate::domain::models::media::Media;
-use crate::infrastructure::renderers::formatters::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
 
 const DEFAULT_PAGINATION_SIZE: usize = 48;
 
@@ -48,7 +48,11 @@ pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
     let page = Page::new(Slug::new("photos"), Some("Photos"), Some("All my photos"));
 
     for paginator_page in paginated {
-        let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
+        let mut page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
+
+        if let Some(first_image) = paginator_page.data.first() {
+            page = page.with_image(first_image.clone().into());
+        }
 
         let template = PhotosPage {
             page,

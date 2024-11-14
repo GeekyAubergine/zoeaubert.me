@@ -10,9 +10,9 @@ heroWidth: 1024
 heroHeight: 768
 ---
 
-Last year, I set myself the [goal](https://zoeaubert.me/blog/2022-a-year-in-review/) of playing at least one 1k-point game of 40k. This seemed like a reasonable goal at the time, but I didn't really start it till pretty late in the year.
+Last year, I set myself the [goal](/blog/2022-a-year-in-review/) of playing at least one 1k-point game of 40k. This seemed like a reasonable goal at the time, but I didn't really start it till pretty late in the year.
 
-It became a sprint towards the finish line, with me finishing the last of the painting the day before my first game. But the pressure was good, as it forced me to accept "good enough," rather than spending hours chasing perfection. 
+It became a sprint towards the finish line, with me finishing the last of the painting the day before my first game. But the pressure was good, as it forced me to accept "good enough," rather than spending hours chasing perfection.
 
 ![12 Space Marines stood in two ranks. From left to right, there’s a Terminator Librarian in dark blue armour with gold trim. His right hand is behind him, holding an axe and his right hand is upheld and glowing blue. There’s then a squad of 5 Infernus Marines, who are all in purple and gold armour, with the Sergeant having a red helmet. They are all holding a flame thrower. The Sergeant has his strapped behind him and is throwing a grenade. Next is a Captain in Terminator armour. He is in purple and gold armour and is standing on the corpse of a Tyranid and some rocks. He has a gun in his left hand and a sword in his right. To the right of him is a squad of 5 Terminators in purple and gold armour. These have white helmets, except the sergeant, who has a red helmet with a white stripe. The non-Segargent models have guns and powerfits, while the Sergeant has a gun and a sword.](https://cdn.geekyaubergine.com/2023/12/07/026416d862a8eb46820f107c944a7ba7.jpeg)
 
@@ -28,9 +28,9 @@ I like dudes in armour and big guns. When I was collecting [Age of Sigmar](https
 
 I like purple and wanted to use it as a colour in one of my armies. But for a long time, I wrestled with the fact that the [Emperor's Children](https://warhammer40k.fandom.com/wiki/Emperor%27s_Children) pre-heresy wore purple and I didn't want to be caught up in that. So I dabbled with the [Imperial Fists](https://warhammer40k.fandom.com/wiki/Imperial_Fists) for a while before giving up because painting yellow is painful.
 
-After lamenting my choices with my friend, he convinced me to try doubling down on the "totally not Emperor's Children" angle. So I did. This then spawned "The Confessors". A [Chapter](https://warhammer40k.fandom.com/wiki/Chapter) who hunts the enemies of The Emperor and makes them "confess" their crimes and then pay for their sins. 
+After lamenting my choices with my friend, he convinced me to try doubling down on the "totally not Emperor's Children" angle. So I did. This then spawned "The Confessors". A [Chapter](https://warhammer40k.fandom.com/wiki/Chapter) who hunts the enemies of The Emperor and makes them "confess" their crimes and then pay for their sins.
 
-The Confessors are led by Chapter Master Edward (another of my friend's brilliant suggestions), with each Captain taking a `Ed` name. For example, the name of my Terminator Captain featured here is `Edwin`. Their lore is still mostly under construction, but it's filled with many tongue-in-cheek references, such as they practice excellent (not perfect) warfare and focus on looking their best (again, not perfect). 
+The Confessors are led by Chapter Master Edward (another of my friend's brilliant suggestions), with each Captain taking a `Ed` name. For example, the name of my Terminator Captain featured here is `Edwin`. Their lore is still mostly under construction, but it's filled with many tongue-in-cheek references, such as they practice excellent (not perfect) warfare and focus on looking their best (again, not perfect).
 
 ## Game 1
 
@@ -40,7 +40,7 @@ My first game was an "introduction to 40k" session at my local Warhammer shop. T
 
 As this was my first game and I knew Necron weapons could be pretty scary, I didn't want to get wiped, so I played it pretty cagey. This was my first mistake of many.
 
-The Necron player got the first turn, but all they could really do was move up towards me (to the positions in the photo above). If I had asked more about their units before deploying, I would've found out that they had shorter-range weapon options and couldn't do much to me anyway. 
+The Necron player got the first turn, but all they could really do was move up towards me (to the positions in the photo above). If I had asked more about their units before deploying, I would've found out that they had shorter-range weapon options and couldn't do much to me anyway.
 
 It was then my turn. This revealed my second and third blunders. My [Infernus Marines](https://warhammer40k.fandom.com/wiki/Infernus_Squad) (left) did 0 damage to the [Skorpekh Destroyers](https://warhammer40k.fandom.com/wiki/Skorpekh_Destroyer) (left) as I grossly misunderstood how tough they were. Then my [Terminators](https://warhammer40k.fandom.com/wiki/Terminators) (right) did some damage to the [Necron Warriors](https://warhammer40k.fandom.com/wiki/Necron_Warrior) (upper middle), but due to hiding in a building, I prevented some of my models having a line of sight and being able to shoot.
 
@@ -50,7 +50,7 @@ I knew at this point I'd made some serious errors. I assumed my Infernus Marines
 
 The Necron player advanced their Warriors to the centre and then charged the Skorpekhs into my Infernus Marines. To say the Skorpekhs wiped my Marines would be an understatement. They were overkilled by a hilarious margin. After that, I was ready for my Terminators to also take a beating, but it turns out their armour is _much_ better than I thought, and they just shrugged off the 20-odd shots, taking only a single wound.
 
-It was then my turn to exact my revenge. On the advice of my opponent to trust in my Terminator's melee strength, I shot at the Warriors, taking a few out and then charged the Skorpekhs. To say I was impressed would be an understatement. The high strength and armour penetration of the [Power Fists](https://warhammer40k.fandom.com/wiki/Power_Fist) is awesome. They took out 2 of the Skorpekh and left another low for my Captain to finish off with his sword. 
+It was then my turn to exact my revenge. On the advice of my opponent to trust in my Terminator's melee strength, I shot at the Warriors, taking a few out and then charged the Skorpekhs. To say I was impressed would be an understatement. The high strength and armour penetration of the [Power Fists](https://warhammer40k.fandom.com/wiki/Power_Fist) is awesome. They took out 2 of the Skorpekh and left another low for my Captain to finish off with his sword.
 
 ![Six purple Space Marines in Terminator Armour facing three Necron Skorpekh Destroyers wielding light green blades](https://cdn.geekyaubergine.com/2023/12/first-game-of-40k/IMG_5379.JPG)
 
@@ -58,15 +58,15 @@ This very quickly turned from what I thought was an easy loss into a clear win. 
 
 ![Five purple Space Marines in Terminator armour fighting a Necron Overlord with four Necron Warriors in the background](https://cdn.geekyaubergine.com/2023/12/first-game-of-40k/IMG_5381.JPG)
 
-While I know the opponent made some intentional "blunders" to ensure I didn't automatically lose the game, I was thoroughly impressed by how powerful my Terminators were and had a great time. 
+While I know the opponent made some intentional "blunders" to ensure I didn't automatically lose the game, I was thoroughly impressed by how powerful my Terminators were and had a great time.
 
 It was overwhelming though. While I thought I knew the game well enough to play, actually doing it and being required to remember everything the instant I needed it proved much more difficult than I expected. However, some of it was already becoming easier by the end of this first game.
 
 ## Game 2
 
-My next game was against my friend who got me into 40k and made many of the lore suggestions for the Confessors. He was playing his [Genestealer Cult](https://warhammer40k.fandom.com/wiki/Genestealer_Cult). 
+My next game was against my friend who got me into 40k and made many of the lore suggestions for the Confessors. He was playing his [Genestealer Cult](https://warhammer40k.fandom.com/wiki/Genestealer_Cult).
 
-I thought I knew this army and how it operated from our numerous hours discussing our units and all the cool things they can do. As we both only really have the [Combat Patrol](https://warhammer40000.com/combat-patrol/)'s to play with, so we did that. 
+I thought I knew this army and how it operated from our numerous hours discussing our units and all the cool things they can do. As we both only really have the [Combat Patrol](https://warhammer40000.com/combat-patrol/)'s to play with, so we did that.
 
 You'll also see that we each have our [Red Gobbo](https://www.warhammer-community.com/2023/11/03/get-ready-to-spread-festive-cheer-with-da-red-gobbos-surprise/)'s in our armies. They don't belong in our armies, but there's an option to play a game with them to get some free festive dice, and as we both had one, there were no real advantages to either player.
 
@@ -90,13 +90,13 @@ Thanks to being able to respond in my opponent's fight phase and then again in m
 
 I did move my Infernus Marines around the corner to the left, trying to keep away from the Rockgrinder as it was obviously going to make the charge against them, but it didn't work.
 
-As predicted, he moved his Rockgrinder up to my Infernus Marines on my opponent's turn. He also deployed his Neophytes on his home objective and dropped his [Acolyte Hybrids](https://warhammer40k.fandom.com/wiki/Acolyte_Hybrid) as close as possible to my Terminators. 
+As predicted, he moved his Rockgrinder up to my Infernus Marines on my opponent's turn. He also deployed his Neophytes on his home objective and dropped his [Acolyte Hybrids](https://warhammer40k.fandom.com/wiki/Acolyte_Hybrid) as close as possible to my Terminators.
 
 The Acolytes and Rockgrinder then charged respectively. The Acolytes did nothing to my Terminators, but the Rockgrinder decimated my Infernus Marines.
 
 ![A battle scene split into two levels by a boxy bit of terrain. On the top level are four purple Space Marines in Terminator Armour fighting a single Aberrant and 5 Acolyte Hybrids. On the lower level is an unpainted truck fighting two purple Infernus Marines and a dark blue Librarian. The the background is a large group of Neophyte Hybrids](https://cdn.geekyaubergine.com/2023/12/first-game-of-40k/IMG_5400.JPG)
 
-Enter the Red Gobbo. 
+Enter the Red Gobbo.
 
 On my next turn, as a somewhat last-ditch effort, I got my Gobbo involved and tagged him into combat with the Rock grinder. Astonishingly, he managed to do a wound to it. However, his primary goal was to pin the Rockgrinder down.
 
@@ -112,7 +112,7 @@ My opponent then played a genius move of retreating his Neophytes so that the Ro
 
 ![Purple Captain in Terminator Armour facing a Genestealer truck with red dice on it reading 7. Stood near the Captain are numerous unpainted Genestealer models](https://cdn.geekyaubergine.com/2023/12/first-game-of-40k/IMG_5419.JPG)
 
-I'm sure you can imagine what happened next. Despite his heroic last stand, he eventually was overwhelmed. 
+I'm sure you can imagine what happened next. Despite his heroic last stand, he eventually was overwhelmed.
 
 ![A purple Captain in Terminator Armour is surrounded by numerous unpainted Genestealer Cult models, including a truck. The truck as red dice on it reading 7](https://cdn.geekyaubergine.com/2023/12/first-game-of-40k/IMG_5425.JPG)
 

@@ -22,9 +22,9 @@ use crate::{
     prelude::*,
 };
 
-use crate::infrastructure::renderers::formatters::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
 
 const TV_TAG: &str = "TV";
 
@@ -131,10 +131,12 @@ async fn render_tv_show_page(
 
     let average_score: f32 = total_scores.iter().sum::<u8>() as f32 / total_scores.len() as f32;
 
-    let posts = reviews
+    let mut posts = reviews
         .iter()
         .map(|r| r.post.clone())
         .collect::<Vec<OmniPost>>();
+
+    posts.sort_by(|a, b| b.date().cmp(&a.date()));
 
     let page = Page::new(tv_show.slug(), Some(&tv_show.title), None);
 

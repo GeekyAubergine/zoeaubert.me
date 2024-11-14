@@ -21,9 +21,9 @@ use crate::{
     prelude::*,
 };
 
-use crate::infrastructure::renderers::formatters::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
 
 const MOVIE_TAG: &str = "Movies";
 
@@ -121,10 +121,12 @@ async fn render_movie_page(
         (total_score as f32 / reviews.len() as f32)
     };
 
-    let posts = reviews
+    let mut posts = reviews
         .iter()
         .map(|r| r.post.clone())
         .collect::<Vec<OmniPost>>();
+
+    posts.sort_by(|a, b| b.date().cmp(&a.date()));
 
     let page = Page::new(movie.slug(), Some(&movie.title), None);
 

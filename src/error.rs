@@ -66,6 +66,9 @@ pub enum FileSystemError {
 
     #[error("Unable to read directory: {0}")]
     ReadDirError(std::io::Error),
+
+    #[error("Unable to copy file: {0}")]
+    CopyFileError(std::io::Error),
 }
 
 impl FileSystemError {
@@ -83,6 +86,10 @@ impl FileSystemError {
 
     pub fn read_dir_error(error: std::io::Error) -> Error {
         Error::FileSystemError(Self::ReadDirError(error))
+    }
+
+    pub fn copy_file_error(error: std::io::Error) -> Error {
+        Error::FileSystemError(Self::CopyFileError(error))
     }
 }
 

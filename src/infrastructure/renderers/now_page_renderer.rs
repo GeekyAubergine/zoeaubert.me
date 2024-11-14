@@ -11,9 +11,9 @@ use crate::{
 };
 
 use crate::domain::models::media::Media;
-use crate::infrastructure::renderers::formatters::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
 
 use crate::domain::models::tag::Tag;
 

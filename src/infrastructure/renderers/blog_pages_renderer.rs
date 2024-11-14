@@ -8,9 +8,9 @@ use crate::domain::{models::blog_post::BlogPost, state::State};
 
 use crate::prelude::*;
 
-use crate::infrastructure::renderers::formatters::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
 
 pub async fn render_blog_pages(state: &impl State) -> Result<()> {
     let blog_posts = state.blog_posts_repo().find_all_by_date().await?;
@@ -57,13 +57,17 @@ struct BlogPostTemplate {
 }
 
 async fn render_blog_post_page(state: &impl State, blog_post: BlogPost) -> Result<()> {
-    let page = Page::new(
+    let mut page = Page::new(
         blog_post.slug.clone(),
         Some(&blog_post.title),
         Some(&blog_post.description),
     )
     .with_date(blog_post.date)
     .with_tags(blog_post.tags.clone());
+
+    if let Some(image) = &blog_post.hero_image {
+        page = page.with_image(image.clone().into());
+    }
 
     let template = BlogPostTemplate {
         page,

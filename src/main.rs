@@ -41,20 +41,6 @@ async fn prepare_folders() -> Result<()> {
     copy_dir("assets", "output/assets");
     copy_dir("_assets", "output/assets");
 
-    // Command::new("cp")
-    //     .arg("-r")
-    //     .arg("./assets/.")
-    //     .arg("./output/assets/")
-    //     .output()
-    //     .expect("Failed to copy assets");
-
-    // Command::new("cp")
-    //     .arg("-r")
-    //     .arg("./_assets/.")
-    //     .arg("./output/assets/")
-    //     .output()
-    //     .expect("Failed to copy assets");
-
     tokio::fs::create_dir_all(Path::new("./output"))
         .await
         .map_err(FileSystemError::create_dir_error)?;
