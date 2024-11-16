@@ -1,10 +1,12 @@
 User-agent: *
-Allow: /interests/warhammer
-Allow: /blog
-Allow: /faq
-Allow: /timeline
-Allow: /micros
-Disallow: /
+Disallow: /interests/games
+Disallow: /interests/lego
+Disallow: /interests/movies
+Disallow: /interests/tv
+Disallow: /interests/books
+Disallow: /albums
+Disallow: /photos
+Disallow: /feeds
 
 User-agent: AdsBot-Google
 User-agent: Amazonbot
