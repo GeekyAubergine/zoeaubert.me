@@ -1,42 +1,51 @@
 <!DOCTYPE html>
 <html lang="{{ page.language() }}">
     <head>
-        <link rel="preconnect" href="https://cdn.geekyaubergine.com">
-        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="preconnect" href="https://cdn.geekyaubergine.com" />
+        <link rel="preconnect" href="https://fonts.bunny.net" />
 
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link rel="icon" type="image/x-icon" href="/assets/img/icon.png">
-        <link rel="alternate" type="application/rss+xml" title="Zoe Aubert's RSS Feed" href="https://zoeaubert.me/feeds/blog-rss.xml">
+        <link rel="icon" type="image/x-icon" href="/assets/img/icon.png" />
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="Zoe Aubert's RSS Feed"
+            href="https://zoeaubert.me/feeds/blog-rss.xml"
+        />
 
         <title>{{ page.title }}</title>
 
-        <meta name="title" content="{{ page.title }}"/>
-        <meta property="og:title" content="{{ page.title }}"/>
-        <meta property="twitter:title" content="{{ page.title }}"/>
+        <meta name="title" content="{{ page.title }}" />
+        <meta property="og:title" content="{{ page.title }}" />
+        <meta property="twitter:title" content="{{ page.title }}" />
 
-        <meta name="description" content="{{ page.description }}"/>
-        <meta property="og:description" content="{{ page.description }}"/>
-        <meta property="twitter:description" content="{{ page.description }}"/>
+        <meta name="description" content="{{ page.description }}" />
+        <meta property="og:description" content="{{ page.description }}" />
+        <meta property="twitter:description" content="{{ page.description }}" />
 
-        <meta property="og:url" content="{{ page.permalink() }}"/>
-        <meta property="twitter:url" content="{{ page.permalink() }}"/>
+        <meta property="og:url" content="{{ page.permalink() }}" />
+        <meta property="twitter:url" content="{{ page.permalink() }}" />
 
-        <meta property="twitter:image" content="{{ page.image_url() }}"/>
-        <meta property="og:image" content="{{  page.image_url() }}"/>
+        <meta property="twitter:image" content="{{ page.image_url() }}" />
+        <meta property="og:image" content="{{  page.image_url() }}" />
 
-        <meta property="twitter:image:alt" content="{{ page.image_alt() }}"/>
-        <meta property="og:image:alt" content="{{  page.image_alt() }}"/>
+        <meta property="twitter:image:alt" content="{{ page.image_alt() }}" />
+        <meta property="og:image:alt" content="{{  page.image_alt() }}" />
 
         <meta name="fediverse:creator" content="@geekyaubergine@social.lol" />
 
-        <link rel="stylesheet" href="/assets/css/styles-{{ page.build_date() }}.css">
+        <link
+            rel="stylesheet"
+            href="/assets/css/styles-{{ page.build_date() }}.css"
+        />
 
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-a11y-dark.min.css" rel="stylesheet" defer>
-        <script src="https://cdn.usefathom.com/script.js" data-site="XPKVFMEO" defer></script>
-        <script href="https://cdnjs.cloudflare.com/ajax/libs/prism-core.min.js" defer></script>
-        <script href="https://cdnjs.cloudflare.com/ajax/libs/prism-autoloader.min.js" defer></script>
+        <script
+            src="https://cdn.usefathom.com/script.js"
+            data-site="XPKVFMEO"
+            defer
+        ></script>
 
         {% block head %}{% endblock %}
     </head>

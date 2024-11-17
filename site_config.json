@@ -4,7 +4,7 @@
     "description": "Software developer, musician, photographer, nerd, and some other things. Making computers go bleep bloop since 2010.",
     "author": "Zoe Aubert | GeekyAubergine",
     "image": {
-        "url": "assets/img/web-bg.png",
+        "url": "/assets/img/web-bg.png",
         "alt": "Zoe Aubert centered in purple/pink text on a dark grey background",
         "width": 400,
         "height": 200,
