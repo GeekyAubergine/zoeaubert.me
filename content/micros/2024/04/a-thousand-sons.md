@@ -1,5 +1,5 @@
 ---
-date: 2023-11-03T19:22
+date: 2024-04-03T19:22
 tags: ["Warhammer", "WarhammerCommunity", "HorusHeresy", "Books"]
 ---
 A Thousand Sons by Graham McNeill

@@ -1,5 +1,5 @@
 ---
-date: 2023-11-03T19:22
+date: 2024-05-02T19:22
 tags: ["Warhammer", "WarhammerCommunity", "HorusHeresy", "Books"]
 ---
 Prospero Burns by Dan Abnett
