@@ -124,10 +124,6 @@ pub trait FileService: Sized + Send + Sync {
 
     async fn find_files_rescurse(&self, path: &Path, extension: &str) -> Result<Vec<String>>;
 
-    async fn get_file_metadata(&self, path: &Path) -> Result<std::fs::Metadata>;
-
-    async fn get_file_last_modified(&self, path: &Path) -> Result<DateTime<Utc>>;
-
     async fn read_file(&self, path: &Path) -> Result<Vec<u8>>;
 
     async fn write_file(&self, path: &Path, data: &[u8]) -> Result<()>;

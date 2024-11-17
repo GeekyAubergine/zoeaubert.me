@@ -8,6 +8,7 @@ use url::Url;
 use dotenvy_macro::dotenv;
 
 use crate::{
+    calculate_hash,
     domain::{
         models::{
             album::{Album, AlbumPhoto},
@@ -62,7 +63,7 @@ fn image_size_resized_large(image: &Image) -> ImageDimensions {
     )
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Hash)]
 pub struct FileAlbumPhoto {
     pub url: String,
     pub description: String,
@@ -71,7 +72,7 @@ pub struct FileAlbumPhoto {
     pub featured: Option<bool>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Hash)]
 pub struct FileAlbum {
     pub title: String,
     pub description: Option<String>,
@@ -82,17 +83,14 @@ pub struct FileAlbum {
 pub async fn update_album_command(state: &impl State, file_path: &Path) -> Result<()> {
     let yaml: FileAlbum = state.file_service().read_yaml_file(file_path).await?;
 
+    let hash = calculate_hash(&yaml);
+
     let file_name = file_path
         .file_name()
         .ok_or(AlbumError::invalid_file_name(file_path.to_path_buf()))?
         .to_str()
         .ok_or(AlbumError::invalid_file_name(file_path.to_path_buf()))?
         .replace(".yml", "");
-
-    let last_modified = state
-        .file_service()
-        .get_file_last_modified(file_path)
-        .await?;
 
     let date = parse_date(&yaml.date)?;
 
@@ -101,7 +99,7 @@ pub async fn update_album_command(state: &impl State, file_path: &Path) -> Resul
     let album_slug = Slug::new(&format!("albums/{}/{}", slug_date, file_name));
 
     if let Some(album) = state.albums_repo().find_by_slug(&album_slug).await? {
-        if album.updated_at == last_modified {
+        if album.original_data_hash == hash {
             return Ok(());
         }
     }
@@ -110,13 +108,7 @@ pub async fn update_album_command(state: &impl State, file_path: &Path) -> Resul
 
     state.profiler().entity_processed().await?;
 
-    let mut album = Album::new(
-        album_slug.clone(),
-        yaml.title,
-        yaml.description,
-        date,
-        last_modified,
-    );
+    let mut album = Album::new(album_slug.clone(), yaml.title, yaml.description, date, hash);
 
     for photo in yaml.photos {
         let url: Url = format!("{}{}", dotenv!("CDN_URL"), photo.url)

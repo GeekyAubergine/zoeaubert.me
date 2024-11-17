@@ -7,7 +7,7 @@ pub mod infrastructure;
 pub mod prelude;
 pub mod tasks;
 
-use std::{path::Path, process::Command, time::Duration};
+use std::{hash::{DefaultHasher, Hash, Hasher}, path::Path, process::Command, time::Duration};
 
 use application::commands::update_all_data_command::update_all_data_command;
 use build_data::BUILD_DATE;
@@ -68,4 +68,10 @@ async fn main() -> Result<()> {
     render_site(&state).await?;
 
     Ok(())
+}
+
+pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
+    let mut s = DefaultHasher::new();
+    t.hash(&mut s);
+    s.finish()
 }

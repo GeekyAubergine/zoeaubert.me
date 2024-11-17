@@ -24,15 +24,27 @@ pub async fn render_mastodon_post_pages(state: &impl State) -> Result<()> {
     let mastodon_posts = state.mastodon_posts_repo().find_all_by_date().await?;
 
     for mastodon_post in mastodon_posts {
-        let first_line = mastodon_post.content().lines().next();
+        let content = mastodon_post
+            .content()
+            .replace("<p>", "\n")
+            .replace("</p>", "\n");
 
-        let mut page = Page::new(
-            mastodon_post.slug().clone(),
-            None,
-            first_line,
-        )
-        .with_date(*mastodon_post.created_at())
-        .with_tags(mastodon_post.tags().clone());
+        let lines = content.lines().collect::<Vec<&str>>();
+
+        let lines = lines
+            .iter()
+            .map(|line| line.trim())
+            .filter(|line| !line.is_empty())
+            .collect::<Vec<&str>>();
+
+        let first_line = match lines.first() {
+            Some(first) => Some(*first),
+            None => None,
+        };
+
+        let mut page = Page::new(mastodon_post.slug().clone(), None, first_line)
+            .with_date(*mastodon_post.created_at())
+            .with_tags(mastodon_post.tags().clone());
 
         if let Some(first) = mastodon_post.media().first() {
             match first {

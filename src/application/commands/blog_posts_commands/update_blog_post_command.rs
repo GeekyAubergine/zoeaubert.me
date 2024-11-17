@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use crate::calculate_hash;
 use crate::domain::models::slug::Slug;
 use crate::domain::repositories::{BlogPostsRepo, Profiler};
 use crate::domain::services::{FileService, ImageService};
@@ -42,6 +43,8 @@ fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
 pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> Result<()> {
     let file_contents = state.file_service().read_text_file(file_path).await?;
 
+    let hash = calculate_hash(&file_contents);
+
     let split = file_contents.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -63,13 +66,8 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
 
             let slug = Slug::new(&format!("/blog/{}", front_matter.slug));
 
-            let last_mofied = state
-                .file_service()
-                .get_file_last_modified(file_path)
-                .await?;
-
             if let Some(existing) = state.blog_posts_repo().find_by_slug(&slug).await? {
-                if last_mofied == existing.updated_at {
+                if hash == existing.original_data_hash {
                     return Ok(());
                 }
             }
@@ -83,7 +81,7 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
                 front_matter.description,
                 tags,
                 content.to_owned().to_owned(),
-                last_mofied,
+                hash,
             );
 
             if let (Some(url), Some(alt), Some(width), Some(height)) = (

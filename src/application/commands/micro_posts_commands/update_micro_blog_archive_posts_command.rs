@@ -6,6 +6,7 @@ use std::path::Path;
 use tracing::info;
 
 use crate::{
+    calculate_hash,
     domain::{
         models::{
             image::{Image, ImageDimensions},
@@ -30,7 +31,7 @@ pub const HTML_IMAGE_REGEX: Lazy<Regex> = Lazy::new(|| {
 const TAGS_TO_IGNORE: [&str; 2] = ["status", "photography"];
 const SELF_URL: &str = "zoeaubert.me";
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Hash)]
 struct ArchiveFileItem {
     id: String,
     // content_html: String,
@@ -97,10 +98,9 @@ fn slug_for_item(item: &ArchiveFileItem) -> Slug {
     Slug::new(&slug)
 }
 
-fn archive_item_to_post(
-    item: ArchiveFileItem,
-    updated_at: DateTime<Utc>,
-) -> Result<Option<MicroPost>> {
+fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
+    let hash = calculate_hash(&item);
+
     let slug = slug_for_item(&item);
 
     let tags: Vec<String> = match item.tags {
@@ -136,7 +136,7 @@ fn archive_item_to_post(
         content,
         media,
         tags,
-        updated_at,
+        hash,
     )))
 }
 
@@ -144,15 +144,6 @@ pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Resu
     let archive_file: ArchiveFile = state
         .file_service()
         .read_json_file(
-            &state
-                .file_service()
-                .make_content_file_path(&Path::new(MICRO_POSTS_DIR)),
-        )
-        .await?;
-
-    let last_modified = state
-        .file_service()
-        .get_file_last_modified(
             &state
                 .file_service()
                 .make_content_file_path(&Path::new(MICRO_POSTS_DIR)),
@@ -171,7 +162,7 @@ pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Resu
             continue;
         }
 
-        if let Some(post) = archive_item_to_post(item, last_modified.clone())? {
+        if let Some(post) = archive_item_to_post(item)? {
             info!("Updating micro blog archive post {:?}", post.slug);
             state.micro_posts_repo().commit(&post).await?;
         }

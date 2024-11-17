@@ -98,24 +98,6 @@ impl FileService for FileServiceDisk {
         Ok(files)
     }
 
-    async fn get_file_metadata(&self, path: &Path) -> Result<std::fs::Metadata> {
-        let metadata = tokio::fs::metadata(path)
-            .await
-            .map_err(FileSystemError::read_error)?;
-
-        Ok(metadata)
-    }
-
-    async fn get_file_last_modified(&self, path: &Path) -> Result<DateTime<Utc>> {
-        let metadata = self.get_file_metadata(path).await?;
-
-        // TODO use git commit time if available
-
-        let last_modified = metadata.modified().map_err(FileSystemError::read_error)?;
-
-        Ok(DateTime::from(last_modified))
-    }
-
     async fn read_file(&self, path: &Path) -> Result<Vec<u8>> {
         debug!("Reading file from [{:?}]", path);
         let data = tokio::fs::read(path)
@@ -197,7 +179,12 @@ impl FileService for FileServiceDisk {
         self.write_file(path, &data).await
     }
 
-    async fn write_text_file(&self, path: PathBuf, data: String, join_set: &mut JoinSet<Result<()>>) -> Result<()> {
+    async fn write_text_file(
+        &self,
+        path: PathBuf,
+        data: String,
+        join_set: &mut JoinSet<Result<()>>,
+    ) -> Result<()> {
         let data: Vec<u8> = data.as_bytes().to_vec();
         join_set.spawn(async {
             let parent_dir = path.parent().unwrap();

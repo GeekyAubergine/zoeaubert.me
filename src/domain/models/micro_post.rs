@@ -1,10 +1,10 @@
 use std::fmt;
 
+use super::image::Image;
+use super::tag::Tag;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use super::image::Image;
-use super::tag::Tag;
 
 use super::media::Media;
 use super::slug::Slug;
@@ -16,7 +16,8 @@ pub struct MicroPost {
     pub content: String,
     pub media: Vec<Media>,
     pub tags: Vec<Tag>,
-    pub updated_at: DateTime<Utc>,
+
+    pub original_data_hash: u64,
 }
 
 impl MicroPost {
@@ -26,7 +27,7 @@ impl MicroPost {
         content: String,
         media: Vec<Media>,
         tags: Vec<Tag>,
-        updated_at: DateTime<Utc>,
+        original_data_hash: u64,
     ) -> Self {
         Self {
             slug,
@@ -34,7 +35,7 @@ impl MicroPost {
             content,
             media,
             tags,
-            updated_at,
+            original_data_hash,
         }
     }
 

@@ -52,7 +52,8 @@ pub struct Album {
     pub description: Option<String>,
     pub date: DateTime<Utc>,
     pub photos: Vec<AlbumPhoto>,
-    pub updated_at: DateTime<Utc>,
+
+    pub original_data_hash: u64,
 }
 
 impl Album {
@@ -61,7 +62,8 @@ impl Album {
         title: String,
         description: Option<String>,
         date: DateTime<Utc>,
-        updated_at: DateTime<Utc>,
+
+        original_data_hash: u64,
     ) -> Self {
         Self {
             slug,
@@ -69,7 +71,7 @@ impl Album {
             description,
             date,
             photos: vec![],
-            updated_at,
+            original_data_hash,
         }
     }
 

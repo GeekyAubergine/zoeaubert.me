@@ -7,6 +7,7 @@ use serde::Deserialize;
 use tracing::info;
 
 use crate::{
+    calculate_hash,
     domain::{
         models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
         repositories::{MicroPostsRepo, Profiler},
@@ -32,6 +33,8 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
 }
 
 async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Result<()> {
+    let hash = calculate_hash(&content);
+
     let split = content.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -60,13 +63,8 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
 
     let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
-    let last_modified = state
-        .file_service()
-        .get_file_last_modified(file_path)
-        .await?;
-
     if let Some(existing) = state.micro_posts_repo().find_by_slug(&slug).await? {
-        if existing.updated_at == last_modified {
+        if hash == existing.original_data_hash {
             return Ok(());
         }
     }
@@ -87,7 +85,7 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
 
     info!("Updating micro post: {:?}", slug);
 
-    let micro_post = MicroPost::new(slug, date, content.to_string(), media, tags, last_modified);
+    let micro_post = MicroPost::new(slug, date, content.to_string(), media, tags, hash);
 
     state.micro_posts_repo().commit(&micro_post).await?;
 
