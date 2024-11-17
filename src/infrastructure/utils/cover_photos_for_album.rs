@@ -71,26 +71,14 @@ mod test {
 
     #[test]
     fn it_should_return_empty_vec_when_no_photos() {
-        let album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
         let photos = cover_photos_for_album(&album);
         assert_eq!(photos.len(), 0);
     }
 
     #[test]
     fn it_should_return_first_featured_landscaped_photo() {
-        let mut album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let mut album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
@@ -134,13 +122,7 @@ mod test {
 
     #[test]
     fn it_should_return_first_two_featured_portrait_photos() {
-        let mut album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let mut album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
@@ -185,13 +167,7 @@ mod test {
 
     #[test]
     fn it_should_return_first_featured_portrait_and_first_non_featured_portrait() {
-        let mut album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let mut album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
@@ -236,13 +212,7 @@ mod test {
 
     #[test]
     fn it_should_return_first_non_featured_landscaped_photo() {
-        let mut album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let mut album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
@@ -286,13 +256,7 @@ mod test {
 
     #[test]
     fn it_should_return_first_two_non_featured_portrait_photos() {
-        let mut album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let mut album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
 
         album.add_photo(
             AlbumPhoto::new(
@@ -338,13 +302,7 @@ mod test {
 
     #[test]
     fn it_should_return_first_featured_photo_if_no_previous_rule_met() {
-        let mut album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let mut album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
@@ -364,13 +322,7 @@ mod test {
 
     #[test]
     fn it_should_return_first_non_featured_photo_if_no_previous_rule_met() {
-        let mut album = Album::new(
-            Slug::new(""),
-            "title".to_string(),
-            None,
-            Utc::now(),
-            Utc::now(),
-        );
+        let mut album = Album::new(Slug::new(""), "title".to_string(), None, Utc::now(), 0);
         album.add_photo(
             AlbumPhoto::new(
                 Slug::new("file_1"),
