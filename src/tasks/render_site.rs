@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use askama::Template;
+use chrono::{DateTime, Utc};
 use tokio::fs::copy;
 use tokio::try_join;
 use tracing::info;
@@ -14,6 +15,8 @@ use crate::domain::queries::tags_queries::find_tag_counts;
 use crate::domain::repositories::Profiler;
 use crate::domain::services::{FileService, PageRenderingService};
 use crate::domain::state::State;
+
+use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
 
 use crate::error::FileSystemError;
 use crate::infrastructure::renderers::albums_and_photos_renderer::render_albums_and_photo_pages;
@@ -78,6 +81,8 @@ pub async fn render_site(state: &impl State) -> Result<()> {
     .await
     .map_err(FileSystemError::copy_file_error)?;
 
+    state.page_rendering_service().build_sitemap(state).await?;
+
     let duration = start.elapsed();
 
     state
@@ -116,6 +121,6 @@ async fn render_404_page(state: &impl State) -> Result<()> {
 
     state
         .page_rendering_service()
-        .add_page(state, page.slug.clone(), FourOFourTemplate { page })
+        .add_page(state, page.slug.clone(), FourOFourTemplate { page }, None)
         .await
 }

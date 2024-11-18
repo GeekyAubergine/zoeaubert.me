@@ -95,7 +95,7 @@ async fn render_tags_list_page(state: &impl State, tag_counts: &HashMap<Tag, usi
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(state, template.page.slug.clone(), template, None)
         .await
 }
 
@@ -119,8 +119,19 @@ async fn render_tag_page<'d>(
         posts: paginator_page.data.to_vec(),
     };
 
+    let most_recent_post = paginator_page
+        .data
+        .first()
+        .map(|p| p.last_updated_at())
+        .flatten();
+
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            most_recent_post,
+        )
         .await
 }

@@ -108,7 +108,14 @@ pub async fn update_album_command(state: &impl State, file_path: &Path) -> Resul
 
     state.profiler().entity_processed().await?;
 
-    let mut album = Album::new(album_slug.clone(), yaml.title, yaml.description, date, hash);
+    let mut album = Album::new(
+        album_slug.clone(),
+        yaml.title,
+        yaml.description,
+        date,
+        Utc::now(),
+        hash,
+    );
 
     for photo in yaml.photos {
         let url: Url = format!("{}{}", dotenv!("CDN_URL"), photo.url)
@@ -193,6 +200,7 @@ pub async fn update_album_command(state: &impl State, file_path: &Path) -> Resul
             small_image,
             large_image,
             original_image,
+            Utc::now(),
         )
         .set_featured(photo.featured.unwrap_or(false));
 

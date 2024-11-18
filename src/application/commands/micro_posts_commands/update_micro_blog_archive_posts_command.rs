@@ -136,6 +136,7 @@ fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
         content,
         media,
         tags,
+        None,
         hash,
     )))
 }

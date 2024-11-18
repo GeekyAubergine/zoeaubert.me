@@ -15,6 +15,7 @@ pub struct MastodonPostNonSpoiler {
     media: Vec<Media>,
     media_previews: Vec<Media>,
     tags: Vec<Tag>,
+    updated_at: DateTime<Utc>,
 }
 
 impl MastodonPostNonSpoiler {
@@ -24,6 +25,7 @@ impl MastodonPostNonSpoiler {
         created_at: DateTime<Utc>,
         content: String,
         tags: Vec<Tag>,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
@@ -33,6 +35,7 @@ impl MastodonPostNonSpoiler {
             media: vec![],
             media_previews: vec![],
             tags,
+            updated_at
         }
     }
 
@@ -54,6 +57,7 @@ pub struct MastodonPostSpoiler {
     pub media_previews: Vec<Media>,
     pub spoiler_text: String,
     pub tags: Vec<Tag>,
+    pub updated_at: DateTime<Utc>,
 }
 
 impl MastodonPostSpoiler {
@@ -64,6 +68,7 @@ impl MastodonPostSpoiler {
         content: String,
         spoiler_text: String,
         tags: Vec<Tag>,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
@@ -74,6 +79,7 @@ impl MastodonPostSpoiler {
             media_previews: vec![],
             spoiler_text,
             tags,
+            updated_at
         }
     }
 
@@ -162,6 +168,13 @@ impl MastodonPost {
                     post.media_previews.clone()
                 }
             }
+        }
+    }
+
+    pub fn updated_at(&self) -> &DateTime<Utc> {
+        match self {
+            MastodonPost::NonSpoiler(post) => &post.updated_at,
+            MastodonPost::Spoiler(post) => &post.updated_at,
         }
     }
 }

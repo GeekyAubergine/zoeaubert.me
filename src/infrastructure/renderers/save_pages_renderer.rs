@@ -37,6 +37,6 @@ pub async fn render_save_page(state: &impl State) -> Result<()> {
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(state, template.page.slug.clone(), template, None)
         .await
 }

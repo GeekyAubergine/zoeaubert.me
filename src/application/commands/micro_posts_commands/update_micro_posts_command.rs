@@ -85,7 +85,15 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
 
     info!("Updating micro post: {:?}", slug);
 
-    let micro_post = MicroPost::new(slug, date, content.to_string(), media, tags, hash);
+    let micro_post = MicroPost::new(
+        slug,
+        date,
+        content.to_string(),
+        media,
+        tags,
+        Some(Utc::now()),
+        hash,
+    );
 
     state.micro_posts_repo().commit(&micro_post).await?;
 

@@ -14,9 +14,11 @@ use crate::domain::models::mastodon_post::{
 use crate::domain::models::media::Media;
 use crate::domain::models::tag::Tag;
 use crate::domain::repositories::{MastodonPostsRepo, Profiler};
-use crate::domain::services::{CacheService, CdnService, FileService, ImageService, NetworkService, QueryLimitingService};
+use crate::domain::services::{
+    CacheService, CdnService, FileService, ImageService, NetworkService, QueryLimitingService,
+};
 use crate::domain::state::State;
-use crate::{prelude::*};
+use crate::prelude::*;
 
 const QUERY: &str = "mastodon";
 const SELF_URL: &str = "zoeaubert.me";
@@ -78,6 +80,7 @@ struct MastodonStatus {
     visibility: Option<String>,
     spoiler_text: Option<String>,
     tags: Vec<MastodonStatusTag>,
+    edited_at: Option<DateTime<Utc>>,
 }
 
 const MASTODON_PAGINATION_LIMIT: u32 = 40;
@@ -215,6 +218,7 @@ async fn mastodon_status_to_post(
             status.created_at,
             content,
             tags,
+            status.edited_at.unwrap_or(status.created_at),
         )),
         Some(spoiler_text) => MastodonPost::Spoiler(MastodonPostSpoiler::new(
             status.id,
@@ -223,6 +227,7 @@ async fn mastodon_status_to_post(
             content,
             spoiler_text,
             tags,
+            status.edited_at.unwrap_or(status.created_at),
         )),
     };
 
@@ -290,7 +295,11 @@ async fn mastodon_status_to_post(
 }
 
 pub async fn update_mastodon_posts_command(state: &impl State) -> Result<()> {
-    if !state.query_limiting_service().can_query_within_hour(QUERY).await? {
+    if !state
+        .query_limiting_service()
+        .can_query_within_hour(QUERY)
+        .await?
+    {
         return Ok(());
     }
 

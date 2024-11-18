@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
+use chrono::{DateTime, Utc};
 use rayon::prelude::*;
 
 use askama::{DynTemplate, Template};
@@ -12,6 +13,8 @@ use crate::domain::models::slug::Slug;
 use crate::domain::repositories::Profiler;
 use crate::domain::services::{FileService, PageRenderingService};
 use crate::domain::{models::page::Page, state::State};
+
+use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
 
 use crate::error::TemplateError;
 use crate::prelude::*;
@@ -33,24 +36,49 @@ struct FileWriteJob {
     content: String,
 }
 
+#[derive(Debug, Clone)]
+struct SiteMapPage {
+    url: String,
+    last_modified: Option<DateTime<Utc>>,
+}
+
+#[derive(Template)]
+#[template(path = "sitemap.xml")]
+pub struct SitemapTemplate {
+    pages: Vec<SiteMapPage>,
+}
+
 pub struct PageRenderingServiceImpl {
     rendering_jobs: Arc<RwLock<Vec<RenderingJob>>>,
+    site_map_pages: Arc<RwLock<Vec<SiteMapPage>>>,
 }
 
 impl PageRenderingServiceImpl {
     pub fn new() -> Self {
         Self {
             rendering_jobs: Arc::new(RwLock::new(Vec::new())),
+            site_map_pages: Arc::new(RwLock::new(Vec::new())),
         }
     }
 }
 
 #[async_trait::async_trait]
 impl<'l> PageRenderingService for PageRenderingServiceImpl {
-    async fn add_page<T>(&self, state: &impl State, slug: Slug, template: T) -> Result<()>
+    async fn add_page<T>(
+        &self,
+        state: &impl State,
+        slug: Slug,
+        template: T,
+        last_modified: Option<&DateTime<Utc>>,
+    ) -> Result<()>
     where
         T: Template + Send + Sync + 'static,
     {
+        self.site_map_pages.write().await.push(SiteMapPage {
+            url: slug.permalink(),
+            last_modified: last_modified.cloned(),
+        });
+
         let job = RenderingJob {
             save_location: RenderingJobSaveLocation::Slug(slug),
             render_fn: Arc::new(move || template.render().map_err(TemplateError::render_error)),
@@ -134,6 +162,22 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
             .profiler()
             .set_number_of_pages_written(file_writes.len() as u32)
             .await?;
+
+        Ok(())
+    }
+
+    async fn build_sitemap(&self, state: &impl State) -> Result<()> {
+        let pages = self.site_map_pages.read().await;
+
+        let template = SitemapTemplate {
+            pages: pages.clone(),
+        };
+
+        let rendered = template.render().map_err(TemplateError::render_error)?;
+
+        let path = state.file_service().make_output_file_path(&Path::new("sitemap.xml"));
+
+        state.file_service().write_text_file_blocking(&path, &rendered).await?;
 
         Ok(())
     }

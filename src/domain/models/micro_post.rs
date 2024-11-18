@@ -16,7 +16,7 @@ pub struct MicroPost {
     pub content: String,
     pub media: Vec<Media>,
     pub tags: Vec<Tag>,
-
+    pub updated_at: Option<DateTime<Utc>>,
     pub original_data_hash: u64,
 }
 
@@ -27,6 +27,7 @@ impl MicroPost {
         content: String,
         media: Vec<Media>,
         tags: Vec<Tag>,
+        updated_at: Option<DateTime<Utc>>,
         original_data_hash: u64,
     ) -> Self {
         Self {
@@ -35,6 +36,7 @@ impl MicroPost {
             content,
             media,
             tags,
+            updated_at,
             original_data_hash,
         }
     }

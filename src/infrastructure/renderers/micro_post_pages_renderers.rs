@@ -50,12 +50,17 @@ pub async fn render_micro_post_pages(state: &impl State) -> Result<()> {
 
         let template = MicroPostTemplate {
             page,
-            post: micro_post,
+            post: micro_post.clone(),
         };
 
         state
             .page_rendering_service()
-            .add_page(state, template.page.slug.clone(), template)
+            .add_page(
+                state,
+                template.page.slug.clone(),
+                template,
+                micro_post.updated_at.as_ref(),
+            )
             .await?;
     }
 

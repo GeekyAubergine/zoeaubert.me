@@ -43,9 +43,16 @@ async fn render_blogs_list_page(state: &impl State, blog_posts: &[BlogPost]) -> 
         blog_posts: blog_posts.to_vec(),
     };
 
+    let most_recent_blog_post = blog_posts.first().map(|p| p.updated_at);
+
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            most_recent_blog_post.as_ref(),
+        )
         .await
 }
 
@@ -69,6 +76,8 @@ async fn render_blog_post_page(state: &impl State, blog_post: BlogPost) -> Resul
         page = page.with_image(image.clone().into());
     }
 
+    let updated_at = Some(blog_post.updated_at);
+
     let template = BlogPostTemplate {
         page,
         post: blog_post,
@@ -76,6 +85,11 @@ async fn render_blog_post_page(state: &impl State, blog_post: BlogPost) -> Resul
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            updated_at.as_ref(),
+        )
         .await
 }

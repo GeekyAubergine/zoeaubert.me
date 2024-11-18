@@ -74,7 +74,7 @@ async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(state, template.page.slug.clone(), template, None)
         .await
 }
 
@@ -137,6 +137,6 @@ async fn render_game_page(state: &impl State, game: &Game) -> Result<()> {
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(state, template.page.slug.clone(), template, None)
         .await
 }

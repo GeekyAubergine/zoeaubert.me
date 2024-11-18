@@ -101,11 +101,20 @@ async fn render_tv_show_list_page(
         Some("Tv shows I've watched"),
     );
 
+    let updated_at = tv_shows
+        .first()
+        .map(|r| r.most_recent_review.post.date().clone());
+
     let template = TvShowListTemplate { page, tv_shows };
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            updated_at.as_ref(),
+        )
         .await
 }
 
@@ -147,8 +156,15 @@ async fn render_tv_show_page(
         posts,
     };
 
+    let most_recent_review = reviews.iter().max_by_key(|r| r.post.date());
+
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            most_recent_review.map(|r| r.post.date()),
+        )
         .await
 }

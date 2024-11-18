@@ -61,7 +61,7 @@ async fn render_year_pages<'d>(state: &impl State, year: u16, posts: &[OmniPost]
 
         state
             .page_rendering_service()
-            .add_page(state, template.page.slug.clone(), template).await?;
+            .add_page(state, template.page.slug.clone(), template, None).await?;
     }
 
     Ok(())

@@ -80,6 +80,10 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
         }
     }
 
+    let most_recent_updated_at = albums_by_year
+        .first()
+        .map(|(_, albums)| albums.first().map(|album| album.album.updated_at));
+
     let template = AlbumListPage {
         page,
         albums_by_year,
@@ -87,7 +91,12 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            most_recent_updated_at.flatten().as_ref(),
+        )
         .await?;
 
     Ok(())
@@ -115,11 +124,18 @@ async fn render_all_albums_page(state: &impl State) -> Result<()> {
         }
     }
 
+    let most_recent_updated_at = albums.first().map(|album| album.updated_at);
+
     let template = AllAlbumsPage { page, albums };
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            most_recent_updated_at.as_ref(),
+        )
         .await?;
 
     Ok(())
@@ -174,6 +190,8 @@ pub async fn render_album_page(state: &impl State, album: Album) -> Result<()> {
         page = page.with_image(cover_image.clone().into());
     }
 
+    let updated_at = Some(album.updated_at);
+
     let template = AlbumPage {
         page,
         album: album.clone(),
@@ -182,7 +200,12 @@ pub async fn render_album_page(state: &impl State, album: Album) -> Result<()> {
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            updated_at.as_ref(),
+        )
         .await?;
 
     Ok(())
@@ -216,6 +239,8 @@ pub async fn render_album_photo_page(
     )
     .with_image(photo.small_image.clone().into());
 
+    let updated_at = Some(photo.updated_at);
+
     let template = AlbumPhotoPage {
         page,
         album,
@@ -228,7 +253,12 @@ pub async fn render_album_photo_page(
 
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            updated_at.as_ref(),
+        )
         .await?;
 
     Ok(())

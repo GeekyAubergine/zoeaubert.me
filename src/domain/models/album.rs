@@ -15,6 +15,7 @@ pub struct AlbumPhoto {
     pub large_image: Image,
     pub original_image: Image,
     pub featured: bool,
+    pub updated_at: DateTime<Utc>,
 }
 
 impl AlbumPhoto {
@@ -26,6 +27,7 @@ impl AlbumPhoto {
         small_image: Image,
         large_image: Image,
         original_image: Image,
+        updated_at: DateTime<Utc>,
     ) -> Self {
         Self {
             slug,
@@ -36,6 +38,7 @@ impl AlbumPhoto {
             large_image,
             original_image,
             featured: false,
+            updated_at,
         }
     }
 
@@ -52,7 +55,7 @@ pub struct Album {
     pub description: Option<String>,
     pub date: DateTime<Utc>,
     pub photos: Vec<AlbumPhoto>,
-
+    pub updated_at: DateTime<Utc>,
     pub original_data_hash: u64,
 }
 
@@ -62,7 +65,7 @@ impl Album {
         title: String,
         description: Option<String>,
         date: DateTime<Utc>,
-
+        updated_at: DateTime<Utc>,
         original_data_hash: u64,
     ) -> Self {
         Self {
@@ -71,6 +74,7 @@ impl Album {
             description,
             date,
             photos: vec![],
+            updated_at,
             original_data_hash,
         }
     }

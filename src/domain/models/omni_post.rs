@@ -5,8 +5,13 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
-    album::{Album, AlbumPhoto}, blog_post::BlogPost, mastodon_post::MastodonPost, media::Media,
-    micro_post::MicroPost, slug::Slug, tag::Tag,
+    album::{Album, AlbumPhoto},
+    blog_post::BlogPost,
+    mastodon_post::MastodonPost,
+    media::Media,
+    micro_post::MicroPost,
+    slug::Slug,
+    tag::Tag,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -79,7 +84,7 @@ impl OmniPost {
             Self::MastodonPost(mastodon_post) => mastodon_post.media(),
             Self::AlbumPhoto(album_photo) => {
                 vec![album_photo.small_image.clone().into()]
-            },
+            }
             // It does it's own thing
             Self::Album(_) => vec![],
         }
@@ -109,6 +114,18 @@ impl OmniPost {
             Self::MastodonPost(mastodon_post) => mastodon_post.tags().clone(),
             Self::AlbumPhoto(album_photo) => album_photo.tags.clone(),
             Self::Album(album) => vec![],
+        }
+    }
+
+    pub fn last_updated_at(&self) -> Option<&DateTime<Utc>> {
+        match self {
+            // Self::StatusLol(status_lol) => status_lol.last_updated_at(),
+            // Self::UnlockedGameAchievement { .. } => None,
+            Self::BlogPost(blog_post) => Some(&blog_post.updated_at),
+            Self::MicroPost(micro_post) => micro_post.updated_at.as_ref(),
+            Self::MastodonPost(mastodon_post) => Some(mastodon_post.updated_at()),
+            Self::AlbumPhoto(album_photo) => Some(&album_photo.updated_at),
+            Self::Album(album) => Some(&album.updated_at),
         }
     }
 }

@@ -48,7 +48,16 @@ pub async fn render_timeline_page<'d>(state: &impl State) -> Result<()> {
 
         state
             .page_rendering_service()
-            .add_page(state, template.page.slug.clone(), template)
+            .add_page(
+                state,
+                template.page.slug.clone(),
+                template,
+                paginator_page
+                    .data
+                    .first()
+                    .map(|p| p.last_updated_at())
+                    .flatten(),
+            )
             .await?;
     }
 

@@ -56,12 +56,17 @@ pub async fn render_mastodon_post_pages(state: &impl State) -> Result<()> {
 
         let template = MastodonPostTemplate {
             page,
-            post: mastodon_post,
+            post: mastodon_post.clone(),
         };
 
         state
             .page_rendering_service()
-            .add_page(state, template.page.slug.clone(), template)
+            .add_page(
+                state,
+                template.page.slug.clone(),
+                template,
+                Some(mastodon_post.updated_at()),
+            )
             .await?;
     }
 

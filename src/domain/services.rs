@@ -171,7 +171,13 @@ pub trait QueryLimitingService {
 
 #[async_trait::async_trait]
 pub trait PageRenderingService {
-    async fn add_page<T>(&self, state: &impl State, slug: Slug, template: T) -> Result<()>
+    async fn add_page<T>(
+        &self,
+        state: &impl State,
+        slug: Slug,
+        template: T,
+        last_modified: Option<&DateTime<Utc>>,
+    ) -> Result<()>
     where
         T: Template + Send + Sync + 'static;
 
@@ -180,4 +186,6 @@ pub trait PageRenderingService {
         T: Template + Send + Sync + 'static;
 
     async fn render_pages(&self, state: &impl State) -> Result<()>;
+
+    async fn build_sitemap(&self, state: &impl State) -> Result<()>;
 }

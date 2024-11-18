@@ -38,6 +38,8 @@ pub async fn render_home_page(state: &impl State) -> Result<()> {
         .cloned()
         .collect::<Vec<_>>();
 
+    let most_recent_post = recent_blog_posts.first().cloned();
+
     let template = IndexTemplate {
         page,
         silly_names,
@@ -45,8 +47,15 @@ pub async fn render_home_page(state: &impl State) -> Result<()> {
         recent_blog_posts,
     };
 
+    let updated_at = most_recent_post.map(|p| p.updated_at);
+
     state
         .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template)
+        .add_page(
+            state,
+            template.page.slug.clone(),
+            template,
+            updated_at.as_ref(),
+        )
         .await
 }

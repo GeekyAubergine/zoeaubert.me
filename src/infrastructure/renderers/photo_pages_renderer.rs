@@ -61,7 +61,7 @@ pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
 
         state
             .page_rendering_service()
-            .add_page(state, template.page.slug.clone(), template)
+            .add_page(state, template.page.slug.clone(), template, None)
             .await?;
     }
 

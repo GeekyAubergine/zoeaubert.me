@@ -5,6 +5,7 @@ use crate::domain::models::slug::Slug;
 use crate::domain::repositories::{BlogPostsRepo, Profiler};
 use crate::domain::services::{FileService, ImageService};
 use crate::infrastructure::utils::date::parse_date;
+use chrono::Utc;
 use serde::Deserialize;
 use tracing::{debug, info};
 use url::Url;
@@ -81,6 +82,7 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
                 front_matter.description,
                 tags,
                 content.to_owned().to_owned(),
+                Utc::now(),
                 hash,
             );
 
