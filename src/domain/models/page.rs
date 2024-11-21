@@ -52,7 +52,7 @@ impl PagePagination {
         let next = match page.has_next() {
             true => Some(PagePaginationLabel::new(
                 &slug.append(&format!("page-{}", page.page_number + 1)),
-                &format!("Newer {}", entity_name),
+                &format!("Older {}", entity_name),
             )),
             false => None,
         };
@@ -60,7 +60,7 @@ impl PagePagination {
         let prev = match page.has_previous() {
             true => Some(PagePaginationLabel::new(
                 &slug.append(&format!("page-{}", page.page_number - 1)),
-                &format!("Older {}", entity_name),
+                &format!("Newer {}", entity_name),
             )),
             false => None,
         };

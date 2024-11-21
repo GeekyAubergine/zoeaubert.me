@@ -89,8 +89,12 @@ fn compile_css(build_date: &str) {
         input_css.display(),
         intermediate_css.display()
     );
-    // let lightning_command = format!("{} --minify --bundle --targets '>= 0.25%' {} -o {}", LIGHTNING_CSS_COMMAND, intermediate_css.display(), output_css.display());
-    let lightning_command = format!("cp {} {}", intermediate_css.display(), output_css.display());
+    let lightning_command = format!(
+        "./node_modules/.bin/lightningcss --minify --bundle --targets '>= 0.25%' {} -o {}",
+        intermediate_css.display(),
+        output_css.display()
+    );
+    // let lightning_command = format!("cp {} {}", intermediate_css.display(), output_css.display());
 
     // Compile the CSS
     println!("Compiling CSS...");
