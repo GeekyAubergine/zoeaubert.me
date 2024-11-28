@@ -57,12 +57,13 @@ impl PagePagination {
             false => None,
         };
 
-        let prev = match page.has_previous() {
-            true => Some(PagePaginationLabel::new(
+        let prev = match page.page_number {
+            0 | 1 => None,
+            2 => Some(PagePaginationLabel::new(slug, &format!("Newer {}", entity_name))),
+            _ => Some(PagePaginationLabel::new(
                 &slug.append(&format!("page-{}", page.page_number - 1)),
                 &format!("Newer {}", entity_name),
             )),
-            false => None,
         };
 
         Self::new(next, prev)
