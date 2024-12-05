@@ -4,6 +4,7 @@ pub trait FormatDate {
     fn short_iso(&self) -> String;
     fn datetime(&self) -> String;
     fn without_time(&self) -> String;
+    fn month_as_word(&self) -> String;
 }
 
 impl FormatDate for DateTime<Utc> {
@@ -17,5 +18,9 @@ impl FormatDate for DateTime<Utc> {
 
     fn without_time(&self) -> String {
         self.format("%Y-%m-%d").to_string()
+    }
+
+    fn month_as_word(&self) -> String {
+        self.format("%B %e, %Y").to_string()
     }
 }

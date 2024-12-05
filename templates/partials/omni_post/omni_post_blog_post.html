@@ -16,4 +16,4 @@
     />
 </div>
 {% when None %} {% endmatch %}
-<p>{{ post.description }}</p>
+{{ post.description.to_html()|safe }}

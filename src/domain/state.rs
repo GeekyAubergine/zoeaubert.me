@@ -1,9 +1,10 @@
 use super::{
     repositories::{
-        AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, GameAchievementsRepo, GamesRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, Profiler, ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo
+        AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, GameAchievementsRepo, GamesRepo, LeagueRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, Profiler, ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo
     },
     services::{
-        CacheService, CdnService, FileService, ImageService, MovieService, NetworkService, PageRenderingService, QueryLimitingService, TvShowsService
+        CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
+        PageRenderingService, QueryLimitingService, TvShowsService,
     },
 };
 
@@ -37,6 +38,10 @@ pub trait State: Sync + Send {
     fn faq_repo(&self) -> &impl FaqRepo;
 
     fn now_text_repo(&self) -> &impl NowTextRepo;
+
+    fn league_repo(&self) -> &impl LeagueRepo;
+
+    // --------
 
     fn cache_service(&self) -> &impl CacheService;
 

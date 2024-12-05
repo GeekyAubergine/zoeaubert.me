@@ -14,7 +14,7 @@ use crate::domain::repositories::Profiler;
 use crate::domain::services::{FileService, PageRenderingService};
 use crate::domain::{models::page::Page, state::State};
 
-use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 
 use crate::error::TemplateError;
 use crate::prelude::*;

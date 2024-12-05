@@ -9,9 +9,9 @@ use crate::domain::{
 
 use crate::prelude::*;
 
-use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 #[derive(Template)]
 #[template(path = "mastodon_posts/post.html")]

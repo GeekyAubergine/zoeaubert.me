@@ -51,13 +51,13 @@
     /* ---------------- Core ---------------- */
 
     html {
-        font-size: 16px;
+        @apply font-[16px] md:font-[18px];
+        /* @apply  */
     }
 
     * {
-        font-family: 'Atkinson Hyperlegible', sans-serif, ui-sans-serif,
-            system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-            'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+            Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
             'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
             'Noto Color Emoji';
         font-display: swap;
@@ -70,7 +70,7 @@
     /* ----------------  Utilities ---------------- */
 
     .width-control {
-        @apply w-[68ch] max-w-[100%] px-4 md:px-0;
+        @apply w-[66ch] max-w-[100%] px-4 md:px-0;
     }
 
     .text {
@@ -151,8 +151,7 @@
     .title-font {
         font-family: 'WilcoLoftSans';
         font-display: swap;
-        @apply mt-8 mb-0;
-        letter-spacing: 0.025rem;
+        @apply mt-8 mb-0 tracking-[0.025rem] md:tracking-[0.05rem];
     }
 
     h1,
@@ -210,7 +209,7 @@
     }
 
     pre {
-        @apply bg-code dark:bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+        @apply bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
         font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
             'Courier New', monospace;
     }
@@ -228,7 +227,7 @@
     }
 
     pre > code {
-        @apply text-text dark:text-text-dark;
+        @apply text-text-dark;
     }
 
     /* ----------------  Common ---------------- */
@@ -516,22 +515,26 @@
     }
 
     .timeline-post {
-        @apply py-4 first-of-type:pt-0;
+        @apply py-8 first-of-type:pt-0;
 
-        & .timestamp {
-            @apply mt-0 mb-4;
-
-            & > time {
-                @apply accent text-sm;
-            }
+        a {
+            @apply !no-underline hover:under;
         }
 
         h2 {
-            @apply mt-0 mb-3 text-2xl accent;
+            @apply mt-0 mb-4 text-3xl;
+        }
+
+        .timestamp {
+            @apply mt-0 mb-3 !no-underline hover:under;
+
+            & > time {
+                @apply accent text-lg uppercase;
+            }
         }
 
         & .media {
-            @apply flex flex-row justify-start my-2 mx-auto;
+            @apply flex flex-row justify-start mt-2 mb-4 mx-auto;
 
             & > .media-grid {
                 @apply grid gap-x-1 grid-cols-2 overflow-hidden;
@@ -553,16 +556,8 @@
             @apply mt-0 text-center;
         }
 
-        .tags-and-timestamp {
-            @apply flex-row justify-between items-baseline mt-2;
-
-            & .tags-list {
-                @apply flex-row justify-start items-baseline;
-            }
-
-            & .timestamp {
-                @apply w-[16ch] text-right mb-0;
-            }
+        .tags-list {
+            @apply flex-row justify-start items-baseline mt-2;
         }
     }
 
@@ -861,6 +856,22 @@
 
         & .pagefind-ui__result-image {
             @apply max-h-[24rem] w-full object-contain;
+        }
+    }
+
+    .league-champ-note {
+        @apply my-4;
+
+        h3 {
+            @apply mt-0 mb-2;
+        }
+
+        p {
+            @apply ml-4 my-0;
+        }
+
+        span {
+            @apply inline-block secondary mr-2 w-3;
         }
     }
 }

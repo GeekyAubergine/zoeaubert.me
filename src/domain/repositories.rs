@@ -1,12 +1,22 @@
+use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::time::Duration;
-use chrono::{DateTime, Utc};
 
 use crate::prelude::*;
 
 use super::{
     models::{
-        album::{Album, AlbumPhoto}, blog_post::BlogPost, games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked}, lego::{LegoMinifig, LegoSet}, mastodon_post::MastodonPost, micro_post::MicroPost, movie::{MovieId, MovieReview}, referral::Referral, slug::Slug, tv_show::{TvShowId, TvShowReview}
+        album::{Album, AlbumPhoto},
+        blog_post::BlogPost,
+        games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
+        league::LeagueChampNote,
+        lego::{LegoMinifig, LegoSet},
+        mastodon_post::MastodonPost,
+        micro_post::MicroPost,
+        movie::{MovieId, MovieReview},
+        referral::Referral,
+        slug::Slug,
+        tv_show::{TvShowId, TvShowReview},
     },
     services::FileService,
     state::State,
@@ -169,4 +179,12 @@ pub trait NowTextRepo {
     async fn find(&self) -> Result<String>;
 
     async fn commit(&self, now_text: String) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait LeagueRepo {
+    async fn find_all_champ_notes_by_name(&self)
+        -> Result<Vec<LeagueChampNote>>;
+
+    async fn commit_champ_notes(&self, notes: Vec<LeagueChampNote>) -> Result<()>;
 }

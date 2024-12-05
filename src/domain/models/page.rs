@@ -5,7 +5,7 @@ use url::Url;
 use crate::{
     build_data::BUILD_DATE,
     infrastructure::{
-        renderers::formatters_renderer::format_date::FormatDate, utils::paginator::PaginatorPage,
+        renderers::formatters::format_date::FormatDate, utils::paginator::PaginatorPage,
     },
 };
 

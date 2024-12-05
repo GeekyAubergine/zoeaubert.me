@@ -1,16 +1,11 @@
-<div>{{ post.content().to_html()|safe }}</div>
+{% if post .optimised_media() .len() > 0 %}
 <div class="media">
-    {% if post
-        .optimised_media()
-        .len() > 1 %}
-        <div class="media-grid">
-            {% for media in post.optimised_media() %}
-                {% include "partials/media/media.html" %}
-            {% endfor %}
-        </div>
-    {% else %}
-        {% for media in post.optimised_media() %}
-            {% include "partials/media/media.html" %}
-        {% endfor %}
-    {% endif %}
+    {% if post .optimised_media() .len() > 1 %}
+    <div class="media-grid">
+        {% for media in post.optimised_media() %} {% include
+        "partials/media/media.html" %} {% endfor %}
+    </div>
+    {% else %} {% for media in post.optimised_media() %} {% include
+    "partials/media/media.html" %} {% endfor %} {% endif %}
 </div>
+{% endif %} {{ post.content().to_html()|safe }}

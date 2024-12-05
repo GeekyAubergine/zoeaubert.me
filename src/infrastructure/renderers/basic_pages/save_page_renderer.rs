@@ -6,7 +6,7 @@ use crate::{
     domain::{
         models::{omni_post::OmniPost, page::Page, referral::Referral, slug::Slug},
         queries::{omni_post_queries::find_all_omni_posts_by_tag, tags_queries::find_tag_counts},
-        repositories::{FaqRepo, ReferralsRepo},
+        repositories::ReferralsRepo,
         services::PageRenderingService,
         state::State,
     },
@@ -15,25 +15,25 @@ use crate::{
 };
 
 use crate::domain::models::media::Media;
-use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 use crate::domain::models::tag::Tag;
 
 #[derive(Template)]
-#[template(path = "faq.html")]
-struct FaqTemplate {
+#[template(path = "save.html")]
+struct SaveTemplate {
     page: Page,
-    faq: String,
+    referrals: Vec<Referral>,
 }
 
-pub async fn render_faq_page(state: &impl State) -> Result<()> {
-    let faq = state.faq_repo().find().await?;
+pub async fn render_save_page(state: &impl State) -> Result<()> {
+    let referrals = state.referrals_repo().find_all().await?;
 
-    let page = Page::new(Slug::new("faq"), Some("FAQ"), None);
+    let page = Page::new(Slug::new("save"), Some("Save"), None);
 
-    let template = FaqTemplate { page, faq };
+    let template = SaveTemplate { page, referrals };
 
     state
         .page_rendering_service()

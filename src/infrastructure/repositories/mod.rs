@@ -12,4 +12,5 @@ pub mod tv_show_reviews_repo_memory;
 pub mod albums_repo_disk;
 pub mod referrary_repo_memory;
 pub mod faq_repo_memory;
-pub mod now_text_repo;
+pub mod now_text_repo_memory;
+pub mod leauge_repo_disk;

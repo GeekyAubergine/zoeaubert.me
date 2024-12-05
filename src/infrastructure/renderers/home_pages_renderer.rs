@@ -7,9 +7,9 @@ use crate::domain::services::PageRenderingService;
 use crate::domain::state::State;
 use crate::prelude::*;
 
-use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 const RECENT_POSTS_COUNT: usize = 5;
 

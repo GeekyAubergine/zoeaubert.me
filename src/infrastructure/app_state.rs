@@ -5,9 +5,9 @@ use super::{
         about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk,
         blog_posts_repo_disk::BlogPostsRepoDisk, faq_repo_memory::FaqRepoMemory,
         game_achievements_repo_disk::GameAchievementsRepoDisk, games_repo_disk::GamesRepoDisk,
-        lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk,
-        micro_blog_repo_disk::MicroPostsRepoDisk,
-        movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo::NowTextRepoMemory,
+        leauge_repo_disk::LeagueRepoDisk, lego_repo_disk::LegoRepoDisk,
+        mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk,
+        movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo_memory::NowTextRepoMemory,
         profiler_memory::ProfilerMemory, referrary_repo_memory::ReferralsRepoMemory,
         silly_names_repo_memory::SillyNamesRepoMemory,
         tv_show_reviews_repo_memory::TvShowReviewsRepoMemory,
@@ -25,12 +25,11 @@ use super::{
 use crate::{
     domain::{
         repositories::{
-            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, GameAchievementsRepo, GamesRepo,
-            LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, Profiler,
-            ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo,
+            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, GameAchievementsRepo, GamesRepo, LeagueRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, Profiler, ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo
         },
         services::{
-            CacheService, CdnService, FileService, ImageService, MovieService, NetworkService, PageRenderingService, QueryLimitingService, TvShowsService
+            CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
+            PageRenderingService, QueryLimitingService, TvShowsService,
         },
         state::State,
     },
@@ -53,6 +52,7 @@ pub struct AppState {
     referrals_repo: ReferralsRepoMemory,
     faq_repo: FaqRepoMemory,
     now_text_repo: NowTextRepoMemory,
+    league_repo: LeagueRepoDisk,
     // services
     cache_service: CacheServiceDisk,
     cdn_service: CdnServiceBunny,
@@ -83,6 +83,7 @@ impl AppState {
             referrals_repo: ReferralsRepoMemory::new(),
             faq_repo: FaqRepoMemory::new(),
             now_text_repo: NowTextRepoMemory::new(),
+            league_repo: LeagueRepoDisk::new().await?,
             // services
             cache_service: CacheServiceDisk::new(),
             cdn_service: CdnServiceBunny::new(),
@@ -160,6 +161,10 @@ impl State for AppState {
 
     fn now_text_repo(&self) -> &impl NowTextRepo {
         &self.now_text_repo
+    }
+
+    fn league_repo(&self) -> &impl LeagueRepo {
+        &self.league_repo
     }
 
     // services

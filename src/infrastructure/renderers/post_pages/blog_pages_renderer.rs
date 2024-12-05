@@ -8,9 +8,9 @@ use crate::domain::{models::blog_post::BlogPost, state::State};
 
 use crate::prelude::*;
 
-use crate::infrastructure::renderers::formatters_renderer::format_date::FormatDate;
-use crate::infrastructure::renderers::formatters_renderer::format_markdown::FormatMarkdown;
-use crate::infrastructure::renderers::formatters_renderer::format_number::FormatNumber;
+use crate::infrastructure::renderers::formatters::format_date::FormatDate;
+use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
+use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 pub async fn render_blog_pages(state: &impl State) -> Result<()> {
     let blog_posts = state.blog_posts_repo().find_all_by_date().await?;

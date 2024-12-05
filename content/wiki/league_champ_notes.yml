@@ -1,0 +1,15 @@
+champs:
+  - name: Aatrox
+    role: Melee
+    lane: Top
+    q: Close slam
+    w: Short ranged wheel thing
+    e: Dash
+    r: Power up
+  - name: Miss Fortune
+    role: Ranged
+    lane: Bot -  ADC
+    q: Shot that bounces to one other target
+    w: Faster shots
+    e: Circular rain attack
+    r: V shapped waves of bullets
