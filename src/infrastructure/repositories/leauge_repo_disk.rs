@@ -37,12 +37,8 @@ impl LeagueRepo for LeagueRepoDisk {
     }
 
     async fn commit_champ_notes(&self, champ_notes: Vec<LeagueChampNote>) -> Result<()> {
-        println!("commit_champ_notes {:?}", champ_notes);
-
         let mut data = self.champ_notes.write().await;
         *data = champ_notes.clone();
-
-        println!("{:?}", data);
 
         Ok(())
     }

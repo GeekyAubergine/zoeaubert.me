@@ -10,7 +10,7 @@ pub mod omni_post;
 pub mod cache_path;
 pub mod mastodon_post;
 pub mod lego;
-pub mod games;
+pub mod steam;
 pub mod movie;
 pub mod network_response;
 pub mod tv_show;

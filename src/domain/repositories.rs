@@ -8,7 +8,7 @@ use super::{
     models::{
         album::{Album, AlbumPhoto},
         blog_post::BlogPost,
-        games::{Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked},
+        steam::{SteamGame, SteamGameAchievement, SteamGameAchievementLocked, SteamGameAchievementUnlocked},
         league::LeagueChampNote,
         lego::{LegoMinifig, LegoSet},
         mastodon_post::MastodonPost,
@@ -104,10 +104,10 @@ pub trait LegoRepo {
 }
 
 #[async_trait::async_trait]
-pub trait GamesRepo {
-    async fn find_by_game_id(&self, game_id: u32) -> Result<Option<Game>>;
+pub trait SteamGamesRepo {
+    async fn find_by_game_id(&self, game_id: u32) -> Result<Option<SteamGame>>;
 
-    async fn find_all_games(&self) -> Result<Vec<Game>>;
+    async fn find_all_games(&self) -> Result<Vec<SteamGame>>;
 
     async fn find_total_playtime(&self) -> Result<u32>;
 
@@ -115,19 +115,19 @@ pub trait GamesRepo {
 
     async fn find_most_recently_updated_at(&self) -> Result<Option<DateTime<Utc>>>;
 
-    async fn commit(&self, game: &Game) -> Result<()>;
+    async fn commit(&self, game: &SteamGame) -> Result<()>;
 }
 
 #[async_trait::async_trait]
-pub trait GameAchievementsRepo {
+pub trait SteamAchievementsRepo {
     async fn find_all_unlocked_by_unlocked_date(
         &self,
         game_id: u32,
-    ) -> Result<Vec<GameAchievementUnlocked>>;
+    ) -> Result<Vec<SteamGameAchievementUnlocked>>;
 
-    async fn find_all_locked_by_name(&self, game_id: u32) -> Result<Vec<GameAchievementLocked>>;
+    async fn find_all_locked_by_name(&self, game_id: u32) -> Result<Vec<SteamGameAchievementLocked>>;
 
-    async fn commit(&self, game: &Game, achievement: &GameAchievement) -> Result<()>;
+    async fn commit(&self, game: &SteamGame, achievement: &SteamGameAchievement) -> Result<()>;
 }
 
 #[async_trait::async_trait]

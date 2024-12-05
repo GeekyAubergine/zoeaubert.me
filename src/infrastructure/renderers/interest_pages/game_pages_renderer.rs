@@ -1,11 +1,15 @@
-use askama::Template;
+use std::time::Duration;
 
-use crate::domain::models::games::{GameAchievementLocked, GameAchievementUnlocked};
+use askama::Template;
+use chrono::{DateTime, Utc};
+
+use crate::domain::models::image::Image;
 use crate::domain::models::site_config::PageImage;
 use crate::domain::models::slug::Slug;
-use crate::domain::models::{games::Game, page::Page};
+use crate::domain::models::steam::{SteamGameAchievementLocked, SteamGameAchievementUnlocked};
+use crate::domain::models::{page::Page, steam::SteamGame};
 
-use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
+use crate::domain::repositories::{SteamAchievementsRepo, SteamGamesRepo};
 use crate::domain::services::PageRenderingService;
 use crate::prelude::*;
 
@@ -18,13 +22,39 @@ const RECENTLY_PLAYED_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
 const HEADER_IMAGE_HEIGHT: u32 = 193;
 
+#[derive(Clone)]
+struct GameListGame {
+    pub slug_partial: String,
+    pub name: String,
+    pub playtime: Duration,
+    pub image: Image,
+    pub last_played: DateTime<Utc>,
+}
+
+impl GameListGame {
+    pub fn playtime_hours(&self) -> f32 {
+        self.playtime.as_secs_f32() / 3600.0
+    }
+}
+
 pub async fn render_games_pages(state: &impl State) -> Result<()> {
-    let games = state.games_repo().find_all_games().await?;
+    let steam_games = state.steam_games_repo().find_all_games().await?;
+
+    let games = steam_games
+        .iter()
+        .map(|game| GameListGame {
+            slug_partial: game.id.to_string(),
+            name: game.name.clone(),
+            playtime: Duration::from_secs((game.playtime * 60) as u64),
+            image: game.header_image.clone(),
+            last_played: game.last_played,
+        })
+        .collect::<Vec<_>>();
 
     render_games_list_page(state, &games).await?;
 
-    for game in games {
-        render_game_page(state, &game).await?;
+    for game in steam_games {
+        render_steam_game_page(state, &game).await?;
     }
 
     Ok(())
@@ -32,15 +62,15 @@ pub async fn render_games_pages(state: &impl State) -> Result<()> {
 
 #[derive(Template)]
 #[template(path = "interests/games/games_list.html")]
-struct IndexTemplate {
+struct GamesListTemplate {
     page: Page,
-    games_by_recently_played: Vec<Game>,
-    games_by_most_played: Vec<Game>,
+    games_by_recently_played: Vec<GameListGame>,
+    games_by_most_played: Vec<GameListGame>,
     total_games: usize,
     total_playtime: f32,
 }
 
-async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()> {
+async fn render_games_list_page(state: &impl State, games: &[GameListGame]) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/games"),
         Some("Games"),
@@ -64,7 +94,7 @@ async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()
     let total_games = games.len();
     let total_playtime = games.iter().map(|g| g.playtime_hours()).sum::<f32>();
 
-    let template = IndexTemplate {
+    let template = GamesListTemplate {
         page,
         games_by_recently_played,
         games_by_most_played,
@@ -79,23 +109,23 @@ async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()
 }
 
 #[derive(Template)]
-#[template(path = "interests/games/game.html")]
-struct GameTemplate {
+#[template(path = "interests/games/steam/steam_game.html")]
+struct SteamGameTemplate {
     page: Page,
-    game: Game,
-    unlocked_achievements: Vec<GameAchievementUnlocked>,
-    locked_achievements: Vec<GameAchievementLocked>,
+    game: SteamGame,
+    unlocked_achievements: Vec<SteamGameAchievementUnlocked>,
+    locked_achievements: Vec<SteamGameAchievementLocked>,
     total_achievements: usize,
 }
 
-async fn render_game_page(state: &impl State, game: &Game) -> Result<()> {
+async fn render_steam_game_page(state: &impl State, game: &SteamGame) -> Result<()> {
     let unlocked_achievements = state
-        .game_achievements_repo()
+        .steam_achievements_repo()
         .find_all_unlocked_by_unlocked_date(game.id)
         .await?;
 
     let locked_achievements = state
-        .game_achievements_repo()
+        .steam_achievements_repo()
         .find_all_locked_by_name(game.id)
         .await?;
 
@@ -127,7 +157,7 @@ async fn render_game_page(state: &impl State, game: &Game) -> Result<()> {
     )
     .with_image(image);
 
-    let template = GameTemplate {
+    let template = SteamGameTemplate {
         page,
         game: game.clone(),
         unlocked_achievements,

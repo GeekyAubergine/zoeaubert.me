@@ -7,7 +7,7 @@ use url::Url;
 use super::image::Image;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Game {
+pub struct SteamGame {
     pub id: u32,
     pub name: String,
     pub header_image: Image,
@@ -16,7 +16,7 @@ pub struct Game {
     pub link_url: String,
 }
 
-impl Game {
+impl SteamGame {
     pub fn new(
         id: u32,
         name: String,
@@ -41,7 +41,7 @@ impl Game {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GameAchievementUnlocked {
+pub struct SteamGameAchievementUnlocked {
     pub id: String,
     pub game_id: u32,
     pub display_name: String,
@@ -51,7 +51,7 @@ pub struct GameAchievementUnlocked {
     pub global_unlocked_percentage: f32,
 }
 
-impl GameAchievementUnlocked {
+impl SteamGameAchievementUnlocked {
     pub fn new(
         id: String,
         game_id: u32,
@@ -74,7 +74,7 @@ impl GameAchievementUnlocked {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GameAchievementLocked {
+pub struct SteamGameAchievementLocked {
     pub id: String,
     pub game_id: u32,
     pub display_name: String,
@@ -83,7 +83,7 @@ pub struct GameAchievementLocked {
     pub global_unlocked_percentage: f32,
 }
 
-impl GameAchievementLocked {
+impl SteamGameAchievementLocked {
     pub fn new(
         id: String,
         game_id: u32,
@@ -104,12 +104,12 @@ impl GameAchievementLocked {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum GameAchievement {
-    Unlocked(GameAchievementUnlocked),
-    Locked(GameAchievementLocked),
+pub enum SteamGameAchievement {
+    Unlocked(SteamGameAchievementUnlocked),
+    Locked(SteamGameAchievementLocked),
 }
 
-impl GameAchievement {
+impl SteamGameAchievement {
     pub fn id(&self) -> &str {
         match self {
             Self::Unlocked(achievement) => &achievement.id,

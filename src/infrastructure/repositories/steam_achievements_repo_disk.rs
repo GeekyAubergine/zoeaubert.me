@@ -5,33 +5,33 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::domain::models::games::{
-    GameAchievement, GameAchievementLocked, GameAchievementUnlocked,
+use crate::domain::models::steam::{
+    SteamGameAchievement, SteamGameAchievementLocked, SteamGameAchievementUnlocked,
 };
-use crate::domain::repositories::{GameAchievementsRepo, GamesRepo};
+use crate::domain::repositories::{SteamAchievementsRepo, SteamGamesRepo};
 use crate::domain::services::FileService;
 use crate::domain::state::State;
 use crate::infrastructure::services::file_service_disk::FileServiceDisk;
 use crate::prelude::*;
 
-use crate::domain::models::games::Game;
+use crate::domain::models::steam::SteamGame;
 
-const FILE_NAME: &str = "game_achievements.json";
+const FILE_NAME: &str = "steam_achievements.json";
 
 fn make_file_path(file_service: &impl FileService) -> PathBuf {
     file_service.make_archive_file_path(&Path::new(FILE_NAME))
 }
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct GameAchievementsForGame {
+pub struct SteamAchievementsForGame {
     game_id: u32,
-    locked_achievements: HashMap<String, GameAchievementLocked>,
-    unlocked_achievements: HashMap<String, GameAchievementUnlocked>,
+    locked_achievements: HashMap<String, SteamGameAchievementLocked>,
+    unlocked_achievements: HashMap<String, SteamGameAchievementUnlocked>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct GameAchievementsRepoData {
-    data: HashMap<u32, GameAchievementsForGame>,
+    data: HashMap<u32, SteamAchievementsForGame>,
 }
 
 pub struct GameAchievementsRepoDisk {
@@ -55,11 +55,11 @@ impl GameAchievementsRepoDisk {
 }
 
 #[async_trait::async_trait]
-impl GameAchievementsRepo for GameAchievementsRepoDisk {
+impl SteamAchievementsRepo for GameAchievementsRepoDisk {
     async fn find_all_unlocked_by_unlocked_date(
         &self,
         game_id: u32,
-    ) -> Result<Vec<GameAchievementUnlocked>> {
+    ) -> Result<Vec<SteamGameAchievementUnlocked>> {
         let data = self.data.read().await;
 
         let game_achievements = match data.data.get(&game_id) {
@@ -71,14 +71,14 @@ impl GameAchievementsRepo for GameAchievementsRepoDisk {
             .unlocked_achievements
             .values()
             .cloned()
-            .collect::<Vec<GameAchievementUnlocked>>();
+            .collect::<Vec<SteamGameAchievementUnlocked>>();
 
         unlocked_achievements.sort_by(|a, b| b.unlocked_date.cmp(&a.unlocked_date));
 
         Ok(unlocked_achievements)
     }
 
-    async fn find_all_locked_by_name(&self, game_id: u32) -> Result<Vec<GameAchievementLocked>> {
+    async fn find_all_locked_by_name(&self, game_id: u32) -> Result<Vec<SteamGameAchievementLocked>> {
         let data = self.data.read().await;
 
         let game_achievements = match data.data.get(&game_id) {
@@ -89,22 +89,22 @@ impl GameAchievementsRepo for GameAchievementsRepoDisk {
             .locked_achievements
             .values()
             .cloned()
-            .collect::<Vec<GameAchievementLocked>>();
+            .collect::<Vec<SteamGameAchievementLocked>>();
 
         locked_achievements.sort_by(|a, b| a.display_name.cmp(&b.display_name));
 
         Ok(locked_achievements)
     }
 
-    async fn commit(&self, game: &Game, achievement: &GameAchievement) -> Result<()> {
+    async fn commit(&self, game: &SteamGame, achievement: &SteamGameAchievement) -> Result<()> {
         let mut data = self.data.write().await;
 
         match achievement {
-            GameAchievement::Locked(locked) => {
+            SteamGameAchievement::Locked(locked) => {
                 let game_achievements =
                     data.data
                         .entry(game.id)
-                        .or_insert_with(|| GameAchievementsForGame {
+                        .or_insert_with(|| SteamAchievementsForGame {
                             game_id: game.id,
                             locked_achievements: HashMap::new(),
                             unlocked_achievements: HashMap::new(),
@@ -114,11 +114,11 @@ impl GameAchievementsRepo for GameAchievementsRepoDisk {
                     .locked_achievements
                     .insert(locked.id.clone(), locked.clone());
             }
-            GameAchievement::Unlocked(unlocked) => {
+            SteamGameAchievement::Unlocked(unlocked) => {
                 let game_achievements =
                     data.data
                         .entry(game.id)
-                        .or_insert_with(|| GameAchievementsForGame {
+                        .or_insert_with(|| SteamAchievementsForGame {
                             game_id: game.id,
                             locked_achievements: HashMap::new(),
                             unlocked_achievements: HashMap::new(),

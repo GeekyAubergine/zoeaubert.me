@@ -6,10 +6,10 @@ use serde::{Deserialize, Serialize};
 use tracing::info;
 use url::Url;
 
-use crate::domain::models::games::{
-    Game, GameAchievement, GameAchievementLocked, GameAchievementUnlocked,
+use crate::domain::models::steam::{
+    SteamGame, SteamGameAchievement, SteamGameAchievementLocked, SteamGameAchievementUnlocked,
 };
-use crate::domain::repositories::{GameAchievementsRepo, GamesRepo, Profiler};
+use crate::domain::repositories::{SteamAchievementsRepo, SteamGamesRepo, Profiler};
 use crate::domain::services::{CdnService, ImageService, NetworkService};
 use crate::domain::state::State;
 use crate::error::GameError;
@@ -201,7 +201,7 @@ async fn get_steam_global_achievement_percentage(
     }
 }
 
-pub async fn update_game_achievements_command(state: &impl State, game: &Game) -> Result<()> {
+pub async fn update_steam_game_achievements_command(state: &impl State, game: &SteamGame) -> Result<()> {
     info!(
         "Updating game achievements for game: {} [{}]",
         game.id, game.name
@@ -236,8 +236,6 @@ pub async fn update_game_achievements_command(state: &impl State, game: &Game) -
             .iter()
             .find(|global_achievement| global_achievement.name == achievement.name);
 
-        // TODO, this is the wrong value
-        // TODO, go back to storing relative paths for images, easier to swap out
         let global_percentage = match global_achievement {
             Some(global_achievement) => global_achievement.percent,
             None => 0.0,
@@ -263,7 +261,7 @@ pub async fn update_game_achievements_command(state: &impl State, game: &Game) -
                     )
                     .await?;
 
-                GameAchievement::Unlocked(GameAchievementUnlocked::new(
+                SteamGameAchievement::Unlocked(SteamGameAchievementUnlocked::new(
                     achievement.name,
                     game.id,
                     achievement.display_name,
@@ -297,7 +295,7 @@ pub async fn update_game_achievements_command(state: &impl State, game: &Game) -
                     )
                     .await?;
 
-                GameAchievement::Locked(GameAchievementLocked::new(
+                SteamGameAchievement::Locked(SteamGameAchievementLocked::new(
                     achievement.name,
                     game.id,
                     achievement.display_name,
@@ -309,7 +307,7 @@ pub async fn update_game_achievements_command(state: &impl State, game: &Game) -
         };
 
         state
-            .game_achievements_repo()
+            .steam_achievements_repo()
             .commit(&game, &achievment)
             .await?;
     }

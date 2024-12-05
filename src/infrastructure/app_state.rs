@@ -4,7 +4,7 @@ use super::{
     repositories::{
         about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk,
         blog_posts_repo_disk::BlogPostsRepoDisk, faq_repo_memory::FaqRepoMemory,
-        game_achievements_repo_disk::GameAchievementsRepoDisk, games_repo_disk::GamesRepoDisk,
+        steam_achievements_repo_disk::GameAchievementsRepoDisk, steam_games_repo_disk::GamesRepoDisk,
         leauge_repo_disk::LeagueRepoDisk, lego_repo_disk::LegoRepoDisk,
         mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk,
         movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo_memory::NowTextRepoMemory,
@@ -25,7 +25,7 @@ use super::{
 use crate::{
     domain::{
         repositories::{
-            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, GameAchievementsRepo, GamesRepo, LeagueRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, Profiler, ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo
+            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, SteamAchievementsRepo, SteamGamesRepo, LeagueRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, Profiler, ReferralsRepo, SillyNamesRepo, TvShowReviewsRepo
         },
         services::{
             CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
@@ -131,11 +131,11 @@ impl State for AppState {
         &self.lego_repo
     }
 
-    fn games_repo(&self) -> &impl GamesRepo {
+    fn steam_games_repo(&self) -> &impl SteamGamesRepo {
         &self.games_repo
     }
 
-    fn game_achievements_repo(&self) -> &impl GameAchievementsRepo {
+    fn steam_achievements_repo(&self) -> &impl SteamAchievementsRepo {
         &self.game_achievements_repo
     }
 

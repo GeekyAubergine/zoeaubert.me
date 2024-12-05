@@ -7,9 +7,9 @@ use serde::{Deserialize, Serialize};
 use tracing::info;
 use url::Url;
 
-use crate::application::commands::games_commands::update_game_achievements_command::update_game_achievements_command;
-use crate::domain::models::games::Game;
-use crate::domain::repositories::GamesRepo;
+use crate::application::commands::steam_commands::update_steam_game_achievements_command::update_steam_game_achievements_command;
+use crate::domain::models::steam::SteamGame;
+use crate::domain::repositories::SteamGamesRepo;
 use crate::domain::services::{CdnService, ImageService, NetworkService, QueryLimitingService};
 use crate::domain::state::State;
 
@@ -73,7 +73,7 @@ pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
 }
 
 async fn process_game(state: &impl State, game: SteamOwnedGame) -> Result<()> {
-    if let Some(stored_game) = state.games_repo().find_by_game_id(game.appid).await? {
+    if let Some(stored_game) = state.steam_games_repo().find_by_game_id(game.appid).await? {
         if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.last_played {
             return Ok(());
         }
@@ -100,7 +100,7 @@ async fn process_game(state: &impl State, game: SteamOwnedGame) -> Result<()> {
         )
         .await?;
 
-    let game = Game::new(
+    let game = SteamGame::new(
         game.appid,
         game.name,
         image,
@@ -109,15 +109,14 @@ async fn process_game(state: &impl State, game: SteamOwnedGame) -> Result<()> {
         format!("https://store.steampowered.com/app/{}", game.appid),
     );
 
-    // Do achievments first as if they fail we don't want to commit the game
-    update_game_achievements_command(state, &game).await?;
+    update_steam_game_achievements_command(state, &game).await?;
 
-    state.games_repo().commit(&game).await?;
+    state.steam_games_repo().commit(&game).await?;
 
     Ok(())
 }
 
-pub async fn update_games_command(state: &impl State) -> Result<()> {
+pub async fn update_steam_games_command(state: &impl State) -> Result<()> {
     if !state.query_limiting_service().can_query_within_hour(QUERY).await? {
         return Ok(());
     }

@@ -26,11 +26,7 @@ pub async fn update_league_champ_notes_command(state: &impl State) -> Result<()>
         )
         .await?;
 
-    println!("Updatingleague champ notes {:?}", notes);
-
     state.league_repo().commit_champ_notes(notes.champs).await?;
-
-    println!("Updated league champ notes");
 
     Ok(())
 }

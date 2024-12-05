@@ -5,29 +5,29 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::domain::repositories::GamesRepo;
+use crate::domain::repositories::SteamGamesRepo;
 use crate::domain::services::FileService;
 use crate::domain::state::State;
 use crate::infrastructure::services::file_service_disk::FileServiceDisk;
 use crate::prelude::*;
 
-use crate::domain::models::games::Game;
+use crate::domain::models::steam::SteamGame;
 
-const FILE_NAME: &str = "games.json";
+const FILE_NAME: &str = "steam_games.json";
 
 fn make_file_path(file_service: &impl FileService) -> PathBuf {
     file_service.make_archive_file_path(&Path::new(FILE_NAME))
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct GamesRepoData {
-    games: HashMap<u32, Game>,
+pub struct SteamGamesRepoData {
+    games: HashMap<u32, SteamGame>,
     updated_at: DateTime<Utc>,
 }
 
 #[derive(Debug, Clone)]
 pub struct GamesRepoDisk {
-    data: Arc<RwLock<GamesRepoData>>,
+    data: Arc<RwLock<SteamGamesRepoData>>,
     file_service: FileServiceDisk,
 }
 
@@ -47,17 +47,17 @@ impl GamesRepoDisk {
 }
 
 #[async_trait::async_trait]
-impl GamesRepo for GamesRepoDisk {
-    async fn find_by_game_id(&self, game_id: u32) -> Result<Option<Game>> {
+impl SteamGamesRepo for GamesRepoDisk {
+    async fn find_by_game_id(&self, game_id: u32) -> Result<Option<SteamGame>> {
         let data = self.data.read().await;
 
         Ok(data.games.get(&game_id).cloned())
     }
 
-    async fn find_all_games(&self) -> Result<Vec<Game>> {
+    async fn find_all_games(&self) -> Result<Vec<SteamGame>> {
         let data = self.data.read().await;
 
-        Ok(data.games.values().cloned().collect::<Vec<Game>>())
+        Ok(data.games.values().cloned().collect::<Vec<SteamGame>>())
     }
 
     async fn find_total_playtime(&self) -> Result<u32> {
@@ -80,7 +80,7 @@ impl GamesRepo for GamesRepoDisk {
         Ok(Some(data.updated_at))
     }
 
-    async fn commit(&self, game: &Game) -> Result<()> {
+    async fn commit(&self, game: &SteamGame) -> Result<()> {
         let mut data = self.data.write().await;
 
         data.games.insert(game.id, game.clone());
