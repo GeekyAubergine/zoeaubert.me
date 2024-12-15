@@ -48,13 +48,13 @@ impl GamesRepoDisk {
 
 #[async_trait::async_trait]
 impl SteamGamesRepo for GamesRepoDisk {
-    async fn find_by_game_id(&self, game_id: u32) -> Result<Option<SteamGame>> {
+    async fn find_by_id(&self, game_id: u32) -> Result<Option<SteamGame>> {
         let data = self.data.read().await;
 
         Ok(data.games.get(&game_id).cloned())
     }
 
-    async fn find_all_games(&self) -> Result<Vec<SteamGame>> {
+    async fn find_all(&self) -> Result<Vec<SteamGame>> {
         let data = self.data.read().await;
 
         Ok(data.games.values().cloned().collect::<Vec<SteamGame>>())

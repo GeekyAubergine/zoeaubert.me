@@ -11,15 +11,7 @@ use url::Url;
 
 use super::{
     models::{
-        cache_path::CachePath,
-        image::{Image, ImageDimensions},
-        media::Media,
-        movie::{Movie, MovieReview},
-        network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes},
-        omni_post::OmniPost,
-        page::Page,
-        slug::Slug,
-        tv_show::{TvShow, TvShowReview},
+        cache_path::CachePath, content::Content, image::{Image, ImageDimensions}, media::Media, movie::{Movie, MovieReview}, network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes}, omni_post::OmniPost, page::Page, slug::Slug, tv_show::{TvShow, TvShowReview}
     },
     state::State,
 };
@@ -50,10 +42,10 @@ pub trait MovieService {
     async fn find_movie(&self, state: &impl State, title: &str, year: u16)
         -> Result<Option<Movie>>;
 
-    async fn movie_review_from_omni_post(
+    async fn movie_review_from_content(
         &self,
         state: &impl State,
-        post: &OmniPost,
+        post: &Content,
     ) -> Result<MovieReview>;
 }
 
@@ -61,10 +53,10 @@ pub trait MovieService {
 pub trait TvShowsService {
     async fn find_tv_show(&self, state: &impl State, title: &str) -> Result<Option<TvShow>>;
 
-    async fn tv_show_review_from_omni_post(
+    async fn tv_show_review_from_content(
         &self,
         state: &impl State,
-        post: &OmniPost,
+        post: &Content,
     ) -> Result<TvShowReview>;
 }
 

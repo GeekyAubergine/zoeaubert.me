@@ -13,7 +13,7 @@ use crate::{
             slug::Slug,
             tag::Tag,
         },
-        queries::omni_post_queries::find_all_omni_posts_by_tag,
+        queries::omni_post_queries::{find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags},
         repositories::MovieReviewsRepo,
         services::{MovieService, PageRenderingService},
         state::State,
@@ -28,10 +28,18 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 const MOVIE_TAG: &str = "Movies";
 
 pub async fn render_movie_pages(state: &impl State) -> Result<()> {
-    let reviews_by_id = state
-        .movie_reviews_repo()
-        .find_all_grouped_by_movie_id()
-        .await?;
+    let posts = find_all_omni_posts(state, OmniPostFilterFlags::MOVIE_REVIEW).await?;
+
+    let mut reviews_by_id = HashMap::new();
+    for post in posts {
+        match post {
+            OmniPost::MovieReview(post) => {
+                let entry = reviews_by_id.entry(post.movie.id).or_insert_with(Vec::new);
+                entry.push(post);
+            }
+            _ => {}
+        }
+    }
 
     render_movies_list_page(state, &reviews_by_id).await?;
 
@@ -67,7 +75,7 @@ async fn render_movies_list_page(
             let total_score: u16 = reviews.iter().map(|r| r.score as u16).sum();
             let average_score = (total_score as f32 / reviews.len() as f32);
 
-            match reviews.iter().max_by_key(|r| r.post.date()) {
+            match reviews.iter().max_by_key(|r| r.source_content.date()) {
                 Some(most_recent_review) => Some(AverageReviewForMovie {
                     movie: most_recent_review.movie.clone(),
                     average_score,
@@ -83,9 +91,9 @@ async fn render_movies_list_page(
 
     movies.sort_by(|a, b| {
         b.most_recent_review
-            .post
+            .source_content
             .date()
-            .cmp(&a.most_recent_review.post.date())
+            .cmp(&a.most_recent_review.source_content.date())
     });
 
     let page = Page::new(
@@ -96,7 +104,7 @@ async fn render_movies_list_page(
 
     let updated_at = movies
         .first()
-        .map(|r| r.most_recent_review.post.date().clone());
+        .map(|r| r.most_recent_review.source_content.date().clone());
 
     let template = MovieListTemplate { page, movies };
 
@@ -132,7 +140,7 @@ async fn render_movie_page(
 
     let mut posts = reviews
         .iter()
-        .map(|r| r.post.clone())
+        .map(|r| r.source_content.clone().into())
         .collect::<Vec<OmniPost>>();
 
     posts.sort_by(|a, b| b.date().cmp(&a.date()));
@@ -146,7 +154,7 @@ async fn render_movie_page(
         posts,
     };
 
-    let most_recent_review = reviews.iter().max_by_key(|r| r.post.date());
+    let most_recent_review = reviews.iter().max_by_key(|r| r.source_content.date());
 
     state
         .page_rendering_service()
@@ -154,7 +162,7 @@ async fn render_movie_page(
             state,
             template.page.slug.clone(),
             template,
-            most_recent_review.map(|r| r.post.date()),
+            most_recent_review.map(|r| r.source_content.date()),
         )
         .await
 }

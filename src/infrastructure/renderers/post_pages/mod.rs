@@ -2,7 +2,7 @@ use blog_pages_renderer::render_blog_pages;
 use mastodon_post_pages_renderer::render_mastodon_post_pages;
 use micro_post_pages_renderer::render_micro_post_pages;
 use tags_pages_renderer::render_tags_pages;
-use timeline_pages_renderer::render_timeline_page;
+use timeline_pages_renderer::render_timeline_pages;
 use tokio::try_join;
 use years_pages_renderer::render_years_pages;
 
@@ -21,7 +21,7 @@ pub async fn render_post_pages(state: &impl State) -> Result<()> {
         render_blog_pages(state),
         render_micro_post_pages(state),
         render_mastodon_post_pages(state),
-        render_timeline_page(state),
+        render_timeline_pages(state),
         render_tags_pages(state),
         render_years_pages(state),
     )?;

@@ -220,6 +220,7 @@ pub async fn update_steam_game_achievements_command(
     for achievement in game_data {
         state.profiler().entity_processed().await?;
 
+        // Sometimes the icon urls are just a directory
         if achievement.icon.as_str().ends_with("/") || achievement.icon_gray.as_str().ends_with("/")
         {
             continue;

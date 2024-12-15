@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::domain::models::{omni_post::OmniPost, slug::Slug};
+use crate::domain::models::{content::Content, slug::Slug};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -349,7 +349,7 @@ pub enum MovieError {
     MovieNotFound(String),
 
     #[error("Unsupported OmniPost type: {0}")]
-    UnsupportedOmniPostType(Slug),
+    UnsupportedContenttType(Slug),
 
     #[error("Movie has no poster {0}")]
     MovieHasNoPoster(u32),
@@ -380,8 +380,8 @@ impl MovieError {
         Error::MovieError(Self::MovieNotFound(error))
     }
 
-    pub fn unsupported_omni_post_type(omni_post: &OmniPost) -> Error {
-        Error::MovieError(Self::UnsupportedOmniPostType(omni_post.slug()))
+    pub fn unsupported_content_type(content: &Content) -> Error {
+        Error::MovieError(Self::UnsupportedContenttType(content.slug()))
     }
 
     pub fn movie_has_no_poster(id: u32) -> Error {
@@ -410,7 +410,7 @@ pub enum TvShowsError {
     TvShowNotFound(String),
 
     #[error("Unsupported OmniPost type: {0}")]
-    UnsupportedOmniPostType(Slug),
+    UnsupportedContentType(Slug),
 
     #[error("Tv show has no poster {0}")]
     TvShowHasNoPoster(u32),
@@ -441,8 +441,8 @@ impl TvShowsError {
         Error::TvShowsError(Self::TvShowNotFound(error))
     }
 
-    pub fn unsupported_omni_post_type(omni_post: &OmniPost) -> Error {
-        Error::TvShowsError(Self::UnsupportedOmniPostType(omni_post.slug()))
+    pub fn unsupported_content_type(content: &Content) -> Error {
+        Error::TvShowsError(Self::UnsupportedContentType(content.slug()))
     }
 
     pub fn tv_show_has_no_poster(id: u32) -> Error {

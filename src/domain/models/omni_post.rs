@@ -7,125 +7,166 @@ use uuid::Uuid;
 use super::{
     album::{Album, AlbumPhoto},
     blog_post::BlogPost,
+    content::Content,
+    image::Image,
     mastodon_post::MastodonPost,
     media::Media,
     micro_post::MicroPost,
+    movie::{Movie, MovieReview},
     slug::Slug,
+    steam::{SteamGame, SteamGameAchievementUnlocked},
     tag::Tag,
+    tv_show::TvShowReview,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum OmniPost {
-    // StatusLol(StatusLolPost),
-    // UnlockedGameAchievement {
-    //     game: Game,
-    //     achievement: GameAchievementUnlocked,
-    // },
     BlogPost(BlogPost),
     MicroPost(MicroPost),
     MastodonPost(MastodonPost),
     AlbumPhoto(AlbumPhoto),
     Album(Album),
+    SteamAcheivementUnlocked {
+        game: SteamGame,
+        achievement: SteamGameAchievementUnlocked,
+    },
+    MovieReview(MovieReview),
+    TvShowReview(TvShowReview),
 }
 
 impl OmniPost {
+    pub fn key(&self) -> String {
+        match self {
+            Self::BlogPost(blog_post) => blog_post.slug.to_string(),
+            Self::MicroPost(micro_post) => micro_post.slug.to_string(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.slug().to_string(),
+            Self::AlbumPhoto(album_photo) => album_photo.slug.to_string(),
+            Self::Album(album) => album.slug.to_string(),
+            Self::SteamAcheivementUnlocked { game, achievement } => {
+                format!("{}-{}", game.id, achievement.id)
+            }
+            Self::MovieReview(review) => review.source_content.slug().to_string(),
+            Self::TvShowReview(review) => review.source_content.slug().to_string(),
+        }
+    }
+
     pub fn slug(&self) -> Slug {
         match self {
-            // Self::StatusLol(status_lol) => status_lol.slug().to_owned(),
-            // Self::UnlockedGameAchievement { achievement, .. } => achievement.slug().to_owned(),
             Self::BlogPost(blog_post) => blog_post.slug.clone(),
             Self::MicroPost(micro_post) => micro_post.slug.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug(),
             Self::AlbumPhoto(album_photo) => album_photo.slug.clone(),
             Self::Album(album) => album.slug.clone(),
+            Self::SteamAcheivementUnlocked { game, .. } => game.slug(),
+            Self::MovieReview(review) => review.source_content.slug(),
+            Self::TvShowReview(review) => review.source_content.slug(),
         }
     }
 
-    // pub fn key(&self) -> String {
-    //     match self {
-    //         // Self::StatusLol(status_lol) => status_lol.id().to_owned(),
-    //         // Self::UnlockedGameAchievement { achievement, .. } => achievement.id().to_owned(),
-    //         Self::BlogPost(blog_post) => blog_post.slug().to_owned(),
-    //         // Self::MicroPost(micro_post) => micro_post.slug.to_owned(),
-    //         // Self::MastodonPost(mastodon_post) => mastodon_post.id().to_owned(),
-    //     }
-    // }
-
     pub fn link(&self) -> String {
         match self {
-            // Self::StatusLol(status_lol) => status_lol.permalink().to_owned(),
-            // Self::UnlockedGameAchievement { game, .. } => format!("/interests/games/{}", game.id()),
             Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
             Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_link(),
             Self::AlbumPhoto(album_photo) => album_photo.slug.relative_link(),
             Self::Album(album) => album.slug.relative_link(),
+            Self::SteamAcheivementUnlocked { game, .. } => game.slug().relative_link(),
+            Self::MovieReview(review) => review.source_content.slug().relative_link(),
+            Self::TvShowReview(review) => review.source_content.slug().relative_link(),
         }
     }
 
     pub fn date(&self) -> &DateTime<Utc> {
         match self {
-            // Self::StatusLol(status_lol) => status_lol.date(),
-            // Self::UnlockedGameAchievement { achievement, .. } => achievement.unlocked_date(),
             Self::BlogPost(blog_post) => &blog_post.date,
             Self::MicroPost(micro_post) => &micro_post.date,
             Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
             Self::AlbumPhoto(album_photo) => &album_photo.date,
             Self::Album(album) => &album.date,
+            Self::SteamAcheivementUnlocked { achievement, .. } => &achievement.unlocked_date,
+            Self::MovieReview(review) => review.source_content.date(),
+            Self::TvShowReview(review) => review.source_content.date(),
         }
     }
 
     pub fn media(&self) -> Vec<Media> {
         match self {
-            // Self::StatusLol(status_lol) => vec![],
-            // Self::UnlockedGameAchievement { .. } => vec![],
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.media(),
             Self::AlbumPhoto(album_photo) => {
                 vec![album_photo.small_image.clone().into()]
             }
-            // It does it's own thing
-            Self::Album(_) => vec![],
+            Self::Album(_) => vec![], // It does it's own thing
+            Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos
+            Self::MovieReview(_) => vec![], // Don't want this showing up in photos
+            Self::TvShowReview(_) => vec![], // Don't want this showing up in photos
         }
     }
 
     pub fn optimised_media(&self) -> Vec<Media> {
         match self {
-            // Self::StatusLol(status_lol) => vec![],
-            // Self::UnlockedGameAchievement { .. } => vec![],
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.optimised_media(),
             Self::AlbumPhoto(album_photo) => {
                 vec![album_photo.small_image.clone().into()]
             }
-            // It does it's own thing
-            Self::Album(_) => vec![],
+            Self::Album(_) => vec![], // It does it's own thing
+            Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos
+            Self::MovieReview(_) => vec![], // Don't want this showing up in photos
+            Self::TvShowReview(_) => vec![], // Don't want this showing up in photos
         }
     }
 
     pub fn tags(&self) -> Vec<Tag> {
         match self {
-            // Self::StatusLol(status_lol) => status_lol.tags.clone(),
-            // Self::UnlockedGameAchievement { .. } => vec![],
             Self::BlogPost(blog_post) => blog_post.tags.clone(),
             Self::MicroPost(micro_post) => micro_post.tags.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.tags().clone(),
             Self::AlbumPhoto(album_photo) => album_photo.tags.clone(),
-            Self::Album(album) => vec![],
+            Self::Album(_) => vec![], // Don't want it in search
+            Self::SteamAcheivementUnlocked { .. } => vec![], // Doesn't have tags
+            Self::MovieReview(review) => review.source_content.tags(),
+            Self::TvShowReview(review) => review.source_content.tags(),
         }
     }
 
     pub fn last_updated_at(&self) -> Option<&DateTime<Utc>> {
         match self {
-            // Self::StatusLol(status_lol) => status_lol.last_updated_at(),
-            // Self::UnlockedGameAchievement { .. } => None,
             Self::BlogPost(blog_post) => Some(&blog_post.updated_at),
             Self::MicroPost(micro_post) => micro_post.updated_at.as_ref(),
             Self::MastodonPost(mastodon_post) => Some(mastodon_post.updated_at()),
             Self::AlbumPhoto(album_photo) => Some(&album_photo.updated_at),
             Self::Album(album) => Some(&album.updated_at),
+            Self::SteamAcheivementUnlocked { achievement, .. } => Some(&achievement.unlocked_date),
+            Self::MovieReview(review) => review.source_content.last_updated_at(),
+            Self::TvShowReview(review) => review.source_content.last_updated_at(),
+        }
+    }
+
+    pub fn side_image(&self) -> Option<Image> {
+        match self {
+            Self::BlogPost(blog_post) => None,
+            Self::MicroPost(micro_post) => None,
+            Self::MastodonPost(mastodon_post) => None,
+            Self::AlbumPhoto(album_photo) => None,
+            Self::Album(_) => None,
+            Self::SteamAcheivementUnlocked { game, .. } => Some(game.header_image.clone()),
+            Self::MovieReview(review) => Some(review.movie.poster.clone()),
+            Self::TvShowReview(review) => Some(review.tv_show.poster.clone()),
+        }
+    }
+}
+
+impl From<Content> for OmniPost {
+    fn from(content: Content) -> Self {
+        match content {
+            Content::BlogPost(blog_post) => Self::BlogPost(blog_post),
+            Content::MicroPost(micro_post) => Self::MicroPost(micro_post),
+            Content::MastodonPost(mastodon_post) => Self::MastodonPost(mastodon_post),
+            Content::AlbumPhoto(album_photo) => Self::AlbumPhoto(album_photo),
+            Content::Album(album) => Self::Album(album),
         }
     }
 }
@@ -136,21 +177,9 @@ impl From<BlogPost> for OmniPost {
     }
 }
 
-impl From<&BlogPost> for OmniPost {
-    fn from(blog_post: &BlogPost) -> Self {
-        Self::BlogPost(blog_post.clone())
-    }
-}
-
 impl From<MicroPost> for OmniPost {
     fn from(micro_post: MicroPost) -> Self {
         Self::MicroPost(micro_post)
-    }
-}
-
-impl From<&MicroPost> for OmniPost {
-    fn from(micro_post: &MicroPost) -> Self {
-        Self::MicroPost(micro_post.clone())
     }
 }
 
@@ -160,21 +189,9 @@ impl From<MastodonPost> for OmniPost {
     }
 }
 
-impl From<&MastodonPost> for OmniPost {
-    fn from(mastodon_post: &MastodonPost) -> Self {
-        Self::MastodonPost(mastodon_post.clone())
-    }
-}
-
 impl From<AlbumPhoto> for OmniPost {
     fn from(album_photo: AlbumPhoto) -> Self {
         Self::AlbumPhoto(album_photo)
-    }
-}
-
-impl From<&AlbumPhoto> for OmniPost {
-    fn from(album_photo: &AlbumPhoto) -> Self {
-        Self::AlbumPhoto(album_photo.clone())
     }
 }
 
@@ -184,8 +201,20 @@ impl From<Album> for OmniPost {
     }
 }
 
-impl From<&Album> for OmniPost {
-    fn from(album: &Album) -> Self {
-        Self::Album(album.clone())
+impl From<(SteamGame, SteamGameAchievementUnlocked)> for OmniPost {
+    fn from((game, achievement): (SteamGame, SteamGameAchievementUnlocked)) -> Self {
+        Self::SteamAcheivementUnlocked { game, achievement }
+    }
+}
+
+impl From<MovieReview> for OmniPost {
+    fn from(movie: MovieReview) -> Self {
+        Self::MovieReview(movie)
+    }
+}
+
+impl From<TvShowReview> for OmniPost {
+    fn from(tv_show: TvShowReview) -> Self {
+        Self::TvShowReview(tv_show)
     }
 }

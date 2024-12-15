@@ -73,7 +73,7 @@ pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
 }
 
 async fn process_game(state: &impl State, game: SteamOwnedGame) -> Result<()> {
-    if let Some(stored_game) = state.steam_games_repo().find_by_game_id(game.appid).await? {
+    if let Some(stored_game) = state.steam_games_repo().find_by_id(game.appid).await? {
         if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.last_played {
             return Ok(());
         }

@@ -8,14 +8,20 @@ use super::{
     models::{
         album::{Album, AlbumPhoto},
         blog_post::BlogPost,
-        steam::{SteamGame, SteamGameAchievement, SteamGameAchievementLocked, SteamGameAchievementUnlocked},
+        content::Content,
         league::LeagueChampNote,
         lego::{LegoMinifig, LegoSet},
         mastodon_post::MastodonPost,
         micro_post::MicroPost,
         movie::{MovieId, MovieReview},
+        omni_post::OmniPost,
         referral::Referral,
         slug::Slug,
+        steam::{
+            SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
+            SteamGameAchievementUnlocked,
+        },
+        tag::Tag,
         tv_show::{TvShowId, TvShowReview},
     },
     services::FileService,
@@ -105,9 +111,9 @@ pub trait LegoRepo {
 
 #[async_trait::async_trait]
 pub trait SteamGamesRepo {
-    async fn find_by_game_id(&self, game_id: u32) -> Result<Option<SteamGame>>;
+    async fn find_by_id(&self, game_id: u32) -> Result<Option<SteamGame>>;
 
-    async fn find_all_games(&self) -> Result<Vec<SteamGame>>;
+    async fn find_all(&self) -> Result<Vec<SteamGame>>;
 
     async fn find_total_playtime(&self) -> Result<u32>;
 
@@ -125,7 +131,10 @@ pub trait SteamAchievementsRepo {
         game_id: u32,
     ) -> Result<Vec<SteamGameAchievementUnlocked>>;
 
-    async fn find_all_locked_by_name(&self, game_id: u32) -> Result<Vec<SteamGameAchievementLocked>>;
+    async fn find_all_locked_by_name(
+        &self,
+        game_id: u32,
+    ) -> Result<Vec<SteamGameAchievementLocked>>;
 
     async fn commit(&self, game: &SteamGame, achievement: &SteamGameAchievement) -> Result<()>;
 }
@@ -183,8 +192,16 @@ pub trait NowTextRepo {
 
 #[async_trait::async_trait]
 pub trait LeagueRepo {
-    async fn find_all_champ_notes_by_name(&self)
-        -> Result<Vec<LeagueChampNote>>;
+    async fn find_all_champ_notes_by_name(&self) -> Result<Vec<LeagueChampNote>>;
 
     async fn commit_champ_notes(&self, notes: Vec<LeagueChampNote>) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait OmniPostRepo {
+    async fn find_all_by_date(&self) -> Result<Vec<OmniPost>>;
+
+    async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<OmniPost>>;
+
+    async fn commit(&self, state: &impl State, posts: Vec<OmniPost>) -> Result<()>;
 }

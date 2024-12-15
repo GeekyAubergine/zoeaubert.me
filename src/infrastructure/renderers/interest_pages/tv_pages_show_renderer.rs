@@ -14,7 +14,7 @@ use crate::{
             tag::Tag,
             tv_show::{TvShow, TvShowId, TvShowReview},
         },
-        queries::omni_post_queries::find_all_omni_posts_by_tag,
+        queries::omni_post_queries::{find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags},
         repositories::TvShowReviewsRepo,
         services::{MovieService, PageRenderingService, TvShowsService},
         state::State,
@@ -29,11 +29,18 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 const TV_TAG: &str = "TV";
 
 pub async fn render_tv_show_pages(state: &impl State) -> Result<()> {
-    let reviews_by_id = state
-        .tv_show_reviews_repo()
-        .find_all_grouped_by_tv_show_id()
-        .await?;
+    let posts = find_all_omni_posts(state, OmniPostFilterFlags::TV_SHOW_REVIEW).await?;
 
+    let mut reviews_by_id = HashMap::new();
+    for post in posts {
+        match post {
+            OmniPost::TvShowReview(post) => {
+                let entry = reviews_by_id.entry(post.tv_show.id).or_insert_with(Vec::new);
+                entry.push(post);
+            }
+            _ => {}
+        }
+    }
     render_tv_show_list_page(state, &reviews_by_id).await?;
 
     for reviews in reviews_by_id.values() {
@@ -74,7 +81,7 @@ async fn render_tv_show_list_page(
             let average_score: f32 =
                 total_scores.iter().sum::<u8>() as f32 / total_scores.len() as f32;
 
-            match reviews.iter().max_by_key(|r| r.post.date()) {
+            match reviews.iter().max_by_key(|r| r.source_content.date()) {
                 Some(most_recent_review) => Some(AverageReviewForTvShow {
                     tv_show: most_recent_review.tv_show.clone(),
                     average_score,
@@ -90,9 +97,9 @@ async fn render_tv_show_list_page(
 
     tv_shows.sort_by(|a, b| {
         b.most_recent_review
-            .post
+            .source_content
             .date()
-            .cmp(&a.most_recent_review.post.date())
+            .cmp(&a.most_recent_review.source_content.date())
     });
 
     let page = Page::new(
@@ -103,7 +110,7 @@ async fn render_tv_show_list_page(
 
     let updated_at = tv_shows
         .first()
-        .map(|r| r.most_recent_review.post.date().clone());
+        .map(|r| r.most_recent_review.source_content.date().clone());
 
     let template = TvShowListTemplate { page, tv_shows };
 
@@ -142,7 +149,7 @@ async fn render_tv_show_page(
 
     let mut posts = reviews
         .iter()
-        .map(|r| r.post.clone())
+        .map(|r| r.source_content.clone().into())
         .collect::<Vec<OmniPost>>();
 
     posts.sort_by(|a, b| b.date().cmp(&a.date()));
@@ -156,7 +163,7 @@ async fn render_tv_show_page(
         posts,
     };
 
-    let most_recent_review = reviews.iter().max_by_key(|r| r.post.date());
+    let most_recent_review = reviews.iter().max_by_key(|r| r.source_content.date());
 
     state
         .page_rendering_service()
@@ -164,7 +171,7 @@ async fn render_tv_show_page(
             state,
             template.page.slug.clone(),
             template,
-            most_recent_review.map(|r| r.post.date()),
+            most_recent_review.map(|r| r.source_content.date()),
         )
         .await
 }

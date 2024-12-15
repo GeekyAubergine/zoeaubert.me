@@ -13,18 +13,19 @@
     </div>
     <div class="text-lg my-8 items-center">
         {# <p>Not mentioned here are untold hours in Minecraft and EVE Online</p> #}
-        <p>See my <a href="/tags/gaming">#gaming</a> posts</p>
+        <p>See my <a href="/interests/games/activity/">gaming activity</a></p>
     </div>
     <h2>Recently Played</h2>
-    <div class="games-grid" data-pagefind-ignore>
+    <div class="games-grid">
         {% for game in games_by_recently_played %}
             {% include "interests/games/games_list_game.html" %}
         {% endfor %}
     </div>
     <h2 class="mt-16">All Games</h2>
-    <div class="games-grid" data-pagefind-ignore>
+    <div class="games-grid mb-8">
         {% for game in games_by_most_played %}
             {% include "interests/games/games_list_game.html" %}
         {% endfor %}
     </div>
+    <p><a class="mt-8" href="/interests/games/achievements/">Sort by Achievement Progress</a></p>
 {% endblock %}

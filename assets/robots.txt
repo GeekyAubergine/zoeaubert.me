@@ -7,6 +7,7 @@ Disallow: /interests/books
 Disallow: /albums
 Disallow: /photos
 Disallow: /feeds
+Disallow: /firehose
 
 User-agent: AdsBot-Google
 User-agent: Amazonbot

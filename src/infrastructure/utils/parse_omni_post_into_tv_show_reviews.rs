@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use regex::Regex;
 
-use crate::{domain::models::omni_post::OmniPost, error::TvShowsError, prelude::*};
+use crate::{domain::models::{content::Content, omni_post::OmniPost}, error::TvShowsError, prelude::*};
 
 const LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\[(.*)\]").unwrap());
 const SEASON_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\((S.*)\)").unwrap());
@@ -15,15 +15,16 @@ const NUMBERS_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d+").unwrap());
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Review {
     pub title: String,
+    pub seasons: Vec<u8>,
     pub scores: Vec<u8>,
     pub review: String,
 }
 
-pub fn parse_omni_post_into_tv_show_review(post: &OmniPost) -> Result<Review> {
-    match post {
-        OmniPost::MicroPost(post) => parse_markdown_into_tv_show_review(&post.content),
-        OmniPost::MastodonPost(post) => parse_markdown_into_tv_show_review(&post.content()),
-        _ => Err(TvShowsError::unsupported_omni_post_type(post)),
+pub fn parse_content_into_tv_show_review(content: &Content) -> Result<Review> {
+    match content {
+        Content::MicroPost(post) => parse_markdown_into_tv_show_review(&post.content),
+        Content::MastodonPost(post) => parse_markdown_into_tv_show_review(&post.content()),
+        _ => Err(TvShowsError::unsupported_content_type(content)),
     }
 }
 
@@ -84,8 +85,8 @@ fn parse_markdown_into_tv_show_review(content: &str) -> Result<Review> {
 
     let seasons = NUMBERS_REGEX
         .find_iter(seasons)
-        .map(|m| m.as_str().parse::<u16>().unwrap())
-        .collect::<Vec<u16>>();
+        .map(|m| m.as_str().parse::<u8>().unwrap())
+        .collect::<Vec<u8>>();
 
     let review = match REVIEW_REGEX.captures(second_line) {
         Some(captures) => captures
@@ -113,6 +114,7 @@ fn parse_markdown_into_tv_show_review(content: &str) -> Result<Review> {
 
     Ok(Review {
         title: title.clone(),
+        seasons: seasons.clone(),
         scores: seasons.iter().map(|_| score).collect::<Vec<u8>>(),
         review: review.clone(),
     })

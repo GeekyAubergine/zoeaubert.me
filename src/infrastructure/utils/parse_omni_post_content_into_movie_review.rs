@@ -3,7 +3,7 @@ use regex::Regex;
 
 use crate::{
     domain::{
-        models::{movie::MovieReview, omni_post::OmniPost},
+        models::{content::Content, movie::MovieReview, omni_post::OmniPost},
         services::MovieService,
         state::State,
     },
@@ -18,13 +18,6 @@ const REVIEW_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"- (.+)$").unwrap());
 const SCORE_AND_MAX_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d+)\/(\d+)").unwrap());
 const NON_LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*) \((\d+)\)").unwrap());
 
-pub async fn omni_post_to_movie_review(
-    movie_service: &impl MovieService,
-    omni_post: &OmniPost,
-) -> Result<Option<MovieReview>> {
-    Ok(None)
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Review {
     pub title: String,
@@ -33,11 +26,11 @@ pub struct Review {
     pub review: String,
 }
 
-pub fn parse_omni_post_into_movie_review(post: &OmniPost) -> Result<Review> {
+pub fn parse_content_into_movie_review(post: &Content) -> Result<Review> {
     match post {
-        OmniPost::MicroPost(post) => parse_markdown_into_movie_review(&post.content),
-        OmniPost::MastodonPost(post) => parse_markdown_into_movie_review(&post.content()),
-        _ => Err(MovieError::unsupported_omni_post_type(post)),
+        Content::MicroPost(post) => parse_markdown_into_movie_review(&post.content),
+        Content::MastodonPost(post) => parse_markdown_into_movie_review(&post.content()),
+        _ => Err(MovieError::unsupported_content_type(post)),
     }
 }
 
@@ -136,9 +129,7 @@ mod test {
         domain::models::{micro_post::MicroPost, slug::Slug, tag::Tag},
         infrastructure::utils::{
             date::parse_date,
-            parse_omni_post_content_into_movie_review::{
-                parse_markdown_into_movie_review, Review,
-            },
+            parse_omni_post_content_into_movie_review::{parse_markdown_into_movie_review, Review},
         },
     };
 

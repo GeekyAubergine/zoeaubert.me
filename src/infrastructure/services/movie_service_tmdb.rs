@@ -8,6 +8,7 @@ use url::Url;
 
 use serde::{Deserialize, Serialize};
 
+use crate::domain::models::content::Content;
 use crate::domain::models::movie::{MovieId, MovieReview};
 use crate::domain::models::omni_post::OmniPost;
 use crate::domain::services::{FileService, ImageService, NetworkService};
@@ -16,7 +17,7 @@ use crate::domain::{models::movie::Movie, services::MovieService};
 
 use crate::error::MovieError;
 use crate::infrastructure::utils::date::parse_date;
-use crate::infrastructure::utils::parse_omni_post_content_into_movie_review::parse_omni_post_into_movie_review;
+use crate::infrastructure::utils::parse_omni_post_content_into_movie_review::parse_content_into_movie_review;
 use crate::prelude::*;
 
 use super::file_service_disk::FileServiceDisk;
@@ -159,12 +160,12 @@ impl MovieService for MovieServiceTmdb {
         }
     }
 
-    async fn movie_review_from_omni_post(
+    async fn movie_review_from_content(
         &self,
         state: &impl State,
-        post: &OmniPost,
+        post: &Content,
     ) -> Result<MovieReview> {
-        let review = parse_omni_post_into_movie_review(post)?;
+        let review = parse_content_into_movie_review(post)?;
 
         let movie = self
             .find_movie(state, &review.title, review.year)
@@ -175,7 +176,7 @@ impl MovieService for MovieServiceTmdb {
             movie,
             score: review.score,
             review: review.review,
-            post: post.clone(),
+            source_content: post.clone(),
         })
     }
 }

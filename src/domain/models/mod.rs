@@ -17,3 +17,5 @@ pub mod tv_show;
 pub mod album;
 pub mod referral;
 pub mod league;
+pub mod game;
+pub mod content;

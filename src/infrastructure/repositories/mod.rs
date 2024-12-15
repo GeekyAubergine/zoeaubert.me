@@ -14,3 +14,4 @@ pub mod referrary_repo_memory;
 pub mod faq_repo_memory;
 pub mod now_text_repo_memory;
 pub mod leauge_repo_disk;
+pub mod omni_post_repo_memory;

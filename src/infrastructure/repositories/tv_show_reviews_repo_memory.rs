@@ -60,7 +60,7 @@ impl TvShowReviewsRepo for TvShowReviewsRepoMemory {
     async fn commit(&self, tv_show_review: &TvShowReview) -> Result<()> {
         let mut data = self.data.write().await;
         data.tv_show_reviews
-            .insert(tv_show_review.post.slug(), tv_show_review.clone());
+            .insert(tv_show_review.source_content.slug(), tv_show_review.clone());
         Ok(())
     }
 }

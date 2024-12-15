@@ -8,6 +8,7 @@ use url::Url;
 
 use serde::{Deserialize, Serialize};
 
+use crate::domain::models::content::Content;
 use crate::domain::models::omni_post::OmniPost;
 use crate::domain::models::tv_show::{TvShow, TvShowId, TvShowReview};
 use crate::domain::services::{FileService, ImageService, NetworkService, TvShowsService};
@@ -15,9 +16,9 @@ use crate::domain::state::State;
 
 use crate::error::TvShowsError;
 use crate::infrastructure::utils::date::parse_date;
-use crate::infrastructure::utils::parse_omni_post_content_into_movie_review::parse_omni_post_into_movie_review;
+use crate::infrastructure::utils::parse_omni_post_content_into_movie_review::parse_content_into_movie_review;
 use crate::infrastructure::utils::parse_omni_post_into_tv_show_reviews::{
-    self, parse_omni_post_into_tv_show_review,
+    self, parse_content_into_tv_show_review,
 };
 use crate::prelude::*;
 
@@ -147,12 +148,12 @@ impl TvShowsService for TvShowsServiceTmdb {
         }
     }
 
-    async fn tv_show_review_from_omni_post(
+    async fn tv_show_review_from_content(
         &self,
         state: &impl State,
-        post: &OmniPost,
+        post: &Content,
     ) -> Result<TvShowReview> {
-        let review = parse_omni_post_into_tv_show_review(post)?;
+        let review = parse_content_into_tv_show_review(post)?;
 
         let tv_show = self
             .find_tv_show(state, &review.title)
@@ -161,9 +162,10 @@ impl TvShowsService for TvShowsServiceTmdb {
 
         Ok(TvShowReview {
             tv_show,
+            seasons: review.seasons,
             scores: review.scores,
             review: review.review,
-            post: post.clone(),
+            source_content: post.clone(),
         })
     }
 }

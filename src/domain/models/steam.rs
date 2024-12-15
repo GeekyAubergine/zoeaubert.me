@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use super::image::Image;
+use super::{image::Image, slug::Slug};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SteamGame {
@@ -37,6 +37,10 @@ impl SteamGame {
 
     pub fn playtime_hours(&self) -> f32 {
         self.playtime as f32 / 60.0
+    }
+
+    pub fn slug(&self) -> Slug {
+        Slug::new(&format!("/interests/games/{}/", self.id))
     }
 }
 
