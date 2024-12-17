@@ -51,6 +51,9 @@ pub enum Error {
 
     #[error("Album error: {0}")]
     AlbumError(#[from] AlbumError),
+
+    #[error("Book error: {0}")]
+    BookError(#[from] BookError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -459,5 +462,24 @@ pub enum AlbumError {
 impl AlbumError {
     pub fn invalid_file_name(file_name: PathBuf) -> Error {
         Error::AlbumError(Self::InvalidFileName(file_name))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum BookError {
+    #[error("Unable to parse book: {0}")]
+    UnableToParseBook(String),
+
+    #[error("Unable to find book title: {0}")]
+    UnableToParseAndFindBookTitle(String),
+}
+
+impl BookError {
+    pub fn unable_to_parse_book(error: String) -> Error {
+        Error::BookError(Self::UnableToParseBook(error))
+    }
+
+    pub fn unable_to_parse_and_find_book_title(error: String) -> Error {
+        Error::BookError(Self::UnableToParseAndFindBookTitle(error))
     }
 }

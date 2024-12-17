@@ -19,3 +19,4 @@ pub mod referral;
 pub mod league;
 pub mod game;
 pub mod content;
+pub mod book;

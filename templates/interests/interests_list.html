@@ -1,21 +1,7 @@
-{% extends "partials/page.html" %}
+{% extends "partials/page.html" %} {%- block content %}
 
-{%- block content %}
-<ul>
-  <li>
-    <a href="/interests/games/">Games</a>
-  </li>
-  <li>
-    <a href="/interests/lego/">Lego</a>
-  </li>
-  <li>
-    <a href="/albums/">Photography</a>
-  </li>
-  <li>
-    <a href="/interests/movies/">Movies</a>
-  </li>
-  <li>
-    <a href="/interests/tv/">TV</a>
-  </li>
-</ul>
+<div class="interests-grid">
+    {% for interest in interests %} {% include
+    "interests/interests_list_item.html" %} {% endfor %}
+</div>
 {% endblock %}

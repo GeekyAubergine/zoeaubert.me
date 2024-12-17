@@ -166,4 +166,8 @@ impl Image {
 
         path.parse().unwrap()
     }
+
+    pub fn orientation(&self) -> ImageOrientation {
+        self.dimensions.orientation()
+    }
 }

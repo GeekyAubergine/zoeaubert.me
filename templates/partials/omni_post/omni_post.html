@@ -23,6 +23,8 @@
         {% include "partials/omni_post/omni_post_movie_review.html" %}
         {% when OmniPost::TvShowReview with (post) %}
         {% include "partials/omni_post/omni_post_tv_show_review.html" %}
+        {% when OmniPost::BookReview with (post) %}
+        {% include "partials/omni_post/omni_post_book_review.html" %}
         {% endmatch %}
 
         {% if omni_post.tags().len() > 0 %}

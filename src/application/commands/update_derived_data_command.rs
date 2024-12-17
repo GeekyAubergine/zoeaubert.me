@@ -10,7 +10,7 @@ use crate::{
             AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo,
             OmniPostRepo, Profiler, SteamAchievementsRepo, SteamGamesRepo, TvShowReviewsRepo,
         },
-        services::{MovieService, TvShowsService},
+        services::{BookService, MovieService, TvShowsService},
         state::State,
     },
     prelude::*,
@@ -18,44 +18,7 @@ use crate::{
 
 const MOVIE_REVIEW_POST_TAG: &str = "Movies";
 const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
-
-// async fn update_movie_reviews(state: &impl State) -> Result<()> {
-//     let posts = find_all_omni_posts_by_tag(state, &Tag::from_string(MOVIE_REVIEW_POST_TAG)).await?;
-
-//     for post in posts {
-//         state.profiler().entity_processed().await?;
-
-//         match state.movie_service().movie_review_from_content(state, &post).await {
-//             Ok(review) => state.movie_reviews_repo().commit(&review).await?,
-//             Err(e) => warn!(
-//                 "Could not create movie review from post with slug: {} {:?}",
-//                 post.slug(),
-//                 e,
-//             )
-//         };
-//     }
-
-//     Ok(())
-// }
-
-// async fn update_tv_reviews(state: &impl State) -> Result<()> {
-//     let posts = find_all_omni_posts_by_tag(state, &Tag::from_string(TV_SHOW_REVIEW_POST_TAG)).await?;
-
-//     for post in posts {
-//         state.profiler().entity_processed().await?;
-
-//         match state.tv_shows_service().tv_show_review_from_content(state, &post).await {
-//             Ok(review) => state.tv_show_reviews_repo().commit(&review).await?,
-//             Err(e) => warn!(
-//                 "Could not create tv review from post with slug: {} {:?}",
-//                 post.slug(),
-//                 e,
-//             )
-//         };
-//     }
-
-//     Ok(())
-// }
+const BOOK_REVIEW_POST_TAG: &str = "Books";
 
 async fn content_to_omni_post(state: &impl State, content: Content) -> Result<OmniPost> {
     if (content.tags().contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG))) {
@@ -90,6 +53,25 @@ async fn content_to_omni_post(state: &impl State, content: Content) -> Result<Om
                     e,
                 );
                 Ok(content.into())
+            }
+        };
+    }
+
+    if content.tags().contains(&Tag::from_string(BOOK_REVIEW_POST_TAG)) {
+        return match state
+            .book_service()
+            .book_review_from_content(state, &content)
+            .await
+        {
+            Ok(review) => Ok(review.into()),
+            Err(e) => {
+                warn!(
+                    "Could not create book review from post with slug: {} {:?}",
+                    content.slug(),
+                    e,
+                );
+                Ok(content.into())
+                // return Err(e)
             }
         };
     }
@@ -183,8 +165,6 @@ async fn get_steam_achievement_unlocked_content(state: &impl State) -> Result<Ve
             .into_iter()
             .map(|a| (game.clone(), a).into())
             .collect::<Vec<OmniPost>>();
-
-        println!("{:?} {:?}", game.name, achievements.len());
 
         posts.extend(achievements);
     }

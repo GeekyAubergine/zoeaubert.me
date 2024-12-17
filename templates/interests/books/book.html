@@ -1,0 +1,16 @@
+{% extends "partials/page.html" %} {%- block content %}
+<article>
+    <div class="items-center mb-8">
+        {% let image = book.cover.clone() %}
+        {% include "partials/media/image.html" %}
+        <p>{{ average_score.round().format(0, true) }}/5</p>
+    </div>
+
+    <h2>Reviews</h2>
+    <div class="timeline">
+        {% for omni_post in posts %}
+        <hr class="pb-4" />
+        {% include "partials/omni_post/omni_post.html" %} {% endfor %}
+    </div>
+</article>
+{% endblock %}

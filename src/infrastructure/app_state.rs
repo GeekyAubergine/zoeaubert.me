@@ -2,12 +2,21 @@ use std::sync::Arc;
 
 use super::{
     repositories::{
-        about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk, blog_posts_repo_disk::BlogPostsRepoDisk, faq_repo_memory::FaqRepoMemory, leauge_repo_disk::LeagueRepoDisk, lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk, movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo_memory::NowTextRepoMemory, omni_post_repo_memory::OmniPostRepoMemory, profiler_memory::ProfilerMemory, referrary_repo_memory::ReferralsRepoMemory, silly_names_repo_memory::SillyNamesRepoMemory, steam_achievements_repo_disk::GameAchievementsRepoDisk, steam_games_repo_disk::GamesRepoDisk, tv_show_reviews_repo_memory::TvShowReviewsRepoMemory
+        about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk,
+        blog_posts_repo_disk::BlogPostsRepoDisk, faq_repo_memory::FaqRepoMemory,
+        leauge_repo_disk::LeagueRepoDisk, lego_repo_disk::LegoRepoDisk,
+        mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk,
+        movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo_memory::NowTextRepoMemory,
+        omni_post_repo_memory::OmniPostRepoMemory, profiler_memory::ProfilerMemory,
+        referrary_repo_memory::ReferralsRepoMemory, silly_names_repo_memory::SillyNamesRepoMemory,
+        steam_achievements_repo_disk::GameAchievementsRepoDisk,
+        steam_games_repo_disk::GamesRepoDisk, tv_show_reviews_repo_memory::TvShowReviewsRepoMemory,
     },
     services::{
-        cache_service_disk::CacheServiceDisk, cdn_service_bunny::CdnServiceBunny,
-        file_service_disk::FileServiceDisk, image_service_impl::ImageServiceImpl,
-        movie_service_tmdb::MovieServiceTmdb, network_service_reqwest::NetworkServiceReqwest,
+        book_service_open_library::BookServiceOpenLibrary, cache_service_disk::CacheServiceDisk,
+        cdn_service_bunny::CdnServiceBunny, file_service_disk::FileServiceDisk,
+        image_service_impl::ImageServiceImpl, movie_service_tmdb::MovieServiceTmdb,
+        network_service_reqwest::NetworkServiceReqwest,
         page_rendering_service_impl::PageRenderingServiceImpl,
         query_limiting_service_disk::QueryLimitingServiceDisk,
         tv_shows_service_tmdb::TvShowsServiceTmdb,
@@ -17,11 +26,14 @@ use super::{
 use crate::{
     domain::{
         repositories::{
-            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, LeagueRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, OmniPostRepo, Profiler, ReferralsRepo, SillyNamesRepo, SteamAchievementsRepo, SteamGamesRepo, TvShowReviewsRepo
+            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, LeagueRepo, LegoRepo,
+            MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, OmniPostRepo,
+            Profiler, ReferralsRepo, SillyNamesRepo, SteamAchievementsRepo, SteamGamesRepo,
+            TvShowReviewsRepo,
         },
         services::{
-            CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
-            PageRenderingService, QueryLimitingService, TvShowsService,
+            BookService, CacheService, CdnService, FileService, ImageService, MovieService,
+            NetworkService, PageRenderingService, QueryLimitingService, TvShowsService,
         },
         state::State,
     },
@@ -56,6 +68,7 @@ pub struct AppState {
     query_limiting_service: QueryLimitingServiceDisk,
     tv_shows_service: TvShowsServiceTmdb,
     page_rendering_service: PageRenderingServiceImpl,
+    book_service: BookServiceOpenLibrary,
 }
 
 impl AppState {
@@ -88,6 +101,7 @@ impl AppState {
             query_limiting_service: QueryLimitingServiceDisk::new().await?,
             tv_shows_service: TvShowsServiceTmdb::new().await?,
             page_rendering_service: PageRenderingServiceImpl::new(),
+            book_service: BookServiceOpenLibrary::new().await?,
         })
     }
 
@@ -201,5 +215,9 @@ impl State for AppState {
 
     fn page_rendering_service(&self) -> &impl PageRenderingService {
         &self.page_rendering_service
+    }
+
+    fn book_service(&self) -> &impl BookService {
+        &self.book_service
     }
 }

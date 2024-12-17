@@ -131,6 +131,7 @@ mod tests {
         let expected = Review {
             title: "F Is for Family".to_string(),
             scores: vec![4, 4, 4],
+            seasons: vec![3, 4, 5],
             review: "The show continues to improve. The last two seasons touch on much more serious subjects and the show really shines for it.".to_string(),
         };
 
@@ -146,6 +147,7 @@ mod tests {
         let expected = Review {
             title: "Game of Thrones".to_string(),
             scores: vec![2],
+            seasons: vec![7],
             review: "The worst so far. Let&#39;s see how bad S8 is.".to_string(),
         };
 

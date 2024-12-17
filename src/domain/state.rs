@@ -3,8 +3,7 @@ use super::{
         AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, LeagueRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, OmniPostRepo, Profiler, ReferralsRepo, SillyNamesRepo, SteamAchievementsRepo, SteamGamesRepo, TvShowReviewsRepo
     },
     services::{
-        CacheService, CdnService, FileService, ImageService, MovieService, NetworkService,
-        PageRenderingService, QueryLimitingService, TvShowsService,
+        BookService, CacheService, CdnService, FileService, ImageService, MovieService, NetworkService, PageRenderingService, QueryLimitingService, TvShowsService
     },
 };
 
@@ -62,4 +61,6 @@ pub trait State: Sync + Send {
     fn tv_shows_service(&self) -> &impl TvShowsService;
 
     fn page_rendering_service(&self) -> &impl PageRenderingService;
+
+    fn book_service(&self) -> &impl BookService;
 }

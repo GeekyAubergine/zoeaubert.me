@@ -11,7 +11,7 @@ use url::Url;
 
 use super::{
     models::{
-        cache_path::CachePath, content::Content, image::{Image, ImageDimensions}, media::Media, movie::{Movie, MovieReview}, network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes}, omni_post::OmniPost, page::Page, slug::Slug, tv_show::{TvShow, TvShowReview}
+        book::{Book, BookReview}, cache_path::CachePath, content::Content, image::{Image, ImageDimensions}, media::Media, movie::{Movie, MovieReview}, network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes}, omni_post::OmniPost, page::Page, slug::Slug, tag::Tag, tv_show::{TvShow, TvShowReview}
     },
     state::State,
 };
@@ -58,6 +58,23 @@ pub trait TvShowsService {
         state: &impl State,
         post: &Content,
     ) -> Result<TvShowReview>;
+}
+
+#[async_trait::async_trait]
+pub trait BookService {
+    async fn find_book(
+        &self,
+        state: &impl State,
+        title: &str,
+        author: &str,
+        tags: &[Tag],
+    ) -> Result<Option<Book>>;
+
+    async fn book_review_from_content(
+        &self,
+        state: &impl State,
+        post: &Content,
+    ) -> Result<BookReview>;
 }
 
 #[async_trait::async_trait]

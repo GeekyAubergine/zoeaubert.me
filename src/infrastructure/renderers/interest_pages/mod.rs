@@ -1,3 +1,4 @@
+use book_pages_renderer::render_book_pages;
 use game_pages_renderer::render_games_pages;
 use interest_pages_renderer::render_interests_list_page;
 use league_pages_renderer::render_league_pages;
@@ -9,6 +10,7 @@ use tv_pages_show_renderer::render_tv_show_pages;
 use crate::domain::state::State;
 use crate::prelude::*;
 
+pub mod book_pages_renderer;
 pub mod game_pages_renderer;
 pub mod interest_pages_renderer;
 pub mod league_pages_renderer;
@@ -24,6 +26,7 @@ pub async fn render_interests_pages(state: &impl State) -> Result<()> {
         render_movie_pages(state),
         render_tv_show_pages(state),
         render_league_pages(state),
+        render_book_pages(state)
     )?;
 
     Ok(())

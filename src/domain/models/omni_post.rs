@@ -5,18 +5,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
-    album::{Album, AlbumPhoto},
-    blog_post::BlogPost,
-    content::Content,
-    image::Image,
-    mastodon_post::MastodonPost,
-    media::Media,
-    micro_post::MicroPost,
-    movie::{Movie, MovieReview},
-    slug::Slug,
-    steam::{SteamGame, SteamGameAchievementUnlocked},
-    tag::Tag,
-    tv_show::TvShowReview,
+    album::{Album, AlbumPhoto}, blog_post::BlogPost, book::BookReview, content::Content, image::Image, mastodon_post::MastodonPost, media::Media, micro_post::MicroPost, movie::{Movie, MovieReview}, slug::Slug, steam::{SteamGame, SteamGameAchievementUnlocked}, tag::Tag, tv_show::TvShowReview
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -32,6 +21,7 @@ pub enum OmniPost {
     },
     MovieReview(MovieReview),
     TvShowReview(TvShowReview),
+    BookReview(BookReview),
 }
 
 impl OmniPost {
@@ -47,6 +37,7 @@ impl OmniPost {
             }
             Self::MovieReview(review) => review.source_content.slug().to_string(),
             Self::TvShowReview(review) => review.source_content.slug().to_string(),
+            Self::BookReview(review) => review.source_content.slug().to_string(),
         }
     }
 
@@ -60,6 +51,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { game, .. } => game.slug(),
             Self::MovieReview(review) => review.source_content.slug(),
             Self::TvShowReview(review) => review.source_content.slug(),
+            Self::BookReview(review) => review.source_content.slug(),
         }
     }
 
@@ -73,6 +65,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { game, .. } => game.slug().relative_link(),
             Self::MovieReview(review) => review.source_content.slug().relative_link(),
             Self::TvShowReview(review) => review.source_content.slug().relative_link(),
+            Self::BookReview(review) => review.source_content.slug().relative_link(),
         }
     }
 
@@ -86,6 +79,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { achievement, .. } => &achievement.unlocked_date,
             Self::MovieReview(review) => review.source_content.date(),
             Self::TvShowReview(review) => review.source_content.date(),
+            Self::BookReview(review) => review.source_content.date(),
         }
     }
 
@@ -101,6 +95,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos
             Self::MovieReview(_) => vec![], // Don't want this showing up in photos
             Self::TvShowReview(_) => vec![], // Don't want this showing up in photos
+            Self::BookReview(review) => vec![],
         }
     }
 
@@ -116,6 +111,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos
             Self::MovieReview(_) => vec![], // Don't want this showing up in photos
             Self::TvShowReview(_) => vec![], // Don't want this showing up in photos
+            Self::BookReview(review) => vec![],
         }
     }
 
@@ -129,6 +125,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { .. } => vec![], // Doesn't have tags
             Self::MovieReview(review) => review.source_content.tags(),
             Self::TvShowReview(review) => review.source_content.tags(),
+            Self::BookReview(review) => review.source_content.tags(),
         }
     }
 
@@ -142,6 +139,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { achievement, .. } => Some(&achievement.unlocked_date),
             Self::MovieReview(review) => review.source_content.last_updated_at(),
             Self::TvShowReview(review) => review.source_content.last_updated_at(),
+            Self::BookReview(review) => review.source_content.last_updated_at(),
         }
     }
 
@@ -155,6 +153,7 @@ impl OmniPost {
             Self::SteamAcheivementUnlocked { game, .. } => Some(game.header_image.clone()),
             Self::MovieReview(review) => Some(review.movie.poster.clone()),
             Self::TvShowReview(review) => Some(review.tv_show.poster.clone()),
+            Self::BookReview(review) => Some(review.book.cover.clone()),
         }
     }
 }
@@ -216,5 +215,11 @@ impl From<MovieReview> for OmniPost {
 impl From<TvShowReview> for OmniPost {
     fn from(tv_show: TvShowReview) -> Self {
         Self::TvShowReview(tv_show)
+    }
+}
+
+impl From<BookReview> for OmniPost {
+    fn from(book: BookReview) -> Self {
+        Self::BookReview(book)
     }
 }

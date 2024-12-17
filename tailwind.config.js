@@ -27,7 +27,7 @@ module.exports = {
             colors: {
                 background: {
                     DEFAULT: '#FFFFFF',
-                    dark: '#181818',
+                    dark: '#0C0C0E',
                 },
                 headings: {
                     DEFAULT: '#080808',

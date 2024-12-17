@@ -25,6 +25,7 @@ bitflags! {
         const UNLOCKED_STEAM_ACHIEVEMENT = 0x1 << 5;
         const MOVIE_REVIEW = 0x1 << 6;
         const TV_SHOW_REVIEW = 0x1 << 7;
+        const BOOK_REVIEW = 0x1 << 8;
     }
 }
 
@@ -40,6 +41,7 @@ impl OmniPostFilterFlags {
             | OmniPostFilterFlags::ALBUM
             | OmniPostFilterFlags::MOVIE_REVIEW
             | OmniPostFilterFlags::TV_SHOW_REVIEW
+            | OmniPostFilterFlags::BOOK_REVIEW
     }
 
     pub fn filter_photos_page() -> OmniPostFilterFlags {
@@ -54,6 +56,9 @@ impl OmniPostFilterFlags {
             | OmniPostFilterFlags::MICRO_POST
             | OmniPostFilterFlags::MASTODON_POST
             | OmniPostFilterFlags::ALBUM_PHOTO
+            | OmniPostFilterFlags::MOVIE_REVIEW
+            | OmniPostFilterFlags::TV_SHOW_REVIEW
+            | OmniPostFilterFlags::BOOK_REVIEW
     }
 
     pub fn filter_firehose() -> OmniPostFilterFlags {
@@ -84,6 +89,7 @@ pub async fn find_all_omni_posts(
             }
             OmniPost::MovieReview(_) => filter_flags.contains(OmniPostFilterFlags::MOVIE_REVIEW),
             OmniPost::TvShowReview(_) => filter_flags.contains(OmniPostFilterFlags::TV_SHOW_REVIEW),
+            OmniPost::BookReview(_) => filter_flags.contains(OmniPostFilterFlags::BOOK_REVIEW),
         })
         .collect::<Vec<OmniPost>>();
 
