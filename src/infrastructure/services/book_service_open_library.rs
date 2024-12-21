@@ -1,5 +1,6 @@
 use chrono::{DateTime, Datelike, Utc};
 use dotenvy_macro::dotenv;
+use htmlentity::entity::{decode, ICodedDataTrait};
 use reqwest::Client;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
