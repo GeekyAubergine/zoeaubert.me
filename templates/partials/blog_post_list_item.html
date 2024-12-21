@@ -3,12 +3,11 @@
         <a href="{{ post.slug.relative_link() }}">
             <h3>{{ post.title }}</h3>
         </a>
-        <time class="date" dateTime="{{ post.date.datetime() }}">{{ post.date.short_iso() }}</time>
+        <time class="date" dateTime="{{ post.date.datetime() }}">{{ post.date.without_time() }}</time>
     </div>
 
     <p class="description">{{ post.description }}</p>
     <div class="time-to-read-and-tags">
-        {# <p class="time-to-read">{{ post.content | timeToRead }} read</p> #}
         <div class="tags-list">
             {% set tags = post.tags.clone() %}
             {% include "partials/tags_list.html" %}

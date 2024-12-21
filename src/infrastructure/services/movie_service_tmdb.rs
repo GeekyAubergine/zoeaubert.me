@@ -1,5 +1,6 @@
 use chrono::{DateTime, Datelike, Utc};
 use dotenvy_macro::dotenv;
+use htmlentity::entity::{decode, ICodedDataTrait};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -35,6 +36,8 @@ fn name_and_year_to_key(name: &str, year: u16) -> String {
 }
 
 fn make_search_url(title: &str, year: u16) -> Url {
+    let title = decode(title.as_bytes()).to_string().unwrap();
+
     let title = title.replace('&', "").replace(' ', "+");
 
     format!(

@@ -121,12 +121,6 @@ fn parse_legacy_post(content: &str) -> Result<Review> {
 
 // Do not use this directly, use the `books service` instead. This is a helper function.
 fn parse_markdown_into_book_review(content: &str) -> Result<Review> {
-    println!("");
-
-    println!("Parsing book review: [{:?}]", content);
-
-    println!("");
-
     if (content.starts_with("Finished") || content.starts_with("I finished")) {
         return parse_legacy_post(content);
     }

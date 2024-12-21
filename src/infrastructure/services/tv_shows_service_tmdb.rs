@@ -33,6 +33,8 @@ fn make_file_path(file_service: &impl FileService) -> PathBuf {
 }
 
 fn make_search_url(title: &str) -> Url {
+    let title = decode(title.as_bytes()).to_string().unwrap();
+
     let title = title.replace('&', "").replace(' ', "+");
 
     format!(
