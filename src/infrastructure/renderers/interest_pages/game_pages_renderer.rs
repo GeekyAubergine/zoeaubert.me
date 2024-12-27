@@ -107,7 +107,7 @@ async fn render_games_list_most_achieved_page(state: &impl State, games: &[Game]
     let page = Page::new(
         Slug::new("/interests/games/achievements"),
         Some("Game Achievments"),
-        Some("My Game Achievments"),
+        Some("My Game Achievements"),
     );
 
     let games = find_all_games_by_achievment_unlocked_percentage(state)
