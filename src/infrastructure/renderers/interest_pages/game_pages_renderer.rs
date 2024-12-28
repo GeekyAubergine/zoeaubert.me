@@ -106,7 +106,7 @@ struct GamesListMostAchievmentsTemplate {
 async fn render_games_list_most_achieved_page(state: &impl State, games: &[Game]) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/games/achievements"),
-        Some("Game Achievments"),
+        Some("Game Achievements"),
         Some("My Game Achievements"),
     );
 
