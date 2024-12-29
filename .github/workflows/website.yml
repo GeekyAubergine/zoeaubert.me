@@ -110,6 +110,5 @@ jobs:
                   scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null target/release/zoeaubert-website ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}/builder
                   scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r content  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}
                   scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ${{ secrets.SITE_CONFIG }}  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}/${{ secrets.SITE_CONFIG }}
-                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r _assets ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}
                   scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r assets ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}
                   ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }} "cd ${{ secrets.BUILD_SERVER_DIR }} && ./build.sh"
