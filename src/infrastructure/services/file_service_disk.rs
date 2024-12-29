@@ -4,6 +4,7 @@ use std::{
 };
 
 use chrono::{DateTime, Utc};
+use dircpy::copy_dir;
 use dotenvy_macro::dotenv;
 use serde::{de::DeserializeOwned, Serialize};
 use tokio::{spawn, task::JoinSet};
@@ -98,6 +99,13 @@ impl FileService for FileServiceDisk {
         Ok(files)
     }
 
+    async fn make_dir(&self, path: &Path) -> Result<()> {
+        debug!("Making directory [{:?}]", path);
+        tokio::fs::create_dir_all(path)
+            .await
+            .map_err(FileSystemError::create_dir_error)
+    }
+
     async fn read_file(&self, path: &Path) -> Result<Vec<u8>> {
         debug!("Reading file from [{:?}]", path);
         let data = tokio::fs::read(path)
@@ -112,9 +120,7 @@ impl FileService for FileServiceDisk {
 
         let parent_dir = path.parent().unwrap();
 
-        tokio::fs::create_dir_all(parent_dir)
-            .await
-            .map_err(FileSystemError::create_dir_error)?;
+        self.make_dir(parent_dir).await?;
 
         tokio::fs::write(path, data)
             .await
@@ -210,5 +216,42 @@ impl FileService for FileServiceDisk {
         let data = serde_yaml::from_slice(&data).map_err(YamlError::parse_error)?;
 
         Ok(data)
+    }
+
+    async fn delete_file(&self, path: &Path) -> Result<()> {
+        debug!("Deleting file [{:?}]", path);
+        tokio::fs::remove_file(path)
+            .await
+            .map_err(FileSystemError::delete_file_error)
+    }
+
+    async fn delete_dir(&self, path: &Path) -> Result<()> {
+        debug!("Deleting directory [{:?}]", path);
+        match tokio::fs::remove_dir_all(path).await {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                if e.kind() == std::io::ErrorKind::NotFound {
+                    Ok(())
+                } else {
+                    Err(FileSystemError::delete_dir_error(e))
+                }
+            }
+        }
+    }
+
+    async fn copy(&self, source: &Path, destination: &Path) -> Result<()> {
+        debug!("Copying [{:?}] to [{:?}]", source, destination);
+        tokio::fs::copy(source, destination)
+            .await
+            .map_err(FileSystemError::copy_file_error)?;
+
+        Ok(())
+    }
+
+    async fn copy_dir(&self, source: &Path, destination: &Path) -> Result<()> {
+        debug!("Copying directory [{:?}] to [{:?}]", source, destination);
+        copy_dir(source, destination).map_err(FileSystemError::copy_dir_error)?;
+
+        Ok(())
     }
 }

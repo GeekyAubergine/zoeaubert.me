@@ -166,8 +166,18 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
         Ok(())
     }
 
-    async fn build_sitemap(&self, state: &impl State) -> Result<()> {
+    async fn build_sitemap(&self, state: &impl State, disallowed_routes: &[String]) -> Result<()> {
         let pages = self.site_map_pages.read().await;
+
+        let pages: Vec<SiteMapPage> = pages
+            .iter()
+            .filter(|page| {
+                !disallowed_routes
+                    .iter()
+                    .any(|disallowed| page.url.contains(disallowed))
+            })
+            .cloned()
+            .collect();
 
         let template = SitemapTemplate {
             pages: pages.clone(),
@@ -175,9 +185,14 @@ impl<'l> PageRenderingService for PageRenderingServiceImpl {
 
         let rendered = template.render().map_err(TemplateError::render_error)?;
 
-        let path = state.file_service().make_output_file_path(&Path::new("sitemap.xml"));
+        let path = state
+            .file_service()
+            .make_output_file_path(&Path::new("sitemap.xml"));
 
-        state.file_service().write_text_file_blocking(&path, &rendered).await?;
+        state
+            .file_service()
+            .write_text_file_blocking(&path, &rendered)
+            .await?;
 
         Ok(())
     }

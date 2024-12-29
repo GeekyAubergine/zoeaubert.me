@@ -25,29 +25,6 @@ pub mod build_data {
     include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
 }
 
-async fn prepare_folders() -> Result<()> {
-    Command::new("rm")
-        .arg("-rf")
-        .arg("./output")
-        .output()
-        .expect("Failed to remove output directory");
-
-    Command::new("mkdir")
-        .arg("-p")
-        .arg("./output/assets/.")
-        .output()
-        .expect("Failed to create assets directory");
-
-    copy_dir("assets", "output/assets");
-    copy_dir("_assets", "output/assets");
-
-    tokio::fs::create_dir_all(Path::new("./output"))
-        .await
-        .map_err(FileSystemError::create_dir_error)?;
-
-    Ok(())
-}
-
 async fn prepare_state() -> Result<AppState> {
     let state = AppState::new().await?;
 
@@ -62,7 +39,6 @@ async fn main() -> Result<()> {
 
     info!("Build date: {}", BUILD_DATE);
 
-    prepare_folders().await?;
     let state = prepare_state().await?;
 
     render_site(&state).await?;

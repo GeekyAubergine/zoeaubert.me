@@ -11,7 +11,18 @@ use url::Url;
 
 use super::{
     models::{
-        book::{Book, BookReview}, cache_path::CachePath, content::Content, image::{Image, ImageDimensions}, media::Media, movie::{Movie, MovieReview}, network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes}, omni_post::OmniPost, page::Page, slug::Slug, tag::Tag, tv_show::{TvShow, TvShowReview}
+        book::{Book, BookReview},
+        cache_path::CachePath,
+        content::Content,
+        image::{Image, ImageDimensions},
+        media::Media,
+        movie::{Movie, MovieReview},
+        network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes},
+        omni_post::OmniPost,
+        page::Page,
+        slug::Slug,
+        tag::Tag,
+        tv_show::{TvShow, TvShowReview},
     },
     state::State,
 };
@@ -135,6 +146,8 @@ pub trait FileService: Sized + Send + Sync {
 
     async fn read_file(&self, path: &Path) -> Result<Vec<u8>>;
 
+    async fn make_dir(&self, path: &Path) -> Result<()>;
+
     async fn write_file(&self, path: &Path, data: &[u8]) -> Result<()>;
 
     async fn read_json_file<D>(&self, path: &Path) -> Result<D>
@@ -167,6 +180,14 @@ pub trait FileService: Sized + Send + Sync {
     async fn read_yaml_file<D>(&self, path: &Path) -> Result<D>
     where
         D: DeserializeOwned;
+
+    async fn delete_file(&self, path: &Path) -> Result<()>;
+
+    async fn delete_dir(&self, path: &Path) -> Result<()>;
+
+    async fn copy(&self, source: &Path, destination: &Path) -> Result<()>;
+
+    async fn copy_dir(&self, source: &Path, destination: &Path) -> Result<()>;
 }
 
 #[async_trait::async_trait]
@@ -196,5 +217,5 @@ pub trait PageRenderingService {
 
     async fn render_pages(&self, state: &impl State) -> Result<()>;
 
-    async fn build_sitemap(&self, state: &impl State) -> Result<()>;
+    async fn build_sitemap(&self, state: &impl State, disallowed_routes: &[String]) -> Result<()>;
 }

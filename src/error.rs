@@ -54,6 +54,9 @@ pub enum Error {
 
     #[error("Book error: {0}")]
     BookError(#[from] BookError),
+
+    #[error("Site Build Error: {0}")]
+    SiteBuildError(#[from] SiteBuildError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -72,6 +75,15 @@ pub enum FileSystemError {
 
     #[error("Unable to copy file: {0}")]
     CopyFileError(std::io::Error),
+
+    #[error("Unable to delete directory: {0}")]
+    DeleteDirError(std::io::Error),
+
+    #[error("Unable to copy directory: {0}")]
+    CopyDirError(std::io::Error),
+
+    #[error("Unable to delete file: {0}")]
+    DeleteFileError(std::io::Error),
 }
 
 impl FileSystemError {
@@ -93,6 +105,18 @@ impl FileSystemError {
 
     pub fn copy_file_error(error: std::io::Error) -> Error {
         Error::FileSystemError(Self::CopyFileError(error))
+    }
+
+    pub fn delete_dir_error(error: std::io::Error) -> Error {
+        Error::FileSystemError(Self::DeleteDirError(error))
+    }
+
+    pub fn copy_dir_error(error: std::io::Error) -> Error {
+        Error::FileSystemError(Self::CopyDirError(error))
+    }
+
+    pub fn delete_file_error(error: std::io::Error) -> Error {
+        Error::FileSystemError(Self::DeleteFileError(error))
     }
 }
 
@@ -481,5 +505,31 @@ impl BookError {
 
     pub fn unable_to_parse_and_find_book_title(error: String) -> Error {
         Error::BookError(Self::UnableToParseAndFindBookTitle(error))
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum SiteBuildError {
+    #[error("Unable to compile Tailwind CSS")]
+    UnableToCompileTailwindCss(),
+
+    #[error("Unable to compile Lightning CSS")]
+    UnableToCompileLightningCss(),
+
+    #[error("Unable to create _assets/css directory")]
+    UnableToCreateAssetsCssDirectory(),
+}
+
+impl SiteBuildError {
+    pub fn unable_to_compile_tailwind_css() -> Error {
+        Error::SiteBuildError(Self::UnableToCompileTailwindCss())
+    }
+
+    pub fn unable_to_compile_lightning_css() -> Error {
+        Error::SiteBuildError(Self::UnableToCompileLightningCss())
+    }
+
+    pub fn unable_to_create_assets_css_directory() -> Error {
+        Error::SiteBuildError(Self::UnableToCreateAssetsCssDirectory())
     }
 }
