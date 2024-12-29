@@ -7,10 +7,16 @@ pub mod infrastructure;
 pub mod prelude;
 pub mod tasks;
 
-use std::{hash::{DefaultHasher, Hash, Hasher}, path::Path, process::Command, time::Duration};
+use std::{
+    hash::{DefaultHasher, Hash, Hasher},
+    path::Path,
+    process::Command,
+    time::Duration,
+};
 
 use application::commands::update_all_data_command::update_all_data_command;
 use build_data::BUILD_DATE;
+use clap::{Parser, Subcommand};
 use dircpy::copy_dir;
 use domain::{repositories::Profiler, state::State};
 use dotenvy_macro::dotenv;
@@ -23,6 +29,18 @@ use crate::prelude::*;
 
 pub mod build_data {
     include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
+}
+
+#[derive(Parser)]
+#[command(author)]
+struct Args {
+    #[command(subcommand)]
+    cmd: Commands,
+}
+
+#[derive(Subcommand, Debug, Clone)]
+enum Commands {
+    Build,
 }
 
 async fn prepare_state() -> Result<AppState> {
@@ -39,9 +57,19 @@ async fn main() -> Result<()> {
 
     info!("Build date: {}", BUILD_DATE);
 
+    let args = Args::parse();
+
     let state = prepare_state().await?;
 
-    render_site(&state).await?;
+    match args.cmd {
+        // Commands::UpdateAllData => {
+        //     let state = prepare_state().await?;
+        //     update_all_data_command(&state).await?;
+        // }
+        Commands::Build => {
+            render_site(&state).await?;
+        }
+    }
 
     Ok(())
 }

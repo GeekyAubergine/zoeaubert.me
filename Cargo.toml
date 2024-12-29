@@ -15,6 +15,7 @@ askama_escape = "0.10.3"
 async-trait = "0.1.77"
 bitflags = "2.6.0"
 chrono = { version = "0.4.31", features = ["serde", "std"] }
+clap = { version = "4.5.23", features = ["derive"] }
 comrak = { version = "0.24.1", features = [
     "emojis",
     "shortcodes",
