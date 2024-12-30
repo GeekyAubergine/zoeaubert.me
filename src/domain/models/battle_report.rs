@@ -12,6 +12,8 @@ pub enum BattleReportGame {
 pub struct BattleReport {
     pub game: BattleReportGame,
     pub date: DateTime<Utc>,
-    pub myArmy: String,
-    pub opponent: String,
+    pub army_one: String,
+    pub army_two: String,
+    pub content: String,
+    pub images: Vec<String>,
 }

@@ -56,7 +56,7 @@ async fn prepare_state() -> Result<AppState> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt().with_max_level(Level::DEBUG).init();
+    tracing_subscriber::fmt().with_max_level(Level::INFO).init();
 
     let args = Args::parse();
 

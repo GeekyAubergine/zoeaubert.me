@@ -3,7 +3,7 @@ slug: first-games-of-40k
 date: 2023-12-20T20:40
 title: My first games of Warhammer 40k
 description: I recently played my first two games of Warhammer 40k, and it was fun
-tags: ['Warhammer', 'Warhammer40k', 'SpaceMarines', 'Confessors', 'BattleReport', 'Necrons', 'Genestealers']
+tags: ['Warhammer', 'Warhammer40k', 'SpaceMarines', 'Confessors', 'BattleReport', 'Necrons', 'GenestealerCults']
 hero: "https://cdn.geekyaubergine.com/2023/12/first-game-of-40k/IMG_5365-min.JPG"
 heroAlt: "A battlefield with various bits of terrain. In the bottom right corner is six purple Space Marines in Terminator Armour hiding behind a ruin. At the bottom left are five purple Infernus Marines hiding behind a ruin. In the centre are ten Necron Warriors and a Necron Overlord"
 heroWidth: 1024
