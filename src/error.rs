@@ -57,6 +57,9 @@ pub enum Error {
 
     #[error("Site Build Error: {0}")]
     SiteBuildError(#[from] SiteBuildError),
+
+    #[error("Inquire Error: {0}")]
+    InquireError(#[from] inquire::error::InquireError),
 }
 
 #[derive(Debug, thiserror::Error)]

@@ -13,7 +13,6 @@ pub struct BlogPost {
     pub hero_image: Option<Image>,
     pub content: String,
     pub media: Vec<Media>,
-
     pub updated_at: DateTime<Utc>,
     pub original_data_hash: u64,
 }

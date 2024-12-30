@@ -22,7 +22,7 @@ use crate::{
     prelude::*,
 };
 
-const MICRO_POSTS_DIR: &str = "microBlogArchive/feed.json";
+const MICRO_POSTS_DIR: &str = "micro-blog-archive/feed.json";
 
 pub const HTML_IMAGE_REGEX: Lazy<Regex> = Lazy::new(|| {
     Regex::new(r#"(?i)<img(((src="(?<src>([^"]+))")|(alt="(?<alt>([^"]+))")|(width="(?<width>([^"]+))")|(height="(?<height>([^"]+))"))|[^>])*>"#).unwrap()

@@ -34,7 +34,7 @@ use tracing::{error, info};
 
 use crate::{error::SiteBuildError, prelude::*};
 
-const TAILWIND_INPUT_FILE: &str = "./output/assets/css/styles.css";
+const TAILWIND_INPUT_FILE: &str = "./assets/css/styles.css";
 const TAILWIND_INTERMEDIATE_FILE: &str = "./output/assets/css/tw-compiled.css";
 
 const ROBOTS_INPUT_FILE: &str = "./assets/robots.txt";

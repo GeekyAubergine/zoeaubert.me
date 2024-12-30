@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use crate::application::commands::blog_posts_commands::front_matter_from_string;
 use crate::calculate_hash;
 use crate::domain::models::slug::Slug;
 use crate::domain::repositories::{BlogPostsRepo, Profiler};
@@ -18,28 +19,6 @@ use crate::{
     error::{BlogPostError, Error},
     prelude::*,
 };
-
-const BLOG_POSTS_DIR: &str = "blogPosts";
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct BlogPostFileFrontMatter {
-    slug: String,
-    date: String,
-    title: String,
-    description: String,
-    tags: Vec<String>,
-    hero: Option<String>,
-    #[serde(rename = "heroAlt")]
-    hero_alt: Option<String>,
-    #[serde(rename = "heroWidth")]
-    hero_width: Option<u32>,
-    #[serde(rename = "heroHeight")]
-    hero_height: Option<u32>,
-}
-
-fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
-    serde_yaml::from_str(s).map_err(BlogPostError::unparsable_front_matter)
-}
 
 pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> Result<()> {
     let file_contents = state.file_service().read_text_file(file_path).await?;

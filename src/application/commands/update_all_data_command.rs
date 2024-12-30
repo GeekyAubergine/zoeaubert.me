@@ -14,7 +14,7 @@ use crate::application::commands::micro_posts_commands::update_micro_blog_archiv
 use crate::application::commands::micro_posts_commands::update_micro_posts_command::update_micro_posts;
 use crate::application::commands::now_text_commands::update_now_text_command::update_now_text_command;
 use crate::application::commands::referrals_commands::update_referrals_command::update_referrals_command;
-use crate::application::commands::update_derived_data_command::update_derived_data_command;
+use crate::application::commands:: update_derived_data_command::update_derived_data_command;
 use crate::application::commands::league_commands::update_league_data_command;
 use crate::domain::repositories::Profiler;
 use crate::domain::state::State;
