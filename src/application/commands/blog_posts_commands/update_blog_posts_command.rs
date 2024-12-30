@@ -16,7 +16,7 @@ use crate::{
     prelude::*,
 };
 
-const BLOG_POSTS_DIR: &str = "blogPosts";
+use super::BLOG_POSTS_DIR;
 
 pub async fn update_blog_posts_command(state: &impl State) -> Result<()> {
     let blog_posts_files = state
