@@ -5,4 +5,10 @@ tags: ['Warhammer', 'Warhammer40k', 'Custodes', 'GenestealerCults', 'BattleRepor
 
 First game with my Custodes and second game against GSC.
 
+Went well, but damn, do those Aberrants hit hard.
+
 ![](https://cdn.geekyaubergine.com/2024/06/08/IMG_6691.jpeg)
+![](https://cdn.geekyaubergine.com/2024/06/08/IMG_6689.jpeg)
+![](https://cdn.geekyaubergine.com/2024/06/08/IMG_6703.jpeg)
+![](https://cdn.geekyaubergine.com/2024/06/08/IMG_6705.jpeg)
+![](https://cdn.geekyaubergine.com/2024/06/08/IMG_6684.jpeg)

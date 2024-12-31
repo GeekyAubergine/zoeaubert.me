@@ -34,8 +34,8 @@ use tracing::{error, info};
 
 use crate::{error::SiteBuildError, prelude::*};
 
-const TAILWIND_INPUT_FILE: &str = "./assets/css/styles.css";
-const TAILWIND_INTERMEDIATE_FILE: &str = "./output/assets/css/tw-compiled.css";
+const COMPILED_ASSETS_DIR: &str = "./_assets";
+const ASSETS_DIR: &str = "./output/assets";
 
 const ROBOTS_INPUT_FILE: &str = "./assets/robots.txt";
 const ROBOTS_OUTPUT_FILE: &str = "./output/robots.txt";
@@ -65,100 +65,10 @@ async fn prepare_folders(state: &impl State) -> Result<()> {
     Ok(())
 }
 
-fn compile_tailwind(input: &str, output: Option<&str>) -> Result<()> {
-    let input = Path::new(input);
-    let output = output.map(Path::new);
-    let tailwind_module_location = Path::new("./node_modules/.bin/tailwindcss");
-
-    let mut command = format!(
-        "ENVIRONMENT=production {} -i {}",
-        tailwind_module_location.display(),
-        input.display(),
-    );
-
-    if let Some(output) = output {
-        command = format!("{} -o {}", command, output.display());
-    }
-
-    match std::process::Command::new("sh")
-        .arg("-c")
-        .arg(command)
-        .output()
-    {
-        Ok(output) => match output.status.success() {
-            true => {
-                info!("Successfully compiled Tailwind CSS");
-                info!(
-                    "--------\n{}\n--------",
-                    String::from_utf8_lossy(&output.stdout)
-                );
-                Ok(())
-            }
-            false => {
-                error!("Failed to compile Tailwind CSS");
-                error!("stdout: {}", String::from_utf8_lossy(&output.stdout));
-                error!("stderr: {}", String::from_utf8_lossy(&output.stderr));
-                Err(SiteBuildError::unable_to_compile_tailwind_css())
-            }
-        },
-        Err(e) => {
-            error!("Failed to compile Tailwind CSS");
-            error!("Error: {}", e);
-            Err(SiteBuildError::unable_to_compile_tailwind_css())
-        }
-    }
-}
-
-fn run_lightning(input: &str, output: &str) -> Result<()> {
-    let command = format!(
-        "./node_modules/.bin/lightningcss --minify --bundle --targets '>= 0.25%' {} -o {}",
-        input, output
-    );
-
-    match std::process::Command::new("sh")
-        .arg("-c")
-        .arg(command)
-        .output()
-    {
-        Ok(output) => match output.status.success() {
-            true => {
-                info!("Successfully compiled Lightning CSS");
-                info!(
-                    "--------\n{}\n--------",
-                    String::from_utf8_lossy(&output.stdout)
-                );
-                Ok(())
-            }
-            false => {
-                error!("Failed to compile Lightning CSS");
-                error!("stdout: {}", String::from_utf8_lossy(&output.stdout));
-                error!("stderr: {}", String::from_utf8_lossy(&output.stderr));
-                Err(SiteBuildError::unable_to_compile_lightning_css())
-            }
-        },
-        Err(e) => {
-            error!("Failed to compile Lightning CSS");
-            error!("Error: {}", e);
-            Err(SiteBuildError::unable_to_compile_lightning_css())
-        }
-    }
-}
-
 async fn compile_css(state: &impl State) -> Result<()> {
     state
         .file_service()
-        .make_dir(Path::new("./output/assets/css"))
-        .await?;
-
-    compile_tailwind(TAILWIND_INPUT_FILE, Some(TAILWIND_INTERMEDIATE_FILE))?;
-    run_lightning(
-        TAILWIND_INTERMEDIATE_FILE,
-        &format!("./output/assets/css/styles-{}.css", BUILD_DATE),
-    )?;
-
-    state
-        .file_service()
-        .delete_file(Path::new(TAILWIND_INTERMEDIATE_FILE))
+        .copy_dir(Path::new(COMPILED_ASSETS_DIR), Path::new(ASSETS_DIR))
         .await?;
 
     Ok(())
