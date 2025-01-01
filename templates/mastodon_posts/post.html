@@ -3,36 +3,22 @@
 {%- block content %}
     <artcile class="micro-post">
         <div class="page-header">
-            {%- match page.date %}
-        {%- when Some with (date) %}
             <h1>
-                <time datetime="{{date.datetime()}}" class="title-font">{{ date.short_iso() }}</time>
+                <time class="title-font" datetime="{{post.created_at().datetime()}}">{{post.created_at().without_time() }}</time>
             </h1>
-        {%- when None %}
-            {%- endmatch %}
-        </div>
-        {{ post.content().to_html()|safe}}
-        <div class="media">
-            {% let media = post.media() %}
-            {% if media
-                .len() > 1 %}
-                <div class="media-grid">
-                    {% for media in media %}
-                        {% include "partials/media/media.html" %}
-                    {% endfor %}
+            {%- if post.tags().len() > 0 %}
+                <div class="tags-list my-4">
+                    {% let tags = post.tags().clone() %}
+                    {% include "partials/tags_list.html" %}
                 </div>
-            {% else %}
-                {% for media in media %}
-                    {% include "partials/media/media.html" %}
-                {% endfor %}
-            {% endif %}
+            {%- endif %}
         </div>
-        {%- if page.tags.len() > 0 %}
-            <div class="tags-list my-2">
-                {% let tags = page.tags() %}
-                {% include "partials/tags_list.html" %}
-            </div>
-        {%- endif %}
+        {{ post.content().remove_media().to_html()|safe}}
+
+        {% let media = post.media() %}
+        {% for media in media %}
+            {% include "partials/media/media.html" %}
+        {% endfor %}
         <p class="mt-6">See original:
             <a href="{{ post.original_uri() }}" class="link" target="_blank" rel="me">{{ post.original_uri() }}</a>
         </p>

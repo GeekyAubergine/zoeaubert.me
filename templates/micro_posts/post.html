@@ -1,13 +1,23 @@
 {% extends "partials/page.html" %}
 
 {%- block content %}
-    <article class="micro-post">
-        {{ post.content.to_html()|safe}}
-        {%- if page.tags.len() > 0 %}
-            <div class="tags-list my-2">
-                {% let tags = page.tags() %}
+<article class="micro-post">
+    <div class="page-header">
+        <h1>
+            <time class="title-font" datetime="{{post.date.datetime()}}">{{post. date.without_time() }}</time>
+        </h1>
+        {%- if post.tags.len() > 0 %}
+            <div class="tags-list my-4">
+                {% let tags = post.tags.clone() %}
                 {% include "partials/tags_list.html" %}
             </div>
         {%- endif %}
+    </div>
+    {{ post.content().remove_media().to_html()|safe}}
+
+    {% let media = post.media() %}
+    {% for media in media %}
+        {% include "partials/media/media.html" %}
+    {% endfor %}
     </article>
 {% endblock %}

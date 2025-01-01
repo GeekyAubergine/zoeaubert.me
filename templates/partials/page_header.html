@@ -6,7 +6,7 @@
 {%- when Some with (date) %}
     <div class="date-and-readtime" data-pagefind-ignore>
         <p>
-            <time datetime="{{date.datetime()}}">{{ date.short_iso() }}</time>
+            <time datetime="{{date.datetime()}}">{{ date.without_time() }}</time>
             {%- match page.read_time() %}
         {%- when Some with (read_time) %}
             <span>-</span>

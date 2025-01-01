@@ -6,6 +6,8 @@ use regex::Regex;
 use syntect::{easy::HighlightLines, parsing::SyntaxSet};
 use tracing::error;
 
+static MEDIA_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#"\!\[.*?\]\(.*?\)"#).unwrap());
+
 static OPTIONS: Lazy<Options> = Lazy::new(|| {
     let mut options = Options::default();
     // Extension
@@ -168,18 +170,32 @@ fn markdown_to_html(s: &str) -> String {
     highligh_codeblocks(&html)
 }
 
+fn remove_media_from_markdown(markdown: &str) -> String {
+    MEDIA_REGEX.replace_all(markdown, "").to_string()
+}
+
 pub trait FormatMarkdown {
     fn to_html(&self) -> String;
+
+    fn remove_media(&self) -> String;
 }
 
 impl FormatMarkdown for String {
     fn to_html(&self) -> String {
         markdown_to_html(self).to_string()
     }
+
+    fn remove_media(&self) -> String {
+        remove_media_from_markdown(self)
+    }
 }
 
 impl FormatMarkdown for &str {
     fn to_html(&self) -> String {
         markdown_to_html(self).to_string()
+    }
+
+    fn remove_media(&self) -> String {
+        remove_media_from_markdown(self)
     }
 }

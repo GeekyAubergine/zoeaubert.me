@@ -1,4 +1,4 @@
-use std::{env::var, path::Path, process::Command};
+use std::{env::var, path::Path};
 
 use chrono::prelude::*;
 

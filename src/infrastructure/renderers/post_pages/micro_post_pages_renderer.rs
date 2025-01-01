@@ -34,7 +34,7 @@ pub async fn render_micro_post_pages(state: &impl State) -> Result<()> {
 
         let mut page = Page::new(
             micro_post.slug.clone(),
-            Some(&micro_post.date.short_iso()),
+            None,
             first_line,
         )
         .with_date(micro_post.date)

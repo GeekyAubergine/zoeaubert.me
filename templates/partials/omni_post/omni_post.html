@@ -10,9 +10,9 @@
         {% when OmniPost::BlogPost with (post) %}
         {% include "partials/omni_post/omni_post_blog_post.html" %}
         {% when OmniPost::MicroPost with (post) %}
-        {% include "partials/omni_post/omni_post_micro_post.html" %}
+        {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
         {% when OmniPost::MastodonPost with (post) %}
-        {% include "partials/omni_post/omni_post_mastodon_post.html" %}
+        {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
         {% when OmniPost::AlbumPhoto with (photo) %}
         {% include "partials/omni_post/omni_post_album_photo.html" %}
         {% when OmniPost::Album with (album) %}

@@ -43,7 +43,7 @@ module.exports = {
                 },
                 accent: {
                     DEFAULT: '#784387', //'#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
-                    dark: '#C68BEC',
+                    dark: '#EA93E3',
                 },
                 code: {
                     DEFAULT: '#D4D4D4',

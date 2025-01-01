@@ -77,6 +77,8 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
         .map(|i| Media::from(i))
         .collect::<Vec<Media>>();
 
+    println!("{} - media: {:?}", slug.relative_link(), media);
+
     let tags = front_matter
         .tags
         .iter()
