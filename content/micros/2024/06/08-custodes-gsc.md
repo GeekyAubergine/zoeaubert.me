@@ -1,6 +1,6 @@
 ---
 date: 2024-06-08T15:47:00
-tags: ['Warhammer', 'Warhammer40k', 'Custodes', 'GenestealerCults', 'BattleReport']
+tags: ['Warhammer', 'Warhammer40k', 'Custodes', 'GenestealerCults']
 ---
 
 First game with my Custodes and second game against GSC.
