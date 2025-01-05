@@ -8,8 +8,6 @@ Disallow: /albums
 Disallow: /photos
 Disallow: /feeds
 Disallow: /firehose
-Disallow: /tags
-Disallow: /timeline
 Disallow: /years
 
 User-agent: AdsBot-Google
