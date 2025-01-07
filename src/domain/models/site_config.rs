@@ -8,11 +8,21 @@ use dotenvy_macro::dotenv;
 use super::image::Image;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct NavigationLink {
+pub struct HeaderLink {
     pub name: String,
     pub url: String,
-    pub target: String,
-    pub rel: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct PageLink {
+    pub name: String,
+    pub url: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct PageLinkGroup {
+    pub name: String,
+    pub links: Vec<PageLink>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -61,7 +71,8 @@ pub struct PageConfig {
     pub author: String,
     pub image: PageImage,
     pub language: String,
-    pub navigation_links: Vec<NavigationLink>,
+    pub header_links: Vec<HeaderLink>,
+    pub page_links: Vec<PageLinkGroup>,
     pub social_links: Vec<SocialNetworkLink>,
 }
 

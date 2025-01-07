@@ -1,8 +1,8 @@
 use askama::Template;
 
-use crate::domain::models::image::{Image, ImageOrientation};
+use crate::domain::models::image::{Image};
 use crate::domain::models::lego::{LegoMinifig, LegoSet};
-use crate::domain::models::media::Media;
+use crate::domain::models::media::{Media, MediaOrientation};
 use crate::domain::models::slug::Slug;
 use crate::domain::queries::games_queries::find_all_games_by_most_recently_played;
 use crate::domain::queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags};
@@ -69,7 +69,7 @@ pub async fn render_interests_list_page(state: &impl State) -> Result<()> {
 
         let landscape_images = cover_images
             .iter()
-            .filter(|c| c.orientation() == ImageOrientation::Landscape)
+            .filter(|c| c.orientation() == MediaOrientation::Landscape)
             .cloned()
             .collect::<Vec<_>>();
 

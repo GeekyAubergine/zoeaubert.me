@@ -9,70 +9,13 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-use super::{media::Media, slug::Slug};
-
-#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq)]
-pub struct ImageDimensions {
-    pub width: u32,
-    pub height: u32,
-}
-
-impl ImageDimensions {
-    pub fn new(width: u32, height: u32) -> Self {
-        Self { width, height }
-    }
-
-    pub fn aspect_ratio(&self) -> f32 {
-        self.width as f32 / self.height as f32
-    }
-
-    pub fn orientation(&self) -> ImageOrientation {
-        ImageOrientation::from_dimensions(self)
-    }
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
-pub enum ImageOrientation {
-    Landscape,
-    Portrait,
-    Square,
-}
-
-impl ImageOrientation {
-    pub fn from_dimensions(dimensions: &ImageDimensions) -> Self {
-        match dimensions.width.cmp(&dimensions.height) {
-            std::cmp::Ordering::Greater => Self::Landscape,
-            std::cmp::Ordering::Less => Self::Portrait,
-            std::cmp::Ordering::Equal => Self::Square,
-        }
-    }
-
-    pub fn to_string(&self) -> &str {
-        match self {
-            Self::Landscape => "landscape",
-            Self::Portrait => "portrait",
-            Self::Square => "square",
-        }
-    }
-
-    pub fn is_landscape(&self) -> bool {
-        matches!(self, Self::Landscape)
-    }
-
-    pub fn is_portrait(&self) -> bool {
-        matches!(self, Self::Portrait)
-    }
-
-    pub fn is_square(&self) -> bool {
-        matches!(self, Self::Square)
-    }
-}
+use super::{media::{Media, MediaDimensions, MediaOrientation}, slug::Slug};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Image {
     pub path: PathBuf,
     pub alt: String,
-    pub dimensions: ImageDimensions,
+    pub dimensions: MediaDimensions,
     pub title: Option<String>,
     pub description: Option<String>,
     pub date: Option<DateTime<Utc>>,
@@ -81,7 +24,7 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(path: &Path, alt: &str, dimensions: &ImageDimensions) -> Self {
+    pub fn new(path: &Path, alt: &str, dimensions: &MediaDimensions) -> Self {
         Self {
             path: path.to_path_buf(),
             alt: alt.to_string(),
@@ -167,7 +110,7 @@ impl Image {
         path.parse().unwrap()
     }
 
-    pub fn orientation(&self) -> ImageOrientation {
+    pub fn orientation(&self) -> MediaOrientation {
         self.dimensions.orientation()
     }
 }

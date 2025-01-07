@@ -10,7 +10,7 @@ use crate::{
 };
 
 use super::{
-    site_config::{NavigationLink, PageImage, SocialNetworkLink, SITE_CONFIG},
+    site_config::{HeaderLink, PageImage, PageLinkGroup, SocialNetworkLink, SITE_CONFIG},
     slug::Slug,
     tag::Tag,
 };
@@ -59,7 +59,10 @@ impl PagePagination {
 
         let prev = match page.page_number {
             0 | 1 => None,
-            2 => Some(PagePaginationLabel::new(slug, &format!("Newer {}", entity_name))),
+            2 => Some(PagePaginationLabel::new(
+                slug,
+                &format!("Newer {}", entity_name),
+            )),
             _ => Some(PagePaginationLabel::new(
                 &slug.append(&format!("page-{}", page.page_number - 1)),
                 &format!("Newer {}", entity_name),
@@ -78,7 +81,7 @@ pub struct PageConfig {
     pub author: String,
     pub image: PageImage,
     pub language: String,
-    pub navigation_links: Vec<NavigationLink>,
+    pub navigation_links: Vec<HeaderLink>,
     pub social_links: Vec<SocialNetworkLink>,
 }
 
@@ -91,7 +94,8 @@ pub struct Page {
     pub image: PageImage,
     pub language: String,
     pub build_date: String,
-    pub navigation_links: Vec<NavigationLink>,
+    pub header_links: Vec<HeaderLink>,
+    pub page_links: Vec<PageLinkGroup>,
     pub social_links: Vec<SocialNetworkLink>,
     pub heading: Option<String>,
     pub date: Option<DateTime<Utc>>,
@@ -122,16 +126,9 @@ impl Page {
             image: SITE_CONFIG.image.clone(),
             language: SITE_CONFIG.language.to_string(),
             build_date: BUILD_DATE.to_string(),
-            navigation_links: SITE_CONFIG
-                .navigation_links
-                .iter()
-                .map(|link| NavigationLink::from(link.clone()))
-                .collect(),
-            social_links: SITE_CONFIG
-                .social_links
-                .iter()
-                .map(|link| SocialNetworkLink::from(link.clone()))
-                .collect(),
+            header_links: SITE_CONFIG.header_links.clone(),
+            page_links: SITE_CONFIG.page_links.clone(),
+            social_links: SITE_CONFIG.social_links.clone(),
             heading,
             date: None,
             read_time: None,
@@ -250,8 +247,8 @@ impl Page {
         &self.image.alt
     }
 
-    pub fn navigation_links(&self) -> &[NavigationLink] {
-        &self.navigation_links
+    pub fn header_links(&self) -> &[HeaderLink] {
+        &self.header_links
     }
 
     pub fn social_links(&self) -> &[SocialNetworkLink] {
@@ -280,5 +277,13 @@ impl Page {
 
     pub fn page_pagination(&self) -> Option<&PagePagination> {
         self.page_pagination.as_ref()
+    }
+
+    pub fn first_half_of_header_links(&self) -> &[HeaderLink] {
+        &self.header_links[0..self.header_links.len() / 2]
+    }
+
+    pub fn second_half_of_header_links(&self) -> &[HeaderLink] {
+        &self.header_links[self.header_links.len() / 2..]
     }
 }

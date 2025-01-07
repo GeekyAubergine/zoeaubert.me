@@ -1,4 +1,4 @@
-use crate::domain::models::image::{Image, ImageDimensions};
+use crate::domain::models::{image::Image, media::MediaDimensions};
 
 pub enum ResizingConstraint {
     MaxWidth(u32),
@@ -11,9 +11,9 @@ impl ResizingConstraint {
 }
 
 pub fn resize_image(
-    original: &ImageDimensions,
+    original: &MediaDimensions,
     constraint: &ResizingConstraint,
-) -> ImageDimensions {
+) -> MediaDimensions {
     match constraint {
         ResizingConstraint::MaxWidth(max_width) => {
             if original.width <= *max_width {
@@ -21,7 +21,7 @@ pub fn resize_image(
             }
 
             let ratio = *max_width as f64 / original.width as f64;
-            ImageDimensions::new(*max_width, (original.height as f64 * ratio) as u32)
+            MediaDimensions::new(*max_width, (original.height as f64 * ratio) as u32)
         }
     }
 }
@@ -32,7 +32,7 @@ mod tests {
 
     #[test]
     fn it_should_return_original_dimensions_if_resizing_constraint_is_same_as_orignal() {
-        let original = ImageDimensions::new(4000, 3000);
+        let original = MediaDimensions::new(4000, 3000);
         let resized = resize_image(&original, &ResizingConstraint::MaxWidth(4000));
 
         assert_eq!(resized.width, 4000);
@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn it_should_resize_image_to_within_max_width() {
-        let original = ImageDimensions::new(4000, 3000);
+        let original = MediaDimensions::new(4000, 3000);
         let resized = resize_image(&original, &ResizingConstraint::MaxWidth(2000));
 
         assert_eq!(resized.width, 2000);
@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn it_should_preserve_aspect_ratio_when_resizing() {
-        let original = ImageDimensions::new(4000, 3000);
+        let original = MediaDimensions::new(4000, 3000);
         let resized = resize_image(&original, &ResizingConstraint::MaxWidth(2000));
 
         assert_eq!(resized.aspect_ratio(), 1.3333334);
@@ -58,7 +58,7 @@ mod tests {
 
     #[test]
     fn it_should_not_upsize_image() {
-        let original = ImageDimensions::new(2000, 1500);
+        let original = MediaDimensions::new(2000, 1500);
         let resized = resize_image(&original, &ResizingConstraint::MaxWidth(4000));
 
         assert_eq!(resized.width, 2000);

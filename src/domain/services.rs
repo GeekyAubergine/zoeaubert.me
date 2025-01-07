@@ -14,8 +14,8 @@ use super::{
         book::{Book, BookReview},
         cache_path::CachePath,
         content::Content,
-        image::{Image, ImageDimensions},
-        media::Media,
+        image::Image,
+        media::{Media, MediaDimensions},
         movie::{Movie, MovieReview},
         network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes},
         omni_post::OmniPost,
@@ -112,7 +112,7 @@ pub trait ImageService {
         url: &Url,
         path: &Path,
         alt: &str,
-        new_size: &ImageDimensions,
+        new_size: &MediaDimensions,
     ) -> Result<Image>;
 }
 

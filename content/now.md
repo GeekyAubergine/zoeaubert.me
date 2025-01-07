@@ -2,12 +2,10 @@
 
 - Living in Portsmouth
 - Working at my day job with a primary focus on app development
-- Recently purchased my own house
 
 ## Projects
 
-- Getting the house in order
-- Getting the French horn up to similar standards to the trumpet
+- This website
 - Secret projects I hope to launch soon
 
 ## Enjoying
@@ -16,25 +14,23 @@
 
 ## Watching
 
-- Formula 1 (and sometimes the "support" races)
-- [The Bad Batch](https://www.imdb.com/title/tt12708542/)
+- Formula 1 and similar series
 
 ## Reading
 
-- [The Horus Heresy](https://www.blacklibrary.com/the-horus-heresy). I'm currently on my 17th book (I'm reading them out of publication order)
+- [The Horus Heresy](https://www.blacklibrary.com/the-horus-heresy). I'm currently on my 19th book (I'm reading them out of publication order)
 
 ## Travel
 
-- Recently went to Guildford to see [ExtremeRobots](https://www.extremerobots.co.uk/)
 - Mostly travelling back and forward between Portsmouth and Jersey for holidays
 
 ## Music
 
-- Recently picked up the [French horn](https://zoeaubert.me/micros/2022/10/30/after-many-years/). It's going ok for the time I've been playing. I'd like to progress faster but it's much harder than I expected.
+- Continuing to improve on the [French horn](https://zoeaubert.me/micros/2022/10/30/after-many-years/)
 
 ## Warhammer
 
-- Working on my [Custodies](/tags/custodes) army and trying to resist starting yet _another_ army
+- Working on my [Custodies](/tags/custodes) and [Confessors](/tags/confessors) armies and trying to resist starting yet _another_ army
 
 ## Photography
 
@@ -42,7 +38,6 @@
 
 ## Lego
 
-- Recently finished the [London Bus](https://zoeaubert.me/micros/2023/01/20/i-couldnt-resist/) [40220](https://brickset.com/sets/40220-1/London-Bus)
 - Have way too much in my build queue
 
 ## Model Railways

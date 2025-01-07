@@ -1,6 +1,10 @@
-{% extends "partials/base.html" %} {%- block body %} {% include
-"partials/navbar.html" %} {% include "partials/page_header.html" %}
+{% extends "partials/base.html" %}
+{%- block body %}
+{% include "partials/navbar.html" %}
 
+<div class="width-control mx-auto">
+{% include "partials/page_header.html" %}
+</div>
 <div class="wide">
     {% for album in albums %}
     <div>
@@ -9,8 +13,9 @@
                 {{ album.date.without_time() }} - {{ album.title }}
             </h2>
         </a>
-        <div class="photogrid">
-            {% for photo in album.photos %} {% let image = photo.small_image.clone() %}
+        <div class="media-grid">
+            {% for photo in album.photos %}
+            {% let image = photo.small_image.clone() %}
             <div class="grid-element {{ image.dimensions.orientation().to_string() }}">
                 <a href="{{ photo.slug.relative_link() }}">
                     {% include "partials/media/image.html" %}
@@ -20,9 +25,5 @@
         </div>
     </div>
     {% endfor %}
-</div>
-
-<div class="width-control mx-auto">
-    {% include "partials/pagination.html" %}
 </div>
 {% include "partials/footer.html" %} {% endblock %}

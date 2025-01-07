@@ -9,8 +9,5 @@
 
 ## Website
 
-- OMG! What font is that? I love it
-  - The main text is [Atkinson Hyperlegible](https://brailleinstitute.org/freefont). Both accessibility minded and pretty!
-  - The headings are [Wilco-Loft-Sans](https://simplebits.shop/collections/fonts/products/wilco-loft-sans). God it's pretty
 - Why are your tags/categories Upper Camel Case?
-  - Because screen readers struggle to read single-case hashtags, making each word a capital makes it likely that the reader will say each word separately. You should do this too 😊
+  - Screen readers struggle to read single-case hashtags, making the start of each word a capital makes it likely that the reader will say each word separately 😊

@@ -1,18 +1,18 @@
 <footer data-pagefind-ignore>
-    <div>
-        <p>Enjoyed what you've seen?</p>
-        <p>Tell me about it on <a href="https://social.lol/@geekyaubergine" target="_blank" rel="me">Mastodon</a>
-    </p>
-    </div>
-    <div>
-        {% for social in page.social_links %}
-            {% if social.show_in_footer %}
-                <a href="{{ social.url }}" target="_blank" rel="me">{{ social.name }}</a>
-                <span>-</span>
-            {% endif %}
+    <nav aria-label="Site Navigation">
+        {% for link_group in page.page_links %}
+        <div class="link-group">
+            <h3>{{ link_group.name }}</h3>
+            <ul>
+                {% for link in link_group.links %}
+                <li>
+                    <a href="{{ link.url }}" rel="noopener noreferrer"
+                        >{{ link.name }}</a
+                    >
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
         {% endfor %}
-        <a href="/save/">Save</a>
-        <span>-</span>
-        <a href="/feeds/">Feeds</a>
-    </div>
+    </nav>
 </footer>

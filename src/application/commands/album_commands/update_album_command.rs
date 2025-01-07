@@ -11,10 +11,7 @@ use crate::{
     calculate_hash,
     domain::{
         models::{
-            album::{Album, AlbumPhoto},
-            image::{Image, ImageDimensions, ImageOrientation},
-            slug::Slug,
-            tag::Tag,
+            album::{Album, AlbumPhoto}, image::Image, media::{MediaDimensions, MediaOrientation}, slug::Slug, tag::Tag
         },
         repositories::{AlbumsRepo, Profiler},
         services::{FileService, ImageService},
@@ -37,11 +34,11 @@ const PORTRAIT_LARGE_IMAGE_WIDTH: u32 = 1500;
 const SQUARE_SMALL_IMAGE_WIDTH: u32 = 400;
 const SQUARE_LARGE_IMAGE_WIDTH: u32 = 1500;
 
-fn image_size_resized_small(image: &Image) -> ImageDimensions {
+fn image_size_resized_small(image: &Image) -> MediaDimensions {
     let target_width = match image.dimensions.orientation() {
-        ImageOrientation::Landscape => LANDSCAPE_SMALL_IMAGE_WIDTH,
-        ImageOrientation::Portrait => PORTRAIT_SMALL_IMAGE_WIDTH,
-        ImageOrientation::Square => SQUARE_SMALL_IMAGE_WIDTH,
+        MediaOrientation::Landscape => LANDSCAPE_SMALL_IMAGE_WIDTH,
+        MediaOrientation::Portrait => PORTRAIT_SMALL_IMAGE_WIDTH,
+        MediaOrientation::Square => SQUARE_SMALL_IMAGE_WIDTH,
     };
 
     resize_image(
@@ -50,11 +47,11 @@ fn image_size_resized_small(image: &Image) -> ImageDimensions {
     )
 }
 
-fn image_size_resized_large(image: &Image) -> ImageDimensions {
+fn image_size_resized_large(image: &Image) -> MediaDimensions {
     let target_width = match image.dimensions.orientation() {
-        ImageOrientation::Landscape => LANDSCAPE_LARGE_IMAGE_WIDTH,
-        ImageOrientation::Portrait => PORTRAIT_LARGE_IMAGE_WIDTH,
-        ImageOrientation::Square => SQUARE_LARGE_IMAGE_WIDTH,
+        MediaOrientation::Landscape => LANDSCAPE_LARGE_IMAGE_WIDTH,
+        MediaOrientation::Portrait => PORTRAIT_LARGE_IMAGE_WIDTH,
+        MediaOrientation::Square => SQUARE_LARGE_IMAGE_WIDTH,
     };
 
     resize_image(

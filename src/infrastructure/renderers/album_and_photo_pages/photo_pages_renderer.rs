@@ -48,7 +48,7 @@ pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
     let page = Page::new(Slug::new("photos"), Some("Photos"), Some("All my photos"));
 
     for paginator_page in paginated {
-        let mut page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
+        let mut page = Page::from_page_and_pagination_page(&page, &paginator_page, "Photos");
 
         if let Some(first_image) = paginator_page.data.first() {
             page = page.with_image(first_image.clone().into());

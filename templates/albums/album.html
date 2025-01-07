@@ -1,9 +1,13 @@
-{% extends "partials/base.html" %} {%- block body %} {% include
-"partials/navbar.html" %} {% include "partials/page_header.html" %}
+{% extends "partials/base.html" %}
+{%- block body %}
+{% include "partials/navbar.html" %}
+<div class="width-control mx-auto">
+{% include "partials/page_header.html" %}
+</div>
 
 <div class="wide">
     <div>{{ description.to_html()|safe }}</div>
-    <div class="photogrid">
+    <div class="media-grid">
         {% for photo in album.photos %} {% let image = photo.small_image.clone()
         %}
         <div

@@ -7,11 +7,9 @@
     </div>
 
     <p class="description">{{ post.description }}</p>
-    <div class="time-to-read-and-tags">
-        <div class="tags-list">
-            {% set tags = post.tags.clone() %}
-            {% include "partials/tags_list.html" %}
-        </div>
+    <div class="tags-list">
+        {% set tags = post.tags.clone() %}
+        {% include "partials/tags_list.html" %}
     </div>
 </article>
 <hr/>

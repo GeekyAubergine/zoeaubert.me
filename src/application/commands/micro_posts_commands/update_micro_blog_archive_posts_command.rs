@@ -9,8 +9,8 @@ use crate::{
     calculate_hash,
     domain::{
         models::{
-            image::{Image, ImageDimensions},
-            media::Media,
+            image::Image,
+            media::{Media, MediaDimensions},
             micro_post::MicroPost,
             slug::Slug,
             tag::Tag,
@@ -73,7 +73,7 @@ fn extract_images_from_html(markup: &str, date: &DateTime<Utc>, parent_slug: &Sl
         let path = Path::new(&path);
 
         images.push(
-            Image::new(&path, alt, &ImageDimensions::new(width, height))
+            Image::new(&path, alt, &MediaDimensions::new(width, height))
                 .with_date(date)
                 .with_parent_slug(parent_slug),
         );
@@ -177,7 +177,7 @@ mod tests {
     use chrono::Utc;
     use url::Url;
 
-    use crate::domain::{models::image::ImageDimensions, services::CdnService};
+    use crate::domain::{services::CdnService};
 
     use super::*;
 
@@ -197,7 +197,7 @@ mod tests {
 
         let expected = Image::new(&expected_path,
             "Picture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa",
-            &ImageDimensions::new(600, 450),
+            &MediaDimensions::new(600, 450),
         ).with_date(&date).with_parent_slug(&parent_slug);
 
         let image = media.get(0).unwrap();

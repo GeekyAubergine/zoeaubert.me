@@ -1,6 +1,6 @@
-<div class="w-5 h-5">
+<div id="theme-toggle">
     <svg
-    class="toggle-button"
+    id="toggle-button"
     width="24"
     height="24"
     viewBox="0 0 100 100"
@@ -17,7 +17,7 @@
     const htmlClassList = document
         .querySelector("html")
         .classList;
-    const toggleButton = document.querySelector(".toggle-button");
+    const toggleButton = document.querySelector("#toggle-button");
     const systemDarkSetting = window.matchMedia("(prefers-color-scheme: dark)");
     const storedDarkValue = localStorage.getItem("dark");
 

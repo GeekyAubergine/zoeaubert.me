@@ -8,7 +8,8 @@ use regex::Regex;
 use std::io::Cursor;
 use url::Url;
 
-use crate::domain::models::image::{Image, ImageDimensions};
+use crate::domain::models::image::{Image};
+use crate::domain::models::media::MediaDimensions;
 use crate::domain::models::slug::Slug;
 
 use crate::domain::services::{ImageService, NetworkService};
@@ -52,7 +53,7 @@ impl ImageService for ImageServiceImpl {
         Ok(Image::new(
             path,
             alt,
-            &ImageDimensions::new(image_size.width as u32, image_size.height as u32),
+            &MediaDimensions::new(image_size.width as u32, image_size.height as u32),
         ))
     }
 
@@ -93,7 +94,7 @@ impl ImageService for ImageServiceImpl {
         url: &Url,
         path: &Path,
         alt: &str,
-        new_size: &ImageDimensions,
+        new_size: &MediaDimensions,
     ) -> Result<Image> {
         let original_bytes = state.network_service().download_bytes(&url).await?;
 

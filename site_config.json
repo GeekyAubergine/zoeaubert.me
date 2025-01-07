@@ -11,48 +11,121 @@
         "date": 1678200125
     },
     "language": "en-gb",
-    "navigation_links": [
+    "header_links": [
         {
             "name": "Blog",
-            "target": "",
-            "rel": "",
             "url": "/blog/"
         },
         {
             "name": "Timeline",
-            "target": "",
-            "rel": "",
             "url": "/timeline/"
         },
         {
             "name": "Photos",
-            "target": "",
-            "rel": "",
             "url": "/photos/"
         },
         {
-            "name": "Interests",
-            "target": "",
-            "rel": "",
-            "url": "/interests/"
-        },
-        {
             "name": "Tags",
-            "target": "",
-            "rel": "",
             "url": "/tags/"
         },
         {
-            "name": "/now",
-            "target": "",
-            "rel": "",
-            "url": "/now/"
+            "name": "Interests",
+            "url": "/interests/"
+        }
+    ],
+    "page_links": [
+        {
+            "name": "Posts",
+            "links": [
+                {
+                    "name": "Blog",
+                    "url": "/blog/"
+                },
+                {
+                    "name": "Timeline",
+                    "url": "/timeline/"
+                },
+                {
+                    "name": "Tags",
+                    "url": "/tags/"
+                },
+                {
+                    "name": "Photos",
+                    "url": "/photos/"
+                }
+            ]
         },
         {
-            "name": "/faq",
-            "target": "",
-            "rel": "",
-            "url": "/faq/"
+            "name": "Interests",
+            "links": [
+                {
+                    "name": "All Interests",
+                    "url": "/interests/"
+                },
+                {
+                    "name": "Games",
+                    "url": "/interests/games/"
+                },
+                {
+                    "name": "Warhammer",
+                    "url": "/tags/warhammer/"
+                },
+                {
+                    "name": "Lego",
+                    "url": "/interests/lego/"
+                },
+                {
+                    "name": "Photography",
+                    "url": "/albums/"
+                },
+                { "name": "Books", "url": "/books/" },
+                {
+                    "name": "Movies",
+                    "url": "/interests/movies/"
+                },
+                {
+                    "name": "TV",
+                    "url": "/interests/tv/"
+                }
+            ]
+        },
+        {
+            "name": "Other",
+            "links": [
+                {
+                    "name": "/now",
+                    "url": "/now/"
+                },
+                {
+                    "name": "Faq",
+                    "url": "/faq/"
+                },
+                {
+                    "name": "Save",
+                    "url": "/save/"
+                },
+                {
+                    "name": "Feeds",
+                    "url": "/feeds"
+                }
+            ]
+        },
+        {
+            "name": "Socials",
+            "links": [
+                {
+                    "name": "Mastodon",
+                    "url": "https://social.lol/@geekyaubergine"
+                },
+                {
+                    "name": "GitHub",
+                    "url": "https://github.com/geekyaubergine"
+                },
+                {
+                    "name": "LinkedIn",
+                    "url": "https://www.linkedin.com/in/zoeaubert/"
+                }
+            ]
         }
     ],
     "social_links": [

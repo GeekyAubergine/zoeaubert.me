@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
+/* @font-face {
     font-family: 'Atkinson Hyperlegible';
     src: url('/assets/fonts/Atkinson-Hyperlegible-Regular-102a.woff2')
         format('woff2');
@@ -33,7 +33,7 @@
 @font-face {
     font-family: 'WilcoLoftSans';
     src: url('/assets/fonts/WilcoLoftSans-Treble.woff2') format('woff2');
-}
+} */
 
 @keyframes blink {
     0% {
@@ -51,7 +51,7 @@
     /* ---------------- Core ---------------- */
 
     html {
-        @apply font-[16px] md:font-[18px];
+        @apply text-[16px] md:text-[18px];
         /* @apply  */
     }
 
@@ -70,7 +70,7 @@
     /* ----------------  Utilities ---------------- */
 
     .width-control {
-        @apply w-[72ch] max-w-[100%] px-4 md:px-0;
+        @apply w-[60ch] max-w-[100%] px-4 md:px-0;
     }
 
     .text {
@@ -148,37 +148,28 @@
         @apply my-2;
     }
 
-    .title-font {
-        font-family: 'WilcoLoftSans';
-        font-display: swap;
-        @apply mt-8 mb-0 tracking-[0.025rem] md:tracking-[0.05rem];
-    }
-
     h1,
     h2,
     h3,
     h4,
     h5,
     h6 {
-        @apply title-font;
+        @apply mt-8 mb-0 font-bold mr-4 sm:mr-0;
     }
 
     h1 {
-        @apply text-4xl md:text-6xl mt-0;
+        @apply text-4xl sm:text-5xl;
     }
 
     h2 {
-        @apply text-2xl md:text-3xl;
+        @apply text-2xl;
     }
 
-    h3 {
-        @apply text-xl;
-    }
-
+    h3,
     h4,
     h5,
     h6 {
-        @apply text-lg;
+        @apply text-xl;
     }
 
     a {
@@ -186,17 +177,19 @@
     }
 
     ol {
-        @apply list-decimal list-inside;
+        @apply list-decimal list-outside ml-4;
     }
 
     ul {
-        @apply list-disc list-inside;
+        @apply list-disc list-outside ml-4;
     }
 
     li > ul > li,
     li > ol > li {
         @apply ml-4;
     }
+
+
 
     blockquote {
         @apply border-l-4 border-accent dark:border-accent-dark pl-4;
@@ -232,10 +225,6 @@
 
     /* ----------------  Common ---------------- */
 
-    .toggle-button {
-        @apply cursor-pointer text-neutral-400 dark:text-neutral-500 rotate-180 dark:rotate-0 transition-all duration-100;
-    }
-
     .date-and-readtime {
         @apply secondary mt-2;
 
@@ -269,144 +258,87 @@
         /* @apply mt-9 h-5 flex items-center; */
     }
 
-    .photogrid {
-        @apply w-full grid gap-x-2 gap-y-4 mx-auto px-0 grid-cols-2 sm:grid-cols-4 sm:gap-y-2 md:grid-cols-6;
-        grid-auto-rows: 1fr;
-
-        & .grid-element {
-            @apply flex flex-col justify-center items-center;
-        }
-
-        & .landscape {
-            @apply col-span-2 row-span-1;
-        }
-
-        & .portrait {
-            @apply col-span-1 row-span-1 object-cover my-[-8%];
-
-            & img {
-                @apply h-[92%];
-            }
-        }
-
-        & img,
-        & a {
-            @apply m-0 p-0 max-h-full;
-        }
-
-        & a {
-            @apply flex justify-center items-center;
-        }
-    }
-
     nav {
-        @apply sticky top-0 justify-center items-center h-[3.2rem] pt-0 bg-background dark:bg-background-dark border-b border-color z-10 md:h-[3.6rem];
+        @apply width-control mx-auto pt-2 mb-6 sm:flex-row sm:justify-end sm:items-baseline sm:py-4;
 
-        & .nav-wrapper {
-            @apply w-full items-baseline md:flex-row md:justify-between md:px-4 md:max-w-[60rem];
-        }
+        & .name-and-toggle {
+            @apply w-full flex-row justify-between items-center font-normal sm:justify-start;
 
-        & .name-and-buttons {
-            @apply width-control flex-row justify-between items-center mx-auto md:w-auto md:mx-0;
+            & .name {
+                @apply text-2xl h-full text-left mr-2 no-underline mt-0 mb-1 sm:my-1 sm:text-3xl;
 
-            & .mobile-nav-toggle {
-                @apply w-8 h-full justify-center items-center ml-2 md:hidden mb-1;
-
-                & p {
-                    @apply text-center m-0 p-0 text-3xl accent;
-                }
-            }
-
-            & .name-and-toggle {
-                @apply w-full flex-row justify-start items-center font-normal md:w-auto;
-
-                & .name {
-                    @apply text-3xl h-full text-left my-0 mr-2 no-underline md:my-1;
-
-                    &:hover {
-                        .forename,
-                        .surname {
-                            @apply under;
-                        }
-                    }
-
-                    & .forename {
-                        @apply no-underline;
-                    }
-
-                    & .surname {
-                        @apply md:hidden lg:inline-flex;
+                &:hover {
+                    .forename,
+                    .surname {
+                        @apply under;
                     }
                 }
-            }
-        }
 
-        & .link {
-            @apply accent !no-underline hover:!under;
-        }
+                & .forename {
+                    @apply no-underline;
+                }
 
-        & .mobile-nav-container {
-            @apply absolute top-[3rem] pt-2 bg-background dark:bg-background-dark transition-all border-r border-color md:hidden;
-
-            left: calc(-7.5rem);
-            height: calc(100svh - 3rem);
-
-            & .link {
-                @apply my-2 pl-5 w-[7.2rem];
-                @apply my-2 pl-5 w-[7.2rem];
-            }
-        }
-
-        & .show {
-            @apply left-0;
-        }
-
-        & .side-links {
-            @apply flex-row w-full justify-end hidden sm:flex;
-
-            & .link {
-                @apply accent ml-4;
+                & .surname {
+                    @apply sm:hidden md:inline-flex;
+                }
             }
         }
 
         & .links {
-            @apply hidden md:inline-flex flex-row;
+            @apply flex-row justify-between;
 
             & .link {
-                @apply mt-0 mx-2;
+                @apply mx-0 my-0 accent text-lg !no-underline hover:!under sm:mx-2 sm:last-of-type:mr-0;
+            }
+        }
 
-                &:last-of-type {
-                    @apply mr-4;
+        /* & .links {
+            @apply flex-row w-full justify-evenlytly mt-1 sm:w-auto sm:justify-end;
+
+            & .link {
+                @apply flex-1 max-w-[5rem] justify-center mx-0 my-0 text-center accent !no-underline hover:!under text-lg sm:last-of-type:mr-0;
+            }
+        } */
+    }
+
+    #theme-toggle {
+        @apply w-5 h-5 sm:mt-[0.25rem];
+
+        #toggle-button {
+            @apply cursor-pointer text-neutral-400 dark:text-neutral-500 rotate-180 dark:rotate-0 transition-all duration-100;
+        }
+    }
+
+    footer {
+        @apply mt-[10rem] pt-8 pb-6 px-4 items-center bg-accent;
+
+        nav {
+            @apply width-control mx-auto my-0 p-0 grid grid-cols-2 gap-y-16 gap-x-8 sm:grid-cols-3 md:grid-cols-4;
+
+            & .link-group {
+                @apply flex-col;
+
+                & h3 {
+                    @apply text-text-dark mt-0 font-bold text-2xl;
+                }
+
+                & ul {
+                    @apply list-none ml-0;
+
+                    & li {
+                        & a {
+                            @apply text-text-dark !no-underline hover:!under;
+                            text-decoration-color: white;
+                        }
+                    }
                 }
             }
         }
     }
 
-    footer {
-        @apply max-w-full width-control mt-12 p-2 mx-auto items-center border-t border-t-border dark:border-t-border-dark;
-
-        & a {
-            @apply my-0;
-        }
-
-        & > div {
-            @apply flex-row flex-wrap justify-center my-2;
-        }
-
-        & p {
-            @apply mx-0.5 my-0 text-center;
-        }
-
-        & span {
-            @apply text mx-2 my-0;
-        }
-    }
-
     .blog-posts {
-        @apply grid gap-y-4 grid-cols-1 mt-4;
-
         & .blog-post-item {
-            @apply flex-col;
+            @apply my-4 first-of-type:mt-0;
 
             & .title-and-date {
                 @apply flex-col justify-between items-baseline md:flex-row md:items-baseline;
@@ -414,30 +346,22 @@
                 & .date {
                     @apply secondary;
                 }
-            }
 
-            & a {
-                @apply flex flex-1 my-0 no-underline;
+                & a {
+                    @apply flex flex-1 my-0 no-underline;
+                }
             }
 
             & h3 {
-                @apply accent font-normal mt-0 text-2xl;
+                @apply accent mt-0 text-2xl pr-8 sm:pr-0 font-normal;
             }
 
             & .description {
-                @apply hidden md:inline-flex;
-            }
-
-            & .time-to-read-and-tags {
-                @apply flex-row justify-start items-baseline;
+                /* @apply hidden md:inline-flex; */
             }
 
             & .time-to-read {
                 @apply hidden secondary mt-0 md:inline-flex;
-            }
-
-            & .tags-list {
-                /* @apply ml-2; */
             }
 
             p {
@@ -447,14 +371,10 @@
     }
 
     .page-header {
-        @apply flex flex-col justify-center items-center w-full mt-6 mb-6 md:mt-[4rem] md:mb-[4.5rem] md:items-center;
+        @apply w-full mt-0 mb-8 sm:justify-center sm:mt-[2rem] sm:mb-[4.5rem] sm:items-center;
 
         & h1 {
-            @apply text-center;
-        }
-
-        & .tags-list {
-            @apply my-0 md:max-w-[24rem] md:justify-center;
+            @apply sm:text-center sm:max-w-[80%] mt-0;
         }
     }
 
@@ -481,7 +401,7 @@
             @apply flex-row justify-center items-baseline h-[6rem];
 
             .home-name {
-                @apply text-[3rem] md:text-[5rem] mt-0 text-center;
+                @apply text-[3rem] md:text-[5rem] m-0 text-center max-w-full;
             }
 
             .name-cursor {
@@ -500,17 +420,11 @@
         @apply my-2;
 
         & h2 {
-            @apply mt-4;
+            @apply mt-4 mb-4;
         }
 
         & .see-more {
             @apply mt-2;
-        }
-
-        & .blog-post-item {
-            & .hero {
-                @apply hidden;
-            }
         }
     }
 
@@ -537,10 +451,10 @@
             @apply flex flex-row justify-start md:my-4 mx-auto;
 
             & > .media-grid {
-                @apply grid gap-2 grid-cols-1 md:grid-cols-2 overflow-hidden;
+                @apply sm:grid gap-2 grid-cols-1 md:grid-cols-2 overflow-hidden;
             }
             & img {
-                @apply w-full h-full object-contain md:my-0 max-h-[44rem];
+                @apply w-full object-contain md:my-0 max-h-[44rem];
             }
         }
 
@@ -556,17 +470,55 @@
             @apply mt-0 text-center;
         }
 
-        .tags-list {
-            @apply flex-row justify-start items-baseline mt-2;
-        }
-
         .content {
             @apply w-full;
         }
 
         .image {
-            @apply max-w-[8rem] min-w-[8rem] md:max-w-[10rem] md:min-w-[10rem] ml-4;
+            @apply max-w-[6rem] min-w-[6rem] md:max-w-[10rem] md:min-w-[10rem] ml-2;
         }
+
+        .tags-list {
+            @apply mt-2;
+        }
+    }
+
+    .media-grid {
+        @apply w-full grid gap-x-2 gap-y-4 mx-auto px-0 grid-cols-2 sm:grid-cols-4 sm:gap-y-2 md:grid-cols-6;
+        grid-auto-rows: 1fr;
+
+        & .grid-element {
+            @apply flex flex-col justify-center items-center;
+        }
+
+        & .landscape {
+            @apply col-span-2 row-span-1;
+        }
+
+        & .portrait {
+            @apply col-span-1 row-span-1 object-cover my-[-4%];
+
+            & img {
+                @apply h-[92%];
+            }
+        }
+
+        & .square {
+            @apply col-span-2 row-span-1 object-cover;
+        }
+
+        & img,
+        & a {
+            @apply m-0 p-0 max-h-full;
+        }
+
+        & a {
+            @apply flex justify-center items-center;
+        }
+    }
+
+    .half-size-media-grid {
+        @apply grid-cols-4 sm:grid-cols-8 md:grid-cols-10;
     }
 
     .micro-post {
@@ -601,7 +553,7 @@
             @apply !no-underline flex flex-col justify-between cursor-pointer my-2;
 
             & .preview-multi {
-                @apply grid gap-x-1 grid-cols-2 overflow-hidden max-h-[16rem] mb-2;
+                @apply grid gap-x-1 grid-cols-2 overflow-hidden sm:max-h-[16rem] mb-2;
             }
 
             & .preview-single {
@@ -702,7 +654,7 @@
         }
 
         & .img-container {
-            @apply absolute top-[3rem] md:top-[4rem] bottom-[11rem] left-0 right-0 flex-1 justify-center items-center w-full p-2 pt-4 md:p-8 overflow-hidden;
+            @apply absolute top-[5rem] md:top-[6rem] bottom-[11rem] left-0 right-0 flex-1 justify-center items-center w-full p-2 pt-4 md:p-8 overflow-hidden;
 
             & img {
                 @apply w-full h-full object-contain p-0 m-0;
