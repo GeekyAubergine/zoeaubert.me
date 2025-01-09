@@ -7,7 +7,7 @@
             <time class="title-font" datetime="{{post.date.datetime()}}">{{post. date.without_time() }}</time>
         </h1>
         {%- if post.tags.len() > 0 %}
-            <div class="tags-list my-4">
+            <div class="tags-list my-4" data-nosnippet>
                 {% let tags = post.tags.clone() %}
                 {% include "partials/tags_list.html" %}
             </div>

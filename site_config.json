@@ -115,15 +115,18 @@
             "links": [
                 {
                     "name": "Mastodon",
-                    "url": "https://social.lol/@geekyaubergine"
+                    "url": "https://social.lol/@geekyaubergine",
+                    "rel": "me"
                 },
                 {
                     "name": "GitHub",
-                    "url": "https://github.com/geekyaubergine"
+                    "url": "https://github.com/geekyaubergine",
+                    "rel": "me"
                 },
                 {
                     "name": "LinkedIn",
-                    "url": "https://www.linkedin.com/in/zoeaubert/"
+                    "url": "https://www.linkedin.com/in/zoeaubert/",
+                    "rel": "me"
                 }
             ]
         }

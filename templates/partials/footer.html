@@ -6,7 +6,7 @@
             <ul>
                 {% for link in link_group.links %}
                 <li>
-                    <a href="{{ link.url }}" rel="noopener noreferrer"
+                    <a href="{{ link.url }}" rel="{{ link.rel() }}"
                         >{{ link.name }}</a
                     >
                 </li>

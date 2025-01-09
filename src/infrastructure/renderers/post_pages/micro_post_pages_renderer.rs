@@ -24,18 +24,10 @@ pub async fn render_micro_post_pages(state: &impl State) -> Result<()> {
     let micro_posts = state.micro_posts_repo().find_all().await?;
 
     for micro_post in micro_posts {
-        let first_line: Option<&str> = match micro_post.content.lines().next() {
-            Some(line) => match line.contains("](ht") {
-                true => None,
-                false => Some(line),
-            },
-            None => None,
-        };
-
         let mut page = Page::new(
             micro_post.slug.clone(),
             None,
-            first_line,
+            micro_post.description.as_deref(),
         )
         .with_date(micro_post.date)
         .with_tags(micro_post.tags.clone());

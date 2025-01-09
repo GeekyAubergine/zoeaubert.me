@@ -7,7 +7,7 @@
     </div>
 
     <p class="description">{{ post.description }}</p>
-    <div class="tags-list">
+    <div class="tags-list" data-nosnippet>
         {% set tags = post.tags.clone() %}
         {% include "partials/tags_list.html" %}
     </div>

@@ -9,6 +9,7 @@ Disallow: /photos
 Disallow: /feeds
 Disallow: /firehose
 Disallow: /years
+Disallow: /timeline
 
 User-agent: AdsBot-Google
 User-agent: Amazonbot

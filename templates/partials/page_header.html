@@ -19,7 +19,7 @@
     {%- endmatch %}
 
     {%- if page.tags().len() > 0 %}
-        <div class="tags-list">
+        <div class="tags-list" data-nosnippet>
             {% let tags = page.tags() %}
             {% include "partials/tags_list.html" %}
         </div>

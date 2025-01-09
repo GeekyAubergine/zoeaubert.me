@@ -22,10 +22,36 @@ use crate::prelude::*;
 
 const MICRO_POSTS_DIR: &str = "micros";
 
+pub const MARKDOWN_LINK_REGEX: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r#"\(https?://[^\s]+\)"#).unwrap());
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct MicroPostFrontMatter {
     date: String,
     tags: Vec<String>,
+}
+
+fn description_from_string(s: &str) -> Option<String> {
+    let lines = s
+        .lines()
+        .filter(|line| !line.is_empty())
+        .collect::<Vec<&str>>();
+
+    let first_line = lines.iter().next()?;
+
+    let first_line = first_line.replace("[", "").replace("]", "");
+
+    let first_line = MARKDOWN_LINK_REGEX.replace_all(&first_line, "");
+
+    if first_line.contains("<") {
+        let first_line = first_line.split('<').collect::<Vec<&str>>().join("");
+    }
+
+    let sentences = first_line.split('.').collect::<Vec<&str>>();
+
+    let first_sentence = sentences.iter().next()?;
+
+    return Some(first_sentence.to_string());
 }
 
 fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
@@ -83,12 +109,15 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
         .map(|tag| Tag::from_string(tag))
         .collect::<Vec<Tag>>();
 
+    let description = description_from_string(&content);
+
     info!("Updating micro post: {:?}", slug);
 
     let micro_post = MicroPost::new(
         slug,
         date,
         content.to_string(),
+        description,
         media,
         tags,
         Some(Utc::now()),
@@ -121,4 +150,12 @@ pub async fn update_micro_posts(state: &impl State) -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_should_extract_description_from_string() {}
 }

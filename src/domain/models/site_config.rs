@@ -17,6 +17,16 @@ pub struct HeaderLink {
 pub struct PageLink {
     pub name: String,
     pub url: String,
+    pub rel: Option<String>,
+}
+
+impl PageLink {
+    pub fn rel(&self) -> String {
+        match &self.rel {
+            Some(rel) => rel.to_owned(),
+            None => "noopener noreferrer".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]

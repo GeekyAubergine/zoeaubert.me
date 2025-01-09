@@ -27,6 +27,8 @@ const MICRO_POSTS_DIR: &str = "micro-blog-archive/feed.json";
 pub const HTML_IMAGE_REGEX: Lazy<Regex> = Lazy::new(|| {
     Regex::new(r#"(?i)<img(((src="(?<src>([^"]+))")|(alt="(?<alt>([^"]+))")|(width="(?<width>([^"]+))")|(height="(?<height>([^"]+))"))|[^>])*>"#).unwrap()
 });
+pub const MARKDOWN_LINK_REGEX: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r#"\(https?://[^\s]+\)"#).unwrap());
 
 const TAGS_TO_IGNORE: [&str; 2] = ["status", "photography"];
 const SELF_URL: &str = "zoeaubert.me";
@@ -54,6 +56,30 @@ struct ArchiveFile {
     // home_page_url: String,
     // feed_url: String,
     items: Vec<ArchiveFileItem>,
+}
+
+// Find first line or sentence. Remove markdown links and html tags.
+fn extract_description(markup: &str) -> Option<String> {
+    let lines = markup
+        .split("\\n")
+        .filter(|line| !line.is_empty())
+        .collect::<Vec<&str>>();
+
+    let first_line = lines.iter().next()?;
+
+    let first_line = first_line.replace("[", "").replace("]", "");
+
+    let first_line = MARKDOWN_LINK_REGEX.replace_all(&first_line, "");
+
+    if first_line.contains("<") {
+        let first_line = first_line.split('<').collect::<Vec<&str>>().join("");
+    }
+
+    let sentences = first_line.split('.').collect::<Vec<&str>>();
+
+    let first_sentence = sentences.iter().next()?;
+
+    return Some(first_sentence.to_string());
 }
 
 fn extract_images_from_html(markup: &str, date: &DateTime<Utc>, parent_slug: &Slug) -> Vec<Image> {
@@ -125,6 +151,8 @@ fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
         return Ok(None);
     }
 
+    let description = extract_description(&content);
+
     let media = extract_images_from_html(&content, &item.date_published, &slug)
         .iter()
         .map(|i| Media::from(i))
@@ -134,6 +162,7 @@ fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
         slug.clone(),
         item.date_published,
         content,
+        description,
         media,
         tags,
         None,
@@ -177,12 +206,12 @@ mod tests {
     use chrono::Utc;
     use url::Url;
 
-    use crate::domain::{services::CdnService};
+    use crate::domain::services::CdnService;
 
     use super::*;
 
     #[test]
-    fn test_extract_media_from_html() {
+    fn it_should_extract_media_from_html() {
         let parent_slug = Slug::new("test-slug");
 
         let markup = r#"Movie friend\n\n<img src="uploads/2022/ced7ff5352.jpg" width="600" height="450" alt="Picture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa">\n"#;
@@ -206,5 +235,20 @@ mod tests {
         assert_eq!(image.alt, expected.alt);
         assert_eq!(image.dimensions.width, expected.dimensions.width);
         assert_eq!(image.dimensions.height, expected.dimensions.height);
+    }
+
+    #[test]
+    fn it_should_extract_description() {
+        let markup = r#"Movie friend\n\n<img src="uploads/2022/ced7ff5352.jpg" width="600" height="450" alt="Picture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa">\n"#;
+
+        let expected = Some(String::from("Movie friend"));
+
+        assert_eq!(extract_description(&markup), expected);
+
+        let markup = r#"Finished my [Goff Rocker](https://www.games-workshop.com/en-GB/ork-goff-rocker-xmas-promo-2022). Pretty pleased with the result; still a few little touch-ups to do, but for my first Ork, I'm very happy, the skin is a lot of fun to highlight.\n\n<img src=\"uploads/2022/e09fcfa66a.jpg\" width=\"600\" height=\"600\" alt=\"Several angles of my painted Goff Rocker Ork miniature. The ork is posed with one foot raised on a squig, their left arm holding a microphone up to sing into and th other holding a guitar that's strapped to their back. He is wearing biking leathers and a hat. The orks skin is painted a dark green and is fully shaded and highlighted. The highlights maintain the colour without becoming yellow. The leathers are black with medium grey highlights. The squig is painted red with orange-red highlights. The guitar has been painted a hot yellow. Various metal accents are in a mix of bronze and silver colours. The base has been left a simple flat black\">\n"#;
+
+        let expected = Some(String::from("Finished my Goff Rocker"));
+
+        assert_eq!(extract_description(markup), expected);
     }
 }

@@ -28,7 +28,7 @@
         {% endmatch %}
 
         {% if omni_post.tags().len() > 0 %}
-        <div class="tags-list">
+        <div class="tags-list" data-nosnippet>
             {% let tags = omni_post.tags() %} {% include "partials/tags_list.html"
             %}
         </div>

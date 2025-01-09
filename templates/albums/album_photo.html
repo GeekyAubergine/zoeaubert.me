@@ -8,7 +8,7 @@
     </div>
     <div class="buttons-and-text">
         <p class="description">{{photo.description}}</p>
-        <div class="tags-list">
+        <div class="tags-list" data-nosnippet>
             {% set tags = photo.tags.clone() %} {% include
             "partials/tags_list.html" %}
         </div>

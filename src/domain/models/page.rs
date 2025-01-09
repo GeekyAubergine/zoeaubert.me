@@ -167,7 +167,7 @@ impl Page {
         self.date = Some(date);
 
         if !self.title.contains(" | ") {
-            self.title = format!("{} | {}", date.short_iso(), self.title);
+            self.title = format!("{} | {}", date.without_time(), self.title);
         }
 
         self
