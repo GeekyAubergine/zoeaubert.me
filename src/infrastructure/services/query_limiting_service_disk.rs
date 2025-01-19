@@ -17,8 +17,10 @@ use crate::domain::{
 
 const FILE_NAME: &str = "query_limiting_service.json";
 
-pub const ONE_HOUR_PERIOD: Duration = Duration::new(60 * 60 - 1, 0);
-pub const ONE_DAY_PERIOD: Duration = Duration::new(60 * 60 * 24 - 1, 0);
+// All are 1 minute less than the actual period to account for time drift
+pub const FIFTEEN_MINUTES_PERIOD: Duration = Duration::new(15 * 60 - 60, 0);
+pub const ONE_HOUR_PERIOD: Duration = Duration::new(60 * 60 - 60, 0);
+pub const ONE_DAY_PERIOD: Duration = Duration::new(60 * 60 * 24 - 60, 0);
 
 fn make_file_path(file_service: &impl FileService) -> PathBuf {
     file_service.make_archive_file_path(&Path::new(FILE_NAME))
@@ -73,6 +75,10 @@ impl QueryLimitingService for QueryLimitingServiceDisk {
         }
 
         Ok(can_query)
+    }
+
+    async fn can_query_within_fifteen_minutes(&self, query: &str) -> Result<bool> {
+        self.can_query(query, &FIFTEEN_MINUTES_PERIOD).await
     }
 
     async fn can_query_within_hour(&self, query: &str) -> Result<bool> {

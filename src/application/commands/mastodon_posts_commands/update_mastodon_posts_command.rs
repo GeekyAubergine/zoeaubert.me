@@ -297,7 +297,7 @@ async fn mastodon_status_to_post(
 pub async fn update_mastodon_posts_command(state: &impl State) -> Result<()> {
     if !state
         .query_limiting_service()
-        .can_query_within_hour(QUERY)
+        .can_query_within_fifteen_minutes(QUERY)
         .await?
     {
         return Ok(());

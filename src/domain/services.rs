@@ -194,6 +194,8 @@ pub trait FileService: Sized + Send + Sync {
 pub trait QueryLimitingService {
     async fn can_query(&self, query: &str, no_query_duration: &Duration) -> Result<bool>;
 
+    async fn can_query_within_fifteen_minutes(&self, query: &str) -> Result<bool>;
+
     async fn can_query_within_hour(&self, query: &str) -> Result<bool>;
 
     async fn can_query_within_day(&self, query: &str) -> Result<bool>;
