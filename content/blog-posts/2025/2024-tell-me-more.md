@@ -188,8 +188,8 @@ There are two themes I want to introduce this year, as well as my usual list.
 I spend far too much time in every aspect of my life seeking perfection and letting it cause me never to finish anything. I "famously" have many, many projects on the go and even more on my ideas board that I will never finish as I want them to be perfect versus just making some progress now and improving it later.
 
 This is true of all my hobbies:
-- My software doesn't have to be a perfect, enterprise-level product if I'm the only person using it.
-- My Warhammer models only have to look good enough for me; I don't have to be the best painter in my group to feel like I can field my armies.
+- My software doesn't have to be a perfect, enterprise-level product if I'm the only person using it
+- My Warhammer models only have to look good enough for me; I don't have to be the best painter in my group to feel like I can field my armies
 - I don't need the best meta-list to play Lorcana
 - I don't need to research and know all the tricks to a game before I play it
 
