@@ -74,6 +74,7 @@
 
     .text {
         @apply text-text dark:text-text-dark tabular-nums break-words leading-[1.75rem];
+        text-wrap: pretty;
     }
 
     .accent {
