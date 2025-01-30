@@ -1,45 +1,47 @@
-<article class="omni-post">
-    <div class="content">
-        <a href="{{ omni_post.link() }}" rel="noopener" class="timestamp">
-            <time datetime="{{ omni_post.date().datetime() }}">
-                {{ omni_post.date().without_time() }}
-            </time>
-        </a>
+<li class="omni-post">
+    <div class="wrapper">
+        <div class="prose">
+            <a href="{{ omni_post.link() }}" rel="noopener" class="timestamp">
+                <time datetime="{{ omni_post.date().datetime() }}">
+                    {{ omni_post.date().without_time() }}
+                </time>
+            </a>
 
-        {% match omni_post %}
-        {% when OmniPost::BlogPost with (post) %}
-        {% include "partials/omni_post/omni_post_blog_post.html" %}
-        {% when OmniPost::MicroPost with (post) %}
-        {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
-        {% when OmniPost::MastodonPost with (post) %}
-        {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
-        {% when OmniPost::AlbumPhoto with (photo) %}
-        {% include "partials/omni_post/omni_post_album_photo.html" %}
-        {% when OmniPost::Album with (album) %}
-        {% include "partials/omni_post/omni_post_album.html" %}
-        {% when OmniPost::SteamAcheivementUnlocked with { achievement, game } %}
-        {% include "partials/omni_post/omni_post_steam_achievement_unlocked.html" %}
-        {% when OmniPost::MovieReview with (post) %}
-        {% include "partials/omni_post/omni_post_movie_review.html" %}
-        {% when OmniPost::TvShowReview with (post) %}
-        {% include "partials/omni_post/omni_post_tv_show_review.html" %}
-        {% when OmniPost::BookReview with (post) %}
-        {% include "partials/omni_post/omni_post_book_review.html" %}
-        {% endmatch %}
+            {% match omni_post %}
+            {% when OmniPost::BlogPost with (post) %}
+            {% include "partials/omni_post/omni_post_blog_post.html" %}
+            {% when OmniPost::MicroPost with (post) %}
+            {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
+            {% when OmniPost::MastodonPost with (post) %}
+            {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
+            {% when OmniPost::AlbumPhoto with (photo) %}
+            {% include "partials/omni_post/omni_post_album_photo.html" %}
+            {% when OmniPost::Album with (album) %}
+            {% include "partials/omni_post/omni_post_album.html" %}
+            {% when OmniPost::SteamAcheivementUnlocked with { achievement, game } %}
+            {% include "partials/omni_post/omni_post_steam_achievement_unlocked.html" %}
+            {% when OmniPost::MovieReview with (post) %}
+            {% include "partials/omni_post/omni_post_movie_review.html" %}
+            {% when OmniPost::TvShowReview with (post) %}
+            {% include "partials/omni_post/omni_post_tv_show_review.html" %}
+            {% when OmniPost::BookReview with (post) %}
+            {% include "partials/omni_post/omni_post_book_review.html" %}
+            {% endmatch %}
 
-        {% if omni_post.tags().len() > 0 %}
-        <div class="tags-list" data-nosnippet>
-            {% let tags = omni_post.tags() %} {% include "partials/tags_list.html"
-            %}
+            {% if omni_post.tags().len() > 0 %}
+            <div class="tags-list" data-nosnippet>
+                {% let tags = omni_post.tags() %} {% include "partials/tags_list.html"
+                %}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-    </div>
 
-    {% match omni_post.side_image() %}
-    {% when Some with (image) %}
-    <div class="image">
-        {% include "partials/media/image.html" %}
+        {% match omni_post.side_image() %}
+        {% when Some with (image) %}
+        <div class="image">
+            {% include "partials/media/image.html" %}
+        </div>
+        {% when None %}
+        {% endmatch %}
     </div>
-    {% when None %}
-    {% endmatch %}
-</article>
+</li>

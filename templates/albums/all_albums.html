@@ -9,7 +9,7 @@
     {% for album in albums %}
     <div>
         <a href="{{ album.slug.relative_link() }}" class="no-underline">
-            <h2 class="accent">
+            <h2 class="accent text-2xl font-bold mt-12 mb-3 hover:under">
                 {{ album.date.without_time() }} - {{ album.title }}
             </h2>
         </a>

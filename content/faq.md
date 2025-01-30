@@ -11,3 +11,7 @@
 
 - Why are your tags/categories Upper Camel Case?
   - Screen readers struggle to read single-case hashtags, making the start of each word a capital makes it likely that the reader will say each word separately 😊
+
+## More
+
+Something not here you'd like to know? Shoot me a message on [Mastodon](https://social.lol/@geekyaubergine) and I might answer and add it here.

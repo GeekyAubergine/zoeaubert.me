@@ -31,7 +31,7 @@ struct SaveTemplate {
 pub async fn render_save_page(state: &impl State) -> Result<()> {
     let referrals = state.referrals_repo().find_all().await?;
 
-    let page = Page::new(Slug::new("save"), Some("Save"), None);
+    let page = Page::new(Slug::new("save"), Some("Refferals"), None);
 
     let template = SaveTemplate { page, referrals };
 

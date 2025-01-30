@@ -1,7 +1,7 @@
 {% extends "partials/page.html" %} {%- block content %} {% for referral in
 referrals %}
 
-<div class="referral">
+<article class="referral">
     <div class="mb-4">
         <div class="flex-row items-baseline text my-0">
             <h3 class="mr-1 my-0 text-xl font-normal">{{ referral.name }}</h3>
@@ -12,6 +12,6 @@ referrals %}
         </div>
         <p class="secondary mt-0">{{ referral.description }}</p>
     </div>
-</div>
+</article>
 
 {% endfor %} {% endblock %}

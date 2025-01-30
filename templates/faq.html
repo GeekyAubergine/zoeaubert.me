@@ -1,11 +1,2 @@
 {% extends "partials/page.html" %} {%- block content %}
-<p>Find out more about me.</p>
-<p>
-    Something not here you'd like to know? Shoot me a message on
-    <a href="https://social.lol/@geekyaubergine" target="_blank" rel="me"
-        >Mastodon</a
-    >
-    and I might answer and add it here.
-</p>
-
-{{ faq.to_html()|safe}} {% endblock %}
+<article>{{ faq.to_html()|safe}}</article> {% endblock %}

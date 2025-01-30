@@ -100,7 +100,7 @@ Towards the end of the summer, Warhammer has an Armies on Parade event. Mostly o
 
 ![A collection of my black and gold Custodes arranged into several squads, with the jet bikes in the background, Sisters of Silence in the middle and a unit of Guards and Wardens at the front stood on white and black marble-like bases. To the right is my bronze medal, which features a skull and crossbones style icon but with the bones replaced with paint brushes. To the far left are some Imperial Knights from another entry](https://cdn.geekyaubergine.com/2024/09/30/IMG_7637.jpeg)
 
-Despite stiff competition, I somehow came third. I'm sure it was primarily thanks to the Mabel bases, but this was a great win for me.
+Despite stiff competition, I somehow came third. I'm sure it was primarily thanks to the Marble bases, but this was a great win for me.
 
 ### Lorcana
 

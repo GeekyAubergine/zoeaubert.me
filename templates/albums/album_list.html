@@ -6,7 +6,7 @@
     </div>
 
     {% for (year, items) in albums_by_year %}
-        <h2>{{ year }}</h2>
+        <h2 class="text-2xl font-bold">{{ year }}</h2>
         <div class="album-grid">
             {% for item in items %}
                 <a href="{{ item.album.slug.relative_link() }}" class="album">

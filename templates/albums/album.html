@@ -6,7 +6,7 @@
 </div>
 
 <div class="wide">
-    <div>{{ description.to_html()|safe }}</div>
+    <div class="prose mb-4">{{ description.to_html()|safe }}</div>
     <div class="media-grid">
         {% for photo in album.photos %} {% let image = photo.small_image.clone()
         %}

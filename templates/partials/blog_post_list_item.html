@@ -1,4 +1,4 @@
-<article class="blog-post-item" data-pagefind-ignore>
+<li class="blog-post-item prose" data-pagefind-ignore>
     <div class="title-and-date">
         <a href="{{ post.slug.relative_link() }}">
             <h3>{{ post.title }}</h3>
@@ -11,5 +11,5 @@
         {% set tags = post.tags.clone() %}
         {% include "partials/tags_list.html" %}
     </div>
-</article>
+</li>
 <hr/>

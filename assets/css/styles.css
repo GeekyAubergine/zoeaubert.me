@@ -73,7 +73,7 @@
     }
 
     .text {
-        @apply text-text dark:text-text-dark tabular-nums break-words leading-[1.75rem];
+        @apply text-text dark:text-text-dark tabular-nums;
         text-wrap: pretty;
     }
 
@@ -118,6 +118,11 @@
         @apply flex flex-col;
     }
 
+    ul,
+    ol {
+        @apply list-none ml-0;
+    }
+
     /* ----------------  Typography ---------------- */
 
     h1,
@@ -131,96 +136,6 @@
     time,
     li {
         @apply text;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p,
-    a,
-    li,
-    blockquote,
-    img,
-    pre {
-        @apply my-2;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply mt-8 mb-0 font-bold mr-4 sm:mr-0;
-    }
-
-    h1 {
-        @apply text-4xl sm:text-5xl;
-    }
-
-    h2 {
-        @apply text-2xl;
-    }
-
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply text-xl;
-    }
-
-    a {
-        @apply accent under;
-    }
-
-    ol {
-        @apply list-decimal list-outside ml-4;
-    }
-
-    ul {
-        @apply list-disc list-outside ml-4;
-    }
-
-    li > ul > li,
-    li > ol > li {
-        @apply ml-4;
-    }
-
-
-
-    blockquote {
-        @apply border-l-4 border-accent dark:border-accent-dark pl-4;
-    }
-
-    :not(pre) > code {
-        @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
-        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
-            'Courier New', monospace;
-    }
-
-    pre {
-        @apply bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
-        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
-            'Courier New', monospace;
-    }
-
-    p:first-of-type {
-        @apply mt-0;
-    }
-
-    p > img {
-        @apply mx-auto;
-    }
-
-    img {
-        @apply text-text dark:text-text-dark;
-    }
-
-    pre > code {
-        @apply text-text-dark;
     }
 
     /* ----------------  Common ---------------- */
@@ -265,7 +180,7 @@
             @apply w-full flex-row justify-between items-center font-normal sm:justify-start;
 
             & .name {
-                @apply text-2xl h-full text-left mr-2 no-underline mt-0 mb-1 sm:my-1 sm:text-3xl;
+                @apply text-2xl accent h-full text-left mr-2 no-underline mt-0 mb-1 sm:my-1 sm:text-3xl hover:under;
 
                 &:hover {
                     .forename,
@@ -319,13 +234,15 @@
                 @apply flex-col;
 
                 & h3 {
-                    @apply text-text-dark mt-0 font-bold text-2xl;
+                    @apply text-text-dark mt-0 font-bold text-2xl mb-3;
                 }
 
                 & ul {
                     @apply list-none ml-0;
 
                     & li {
+                        @apply my-3 first-of-type:mt-0 last-of-type:mb-0;
+
                         & a {
                             @apply text-text-dark !no-underline hover:!under;
                             text-decoration-color: white;
@@ -336,45 +253,122 @@
         }
     }
 
-    .blog-posts {
-        & .blog-post-item {
-            @apply my-4 first-of-type:mt-0;
+    .page-header {
+        @apply w-full mt-3 mb-8 sm:justify-center sm:mt-[2rem] sm:mb-[4.5rem] sm:items-center;
 
-            & .title-and-date {
-                @apply flex-col justify-between items-baseline md:flex-row md:items-baseline;
-
-                & .date {
-                    @apply secondary;
-                }
-
-                & a {
-                    @apply flex flex-1 my-0 no-underline;
-                }
-            }
-
-            & h3 {
-                @apply accent mt-0 text-2xl pr-8 sm:pr-0 font-normal;
-            }
-
-            & .description {
-                /* @apply hidden md:inline-flex; */
-            }
-
-            & .time-to-read {
-                @apply hidden secondary mt-0 md:inline-flex;
-            }
-
-            p {
-                @apply mt-2;
-            }
+        & h1 {
+            @apply font-bold text-3xl md:text-5xl sm:text-center sm:max-w-[80%] mt-0;
         }
     }
 
-    .page-header {
-        @apply w-full mt-0 mb-8 sm:justify-center sm:mt-[2rem] sm:mb-[4.5rem] sm:items-center;
+    article,
+    .prose {
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        ol,
+        ul,
+        blockquote {
+            @apply my-3;
+        }
 
-        & h1 {
-            @apply sm:text-center sm:max-w-[80%] mt-0;
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            @apply text-xl leading-6 font-bold mt-9 mb-0;
+        }
+
+        h2 {
+            @apply text-2xl leading-6;
+        }
+
+        h2 + h3,
+        h3 + h4,
+        h4 + h5 {
+            @apply mt-3;
+        }
+
+        h2 + p,
+        h3 + p,
+        h4 + p,
+        h5 + p {
+            @apply mt-1;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            @apply leading-7;
+        }
+
+        a {
+            @apply accent under;
+        }
+
+        ol {
+            @apply list-decimal list-outside ml-6;
+        }
+
+        ul {
+            @apply list-disc list-outside ml-5;
+        }
+
+        li {
+            @apply my-3 first-of-type:mt-0 last-of-type:mb-0;
+        }
+
+        li > ul > li,
+        li > ol > li {
+            @apply ml-4;
+        }
+
+        p + ol,
+        p + ul {
+            @apply mt-0 mb-5;
+        }
+
+        blockquote {
+            @apply border-l-4 border-accent dark:border-accent-dark pl-4;
+        }
+
+        h2 + blockquote,
+        h3 + blockquote,
+        h4 + blockquote,
+        h5 + blockquote,
+        h6 + blockquote {
+            @apply mt-6;
+        }
+
+        :not(pre) > code {
+            @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+                'Courier New', monospace;
+        }
+
+        pre {
+            @apply bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+                'Courier New', monospace;
+        }
+
+        p > img {
+            @apply mx-auto;
+        }
+
+        img {
+            @apply text-text dark:text-text-dark;
+        }
+
+        pre > code {
+            @apply text-text-dark;
         }
     }
 
@@ -420,7 +414,7 @@
         @apply my-2;
 
         & h2 {
-            @apply mt-4 mb-4;
+            @apply mt-4 mb-4 font-bold text-2xl leading-6;
         }
 
         & .see-more {
@@ -428,58 +422,104 @@
         }
     }
 
+    .blog-posts {
+        & .blog-post-item {
+            @apply py-4 first-of-type:mt-0;
+
+            & .title-and-date {
+                @apply flex-col justify-between items-baseline md:flex-row md:items-baseline;
+
+                & .date {
+                    @apply secondary;
+                }
+
+                & a {
+                    @apply flex flex-1 my-0 no-underline;
+                }
+            }
+
+            & h3 {
+                @apply accent mt-0 text-2xl pr-8 sm:pr-0 font-normal;
+            }
+
+            & .description {
+                /* @apply hidden md:inline-flex; */
+            }
+
+            & .time-to-read {
+                @apply hidden secondary mt-0 md:inline-flex;
+            }
+
+            p {
+                @apply mt-2;
+            }
+        }
+    }
+
     .omni-post {
-        @apply py-4 first-of-type:pt-0 flex-row;
+        @apply py-4 first-of-type:pt-0;
 
-        a {
-            @apply !no-underline hover:under;
-        }
+        .wrapper {
+            @apply flex-row w-full justify-between;
 
-        h2 {
-            @apply mt-0 mb-4 text-3xl;
-        }
+            .prose {
+                @apply w-full;
 
-        .timestamp {
-            @apply mt-0 mb-3 !no-underline hover:under;
+                a {
+                    @apply !no-underline hover:under;
+                }
 
-            & > time {
-                @apply accent text-xl font-bold uppercase;
+                h2 {
+                    @apply my-3 font-normal accent;
+                }
+
+                .timestamp {
+                    @apply mt-0 mb-3 !no-underline hover:under;
+
+                    & > time {
+                        @apply accent text-xl font-bold uppercase;
+                    }
+                }
+
+                & .media {
+                    @apply flex flex-row justify-start md:my-4 mx-auto;
+
+                    & > .media-grid {
+                        @apply sm:grid gap-2 grid-cols-1 md:grid-cols-2 overflow-hidden;
+                    }
+                    & img {
+                        @apply w-full object-contain md:my-0 max-h-[44rem];
+                    }
+                }
+
+                & :not(.media) img {
+                    @apply mx-auto;
+                }
+
+                .album-photo-media {
+                    @apply mb-0;
+                }
+
+                .album-description {
+                    @apply mt-0 text-center;
+                }
+
+                .content {
+                    @apply w-full;
+                }
+
+                .tags-list {
+                    @apply mt-2;
+                }
+
+                div {
+                    @apply first-of-type:mt-3;
+                }
             }
-        }
 
-        & .media {
-            @apply flex flex-row justify-start md:my-4 mx-auto;
-
-            & > .media-grid {
-                @apply sm:grid gap-2 grid-cols-1 md:grid-cols-2 overflow-hidden;
+            .image {
+                @apply max-w-[6rem] min-w-[6rem] md:max-w-[10rem] md:min-w-[10rem] ml-2;
             }
-            & img {
-                @apply w-full object-contain md:my-0 max-h-[44rem];
-            }
-        }
-
-        & :not(.media) img {
-            @apply mx-auto;
-        }
-
-        .album-photo-media {
-            @apply mb-0;
-        }
-
-        .album-description {
-            @apply mt-0 text-center;
-        }
-
-        .content {
-            @apply w-full;
-        }
-
-        .image {
-            @apply max-w-[6rem] min-w-[6rem] md:max-w-[10rem] md:min-w-[10rem] ml-2;
-        }
-
-        .tags-list {
-            @apply mt-2;
         }
     }
 
