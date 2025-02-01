@@ -7,6 +7,9 @@ use syntect::{easy::HighlightLines, parsing::SyntaxSet};
 use tracing::error;
 
 static MEDIA_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#"\!\[.*?\]\(.*?\)"#).unwrap());
+static MEDIA_HTML_REGEX: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r#"<img[^>]*src="(?P<src>[^"]+)"[^>]*alt="(?P<alt>[^"]+)"[^>]*>"#).unwrap()
+});
 
 static OPTIONS: Lazy<Options> = Lazy::new(|| {
     let mut options = Options::default();
@@ -171,7 +174,9 @@ fn markdown_to_html(s: &str) -> String {
 }
 
 fn remove_media_from_markdown(markdown: &str) -> String {
-    MEDIA_REGEX.replace_all(markdown, "").to_string()
+    let s = MEDIA_REGEX.replace_all(markdown, "");
+    let s = MEDIA_HTML_REGEX.replace_all(&s, "");
+    s.to_string()
 }
 
 pub trait FormatMarkdown {

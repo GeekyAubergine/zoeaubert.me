@@ -274,7 +274,7 @@
         }
 
         img {
-            @apply text-text dark:text-text-dark;
+            @apply text-text dark:text-text-dark w-full mx-auto;
         }
 
         pre > code {
