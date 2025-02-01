@@ -1,18 +1,21 @@
 {% extends "partials/page.html" %}
 
-{%- block content %}
-    <artcile class="micro-post">
-        <div class="page-header">
-            <h1>
-                <time class="title-font" datetime="{{post.created_at().datetime()}}">{{post.created_at().without_time() }}</time>
-            </h1>
-            {%- if post.tags().len() > 0 %}
-                <div class="tags-list my-4" data-nosnippet>
-                    {% let tags = post.tags().clone() %}
-                    {% include "partials/tags_list.html" %}
-                </div>
-            {%- endif %}
+{%- block header %}
+<div class="page-header mb-4">
+    <h1>
+        <time class="title-font" datetime="{{post.created_at().datetime()}}">{{post.created_at().without_time() }}</time>
+    </h1>
+    {%- if post.tags().len() > 0 %}
+        <div class="my-4" >
+            {% let tags = post.tags().clone() %}
+            {% include "partials/tags_list.html" %}
         </div>
+    {%- endif %}
+</div>
+{% endblock %}
+
+{%- block content %}
+    <article>
         {{ post.content().remove_media().to_html()|safe}}
 
         {% let media = post.media() %}

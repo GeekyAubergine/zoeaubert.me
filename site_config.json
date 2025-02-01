@@ -78,7 +78,7 @@
                     "name": "Photography",
                     "url": "/albums/"
                 },
-                { "name": "Books", "url": "/books/" },
+                { "name": "Books", "url": "/interests/books/" },
                 {
                     "name": "Movies",
                     "url": "/interests/movies/"

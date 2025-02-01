@@ -1,0 +1,408 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@layer components {
+    /* ---------------- Core ---------------- */
+
+    html {
+        @apply text-[16px];
+    }
+
+    * {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+            Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+        font-display: swap;
+    }
+
+    body {
+        @apply bg-background dark:bg-background-dark;
+    }
+
+    /* ----------------  Utilities ---------------- */
+
+    .width-control {
+        @apply w-[68ch] max-w-[100%] px-4 md:px-0;
+    }
+
+    .text {
+        @apply text-text dark:text-text-dark tabular-nums;
+        text-wrap: pretty;
+    }
+
+    .accent {
+        @apply text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
+    }
+
+    .no-accent {
+        @apply text-text dark:text-text-dark decoration-text dark:decoration-text-dark;
+    }
+    x .under {
+        @apply underline hover:!underline;
+        text-underline-offset: 0.15em;
+        text-decoration-thickness: 1px;
+    }
+
+    .link {
+        @apply under text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
+    }
+
+    .secondary {
+        @apply !text-secondary dark:!text-secondary-dark !decoration-secondary dark:!decoration-secondary-dark;
+    }
+
+    .border-color {
+        @apply border-border dark:border-border-dark;
+    }
+
+    main {
+        @apply w-full;
+    }
+
+    hr {
+        @apply border-border dark:border-border-dark my-4 mx-0;
+    }
+
+    div,
+    nav,
+    footer,
+    article {
+        @apply flex flex-col;
+    }
+
+    ul,
+    ol,
+    li {
+        @apply list-none ml-0;
+    }
+
+    /* ----------------  Typography ---------------- */
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    a,
+    time,
+    li {
+        @apply text;
+    }
+
+    /* ----------------  Common ---------------- */
+
+    .tags-list {
+        @apply flex-row flex-wrap;
+
+        & .tag {
+            @apply secondary under link mr-2 my-0 py-0 last-of-type:mr-0;
+        }
+    }
+
+    nav {
+        @apply width-control mx-auto pt-2 mb-6 sm:flex-row sm:justify-end sm:items-baseline sm:py-4;
+
+        & .name-and-toggle {
+            @apply w-full flex-row justify-between items-center font-normal sm:justify-start;
+
+            & .name {
+                @apply text-2xl accent h-full text-left mr-2 no-underline mt-0 mb-1 sm:my-1 sm:text-3xl hover:under;
+
+                &:hover {
+                    .forename,
+                    .surname {
+                        @apply under;
+                    }
+                }
+
+                & .forename {
+                    @apply no-underline;
+                }
+
+                & .surname {
+                    @apply sm:hidden md:inline-flex;
+                }
+            }
+        }
+
+        & .links {
+            @apply flex-row justify-between;
+
+            & .link {
+                @apply mx-0 my-0 accent text-lg !no-underline hover:!under sm:mx-2 sm:last-of-type:mr-0;
+            }
+        }
+
+        /* & .links {
+            @apply flex-row w-full justify-evenlytly mt-1 sm:w-auto sm:justify-end;
+
+            & .link {
+                @apply flex-1 max-w-[5rem] justify-center mx-0 my-0 text-center accent !no-underline hover:!under text-lg sm:last-of-type:mr-0;
+            }
+        } */
+    }
+
+    #theme-toggle {
+        @apply w-5 h-5 sm:mt-[0.25rem];
+
+        #toggle-button {
+            @apply cursor-pointer text-neutral-400 dark:text-neutral-500 rotate-180 dark:rotate-0 transition-all duration-100;
+        }
+    }
+
+    footer {
+        @apply mt-[10rem] pt-8 pb-6 px-4 items-center bg-accent;
+
+        nav {
+            @apply width-control mx-auto my-0 p-0 grid grid-cols-2 gap-y-16 gap-x-8 sm:grid-cols-3 md:grid-cols-4;
+
+            & .link-group {
+                @apply flex-col;
+
+                & h3 {
+                    @apply text-text-dark mt-0 font-bold text-2xl mb-3;
+                }
+
+                & ul {
+                    @apply list-none ml-0;
+
+                    & li {
+                        @apply my-3 first-of-type:mt-0 last-of-type:mb-0;
+
+                        & a {
+                            @apply text-text-dark !no-underline hover:!under;
+                            text-decoration-color: white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .page-header {
+        @apply w-full mt-3 mb-8 sm:justify-center sm:mt-[2rem] sm:mb-[4.5rem] sm:items-center;
+
+        & h1 {
+            @apply font-bold text-3xl md:text-5xl sm:text-center sm:max-w-[80%] mt-0;
+        }
+    }
+
+    article,
+    .prose {
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        ol,
+        ul,
+        img,
+        blockquote {
+            @apply my-3;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            @apply text-xl leading-6 font-bold mt-9 mb-0;
+        }
+
+        h2 {
+            @apply text-2xl leading-6;
+        }
+
+        h2 + h3,
+        h3 + h4,
+        h4 + h5 {
+            @apply mt-3;
+        }
+
+        h2 + p,
+        h3 + p,
+        h4 + p,
+        h5 + p {
+            @apply mt-1;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            @apply leading-7;
+        }
+
+        a {
+            @apply accent under;
+        }
+
+        ol {
+            @apply list-decimal list-outside ml-6;
+        }
+
+        ul {
+            @apply list-disc list-outside ml-5;
+        }
+
+        li {
+            @apply my-3 first-of-type:mt-0 last-of-type:mb-0;
+        }
+
+        li > ul > li,
+        li > ol > li {
+            @apply ml-4;
+        }
+
+        p + ol,
+        p + ul {
+            @apply mt-0 mb-5;
+        }
+
+        blockquote {
+            @apply border-l-4 border-accent dark:border-accent-dark pl-4;
+        }
+
+        h2 + blockquote,
+        h3 + blockquote,
+        h4 + blockquote,
+        h5 + blockquote,
+        h6 + blockquote {
+            @apply mt-6;
+        }
+
+        :not(pre) > code {
+            @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+                'Courier New', monospace;
+        }
+
+        pre {
+            @apply bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+                'Courier New', monospace;
+        }
+
+        p > img {
+            @apply mx-auto;
+        }
+
+        img {
+            @apply text-text dark:text-text-dark;
+        }
+
+        pre > code {
+            @apply text-text-dark;
+        }
+    }
+
+    /* ----------------  Page specific ---------------- */
+
+    /* .micro-post {
+        & .media {
+            @apply flex flex-row justify-start mb-6;
+
+            & > .media-grid {
+                @apply grid gap-x-1 grid-cols-2 overflow-hidden;
+            }
+            & img {
+                @apply w-full h-full object-contain;
+            }
+        }
+
+        .tags-list {
+            @apply mt-2;
+        }
+
+        .original-link {
+            @apply mt-6;
+        }
+    } */
+
+
+    /* .tv-movie-header {
+        & h1 {
+            @apply my-2;
+        }
+
+        & a {
+            @apply my-0 no-underline;
+        }
+
+        & img {
+            @apply max-w-[50%] min-w-[6rem] hobbyGridItemImage mx-auto my-0;
+        }
+
+        & .score {
+            @apply text-center my-0;
+        }
+
+        & .year {
+            @apply secondary my-0;
+        }
+    } */
+/*
+    & .tv-movie-header-image {
+        @apply flex-col justify-center items-center mb-4 md:mb-12;
+
+        & a {
+            @apply my-0;
+        }
+
+        & .average {
+            @apply text-center;
+        }
+    } */
+
+    /* .tv-movie-reviews {
+        @apply flex-col;
+
+        & .reviews {
+            @apply mt-1 justify-between w-full;
+
+            & .review {
+                @apply justify-start w-full;
+
+                & h2 {
+                    @apply text-lg mt-0 mb-2;
+                }
+
+                & .score-and-date {
+                    @apply flex-row justify-between items-baseline;
+
+                    & a {
+                        @apply text-sm;
+                    }
+                }
+            }
+        }
+
+        & hr {
+            @apply !flex my-4;
+
+            &:is(:last-of-type, :not(:first-of-type)) {
+                @apply hidden;
+            }
+        }
+    } */
+
+}

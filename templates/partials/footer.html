@@ -1,7 +1,7 @@
 <footer data-pagefind-ignore>
-    <nav aria-label="Site Navigation">
+    <div class="groups">
         {% for link_group in page.page_links %}
-        <div class="link-group">
+        <div class="links">
             <h3>{{ link_group.name }}</h3>
             <ul>
                 {% for link in link_group.links %}
@@ -14,5 +14,5 @@
             </ul>
         </div>
         {% endfor %}
-    </nav>
+    </div>
 </footer>

@@ -1,3 +1,9 @@
-{% for tag in tags %}
-    <a href="/tags/{{ tag.slug() }}" class="tag">#{{ tag.tag() }}</a>
-{% endfor %}
+{%- if tags.len() > 0 %}
+    <ul class="tags-list" data-nosnippet>
+        {% for tag in tags %}
+        <li>
+            <a href="/tags/{{ tag.slug() }}" class="tag">#{{ tag.tag() }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}

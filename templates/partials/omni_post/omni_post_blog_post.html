@@ -1,12 +1,12 @@
 <a
     href="{{ omni_post.slug().relative_link() }}"
     rel="noopener"
-    class="no-underline mb-0"
+    class="!no-underline mb-0"
 >
     <h2>{{ post.title }}</h2>
 </a>
 {% match post.hero_image %} {% when Some with (hero) %}
-<div class="media mt-0">
+<div class="media">
     <img
         src="{{ hero.cdn_url() }}"
         alt="{{ hero.alt }}"

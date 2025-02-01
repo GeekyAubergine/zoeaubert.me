@@ -1,8 +1,10 @@
-{% extends "partials/page.html" %} {%- block content %}
-<article>
-    <div class="items-center mb-8">
+{% extends "partials/page.html" %}
+{%- block header %}
+<div class="page-header mb-12">
+    <h1>{{ tv_show.title }}</h1>
+    <div class="items-center my-4">
         <a
-            class="items-center mb-8 border-hover-accent"
+            class="items-center border-hover-accent"
             href="{{ tv_show.link }}"
             target="_blank"
             rel="noopener noreferrer"
@@ -11,14 +13,12 @@
             "partials/media/image.html" %}
         </a>
 
-        <p>{{ average_score.format(1, true) }}/5</p>
+        <p>{{ average_score.round() }}/5</p>
     </div>
+</div>
 
-    <h2>Reviews</h2>
-    <div class="timeline">
-        {% for omni_post in posts %}
-        <hr class="pb-4" />
-        {% include "partials/omni_post/omni_post.html" %} {% endfor %}
-    </div>
-</article>
+{% endblock %}
+{%- block content %}
+<h2 class="text-xl font-bold">Reviews</h2>
+{% include "partials/omni_post/omni_post_list.html" %}
 {% endblock %}

@@ -1,10 +1,5 @@
 {% extends "partials/page.html" %}
 
 {% block content %}
-<ul>
-    {% for omni_post in posts %}
-        {% include "partials/omni_post/omni_post.html" %}
-        <hr/>
-    {% endfor %}
-</ul>
+{% include "partials/omni_post/omni_post_list.html" %}
 {% endblock %}

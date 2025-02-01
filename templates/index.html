@@ -1,34 +1,30 @@
-{% extends "partials/base.html" %}
+{% extends "partials/page.html" %}
 
-{%- block body %}
-    {% include "partials/navbar.html" %}
-
-    <div class="width-control mx-auto">
-        <div class="page-header home-header" aria-hidden="true">
-            <div class="name-and-cursor">
-                <h1 class="home-name">Zoe Aubert</h1>
-                <p class="name-cursor !opacity-0" ></p>
-            </div>
-            <p>zo-e o-bear</p>
+{%- block header %}
+    <div class="page-header home-header" aria-hidden="true">
+        <div class="name-and-cursor">
+            <h1 class="home-name">Zoe Aubert</h1>
+            <p class="name-cursor !opacity-0" ></p>
         </div>
-
-        <div class="home-about prose">
-            {{ about_text.to_html()|safe }}
-        </div>
-
-        <div class="home-page-block">
-            <h2 class="mainPageHeading">Blog Posts</h2>
-            <ul class="blog-posts">
-                {%- for post in recent_blog_posts %}
-                    {% include "partials/blog_post_list_item.html" %}
-                {% endfor %}
-            </ul>
-            <a class="see-more link" href="/blog">See All Blog Posts</a>
-        </div>
+        <p>zo-e o-bear</p>
     </div>
 
-    {% include "partials/footer.html" %}
-
+    <div class="home-about prose">
+        {{ about_text.to_html()|safe }}
+    </div>
+{% endblock %}
+{%- block content %}
+    <div class="home-page-block">
+        <h2 class="mainPageHeading">Blog Posts</h2>
+        <ol class="blog-posts">
+            {%- for post in recent_blog_posts %}
+                {% include "partials/blog_post_list_item.html" %}
+            {% endfor %}
+        </ol>
+        <a class="see-more link" href="/blog">See All Blog Posts</a>
+    </div>
+{% endblock %}
+{%- block scripts %}
     <script type="text/javascript">
         const TIME_BETWEEN_NAME_CHANGES = 5000;
 

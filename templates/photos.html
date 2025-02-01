@@ -3,15 +3,15 @@
 {% include "partials/navbar.html" %}
 
 <div class="width-control mx-auto">
-{% include "partials/page_header.html" %}
+    <div class="page-header">
+        <h1>Photos</h1>
+        <div class="flex-row justify-center mt-2">
+            <a href="/tags/" class="link mr-4">Tags</a>
+            <a href="/albums/" class="link">View Albums</a>
+        </div>
+    </div>
 </div>
 <div class="wide">
-
-    <div class="flex-row justify-center">
-        <a href="/tags/" class="link mr-4">Tags</a>
-        <a href="/albums/" class="link">View Albums</a>
-    </div>
-
     <div class="media-grid half-size-media-grid">
         {% for image in photos %}
             {% match image.parent_slug %}

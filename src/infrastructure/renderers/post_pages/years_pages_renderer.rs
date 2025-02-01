@@ -34,7 +34,7 @@ pub async fn render_years_pages<'d>(state: &impl State) -> Result<()> {
 }
 
 #[derive(Template)]
-#[template(path = "years/year.html")]
+#[template(path = "partials/omni_post_list_page.html")]
 pub struct YearTemplate {
     page: Page,
     year: u16,
