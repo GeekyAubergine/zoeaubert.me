@@ -21,3 +21,4 @@ pub mod game;
 pub mod content;
 pub mod book;
 pub mod battle_report;
+pub mod project;

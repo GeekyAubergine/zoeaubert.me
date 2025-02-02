@@ -6,23 +6,10 @@ use crate::prelude::*;
 
 use super::{
     models::{
-        album::{Album, AlbumPhoto},
-        blog_post::BlogPost,
-        content::Content,
-        league::LeagueChampNote,
-        lego::{LegoMinifig, LegoSet},
-        mastodon_post::MastodonPost,
-        micro_post::MicroPost,
-        movie::{MovieId, MovieReview},
-        omni_post::OmniPost,
-        referral::Referral,
-        slug::Slug,
-        steam::{
+        album::{Album, AlbumPhoto}, blog_post::BlogPost, content::Content, league::LeagueChampNote, lego::{LegoMinifig, LegoSet}, mastodon_post::MastodonPost, micro_post::MicroPost, movie::{MovieId, MovieReview}, omni_post::OmniPost, project::Project, referral::Referral, slug::Slug, steam::{
             SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
             SteamGameAchievementUnlocked,
-        },
-        tag::Tag,
-        tv_show::{TvShowId, TvShowReview},
+        }, tag::Tag, tv_show::{TvShowId, TvShowReview}
     },
     services::FileService,
     state::State,
@@ -204,4 +191,13 @@ pub trait OmniPostRepo {
     async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<OmniPost>>;
 
     async fn commit(&self, state: &impl State, posts: Vec<OmniPost>) -> Result<()>;
+}
+
+#[async_trait::async_trait]
+pub trait ProjectsRepo {
+    async fn find_all_by_rank_and_name(&self) -> Result<Vec<Project>>;
+
+    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<Project>>;
+
+    async fn commit(&self, project: &Project) -> Result<()>;
 }

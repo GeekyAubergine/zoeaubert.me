@@ -1,0 +1,13 @@
+<li class="project">
+    <a class="no-underline" href="{{ project.link }}">
+        <p class="my-0 text-2xl accent">{{ project.name }}</p>
+    </a>
+    <a
+        href="{{ project.link }}"
+        rel="noopener noreferrer"
+    >
+        {% let image = project.image.clone() %} {% include
+        "partials/media/image.html" %}
+    </a>
+    <p>{{ project.description }}</p>
+</li>

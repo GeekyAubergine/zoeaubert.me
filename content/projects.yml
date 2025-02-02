@@ -1,0 +1,8 @@
+projects:
+    - slug: /projects/maxif
+      name: Maxif
+      description: A simple tool for inspecting file sigantures and metadata
+      image: https://cdn.geekyaubergine.com/projects/maxif/preview_image.png
+      image_alt: 'Three by four grid of hexadecimal numbers with dark biege and blue backgrounds on a light biege background'
+      link: https://maxif.zoeaubert.me
+      rank: 4

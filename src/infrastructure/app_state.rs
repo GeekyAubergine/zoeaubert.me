@@ -2,15 +2,7 @@ use std::sync::Arc;
 
 use super::{
     repositories::{
-        about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk,
-        blog_posts_repo_disk::BlogPostsRepoDisk, faq_repo_memory::FaqRepoMemory,
-        leauge_repo_disk::LeagueRepoDisk, lego_repo_disk::LegoRepoDisk,
-        mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk,
-        movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo_memory::NowTextRepoMemory,
-        omni_post_repo_memory::OmniPostRepoMemory, profiler_memory::ProfilerMemory,
-        referrary_repo_memory::ReferralsRepoMemory, silly_names_repo_memory::SillyNamesRepoMemory,
-        steam_achievements_repo_disk::GameAchievementsRepoDisk,
-        steam_games_repo_disk::GamesRepoDisk, tv_show_reviews_repo_memory::TvShowReviewsRepoMemory,
+        about_text_repo_memory::AboutTextRepoMemory, albums_repo_disk::AlbumsRepoDisk, blog_posts_repo_disk::BlogPostsRepoDisk, faq_repo_memory::FaqRepoMemory, leauge_repo_disk::LeagueRepoDisk, lego_repo_disk::LegoRepoDisk, mastodon_post_repo_disk::MastodonPostRepoDisk, micro_blog_repo_disk::MicroPostsRepoDisk, movie_reviews_repo_memory::MovieReviewsRepoMemory, now_text_repo_memory::NowTextRepoMemory, omni_post_repo_memory::OmniPostRepoMemory, profiler_memory::ProfilerMemory, project_repo_disk::ProjectsRepoDisk, referral_repo_memory::ReferralsRepoMemory, silly_names_repo_memory::SillyNamesRepoMemory, steam_achievements_repo_disk::GameAchievementsRepoDisk, steam_games_repo_disk::GamesRepoDisk, tv_show_reviews_repo_memory::TvShowReviewsRepoMemory
     },
     services::{
         book_service_open_library::BookServiceOpenLibrary, cache_service_disk::CacheServiceDisk,
@@ -26,10 +18,7 @@ use super::{
 use crate::{
     domain::{
         repositories::{
-            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, LeagueRepo, LegoRepo,
-            MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, OmniPostRepo,
-            Profiler, ReferralsRepo, SillyNamesRepo, SteamAchievementsRepo, SteamGamesRepo,
-            TvShowReviewsRepo,
+            AboutTextRepo, AlbumsRepo, BlogPostsRepo, FaqRepo, LeagueRepo, LegoRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo, NowTextRepo, OmniPostRepo, Profiler, ProjectsRepo, ReferralsRepo, SillyNamesRepo, SteamAchievementsRepo, SteamGamesRepo, TvShowReviewsRepo
         },
         services::{
             BookService, CacheService, CdnService, FileService, ImageService, MovieService,
@@ -58,6 +47,7 @@ pub struct AppState {
     now_text_repo: NowTextRepoMemory,
     league_repo: LeagueRepoDisk,
     omni_post_repo: OmniPostRepoMemory,
+    projects_repo: ProjectsRepoDisk,
     // services
     cache_service: CacheServiceDisk,
     cdn_service: CdnServiceBunny,
@@ -91,6 +81,7 @@ impl AppState {
             now_text_repo: NowTextRepoMemory::new(),
             league_repo: LeagueRepoDisk::new().await?,
             omni_post_repo: OmniPostRepoMemory::new(),
+            projects_repo: ProjectsRepoDisk::new().await?,
             // services
             cache_service: CacheServiceDisk::new(),
             cdn_service: CdnServiceBunny::new(),
@@ -177,6 +168,10 @@ impl State for AppState {
 
     fn omni_post_repo(&self) -> &impl OmniPostRepo {
         &self.omni_post_repo
+    }
+
+    fn projects_repo(&self) -> &impl ProjectsRepo {
+        &self.projects_repo
     }
 
     // services
