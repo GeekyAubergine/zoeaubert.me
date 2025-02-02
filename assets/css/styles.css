@@ -171,10 +171,14 @@
     }
 
     .page-header {
-        @apply w-full my-4 sm:justify-center sm:mt-[2rem] sm:mb-[6rem] sm:items-center;
+        @apply w-full my-4 sm:justify-center sm:mt-[2rem] sm:mb-[4rem] sm:items-center;
 
         h1 {
             @apply font-bold text-3xl md:text-5xl sm:text-center sm:max-w-[80%] mt-0;
+        }
+
+        .time {
+            @apply md:mt-4 md:mb-2
         }
 
         .tags-list {
@@ -270,13 +274,13 @@
         }
 
         :not(pre) > code {
-            @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
+            @apply my-2 bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
             font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
                 'Courier New', monospace;
         }
 
         pre {
-            @apply bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+            @apply my-2 bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
             font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
                 'Courier New', monospace;
         }

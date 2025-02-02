@@ -4,7 +4,7 @@
     <h1>{{ heading }}</h1>
     {%- match page.date() %}
 {%- when Some with (date) %}
-    <p>
+    <p class="time">
         <time datetime="{{date.datetime()}}">{{ date.without_time() }}</time>
     </p>
 {%- when None %}
