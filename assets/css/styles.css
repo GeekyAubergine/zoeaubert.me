@@ -113,10 +113,10 @@
         }
 
         .links {
-            @apply flex-row justify-between;
+            @apply flex-row flex-wrap justify-between sm:flex-nowrap;
 
             .link {
-                @apply mx-0 my-0 accent text-lg !no-underline hover:!under sm:mx-2 sm:last-of-type:mr-0;
+                @apply w-[33%] mx-0 mt-1 accent text-center text-lg !no-underline hover:!under sm:w-auto sm:text-left sm:mx-2 sm:my-0 sm:last-of-type:mr-0;
             }
         }
     }
