@@ -101,6 +101,17 @@
         @apply link;
     }
 
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    img {
+        @apply text;
+    }
+
     nav {
         @apply width-control mx-auto pt-2 mb-6 sm:flex-row sm:justify-end sm:items-baseline sm:py-4;
 
