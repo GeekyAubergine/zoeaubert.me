@@ -101,6 +101,10 @@
                     "url": "/faq/"
                 },
                 {
+                    "name": "Support",
+                    "url": "/support/"
+                },
+                {
                     "name": "Refferals",
                     "url": "/save/"
                 },
