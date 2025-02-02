@@ -1,6 +1,7 @@
 use blog_pages_renderer::render_blog_pages;
 use mastodon_post_pages_renderer::render_mastodon_post_pages;
 use micro_post_pages_renderer::render_micro_post_pages;
+use projects_pages_renderer::render_projects_pages;
 use tags_pages_renderer::render_tags_pages;
 use timeline_pages_renderer::render_timeline_pages;
 use tokio::try_join;
@@ -12,6 +13,7 @@ use crate::prelude::*;
 pub mod blog_pages_renderer;
 pub mod mastodon_post_pages_renderer;
 pub mod micro_post_pages_renderer;
+pub mod projects_pages_renderer;
 pub mod tags_pages_renderer;
 pub mod timeline_pages_renderer;
 pub mod years_pages_renderer;
@@ -24,6 +26,7 @@ pub async fn render_post_pages(state: &impl State) -> Result<()> {
         render_timeline_pages(state),
         render_tags_pages(state),
         render_years_pages(state),
+        render_projects_pages(state)
     )?;
 
     Ok(())

@@ -25,6 +25,10 @@
             "url": "/photos/"
         },
         {
+            "name": "Projects",
+            "url": "/projects/"
+        },
+        {
             "name": "Tags",
             "url": "/tags/"
         },
@@ -46,12 +50,16 @@
                     "url": "/timeline/"
                 },
                 {
-                    "name": "Tags",
-                    "url": "/tags/"
-                },
-                {
                     "name": "Photos",
                     "url": "/photos/"
+                },
+                {
+                    "name": "Projects",
+                    "url": "/projects/"
+                },
+                {
+                    "name": "Tags",
+                    "url": "/tags/"
                 }
             ]
         },
