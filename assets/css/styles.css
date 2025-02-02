@@ -108,7 +108,8 @@
     h5,
     h6,
     p,
-    img {
+    img,
+    li {
         @apply text;
     }
 
@@ -597,7 +598,8 @@
         }
 
         .project {
-            a, p {
+            a,
+            p {
                 @apply my-2;
             }
 
