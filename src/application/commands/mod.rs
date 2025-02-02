@@ -12,3 +12,4 @@ pub mod referrals_commands;
 pub mod faq_commands;
 pub mod now_text_commands;
 pub mod league_commands;
+pub mod project_commands;
