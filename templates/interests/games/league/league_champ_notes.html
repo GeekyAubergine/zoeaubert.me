@@ -1,0 +1,21 @@
+{% extends "partials/page.html" %} {%- block content %}
+
+<p>
+    This list is really for me. If you've found it it's by hunting for it. So
+    have fun!
+</p>
+
+{% for champ in champ_notes %}
+
+<hr />
+
+<div class="league-champ-note">
+    <h3>{{ champ.name }}</h3>
+    <p>{{ champ.role }} - {{ champ.lane }}</p>
+    <p><span>Q</span>{{ champ.q }}</p>
+    <p><span>W</span>{{ champ.w }}</p>
+    <p><span>E</span>{{ champ.e }}</p>
+    <p><span>R</span>{{ champ.r }}</p>
+</div>
+
+{% endfor %} {% endblock %}

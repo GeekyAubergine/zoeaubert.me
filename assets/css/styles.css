@@ -1,0 +1,652 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@layer components {
+    /* ----------------  Utilities ---------------- */
+
+    .width-control {
+        @apply w-[68ch] max-w-[100%] px-4 md:px-0;
+    }
+
+    .centered-width-control {
+        @apply width-control mx-auto;
+    }
+
+    .text {
+        @apply text-text dark:text-text-dark tabular-nums;
+        text-wrap: pretty;
+    }
+
+    .accent {
+        @apply text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
+    }
+
+    .no-accent {
+        @apply text-text dark:text-text-dark decoration-text dark:decoration-text-dark;
+    }
+
+    .under {
+        @apply underline hover:!underline;
+        text-underline-offset: 0.15em;
+        text-decoration-thickness: 1px;
+    }
+
+    .link {
+        @apply under text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
+    }
+
+    .secondary {
+        @apply !text-secondary dark:!text-secondary-dark !decoration-secondary dark:!decoration-secondary-dark;
+    }
+
+    .border-color {
+        @apply border-border dark:border-border-dark;
+    }
+
+    .wide {
+        @apply w-[102ch] max-w-[100%] px-4 mx-auto;
+    }
+
+    .border-hover-accent {
+        @apply border-[#00000000] border-2 hover:border-accent dark:hover:border-accent-dark rounded-md;
+    }
+
+    /* ---------------- Core ---------------- */
+
+    html {
+        @apply text-[16px];
+    }
+
+    * {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+            Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+        font-display: swap;
+    }
+
+    body {
+        @apply bg-background dark:bg-background-dark;
+    }
+
+    main {
+        @apply w-full;
+    }
+
+    hr {
+        @apply border-border dark:border-border-dark my-4 mx-0;
+    }
+
+    div,
+    nav,
+    footer,
+    article {
+        @apply flex flex-col;
+    }
+
+    a {
+        @apply link;
+    }
+
+    nav {
+        @apply width-control mx-auto pt-2 mb-6 sm:flex-row sm:justify-end sm:items-baseline sm:py-4;
+
+        .name-and-toggle {
+            @apply w-full flex-row justify-between items-center font-normal sm:justify-start;
+
+            .name {
+                @apply text-2xl accent h-full text-left mr-2 no-underline mt-0 mb-1 sm:my-1 sm:text-3xl hover:!under;
+            }
+        }
+
+        .links {
+            @apply flex-row justify-between;
+
+            .link {
+                @apply mx-0 my-0 accent text-lg !no-underline hover:!under sm:mx-2 sm:last-of-type:mr-0;
+            }
+        }
+    }
+
+    #theme-toggle {
+        @apply w-5 h-5 sm:mt-[0.25rem];
+
+        #toggle-button {
+            @apply cursor-pointer text-neutral-400 dark:text-neutral-500 rotate-180 dark:rotate-0 transition-all duration-100;
+        }
+    }
+
+    footer {
+        @apply mt-[12rem] pt-8 pb-6 px-4 items-center bg-accent;
+
+        .groups {
+            @apply width-control mx-auto my-0 p-0 grid grid-cols-2 gap-y-16 gap-x-8 sm:grid-cols-3 md:grid-cols-4;
+
+            .links {
+                @apply flex-col;
+
+                h3 {
+                    @apply text-text-dark mt-0 font-bold text-2xl mb-3;
+                }
+
+                ul {
+                    @apply list-none ml-0;
+
+                    li {
+                        @apply my-3 first-of-type:mt-0 last-of-type:mb-0;
+
+                        a {
+                            @apply text-text-dark !no-underline hover:!under;
+                            text-decoration-color: white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .page-header {
+        @apply w-full my-4 sm:justify-center sm:mt-[2rem] sm:mb-[6rem] sm:items-center;
+
+        h1 {
+            @apply font-bold text-3xl md:text-5xl sm:text-center sm:max-w-[80%] mt-0;
+        }
+
+        .tags-list {
+            @apply mt-0 mb-8;
+        }
+    }
+
+    article,
+    .prose {
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        ol,
+        ul,
+        img,
+        blockquote {
+            @apply my-2;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            @apply text-xl leading-6 font-bold mt-9 mb-0;
+        }
+
+        h2 {
+            @apply text-2xl leading-6;
+        }
+
+        h2 + h3,
+        h3 + h4,
+        h4 + h5 {
+            @apply mt-2;
+        }
+
+        h2 + p,
+        h3 + p,
+        h4 + p,
+        h5 + p {
+            @apply mt-1;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            @apply leading-7;
+        }
+
+        a {
+            @apply accent under;
+        }
+
+        ol {
+            @apply list-decimal list-outside ml-6;
+        }
+
+        ul {
+            @apply list-disc list-outside ml-5;
+        }
+
+        li {
+            @apply my-3 first-of-type:mt-0 last-of-type:mb-0;
+        }
+
+        li > ul > li,
+        li > ol > li {
+            @apply ml-4;
+        }
+
+        p + ol,
+        p + ul {
+            @apply mt-0 mb-5;
+        }
+
+        blockquote {
+            @apply border-l-4 border-accent dark:border-accent-dark pl-4;
+        }
+
+        h2 + blockquote,
+        h3 + blockquote,
+        h4 + blockquote,
+        h5 + blockquote,
+        h6 + blockquote {
+            @apply mt-6;
+        }
+
+        :not(pre) > code {
+            @apply bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+                'Courier New', monospace;
+        }
+
+        pre {
+            @apply bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+                'Courier New', monospace;
+        }
+
+        p > img {
+            @apply mx-auto my-0;
+        }
+
+        img {
+            @apply text-text dark:text-text-dark w-full mx-auto;
+        }
+
+        pre > code {
+            @apply text-text-dark;
+        }
+    }
+
+    .tags-list {
+        @apply flex flex-row flex-wrap mx-0 my-2;
+
+        li {
+            @apply ml-0 mr-2 my-0 py-0 last-of-type:mr-0;
+        }
+
+        & .tag {
+            @apply secondary link;
+        }
+    }
+
+    /* ----------------  Shared ---------------- */
+
+    .omni-post {
+        @apply flex flex-row justify-between py-4 first-of-type:pt-0;
+
+        .post {
+            @apply w-full;
+
+            .timestamp {
+                @apply mt-0 mb-2 !no-underline hover:under;
+
+                & > time {
+                    @apply accent text-xl font-bold uppercase;
+                }
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                @apply my-2 no-underline;
+            }
+
+            .content {
+                @apply w-full;
+            }
+
+            & .media {
+                @apply flex flex-row justify-start my-2 mx-auto;
+
+                .media-grid {
+                    @apply sm:grid gap-8 grid-cols-1 md:gap-2 md:grid-cols-2 overflow-hidden;
+                }
+
+                img {
+                    @apply w-full object-contain md:my-0 max-h-[44rem];
+                }
+            }
+        }
+
+        .image {
+            @apply max-w-[6rem] min-w-[6rem] md:max-w-[10rem] md:min-w-[10rem] ml-4 md:ml-8;
+        }
+    }
+
+    .media-grid {
+        @apply w-full grid gap-x-2 gap-y-0 mx-auto px-0 grid-cols-2 sm:grid-cols-4 sm:gap-y-2 md:grid-cols-6  overflow-hidden;
+
+        grid-auto-rows: 1fr;
+
+        .grid-element {
+            @apply flex flex-col justify-center items-center;
+        }
+
+        .landscape {
+            @apply col-span-2 row-span-1;
+        }
+
+        .portrait {
+            @apply col-span-1 row-span-1 object-cover my-[-4%];
+
+            img {
+                @apply h-[92%];
+            }
+        }
+
+        .square {
+            @apply col-span-2 row-span-1 object-cover;
+        }
+
+        img,
+        a {
+            @apply m-0 p-0 max-h-full;
+        }
+
+        a {
+            @apply flex justify-center items-center;
+        }
+    }
+
+    .half-size-media-grid {
+        @apply grid-cols-4 sm:grid-cols-8 md:grid-cols-10;
+    }
+
+    .blog-posts {
+        .blog-post-item {
+            @apply py-4 first-of-type:mt-0;
+
+            .title-and-date {
+                @apply flex-col justify-between items-baseline md:flex-row md:items-baseline;
+
+                .date {
+                    @apply secondary;
+                }
+
+                a {
+                    @apply flex flex-1 my-0 no-underline;
+                }
+            }
+
+            h3 {
+                @apply accent mt-0 text-2xl pr-8 sm:pr-0 font-normal;
+            }
+
+            .time-to-read {
+                @apply hidden secondary mt-0 md:inline-flex;
+            }
+
+            p {
+                @apply mt-2;
+            }
+        }
+    }
+
+    .number-stats {
+        @apply flex-row justify-around items-center w-full;
+
+        .number-stat {
+            @apply flex-col justify-center items-center;
+
+            p {
+                @apply text-center my-0;
+            }
+
+            .numbers {
+                @apply text-4xl md:text-5xl;
+            }
+
+            .label {
+                @apply text-lg;
+            }
+        }
+    }
+
+    /* ----------------  Home ---------------- */
+
+    .home-header {
+        @apply items-center md:mb-[4.5rem];
+
+        .name-and-cursor {
+            @apply flex-row justify-center items-baseline h-[6rem];
+
+            .home-name {
+                @apply text-[3rem] md:text-[5rem] m-0 text-center max-w-full;
+            }
+
+            .name-cursor {
+                @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] mt-4 md:mt-6 border-r-2 border-text dark:border-text-dark min-w-[1px];
+
+                animation: blink 800ms linear infinite;
+            }
+        }
+    }
+
+    .home-about {
+        @apply mb-8 text-lg;
+    }
+
+    .home-page-block {
+        @apply my-2;
+
+        h2 {
+            @apply mt-4 mb-4 font-bold text-2xl leading-6;
+        }
+
+        .see-more {
+            @apply mt-2;
+        }
+    }
+
+    /* ----------------  Album ---------------- */
+
+    .album-years {
+        .year {
+            h2 {
+                @apply text-2xl font-bold;
+            }
+        }
+
+        .album-grid {
+            @apply grid gap-x-4 gap-y-12 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 mb-8;
+
+            .album {
+                @apply no-underline flex flex-col h-full justify-between cursor-pointer my-2;
+
+                .preview-multi {
+                    @apply h-full grid gap-x-1 grid-cols-2 overflow-hidden sm:max-h-[16rem];
+                }
+
+                .preview-single {
+                    @apply h-full flex flex-col justify-between my-auto;
+                }
+
+                .title-and-date {
+                    @apply flex flex-col justify-center items-center;
+
+                    .title {
+                        @apply text-xl font-bold accent mt-0 text-center;
+                    }
+
+                    date {
+                        @apply secondary text-sm !no-underline;
+                    }
+                }
+
+                :hover {
+                    .title {
+                        @apply under;
+                    }
+                }
+
+                .img-container {
+                    @apply flex justify-center items-center h-full;
+                }
+            }
+        }
+    }
+
+    .albumPhotoPageContainer {
+        max-height: calc(100vh - 5rem);
+
+        img {
+            max-height: calc(100vh - 30rem);
+            max-width: 100%;
+        }
+    }
+
+    .photo-page {
+        @apply justify-center items-center p-0 m-0;
+
+        nav {
+            @apply absolute top-0 left-0 right-0;
+        }
+
+        .img-container {
+            @apply absolute top-[5rem] md:top-[6rem] bottom-[11rem] left-0 right-0 flex-1 justify-center items-center w-full p-2 pt-4 md:p-8 overflow-hidden;
+
+            img {
+                @apply w-full h-full object-contain p-0 m-0;
+            }
+        }
+
+        .buttons-and-text {
+            @apply absolute bottom-4 left-0 right-0 flex mx-auto justify-end items-center width-control h-[10rem];
+
+            .description {
+                @apply w-full text-center mt-4 mb-0;
+            }
+
+            .tags-list {
+                @apply my-1;
+            }
+
+            .tag {
+                @apply !text-accent dark:!text-accent-dark !decoration-accent dark:!decoration-accent-dark;
+            }
+
+            .nav {
+                @apply flex-row w-full justify-evenly items-center my-0;
+
+                .arrow {
+                    @apply link no-underline h-8 w-8 justify-center items-center text-lg m-0;
+                }
+            }
+
+            .links {
+                @apply flex-row w-full justify-center items-baseline;
+
+                a {
+                    @apply mx-0 my-0;
+                }
+            }
+        }
+    }
+
+    /* ----------------  Interests ---------------- */
+
+    .interests-grid {
+        @apply grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3 mt-2;
+
+        .interest {
+            @apply justify-between items-center;
+
+            img {
+                @apply border-hover-accent my-0 max-h-[10rem] w-auto;
+            }
+        }
+    }
+
+    .hobbyGridItemImage {
+        @apply border-hover-accent;
+    }
+
+    /* ----------------  Games ---------------- */
+
+    .games-grid {
+        @apply grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3 mt-2;
+
+        .game {
+            img {
+                @apply border-hover-accent my-0;
+            }
+        }
+    }
+
+    .game-page-data {
+        @apply flex-col justify-center items-center;
+
+        a {
+            @apply my-4;
+        }
+
+        .game-stats {
+            @apply my-8;
+        }
+    }
+
+    .game-achievement {
+        @apply flex flex-row my-2;
+
+        .image-container {
+            @apply flex-1 max-w-[4rem] md:max-w-[6rem];
+        }
+
+        h3,
+        p {
+            @apply my-0;
+        }
+
+        time {
+            @apply secondary min-w-[10ch] text-right;
+        }
+
+        .left {
+            @apply flex-1 flex-col justify-between mx-4 py-2;
+        }
+
+        .name-and-description {
+            @apply flex-1 flex-col justify-start;
+        }
+
+        .right {
+            @apply flex-col justify-between items-end pt-3;
+        }
+
+        .secondary {
+            @apply w-full;
+        }
+
+        .special {
+            @apply ml-2;
+        }
+    }
+}

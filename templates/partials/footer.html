@@ -1,0 +1,18 @@
+<footer data-pagefind-ignore>
+    <div class="groups">
+        {% for link_group in page.page_links %}
+        <div class="links">
+            <h3>{{ link_group.name }}</h3>
+            <ul>
+                {% for link in link_group.links %}
+                <li>
+                    <a href="{{ link.url }}" rel="{{ link.rel() }}"
+                        >{{ link.name }}</a
+                    >
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</footer>

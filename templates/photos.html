@@ -1,0 +1,34 @@
+{% extends "partials/base.html" %}
+{%- block body %}
+{% include "partials/navbar.html" %}
+
+<div class="width-control mx-auto">
+    <div class="page-header">
+        <h1>Photos</h1>
+        <div class="flex-row justify-center mt-2">
+            <a href="/tags/" class="link mr-4">Tags</a>
+            <a href="/albums/" class="link">View Albums</a>
+        </div>
+    </div>
+</div>
+<div class="wide">
+    <div class="media-grid half-size-media-grid">
+        {% for image in photos %}
+            {% match image.parent_slug %}
+            {% when Some with (parent_slug) %}
+            <div class="grid-element {{ image.dimensions.orientation().to_string() }}">
+                <a href="{{ parent_slug.relative_link() }}"</a>
+                    {% include "partials/media/image.html" %}
+                </a>
+            </div>
+            {% when None %}
+            {% endmatch %}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="width-control mx-auto">
+    {% include "partials/pagination.html" %}
+</div>
+{% include "partials/footer.html" %}
+{% endblock %}

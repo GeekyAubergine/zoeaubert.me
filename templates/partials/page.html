@@ -1,0 +1,13 @@
+{% extends "base.html" %} {%- block body %}
+<main>
+    {% include "partials/navbar.html" %}
+    <div class="centered-width-control">
+        {% block header %} {% include "partials/page_header.html" %} {% endblock
+        %}
+        <div class="w-full">{% block content %}{% endblock %}</div>
+        {% block pagination %} {% include "partials/pagination.html" %} {%
+        endblock %}
+    </div>
+    {% block footer %} {% include "partials/footer.html" %} {% endblock %}
+</main>
+{% block scripts %}{% endblock %} {% endblock %}

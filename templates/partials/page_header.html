@@ -1,0 +1,19 @@
+{%- match page.heading() %}
+{%- when Some with (heading) %}
+<div class="page-header">
+    <h1>{{ heading }}</h1>
+    {%- match page.date() %}
+{%- when Some with (date) %}
+    <p>
+        <time datetime="{{date.datetime()}}">{{ date.without_time() }}</time>
+    </p>
+{%- when None %}
+    {%- endmatch %}
+
+    {% let tags = page.tags() %}
+    {% include "partials/tags_list.html" %}
+
+    {% block subheading %}{% endblock %}
+</div>
+{% when None %}
+{% endmatch %}

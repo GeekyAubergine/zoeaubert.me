@@ -1,6 +1,6 @@
 module.exports = {
     darkMode: 'class',
-    content: ['./src/**/**/*.{njk,md}'],
+    content: ['./templates/**/*.html'],
     safelist: [
         'gatsby-highlight',
         'photogrid',
@@ -27,7 +27,7 @@ module.exports = {
             colors: {
                 background: {
                     DEFAULT: '#FFFFFF',
-                    dark: '#181818',
+                    dark: '#0C0C0E',
                 },
                 headings: {
                     DEFAULT: '#080808',
@@ -38,12 +38,12 @@ module.exports = {
                     dark: '#EDEDED',
                 },
                 secondary: {
-                    DEFAULT: '#5A585F',
+                    DEFAULT: '#5A5861',
                     dark: '#ABA9B0',
                 },
                 accent: {
-                    DEFAULT: '#842A87', //'#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
-                    dark: '#ED95E6',
+                    DEFAULT: '#784387', //'#FEB847',//#F58123', //'#89BA6A', //'#FEB847', //'#DEB9FF', //'#BB9EE0',//'#FEB847', ///#FEB847",//"#F2DE7C",//"#FEB847",//D9BBFF//00D5C6
+                    dark: '#EA93E3',
                 },
                 code: {
                     DEFAULT: '#D4D4D4',

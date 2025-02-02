@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- for page in pages %}
+   <url>
+      <loc>{{ page.url }}</loc>
+      {%- match page.last_modified %}
+      {%- when Some with (last_modified) %}
+      <lastmod>{{ last_modified.without_time() }}</lastmod>
+      {%- when None %}
+      {%- endmatch %}
+   </url>
+   {%- endfor %}
+</urlset>

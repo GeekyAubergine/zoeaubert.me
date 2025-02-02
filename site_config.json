@@ -1,0 +1,158 @@
+{
+    "url": "https://zoeaubert.me",
+    "title": "Zoe Aubert",
+    "description": "Software developer, musician, photographer, nerd, and some other things. Making computers go bleep bloop since 2010.",
+    "author": "Zoe Aubert | GeekyAubergine",
+    "image": {
+        "url": "/assets/img/web-bg.png",
+        "alt": "Zoe Aubert centered in purple/pink text on a dark grey background",
+        "width": 400,
+        "height": 200,
+        "date": 1678200125
+    },
+    "language": "en-gb",
+    "header_links": [
+        {
+            "name": "Blog",
+            "url": "/blog/"
+        },
+        {
+            "name": "Timeline",
+            "url": "/timeline/"
+        },
+        {
+            "name": "Photos",
+            "url": "/photos/"
+        },
+        {
+            "name": "Tags",
+            "url": "/tags/"
+        },
+        {
+            "name": "Interests",
+            "url": "/interests/"
+        }
+    ],
+    "page_links": [
+        {
+            "name": "Posts",
+            "links": [
+                {
+                    "name": "Blog",
+                    "url": "/blog/"
+                },
+                {
+                    "name": "Timeline",
+                    "url": "/timeline/"
+                },
+                {
+                    "name": "Tags",
+                    "url": "/tags/"
+                },
+                {
+                    "name": "Photos",
+                    "url": "/photos/"
+                }
+            ]
+        },
+        {
+            "name": "Interests",
+            "links": [
+                {
+                    "name": "All Interests",
+                    "url": "/interests/"
+                },
+                {
+                    "name": "Games",
+                    "url": "/interests/games/"
+                },
+                {
+                    "name": "Warhammer",
+                    "url": "/tags/warhammer/"
+                },
+                {
+                    "name": "Lego",
+                    "url": "/interests/lego/"
+                },
+                {
+                    "name": "Photography",
+                    "url": "/albums/"
+                },
+                { "name": "Books", "url": "/interests/books/" },
+                {
+                    "name": "Movies",
+                    "url": "/interests/movies/"
+                },
+                {
+                    "name": "TV",
+                    "url": "/interests/tv/"
+                }
+            ]
+        },
+        {
+            "name": "Other",
+            "links": [
+                {
+                    "name": "/now",
+                    "url": "/now/"
+                },
+                {
+                    "name": "Faq",
+                    "url": "/faq/"
+                },
+                {
+                    "name": "Support",
+                    "url": "/support/"
+                },
+                {
+                    "name": "Refferals",
+                    "url": "/save/"
+                },
+                {
+                    "name": "Feeds",
+                    "url": "/feeds"
+                }
+            ]
+        },
+        {
+            "name": "Socials",
+            "links": [
+                {
+                    "name": "Mastodon",
+                    "url": "https://social.lol/@geekyaubergine",
+                    "rel": "me"
+                },
+                {
+                    "name": "GitHub",
+                    "url": "https://github.com/geekyaubergine",
+                    "rel": "me"
+                },
+                {
+                    "name": "LinkedIn",
+                    "url": "https://www.linkedin.com/in/zoeaubert/",
+                    "rel": "me"
+                }
+            ]
+        }
+    ],
+    "social_links": [
+        {
+            "name": "Mastodon",
+            "url": "https://social.lol/@geekyaubergine",
+            "show_in_top_nav": true,
+            "show_in_footer": false
+        },
+        {
+            "name": "GitHub",
+            "url": "https://github.com/geekyaubergine",
+            "show_in_top_nav": true,
+            "show_in_footer": true
+        },
+        {
+            "name": "LinkedIn",
+            "url": "https://www.linkedin.com/in/zoeaubert/",
+            "show_in_top_nav": false,
+            "show_in_footer": true
+        }
+    ]
+}

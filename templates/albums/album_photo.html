@@ -1,0 +1,90 @@
+{% extends "partials/base.html" %} {%- block body %} {% include
+"partials/navbar.html" %}
+
+<div class="wide photo-page">
+    <div class="img-container">
+        {% let image = photo.large_image.clone() %} {% include
+        "partials/media/image.html" %}
+    </div>
+    <div class="buttons-and-text">
+        <p class="description">{{photo.description}}</p>
+        {% set tags = photo.tags.clone() %}
+        {% include "partials/tags_list.html" %}
+
+        <div class="nav">
+            {% match previous_photo %} {%- when Some with (previous_photo) %}
+            <a
+                href="{{ previous_photo.slug.relative_link() }}"
+                class="arrow"
+            >
+                ←
+            </a>
+            {%- when None %}
+            <div class="arrow"></div>
+            {% endmatch %}
+            <p class="m-0">
+                {{ index + 1 }} / {{ total_photos }}
+            </p>
+            {% match next_photo %} {%- when Some with (next_photo) %}
+            <a href="{{ next_photo.slug.relative_link() }}" class="arrow">
+                →
+            </a>
+            {%- when None %}
+            <div class="arrow"></div>
+            {% endmatch %}
+        </div>
+        <div class="links">
+            <a href="{{ album.slug.relative_link() }}">Album</a>
+            <p class="mx-2 my-0">-</p>
+            <a
+                href="{{ photo.original_image.cdn_url() }}"
+                target="_blank"
+                rel="noopener"
+            >
+                Original
+            </a>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function goToPreviousPhoto() {
+          console.log("previous")
+            {% match previous_photo %} {%- when Some with (previous_photo) %}
+            window
+                .history
+                .replaceState(null, '', '{{ previous_photo.slug.relative_link() }}')
+            location.reload()
+            {%- when None %}
+            {% endmatch %}
+          }
+
+
+        function goToNextPhoto() {
+          console.log("next")
+            {% match next_photo %} {%- when Some with (next_photo) %}
+            window
+                .history
+                .replaceState(null, '', '{{ next_photo.slug.relative_link() }}')
+            location.reload()
+            {%- when None %}
+            {% endmatch %}
+          }
+
+        function onKeyUp(event) {
+            if (event.key === 'Escape') {
+                window
+                    .history
+                    .back()
+            }
+            if (event.key === 'ArrowLeft') {
+                goToPreviousPhoto()
+            }
+            if (event.key === 'ArrowRight') {
+                goToNextPhoto()
+            }
+        }
+
+        window.addEventListener('keyup', onKeyUp)
+    </script>
+</div>
+{% endblock %}

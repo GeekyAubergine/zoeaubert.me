@@ -1,0 +1,14 @@
+<nav data-pagefind-ignore aria-label="Primary Navigation">
+    <div class="name-and-toggle">
+        <a class="name" href="/">Zoe Aubert</a>
+        {% include "partials/theme_toggle.html" %}
+    </div>
+    <div class="links">
+        {% for link in page.header_links %}
+        <a
+            class="link"
+            href="{{ link.url }}"
+        >{{ link.name }}</a>
+        {% endfor %}
+    </div>
+</nav>

@@ -1,0 +1,116 @@
+name: website
+
+on:
+    push:
+        branches: ['main']
+    pull_request:
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    check-and-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Make envfile
+              uses: SpicyPizza/create-envfile@v2.0
+              with:
+                  envkey_CACHE_DIR: ''
+                  envkey_CONTENT_DIR: ''
+                  envkey_ARCHIVE_DIR: ''
+                  envkey_OUTPUT_DIR: ''
+                  envkey_MASTODON_ACCOUNT_ID: ''
+                  envkey_CDN_URL: ''
+                  envkey_BUNNY_CDN_URL: ''
+                  envkey_BUNNY_CDN_ACCESS_KEY: ''
+                  envkey_BRICKSET_API_KEY: ''
+                  envkey_BRICKSET_USERNAME: ''
+                  envkey_BRICKSET_PASSWORD: ''
+                  envkey_STEAM_API_KEY: ''
+                  envkey_STEAM_ID: ''
+                  envkey_TMDB_KEY: ''
+                  envkey_SITE_CONFIG: ''
+
+            - name: Install rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: stable
+                  override: true
+                  components: rustfmt, clippy
+
+            - name: Install node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '19'
+
+            - name: Node dependencies
+              run: npm install
+
+            - name: Check
+              run: cargo check
+            - name: Run tests
+              run: cargo test
+
+    build_and_deploy:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+
+        needs:
+            - check-and-test
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install SSH key
+              uses: webfactory/ssh-agent@v0.9.0
+              with:
+                  ssh-private-key: ${{ secrets.BUILD_SERVER_PRIVATE_KEY }}
+
+            - name: Make envfile
+              uses: SpicyPizza/create-envfile@v2.0
+              with:
+                  envkey_CACHE_DIR: ${{ secrets.CACHE_DIR }}
+                  envkey_CONTENT_DIR: ${{ secrets.CONTENT_DIR }}
+                  envkey_ARCHIVE_DIR: ${{ secrets.ARCHIVE_DIR }}
+                  envkey_OUTPUT_DIR: ${{ secrets.OUTPUT_DIR }}
+                  envkey_MASTODON_ACCOUNT_ID: ${{ secrets.MASTODON_ACCOUNT_ID }}
+                  envkey_CDN_URL: ${{ secrets.CDN_URL }}
+                  envkey_BUNNY_CDN_URL: ${{ secrets.BUNNY_CDN_URL}}
+                  envkey_BUNNY_CDN_ACCESS_KEY: ${{ secrets.BUNNY_CDN_ACCESS_KEY }}
+                  envkey_BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY }}
+                  envkey_BRICKSET_USERNAME: ${{ secrets.BRICKSET_USERNAME }}
+                  envkey_BRICKSET_PASSWORD: ${{ secrets.BRICKSET_PASSWORD }}
+                  envkey_STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+                  envkey_STEAM_ID: ${{ secrets.STEAM_ID }}
+                  envkey_TMDB_KEY: ${{ secrets.TMDB_KEY }}
+                  envkey_SITE_CONFIG: ${{ secrets.SITE_CONFIG }}
+
+            - name: Install rust
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+                  override: true
+                  components: rustfmt, clippy
+
+            - name: Install node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '19'
+
+            - name: Node dependencies
+              run: npm install
+
+            - name: Build
+              run: cargo build --release
+
+            - name: Deploy
+              run: |
+                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null target/release/zoeaubert-website ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}/builder
+                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r content  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}
+                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ${{ secrets.SITE_CONFIG }}  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}/${{ secrets.SITE_CONFIG }}
+                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r assets ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}
+                  scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r _assets ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }}:${{ secrets.BUILD_SERVER_DIR }}
+                  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ${{ secrets.BUILDR_SERVER_USER }}@${{ secrets.BUILD_SERVER_HOST }} "cd ${{ secrets.BUILD_SERVER_DIR }} && ./build.sh"
