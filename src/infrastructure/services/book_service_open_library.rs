@@ -72,11 +72,7 @@ async fn find_book(
 
     let docs = &response.docs;
 
-    println!("A");
-
     if (tags.contains(&Tag::from_string(WARHAMMER_TAG))) {
-        println!("B");
-
         let books = docs
             .clone()
             .into_iter()
@@ -98,8 +94,6 @@ async fn find_book(
     }
 
     let first_author = author.split(',').next().unwrap().trim();
-
-    println!("First author: {}", first_author);
 
     let books = docs
         .clone()
@@ -168,11 +162,9 @@ impl BookService for BookServiceOpenLibrary {
         if let Some(book) = self.data.read().await.books.get(title) {
             match book {
                 Some(book) => return Ok(Some(book.clone())),
-                None => println!("Book not found"),
+                None => return Ok(None),
             }
         }
-
-        println!("Searching {}", make_search_url(title));
 
         let book = find_book(state, title, author, tags).await?;
 
