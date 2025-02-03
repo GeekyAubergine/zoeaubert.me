@@ -70,9 +70,15 @@ async fn find_book(
         .download_json::<OpenLibrarySearchResponse>(&make_search_url(title))
         .await?;
 
+    let docs = &response.docs;
+
+    println!("A");
+
     if (tags.contains(&Tag::from_string(WARHAMMER_TAG))) {
-        let books = response
-            .docs
+        println!("B");
+
+        let books = docs
+            .clone()
             .into_iter()
             .filter(|doc| match &doc.publisher {
                 Some(publishers) => {
@@ -86,13 +92,17 @@ async fn find_book(
             .filter(|doc| doc.cover_i.is_some())
             .collect::<Vec<OpenLibraryBook>>();
 
-        return Ok(books.first().cloned());
+        if !books.is_empty() {
+            return Ok(books.first().cloned());
+        }
     }
 
     let first_author = author.split(',').next().unwrap().trim();
 
-    let books = response
-        .docs
+    println!("First author: {}", first_author);
+
+    let books = docs
+        .clone()
         .into_iter()
         .filter(|doc| match doc.author_name {
             Some(ref authors) => {
@@ -158,7 +168,7 @@ impl BookService for BookServiceOpenLibrary {
         if let Some(book) = self.data.read().await.books.get(title) {
             match book {
                 Some(book) => return Ok(Some(book.clone())),
-                None => return Ok(None),
+                None => println!("Book not found"),
             }
         }
 
