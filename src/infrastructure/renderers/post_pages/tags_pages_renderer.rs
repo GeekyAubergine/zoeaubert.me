@@ -100,7 +100,7 @@ async fn render_tags_list_page(state: &impl State, tag_counts: &HashMap<Tag, usi
 }
 
 #[derive(Template)]
-#[template(path = "partials/omni_post_list_page.html")]
+#[template(path = "omni_post/omni_post_list/omni_post_list_page.html")]
 struct TagPostsTemplate {
     page: Page,
     posts: Vec<OmniPost>,

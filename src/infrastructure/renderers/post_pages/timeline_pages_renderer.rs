@@ -26,7 +26,7 @@ use tokio::try_join;
 const DEFAULT_PAGINATION_SIZE: usize = 25;
 
 #[derive(Template)]
-#[template(path = "partials/omni_post_list_page.html")]
+#[template(path = "omni_post/omni_post_list/omni_post_list_page.html")]
 pub struct TimelineTemplate {
     page: Page,
     posts: Vec<OmniPost>,
