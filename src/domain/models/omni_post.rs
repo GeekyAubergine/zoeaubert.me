@@ -5,7 +5,20 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
-    album::{Album, AlbumPhoto}, blog_post::BlogPost, book::BookReview, content::Content, image::Image, mastodon_post::MastodonPost, media::Media, micro_post::MicroPost, movie::{Movie, MovieReview}, slug::Slug, steam::{SteamGame, SteamGameAchievementUnlocked}, tag::Tag, tv_show::TvShowReview
+    album::{Album, AlbumPhoto},
+    blog_post::BlogPost,
+    book::BookReview,
+    content::Content,
+    image::Image,
+    mastodon_post::MastodonPost,
+    media::Media,
+    micro_post::MicroPost,
+    movie::{Movie, MovieReview},
+    page::Page,
+    slug::Slug,
+    steam::{SteamGame, SteamGameAchievementUnlocked},
+    tag::Tag,
+    tv_show::TvShowReview,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -154,6 +167,20 @@ impl OmniPost {
             Self::MovieReview(review) => Some(review.movie.poster.clone()),
             Self::TvShowReview(review) => Some(review.tv_show.poster.clone()),
             Self::BookReview(review) => Some(review.book.cover.clone()),
+        }
+    }
+
+    pub fn page(&self) -> Option<Page> {
+        match self {
+            Self::BlogPost(blog_post) => Some(blog_post.page()),
+            Self::MicroPost(micro_post) => Some(micro_post.page()),
+            Self::MastodonPost(mastodon_post) => Some(mastodon_post.page()),
+            Self::AlbumPhoto(album_photo) => Some(album_photo.page()),
+            Self::Album(album) => Some(album.page()),
+            Self::SteamAcheivementUnlocked { game, .. } => None,
+            Self::MovieReview(review) => Some(review.source_content.page()),
+            Self::TvShowReview(review) => Some(review.source_content.page()),
+            Self::BookReview(review) => Some(review.source_content.page()),
         }
     }
 }

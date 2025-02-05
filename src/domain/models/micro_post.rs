@@ -1,6 +1,7 @@
 use std::fmt;
 
 use super::image::Image;
+use super::page::Page;
 use super::tag::Tag;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -58,5 +59,21 @@ impl MicroPost {
 
     pub fn content(&self) -> &str {
         &self.content
+    }
+
+    pub fn page(&self) -> Page {
+        let mut page = Page::new(self.slug.clone(), None, self.description.as_deref())
+            .with_date(self.date)
+            .with_tags(self.tags.clone());
+
+        if let Some(first) = self.media.first() {
+            match first {
+                Media::Image(image) => {
+                    page = page.with_image(image.clone().into());
+                }
+            }
+        }
+
+        page
     }
 }

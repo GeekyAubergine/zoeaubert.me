@@ -10,6 +10,9 @@ use crate::{
 };
 
 use super::{
+    mastodon_post::MastodonPost,
+    media::Media,
+    omni_post::OmniPost,
     site_config::{HeaderLink, PageImage, PageLinkGroup, SocialNetworkLink, SITE_CONFIG},
     slug::Slug,
     tag::Tag,

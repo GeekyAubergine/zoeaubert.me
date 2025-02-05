@@ -1,0 +1,20 @@
+{% match omni_post %}
+{% when OmniPost::BlogPost with (post) %}
+{% include "omni_post/omni_post_page/omni_post_page_blog_post.html" %}
+{% when OmniPost::MicroPost with (post) %}
+{% include "omni_post/omni_post_list/omni_post_list_item_with_content_and_media.html" %}
+{% when OmniPost::MastodonPost with (post) %}
+{% include "omni_post/omni_post_page/omni_post_page_mastodon_post.html" %}
+{% when OmniPost::AlbumPhoto with (photo) %}
+{% include "omni_post/omni_post_list/omni_post_list_item_album_photo.html" %}
+{% when OmniPost::Album with (album) %}
+{% include "omni_post/omni_post_list/omni_post_list_item_album.html" %}
+{% when OmniPost::SteamAcheivementUnlocked with { achievement, game } %}
+{% include "omni_post/omni_post_list/omni_post_list_item_steam_achievement_unlocked.html" %}
+{% when OmniPost::MovieReview with (post) %}
+{% include "omni_post/omni_post_list/omni_post_list_item_movie_review.html" %}
+{% when OmniPost::TvShowReview with (post) %}
+{% include "omni_post/omni_post_list/omni_post_list_item_tv_show_review.html" %}
+{% when OmniPost::BookReview with (post) %}
+{% include "omni_post/omni_post_list/omni_post_list_item_book_review.html" %}
+{% endmatch %}

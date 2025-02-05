@@ -18,7 +18,7 @@ pub mod lego_pages_renderer;
 pub mod movie_pages_renderer;
 pub mod tv_pages_show_renderer;
 
-pub async fn render_interests_pages(state: &impl State) -> Result<()> {
+pub async fn render_interest_pages(state: &impl State) -> Result<()> {
     try_join!(
         render_interests_list_page(state),
         render_lego_page(state),

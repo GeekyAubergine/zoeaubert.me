@@ -11,6 +11,7 @@ use super::{
     media::Media,
     micro_post::MicroPost,
     movie::{Movie, MovieReview},
+    page::Page,
     slug::Slug,
     steam::{SteamGame, SteamGameAchievementUnlocked},
     tag::Tag,
@@ -110,6 +111,16 @@ impl Content {
                 Some(description) => description.to_string(),
                 None => "".to_string(),
             },
+        }
+    }
+
+    pub fn page(&self) -> Page {
+        match self {
+            Self::BlogPost(blog_post) => blog_post.page(),
+            Self::MicroPost(micro_post) => micro_post.page(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.page(),
+            Self::AlbumPhoto(album_photo) => album_photo.page(),
+            Self::Album(album) => album.page(),
         }
     }
 }
