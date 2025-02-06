@@ -22,11 +22,7 @@ use crate::infrastructure::renderers::basic_pages::render_basic_pages;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 
 use crate::error::FileSystemError;
-use crate::infrastructure::renderers::album_and_photo_pages::render_albums_and_photo_pages;
-use crate::infrastructure::renderers::feed_page_renderers::render_feed_files;
-use crate::infrastructure::renderers::home_pages_renderer::render_home_page;
-use crate::infrastructure::renderers::interest_pages::render_interests_pages;
-use crate::infrastructure::renderers::post_pages::render_post_pages;
+use crate::infrastructure::renderers::render_pages;
 use crate::infrastructure::utils::paginator::paginate;
 use crate::prelude::*;
 
@@ -117,14 +113,7 @@ pub async fn render_site(state: &impl State) -> Result<()> {
 
     let start = std::time::Instant::now();
 
-    try_join!(
-        render_home_page(state),
-        render_basic_pages(state),
-        render_post_pages(state),
-        render_albums_and_photo_pages(state),
-        render_interests_pages(state),
-        render_feed_files(state),
-    )?;
+    render_pages(state).await?;
 
     let disallowed_routes = read_disallowed_routes_from_robot_file(state).await?;
 

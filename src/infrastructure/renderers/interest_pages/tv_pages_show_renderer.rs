@@ -103,7 +103,7 @@ async fn render_tv_show_list_page(
     let page = Page::new(
         Slug::new("/interests/tv"),
         Some("Tv"),
-        Some("Tv shows I've watched"),
+        Some("Tv shows I've watched".to_string()),
     );
 
     let updated_at = tv_shows

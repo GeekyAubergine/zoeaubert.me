@@ -61,7 +61,7 @@ pub async fn render_tags_pages(state: &impl State) -> Result<()> {
         let base_page = Page::new(
             Slug::new(&format!("tags/{}", tag.slug())),
             Some(&format!("{} Posts", tag.title())),
-            Some(&format!("#{} posts", tag.title())),
+            Some(format!("#{} posts", tag.title())),
         );
 
         for page in paginated {
@@ -89,7 +89,7 @@ async fn render_tags_list_page(state: &impl State, tag_counts: &HashMap<Tag, usi
         .collect::<Vec<TagCount>>();
     tags.sort_by(|a, b| a.tag.cmp(&b.tag));
 
-    let page = Page::new(Slug::new("tags"), Some("Tags"), Some("All Tags"));
+    let page = Page::new(Slug::new("tags"), Some("Tags"), Some("All Tags".to_string()));
 
     let template = TagsListTemplate { page, tags };
 
@@ -100,7 +100,7 @@ async fn render_tags_list_page(state: &impl State, tag_counts: &HashMap<Tag, usi
 }
 
 #[derive(Template)]
-#[template(path = "partials/omni_post_list_page.html")]
+#[template(path = "omni_post/omni_post_list/omni_post_list_page.html")]
 struct TagPostsTemplate {
     page: Page,
     posts: Vec<OmniPost>,

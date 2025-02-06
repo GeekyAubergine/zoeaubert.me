@@ -21,7 +21,10 @@ const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
 const BOOK_REVIEW_POST_TAG: &str = "Books";
 
 async fn content_to_omni_post(state: &impl State, content: Content) -> Result<OmniPost> {
-    if (content.tags().contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG))) {
+    if (content
+        .tags()
+        .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG)))
+    {
         return match state
             .movie_service()
             .movie_review_from_content(state, &content)
@@ -39,7 +42,10 @@ async fn content_to_omni_post(state: &impl State, content: Content) -> Result<Om
         };
     }
 
-    if (content.tags().contains(&Tag::from_string(TV_SHOW_REVIEW_POST_TAG))) {
+    if (content
+        .tags()
+        .contains(&Tag::from_string(TV_SHOW_REVIEW_POST_TAG)))
+    {
         return match state
             .tv_shows_service()
             .tv_show_review_from_content(state, &content)
@@ -57,7 +63,10 @@ async fn content_to_omni_post(state: &impl State, content: Content) -> Result<Om
         };
     }
 
-    if content.tags().contains(&Tag::from_string(BOOK_REVIEW_POST_TAG)) {
+    if content
+        .tags()
+        .contains(&Tag::from_string(BOOK_REVIEW_POST_TAG))
+    {
         return match state
             .book_service()
             .book_review_from_content(state, &content)
@@ -141,15 +150,22 @@ async fn get_album_content(state: &impl State) -> Result<Vec<Content>> {
 }
 
 async fn get_album_photos_content(state: &impl State) -> Result<Vec<Content>> {
-    let album_photos = state
+    let photos = state
         .albums_repo()
-        .find_all_album_photos()
+        .find_all_by_date()
         .await?
         .into_iter()
-        .map(|p| p.into())
+        .map(|album| {
+            album
+                .photos
+                .iter()
+                .map(|photo| (album.clone(), photo.clone()).into())
+                .collect::<Vec<Content>>()
+        })
+        .flatten()
         .collect::<Vec<Content>>();
 
-    Ok(album_photos)
+    Ok(photos)
 }
 
 async fn get_steam_achievement_unlocked_content(state: &impl State) -> Result<Vec<OmniPost>> {

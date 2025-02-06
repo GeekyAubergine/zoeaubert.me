@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::infrastructure::utils::cover_photos_for_album::cover_photos_for_album;
 
-use super::{image::Image, slug::Slug, tag::Tag};
+use super::{image::Image, page::Page, slug::Slug, tag::Tag};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AlbumPhoto {
@@ -45,6 +45,15 @@ impl AlbumPhoto {
     pub fn set_featured(mut self, featured: bool) -> Self {
         self.featured = featured;
         self
+    }
+
+    pub fn page(&self) -> Page {
+        Page::new(
+            self.slug.clone(),
+            Some(&self.description),
+            Some(self.small_image.alt.clone()),
+        )
+        .with_image(self.small_image.clone().into())
     }
 }
 
@@ -92,5 +101,48 @@ impl Album {
             .collect::<Vec<_>>();
 
         cover_images
+    }
+
+    pub fn page(&self) -> Page {
+        let description = self.description.clone().unwrap_or("".to_string());
+
+        let mut page = Page::new(self.slug.clone(), Some(&self.title), Some(description))
+            .with_date(self.date);
+
+        let cover_images = self.cover_images();
+
+        if let Some(cover_image) = cover_images.first() {
+            page = page.with_image(cover_image.clone().into());
+        }
+
+        page
+    }
+
+    pub fn index_of_photo(&self, photo: &AlbumPhoto) -> Option<usize> {
+        self.photos.iter().position(|p| p.slug == photo.slug)
+    }
+
+    pub fn total_photos(&self) -> usize {
+        self.photos.len()
+    }
+
+    pub fn previous_photo(&self, photo: &AlbumPhoto) -> Option<&AlbumPhoto> {
+        if let Some(index) = self.index_of_photo(photo) {
+            if index > 0 {
+                return Some(&self.photos[index - 1]);
+            }
+        }
+
+        None
+    }
+
+    pub fn next_photo(&self, photo: &AlbumPhoto) -> Option<&AlbumPhoto> {
+        if let Some(index) = self.index_of_photo(photo) {
+            if index < self.photos.len() - 1 {
+                return Some(&self.photos[index + 1]);
+            }
+        }
+
+        None
     }
 }

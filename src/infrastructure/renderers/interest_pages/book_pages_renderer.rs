@@ -102,7 +102,7 @@ async fn render_book_list_page(
     let page = Page::new(
         Slug::new("/interests/books"),
         Some("Books"),
-        Some("Books I've Read"),
+        Some("Books I've Read".to_string()),
     );
 
     let updated_at = books

@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::{image::Image, media::Media, slug::Slug, tag::Tag};
+use super::{image::Image, media::Media, page::Page, slug::Slug, tag::Tag};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BlogPost {
@@ -59,5 +59,21 @@ impl BlogPost {
 
     pub fn permalink(&self) -> String {
         self.slug.permalink()
+    }
+
+    pub fn page(&self) -> Page {
+        let mut page = Page::new(
+            self.slug.clone(),
+            Some(&self.title),
+            Some(self.description.clone()),
+        )
+        .with_date(self.date)
+        .with_tags(self.tags.clone());
+
+        if let Some(image) = &self.hero_image {
+            page = page.with_image(image.clone().into());
+        }
+
+        page
     }
 }

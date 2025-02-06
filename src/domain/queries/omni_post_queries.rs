@@ -83,7 +83,7 @@ pub async fn find_all_omni_posts(
             OmniPost::MicroPost(_) => filter_flags.contains(OmniPostFilterFlags::MICRO_POST),
             OmniPost::MastodonPost(_) => filter_flags.contains(OmniPostFilterFlags::MASTODON_POST),
             OmniPost::Album(_) => filter_flags.contains(OmniPostFilterFlags::ALBUM),
-            OmniPost::AlbumPhoto(_) => filter_flags.contains(OmniPostFilterFlags::ALBUM_PHOTO),
+            OmniPost::AlbumPhoto { .. } => filter_flags.contains(OmniPostFilterFlags::ALBUM_PHOTO),
             OmniPost::SteamAcheivementUnlocked { .. } => {
                 filter_flags.contains(OmniPostFilterFlags::UNLOCKED_STEAM_ACHIEVEMENT)
             }

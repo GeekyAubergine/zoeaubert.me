@@ -99,7 +99,7 @@ async fn render_movies_list_page(
     let page = Page::new(
         Slug::new("/interests/movies"),
         Some("Movies"),
-        Some("Movies I've watched"),
+        Some("Movies I've watched".to_string()),
     );
 
     let updated_at = movies

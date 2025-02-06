@@ -10,6 +10,9 @@ use crate::{
 };
 
 use super::{
+    mastodon_post::MastodonPost,
+    media::Media,
+    omni_post::OmniPost,
     site_config::{HeaderLink, PageImage, PageLinkGroup, SocialNetworkLink, SITE_CONFIG},
     slug::Slug,
     tag::Tag,
@@ -105,7 +108,7 @@ pub struct Page {
 }
 
 impl Page {
-    pub fn new(slug: Slug, title: Option<&str>, description: Option<&str>) -> Self {
+    pub fn new(slug: Slug, title: Option<&str>, description: Option<String>) -> Self {
         let heading = title.map(|t| t.to_owned());
 
         let title = match title {

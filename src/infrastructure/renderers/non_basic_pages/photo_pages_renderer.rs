@@ -45,7 +45,7 @@ pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
 
     let paginated = paginate(&photos, DEFAULT_PAGINATION_SIZE);
 
-    let page = Page::new(Slug::new("photos"), Some("Photos"), Some("All my photos"));
+    let page = Page::new(Slug::new("photos"), Some("Photos"), Some("All my photos".to_string()));
 
     for paginator_page in paginated {
         let mut page = Page::from_page_and_pagination_page(&page, &paginator_page, "Photos");

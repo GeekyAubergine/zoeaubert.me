@@ -33,7 +33,7 @@ pub async fn render_interests_list_page(state: &impl State) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests"),
         Some("Interests"),
-        Some("My Interests"),
+        Some("My Interests".to_string()),
     );
 
     let mut interests = vec![];

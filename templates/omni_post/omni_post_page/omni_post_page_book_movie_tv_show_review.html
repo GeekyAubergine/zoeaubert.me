@@ -1,0 +1,23 @@
+{% extends "partials/page.html" %}
+{%- block header %}
+<div class="page-header mb-4">
+    <h1 class="mb-4">
+        <time class="title-font" datetime="{{post.source_content.date().datetime()}}">{{post.source_content.date().without_time() }}</time>
+    </h1>
+    {% match omni_post.side_image() %}
+    {% when Some with (image) %}
+    <div class="image mt-0 mb-4">
+        {% include "partials/media/image.html" %}
+    </div>
+    {% when None %}
+    {% endmatch %}
+    {% let tags = post.source_content.tags().clone() %}
+    {% include "partials/tags_list.html" %}
+</div>
+{% endblock %}
+{%- block content %}
+<article>
+    {{ post.source_content.content().remove_media().to_html()|safe}}
+
+    </article>
+{% endblock %}

@@ -27,7 +27,7 @@ pub async fn render_lego_page(state: &impl State) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/lego"),
         Some("Lego"),
-        Some("My Lego Collection"),
+        Some("My Lego Collection".to_string()),
     );
 
     let template = LegoListTemplate {

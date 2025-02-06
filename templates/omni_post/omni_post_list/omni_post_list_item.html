@@ -9,23 +9,23 @@
         <div class="prose">
             {% match omni_post %}
             {% when OmniPost::BlogPost with (post) %}
-            {% include "partials/omni_post/omni_post_blog_post.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_blog_post.html" %}
             {% when OmniPost::MicroPost with (post) %}
-            {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_with_content_and_media.html" %}
             {% when OmniPost::MastodonPost with (post) %}
-            {% include "partials/omni_post/omni_post_with_content_and_media.html" %}
-            {% when OmniPost::AlbumPhoto with (photo) %}
-            {% include "partials/omni_post/omni_post_album_photo.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_with_content_and_media.html" %}
+            {% when OmniPost::AlbumPhoto with { album, photo } %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_album_photo.html" %}
             {% when OmniPost::Album with (album) %}
-            {% include "partials/omni_post/omni_post_album.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_album.html" %}
             {% when OmniPost::SteamAcheivementUnlocked with { achievement, game } %}
-            {% include "partials/omni_post/omni_post_steam_achievement_unlocked.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_steam_achievement_unlocked.html" %}
             {% when OmniPost::MovieReview with (post) %}
-            {% include "partials/omni_post/omni_post_movie_review.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_movie_review.html" %}
             {% when OmniPost::TvShowReview with (post) %}
-            {% include "partials/omni_post/omni_post_tv_show_review.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_tv_show_review.html" %}
             {% when OmniPost::BookReview with (post) %}
-            {% include "partials/omni_post/omni_post_book_review.html" %}
+            {% include "omni_post/omni_post_list/omni_post_list_item_book_review.html" %}
             {% endmatch %}
         </div>
 

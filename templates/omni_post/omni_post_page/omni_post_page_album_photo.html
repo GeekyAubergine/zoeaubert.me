@@ -12,7 +12,7 @@
         {% include "partials/tags_list.html" %}
 
         <div class="nav">
-            {% match previous_photo %} {%- when Some with (previous_photo) %}
+            {% match album.previous_photo(photo) %} {%- when Some with (previous_photo) %}
             <a
                 href="{{ previous_photo.slug.relative_link() }}"
                 class="arrow"
@@ -22,10 +22,13 @@
             {%- when None %}
             <div class="arrow"></div>
             {% endmatch %}
+            {% match album.index_of_photo(photo) %} {%- when Some with (index) %}
             <p class="m-0">
-                {{ index + 1 }} / {{ total_photos }}
+                {{ index + 1 }} / {{ album.total_photos() }}
             </p>
-            {% match next_photo %} {%- when Some with (next_photo) %}
+            {%- when None %}
+            {% endmatch %}
+            {% match album.next_photo(photo) %} {%- when Some with (next_photo) %}
             <a href="{{ next_photo.slug.relative_link() }}" class="arrow">
                 →
             </a>
@@ -49,7 +52,7 @@
     <script type="text/javascript">
         function goToPreviousPhoto() {
           console.log("previous")
-            {% match previous_photo %} {%- when Some with (previous_photo) %}
+            {% match album.previous_photo(photo) %} {%- when Some with (previous_photo) %}
             window
                 .history
                 .replaceState(null, '', '{{ previous_photo.slug.relative_link() }}')
@@ -61,7 +64,7 @@
 
         function goToNextPhoto() {
           console.log("next")
-            {% match next_photo %} {%- when Some with (next_photo) %}
+            {% match album.next_photo(photo) %} {%- when Some with (next_photo) %}
             window
                 .history
                 .replaceState(null, '', '{{ next_photo.slug.relative_link() }}')
