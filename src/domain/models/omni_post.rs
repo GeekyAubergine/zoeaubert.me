@@ -26,7 +26,10 @@ pub enum OmniPost {
     BlogPost(BlogPost),
     MicroPost(MicroPost),
     MastodonPost(MastodonPost),
-    AlbumPhoto(AlbumPhoto),
+    AlbumPhoto {
+        album: Album,
+        photo: AlbumPhoto,
+    },
     Album(Album),
     SteamAcheivementUnlocked {
         game: SteamGame,
@@ -43,7 +46,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.slug.to_string(),
             Self::MicroPost(micro_post) => micro_post.slug.to_string(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug().to_string(),
-            Self::AlbumPhoto(album_photo) => album_photo.slug.to_string(),
+            Self::AlbumPhoto { photo, .. } => photo.slug.to_string(),
             Self::Album(album) => album.slug.to_string(),
             Self::SteamAcheivementUnlocked { game, achievement } => {
                 format!("{}-{}", game.id, achievement.id)
@@ -59,7 +62,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.slug.clone(),
             Self::MicroPost(micro_post) => micro_post.slug.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug(),
-            Self::AlbumPhoto(album_photo) => album_photo.slug.clone(),
+            Self::AlbumPhoto { photo, .. } => photo.slug.clone(),
             Self::Album(album) => album.slug.clone(),
             Self::SteamAcheivementUnlocked { game, .. } => game.slug(),
             Self::MovieReview(review) => review.source_content.slug(),
@@ -73,7 +76,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
             Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_link(),
-            Self::AlbumPhoto(album_photo) => album_photo.slug.relative_link(),
+            Self::AlbumPhoto { photo, .. } => photo.slug.relative_link(),
             Self::Album(album) => album.slug.relative_link(),
             Self::SteamAcheivementUnlocked { game, .. } => game.slug().relative_link(),
             Self::MovieReview(review) => review.source_content.slug().relative_link(),
@@ -87,7 +90,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => &blog_post.date,
             Self::MicroPost(micro_post) => &micro_post.date,
             Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
-            Self::AlbumPhoto(album_photo) => &album_photo.date,
+            Self::AlbumPhoto { photo, .. } => &photo.date,
             Self::Album(album) => &album.date,
             Self::SteamAcheivementUnlocked { achievement, .. } => &achievement.unlocked_date,
             Self::MovieReview(review) => review.source_content.date(),
@@ -101,8 +104,8 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.media(),
-            Self::AlbumPhoto(album_photo) => {
-                vec![album_photo.small_image.clone().into()]
+            Self::AlbumPhoto { photo, .. } => {
+                vec![photo.small_image.clone().into()]
             }
             Self::Album(_) => vec![], // It does it's own thing
             Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos
@@ -117,8 +120,8 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.optimised_media(),
-            Self::AlbumPhoto(album_photo) => {
-                vec![album_photo.small_image.clone().into()]
+            Self::AlbumPhoto { photo, .. } => {
+                vec![photo.small_image.clone().into()]
             }
             Self::Album(_) => vec![], // It does it's own thing
             Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos
@@ -133,7 +136,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => blog_post.tags.clone(),
             Self::MicroPost(micro_post) => micro_post.tags.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.tags().clone(),
-            Self::AlbumPhoto(album_photo) => album_photo.tags.clone(),
+            Self::AlbumPhoto { photo, .. } => photo.tags.clone(),
             Self::Album(_) => vec![], // Don't want it in search
             Self::SteamAcheivementUnlocked { .. } => vec![], // Doesn't have tags
             Self::MovieReview(review) => review.source_content.tags(),
@@ -147,7 +150,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => Some(&blog_post.updated_at),
             Self::MicroPost(micro_post) => micro_post.updated_at.as_ref(),
             Self::MastodonPost(mastodon_post) => Some(mastodon_post.updated_at()),
-            Self::AlbumPhoto(album_photo) => Some(&album_photo.updated_at),
+            Self::AlbumPhoto { photo, .. } => Some(&photo.updated_at),
             Self::Album(album) => Some(&album.updated_at),
             Self::SteamAcheivementUnlocked { achievement, .. } => Some(&achievement.unlocked_date),
             Self::MovieReview(review) => review.source_content.last_updated_at(),
@@ -161,7 +164,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => None,
             Self::MicroPost(micro_post) => None,
             Self::MastodonPost(mastodon_post) => None,
-            Self::AlbumPhoto(album_photo) => None,
+            Self::AlbumPhoto { .. } => None,
             Self::Album(_) => None,
             Self::SteamAcheivementUnlocked { game, .. } => Some(game.header_image.clone()),
             Self::MovieReview(review) => Some(review.movie.poster.clone()),
@@ -175,7 +178,7 @@ impl OmniPost {
             Self::BlogPost(blog_post) => Some(blog_post.page()),
             Self::MicroPost(micro_post) => Some(micro_post.page()),
             Self::MastodonPost(mastodon_post) => Some(mastodon_post.page()),
-            Self::AlbumPhoto(album_photo) => Some(album_photo.page()),
+            Self::AlbumPhoto { photo, .. } => Some(photo.page()),
             Self::Album(album) => Some(album.page()),
             Self::SteamAcheivementUnlocked { game, .. } => None,
             Self::MovieReview(review) => Some(review.source_content.page()),
@@ -191,7 +194,7 @@ impl From<Content> for OmniPost {
             Content::BlogPost(blog_post) => Self::BlogPost(blog_post),
             Content::MicroPost(micro_post) => Self::MicroPost(micro_post),
             Content::MastodonPost(mastodon_post) => Self::MastodonPost(mastodon_post),
-            Content::AlbumPhoto(album_photo) => Self::AlbumPhoto(album_photo),
+            Content::AlbumPhoto { photo, album } => Self::AlbumPhoto { album, photo },
             Content::Album(album) => Self::Album(album),
         }
     }
@@ -215,11 +218,11 @@ impl From<MastodonPost> for OmniPost {
     }
 }
 
-impl From<AlbumPhoto> for OmniPost {
-    fn from(album_photo: AlbumPhoto) -> Self {
-        Self::AlbumPhoto(album_photo)
-    }
-}
+// impl From<AlbumPhoto> for OmniPost {
+//     fn from(album_photo: AlbumPhoto) -> Self {
+//         Self::AlbumPhoto(album_photo)
+//     }
+// }
 
 impl From<Album> for OmniPost {
     fn from(album: Album) -> Self {

@@ -50,7 +50,7 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
     let mut page = Page::new(
         Slug::new("/albums"),
         Some("Albums"),
-        Some("My photo albums"),
+        Some("My photo albums".to_string()),
     );
 
     let albums_by_year = state.albums_repo().find_grouped_by_year().await?;
@@ -113,7 +113,7 @@ async fn render_all_albums_page(state: &impl State) -> Result<()> {
     let mut page = Page::new(
         Slug::new("/albums/all"),
         Some("All Albums"),
-        Some("All photo albums"),
+        Some("All photo albums".to_string()),
     );
 
     let albums = state.albums_repo().find_all_by_date().await?;

@@ -2,14 +2,18 @@
 {%- block body %}
 {% include "partials/navbar.html" %}
 <div class="width-control mx-auto">
-{% include "partials/page_header.html" %}
+    {% include "partials/page_header.html" %}
 </div>
 
 <div class="wide">
+    {% match album.description %}
+    {% when Some with (description) %}
     <div class="prose mb-4">{{ description.to_html()|safe }}</div>
+    {% when None %}
+    {% endmatch %}
     <div class="media-grid">
-        {% for photo in album.photos %} {% let image = photo.small_image.clone()
-        %}
+        {% for photo in album.photos %}
+        {% let image = photo.small_image.clone() %}
         <div
             class="grid-element {{ image.dimensions.orientation().to_string() }}"
         >

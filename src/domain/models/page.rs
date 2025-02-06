@@ -108,7 +108,7 @@ pub struct Page {
 }
 
 impl Page {
-    pub fn new(slug: Slug, title: Option<&str>, description: Option<&str>) -> Self {
+    pub fn new(slug: Slug, title: Option<&str>, description: Option<String>) -> Self {
         let heading = title.map(|t| t.to_owned());
 
         let title = match title {

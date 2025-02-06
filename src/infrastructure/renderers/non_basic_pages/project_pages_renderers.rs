@@ -32,7 +32,7 @@ async fn render_projects_list_page(state: &impl State, projects: &[Project]) -> 
     let page = Page::new(
         Slug::new("/projects"),
         Some("Projects"),
-        Some("My projects"),
+        Some("My projects".to_string()),
     );
 
     let template = ProjectListTemplate {

@@ -56,8 +56,6 @@ async fn render_omni_post_page(state: &impl State, omni_post: &OmniPost) -> Resu
                 .await
         }
         None => {
-            println!("No page found for omni post: {:?}", omni_post.slug());
-
             Ok(())
         }
     }

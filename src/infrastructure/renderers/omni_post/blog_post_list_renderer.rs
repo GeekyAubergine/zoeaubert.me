@@ -27,7 +27,7 @@ pub async fn render_blog_list_page(state: &impl State) -> Result<()> {
     let page = Page::new(
         Slug::new("/blog"),
         Some("Blog Posts"),
-        Some("My blog posts"),
+        Some("My blog posts".to_string()),
     );
 
     let template = BlogsListTemplate {

@@ -22,7 +22,7 @@ pub enum Content {
     BlogPost(BlogPost),
     MicroPost(MicroPost),
     MastodonPost(MastodonPost),
-    AlbumPhoto(AlbumPhoto),
+    AlbumPhoto { album: Album, photo: AlbumPhoto },
     Album(Album),
 }
 
@@ -32,7 +32,7 @@ impl Content {
             Self::BlogPost(blog_post) => blog_post.slug.clone(),
             Self::MicroPost(micro_post) => micro_post.slug.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug(),
-            Self::AlbumPhoto(album_photo) => album_photo.slug.clone(),
+            Self::AlbumPhoto { photo, .. } => photo.slug.clone(),
             Self::Album(album) => album.slug.clone(),
         }
     }
@@ -42,7 +42,7 @@ impl Content {
             Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
             Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
             Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_link(),
-            Self::AlbumPhoto(album_photo) => album_photo.slug.relative_link(),
+            Self::AlbumPhoto { photo, .. } => photo.slug.relative_link(),
             Self::Album(album) => album.slug.relative_link(),
         }
     }
@@ -52,7 +52,7 @@ impl Content {
             Self::BlogPost(blog_post) => &blog_post.date,
             Self::MicroPost(micro_post) => &micro_post.date,
             Self::MastodonPost(mastodon_post) => mastodon_post.created_at(),
-            Self::AlbumPhoto(album_photo) => &album_photo.date,
+            Self::AlbumPhoto { photo, .. } => &photo.date,
             Self::Album(album) => &album.date,
         }
     }
@@ -62,8 +62,8 @@ impl Content {
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.media(),
-            Self::AlbumPhoto(album_photo) => {
-                vec![album_photo.small_image.clone().into()]
+            Self::AlbumPhoto { photo, .. } => {
+                vec![photo.small_image.clone().into()]
             }
             Self::Album(_) => vec![], // It does it's own thing
         }
@@ -74,8 +74,8 @@ impl Content {
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.optimised_media(),
-            Self::AlbumPhoto(album_photo) => {
-                vec![album_photo.small_image.clone().into()]
+            Self::AlbumPhoto { photo, .. } => {
+                vec![photo.small_image.clone().into()]
             }
             Self::Album(_) => vec![], // It does it's own thing
         }
@@ -86,7 +86,7 @@ impl Content {
             Self::BlogPost(blog_post) => blog_post.tags.clone(),
             Self::MicroPost(micro_post) => micro_post.tags.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.tags().clone(),
-            Self::AlbumPhoto(album_photo) => album_photo.tags.clone(),
+            Self::AlbumPhoto { photo, .. } => photo.tags.clone(),
             Self::Album(_) => vec![], // Don't want it in search
         }
     }
@@ -96,7 +96,7 @@ impl Content {
             Self::BlogPost(blog_post) => Some(&blog_post.updated_at),
             Self::MicroPost(micro_post) => micro_post.updated_at.as_ref(),
             Self::MastodonPost(mastodon_post) => Some(mastodon_post.updated_at()),
-            Self::AlbumPhoto(album_photo) => Some(&album_photo.updated_at),
+            Self::AlbumPhoto { photo, .. } => Some(&photo.updated_at),
             Self::Album(album) => Some(&album.updated_at),
         }
     }
@@ -106,7 +106,7 @@ impl Content {
             Self::BlogPost(blog_post) => blog_post.content.to_string(),
             Self::MicroPost(micro_post) => micro_post.content.to_string(),
             Self::MastodonPost(mastodon_post) => mastodon_post.content().to_string(),
-            Self::AlbumPhoto(album_photo) => album_photo.description.to_string(),
+            Self::AlbumPhoto { photo, .. } => photo.description.to_string(),
             Self::Album(album) => match &album.description {
                 Some(description) => description.to_string(),
                 None => "".to_string(),
@@ -119,7 +119,7 @@ impl Content {
             Self::BlogPost(blog_post) => blog_post.page(),
             Self::MicroPost(micro_post) => micro_post.page(),
             Self::MastodonPost(mastodon_post) => mastodon_post.page(),
-            Self::AlbumPhoto(album_photo) => album_photo.page(),
+            Self::AlbumPhoto { photo, .. } => photo.page(),
             Self::Album(album) => album.page(),
         }
     }
@@ -143,9 +143,15 @@ impl From<MastodonPost> for Content {
     }
 }
 
-impl From<AlbumPhoto> for Content {
-    fn from(album_photo: AlbumPhoto) -> Self {
-        Self::AlbumPhoto(album_photo)
+impl From<(Album, AlbumPhoto)> for Content {
+    fn from((album, photo): (Album, AlbumPhoto)) -> Self {
+        Self::AlbumPhoto { album, photo }
+    }
+}
+
+impl From<(AlbumPhoto, Album)> for Content {
+    fn from((photo, album): (AlbumPhoto, Album)) -> Self {
+        Self::AlbumPhoto { album, photo }
     }
 }
 

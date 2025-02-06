@@ -44,7 +44,7 @@ async fn render_timeline_page(state: &impl State) -> Result<()> {
 
     let paginated = paginate(&omni_posts, DEFAULT_PAGINATION_SIZE);
 
-    let page = Page::new(Slug::new("timeline"), Some("Timeline"), Some("My timeline"));
+    let page = Page::new(Slug::new("timeline"), Some("Timeline"), Some("My timeline".to_string()));
 
     for paginator_page in paginated {
         let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
@@ -81,7 +81,7 @@ async fn render_firehost_page(state: &impl State) -> Result<()> {
     let page = Page::new(
         Slug::new("firehose"),
         Some("Firehose"),
-        Some("All the things, all the time"),
+        Some("All the things, all the time".to_string()),
     );
 
     for paginator_page in paginated {

@@ -14,7 +14,7 @@
             {% include "omni_post/omni_post_list/omni_post_list_item_with_content_and_media.html" %}
             {% when OmniPost::MastodonPost with (post) %}
             {% include "omni_post/omni_post_list/omni_post_list_item_with_content_and_media.html" %}
-            {% when OmniPost::AlbumPhoto with (photo) %}
+            {% when OmniPost::AlbumPhoto with { album, photo } %}
             {% include "omni_post/omni_post_list/omni_post_list_item_album_photo.html" %}
             {% when OmniPost::Album with (album) %}
             {% include "omni_post/omni_post_list/omni_post_list_item_album.html" %}

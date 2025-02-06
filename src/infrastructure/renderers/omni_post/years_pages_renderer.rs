@@ -45,7 +45,7 @@ async fn render_year_pages<'d>(state: &impl State, year: u16, posts: &[OmniPost]
     let page = Page::new(
         Slug::new(&format!("/years/{}", year)),
         Some(&format!("{} posts", year)),
-        Some(&format!("My {} posts", year)),
+        Some(format!("My {} posts", year)),
     );
 
     for paginator_page in paginate(posts, DEFAULT_PAGINATION_SIZE) {

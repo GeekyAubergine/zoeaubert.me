@@ -65,7 +65,7 @@ impl BlogPost {
         let mut page = Page::new(
             self.slug.clone(),
             Some(&self.title),
-            Some(&self.description),
+            Some(self.description.clone()),
         )
         .with_date(self.date)
         .with_tags(self.tags.clone());

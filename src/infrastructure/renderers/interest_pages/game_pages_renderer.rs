@@ -65,7 +65,7 @@ async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()
     let page = Page::new(
         Slug::new("/interests/games"),
         Some("Games"),
-        Some("My Games"),
+        Some("My Games".to_string()),
     );
 
     let mut games_by_recently_played = games.to_vec();
@@ -107,7 +107,7 @@ async fn render_games_list_most_achieved_page(state: &impl State, games: &[Game]
     let page = Page::new(
         Slug::new("/interests/games/achievements"),
         Some("Game Achievements"),
-        Some("My Game Achievements"),
+        Some("My Game Achievements".to_string()),
     );
 
     let games = find_all_games_by_achievment_unlocked_percentage(state)
@@ -169,7 +169,7 @@ async fn render_steam_game_page(state: &impl State, game: &SteamGame) -> Result<
     let page = Page::new(
         Slug::new(&format!("/interests/games/{}/", game.id)),
         Some(title.as_str()),
-        Some(description.as_str()),
+        Some(description),
     )
     .with_image(image);
 
@@ -203,7 +203,7 @@ async fn render_activity_page(state: &impl State) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/games/activity/"),
         Some("Game Activity"),
-        Some("My Game Activity"),
+        Some("My Game Activity".to_string()),
     );
 
     for paginator_page in paginated {

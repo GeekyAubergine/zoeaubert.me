@@ -179,10 +179,7 @@ impl MastodonPost {
     }
 
     pub fn page(&self) -> Page {
-        let content = self
-            .content()
-            .replace("<p>", "\n")
-            .replace("</p>", "\n");
+        let content = self.content().replace("<p>", "\n").replace("</p>", "\n");
 
         let lines = content.lines().collect::<Vec<&str>>();
 
@@ -197,7 +194,24 @@ impl MastodonPost {
             None => None,
         };
 
-        let mut page = Page::new(self.slug().clone(), None, first_line)
+        let second_line = match lines.get(1) {
+            Some(second) => Some(*second),
+            None => None,
+        };
+
+        let description = match (first_line, second_line) {
+            (Some(first), Some(second)) => {
+                if first.len() > 100 {
+                    Some(first.to_string())
+                } else {
+                    Some(format!("{}\n{}", first, second))
+                }
+            }
+            (Some(first), None) => Some(first.to_string()),
+            (None, _) => None,
+        };
+
+        let mut page = Page::new(self.slug().clone(), None, description)
             .with_date(*self.created_at())
             .with_tags(self.tags().clone());
 

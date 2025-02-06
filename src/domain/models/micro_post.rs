@@ -62,7 +62,7 @@ impl MicroPost {
     }
 
     pub fn page(&self) -> Page {
-        let mut page = Page::new(self.slug.clone(), None, self.description.as_deref())
+        let mut page = Page::new(self.slug.clone(), None, self.description.clone())
             .with_date(self.date)
             .with_tags(self.tags.clone());
 
