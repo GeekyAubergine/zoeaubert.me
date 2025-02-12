@@ -37,7 +37,7 @@ Before we get onto islands, I must discuss my population density findings. I've 
 My "joke" rests on the premise that Portsmouth is the third most densely populated city in the UK if you exclude London and only use Greater Manchester rather than Manchester.
 
 | City                                                                   | Population | Size (km^2) | Density (p/km^2) |     |
-| ---------------------------------------------------------------------- | ----------:| -----------:| ----------------:| --- |
+| :---------------------------------------------------------------------- | ----------:| -----------:| ----------------:| --- |
 | [London](https://en.wikipedia.org/wiki/London)                         |  8,799,800 |    1,572.00 |          5,597.8 |     |
 | [Portsmouth (All)](https://en.wikipedia.org/wiki/Portsmouth)           |    208,100 |       40.25 |          5,170.2 |     |
 | [Portsea](https://en.wikipedia.org/wiki/Portsea_Island)                |    172,569 |       24.54 |          7,032.2 |     |
