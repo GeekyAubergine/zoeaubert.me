@@ -188,6 +188,10 @@
         }
     }
 
+    .article-spacing {
+        @apply my-2 md:my-3;
+    }
+
     article,
     .prose {
         h2,
@@ -199,8 +203,8 @@
         ol,
         ul,
         img,
-        blockquote {
-            @apply my-2;
+        blockquote, table {
+            @apply article-spacing;
         }
 
         h2,
@@ -250,7 +254,7 @@
         }
 
         li {
-            @apply my-3 first-of-type:mt-0 last-of-type:mb-0;
+            @apply my-3 md:my-4 first-of-type:mt-0 last-of-type:mb-0;
         }
 
         li > ul > li,
@@ -260,7 +264,7 @@
 
         p + ol,
         p + ul {
-            @apply mt-0 mb-5;
+            @apply mt-0 mb-5 md:mb-6;
         }
 
         blockquote {
@@ -276,13 +280,13 @@
         }
 
         :not(pre) > code {
-            @apply my-2 bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
+            @apply article-spacing bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
             font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
                 'Courier New', monospace;
         }
 
         pre {
-            @apply my-2 bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+            @apply article-spacing bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
             font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
                 'Courier New', monospace;
         }
@@ -297,10 +301,6 @@
 
         pre > code {
             @apply text-text-dark;
-        }
-
-        table {
-            @apply w-full my-4;
         }
     }
 
