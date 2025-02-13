@@ -44,7 +44,7 @@ My "joke" rests on the premise that Portsmouth is the third most densely populat
 | [Manchester](https://en.wikipedia.org/wiki/Manchester)                 |    568,996 |      116.00 |          4,905.2 |     |
 | [Greater Manchester](https://en.wikipedia.org/wiki/Greater_Manchester) |  2,812,569 |   1,2760.00 |          2,204.2 |     |
 
-(These values have been retried from Wikipedia using the most recent census (2021) data. To get the population of Portsea, I used [this data](https://www.ilivehere.co.uk/statistics-portsea-island-city-of-portsmouth-31095.html) )
+(These values have been retried from Wikipedia using the most recent census (2021) data. To get the population of Portsea, I used [this data](https://www.ilivehere.co.uk/statistics-portsea-island-city-of-portsmouth-31095.html))
 
 Well, this is a little messy. If you consider Portsmouth only to be Portsea, then yes, Portsmouth is the most densely populated. But if you consider Portsmouth to include all the places under Portsmouth authority, it's the second.
 
