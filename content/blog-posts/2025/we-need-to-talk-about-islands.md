@@ -14,7 +14,7 @@ In a recent (when I first started this) [blog post by Robb](https://rknight.me/b
 
 Ok, good meme. Well done me. This came from a weird piece of information[citation needed] that I have lodged in my head since I moved to Portsmouth and have never really questioned since. 
 
-Robb's response was to question whether Wikipedia was correct (this is what I believe professionals call foreshadowing). I then mentioned that the statistic is also wrong anyway, as when most people say [Portsmouth](https://en.wikipedia.org/wiki/Portsmouth), they mean only [Portsea "Island"] (https://en.wikipedia.org/wiki/Portsea_Island), and this value includes the whole administrative area.
+Robb's response was to question whether Wikipedia was correct (this is what I believe professionals call foreshadowing). I then mentioned that the statistic is also wrong anyway, as when most people say [Portsmouth](https://en.wikipedia.org/wiki/Portsmouth), they mean only [Portsea "Island"](https://en.wikipedia.org/wiki/Portsea_Island), and this value includes the whole administrative area.
 
 We then ~~argued~~ _discussed_ what is and isn't Portsmouth, leading to the ultimate question:
 
