@@ -14,6 +14,33 @@
     }
 }
 
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Regular.otf')
+        format('otf');
+}
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Bold.otf') format('otf');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Italic.otf') format('otf');
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-BoldItalic.otf')
+        format('otf');
+    font-weight: bold;
+    font-style: italic;
+}
+/* @font-face {
+    font-family: 'WilcoLoftSans';
+    src: url('/assets/fonts/WilcoLoftSans-Treble.woff2') format('woff2');
+} */
+
 @layer components {
     /* ----------------  Utilities ---------------- */
 
@@ -195,6 +222,17 @@
 
     article,
     .prose {
+        p,
+        li,
+        th,
+        td {
+            @apply text text-[17px];
+            font-family: 'Atkinson Hyperlegible', system-ui, -apple-system,
+                BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+                'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+                'Segoe UI Symbol', 'Noto Color Emoji';
+        }
+
         h2,
         h3,
         h4,

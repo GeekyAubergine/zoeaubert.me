@@ -62,7 +62,7 @@ I was born and raised in [Jersey](https://en.wikipedia.org/wiki/Jersey) (which d
 
 My premise is simple:
 
-> If you can walk to it, it's not an island
+> If you can walk to it, it's not an island.
 
 Now, let's get down to business. When I say walk, I mean, under ideal circumstances, could you get there on foot? I guess this extends to any land-exclusive vehicle (I see you hover-crafts). Still, I can't think of any examples where you'd be able to drive but not walk it, mainly because any means to walk it would've been found/built (more on this later) before the invention of vehicles.
 
@@ -108,7 +108,7 @@ If we look more at this article and scroll down to the list of tidal islands, yo
 
 (Image retrieved from [Wikipedia](https://en.wikipedia.org/wiki/File:Helier_pilgrimage_2005_Jersey.jpg) - Man vyi - Public Domain)
 
-If you're still in doubt, I have personally walked this walk many times and have not downed.
+If you're still in doubt, I have personally walked this walk many times and have not drowned.
 
 **Conclusion:** This "tidal island" is walkable, not an island.
 
