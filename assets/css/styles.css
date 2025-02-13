@@ -71,6 +71,7 @@
     }
 
     * {
+        @apply text;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
             Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
             'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
@@ -203,7 +204,8 @@
         ol,
         ul,
         img,
-        blockquote, table {
+        blockquote,
+        table {
             @apply article-spacing;
         }
 
