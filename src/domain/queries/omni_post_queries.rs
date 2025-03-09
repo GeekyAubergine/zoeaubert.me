@@ -45,8 +45,7 @@ impl OmniPostFilterFlags {
     }
 
     pub fn filter_photos_page() -> OmniPostFilterFlags {
-        OmniPostFilterFlags::BLOG_POST
-            | OmniPostFilterFlags::MICRO_POST
+        OmniPostFilterFlags::MICRO_POST
             | OmniPostFilterFlags::MASTODON_POST
             | OmniPostFilterFlags::ALBUM_PHOTO
     }
