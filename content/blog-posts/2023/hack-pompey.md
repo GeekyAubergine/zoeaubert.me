@@ -12,11 +12,11 @@ heroHeight: 128
 
 ![Two pixel art blue sharks wearing a barbarian horned had and a white shield with blue cross and red edging](https://cdn.geekyaubergine.com/2023/04572345cced.png)
 
-I attended my first hackathon hosted by [Hack Pompey](https://hackpompey.co.uk/), and it went well. 
+I attended my first hackathon hosted by [Hack Pompey](https://hackpompey.co.uk/), and it went well.
 
 tldr: We made a [Vampire Survivors](https://store.steampowered.com/app/1794680/Vampire_Survivors/) style game based around Blahai the Blahbarian
 
-You can [play it here](https://zoeaubert.me/projects/blahbarian-hackathon/). Warning that the noises are pretty loud.
+You can [play it here](https://blahbarian-hackpompey.zoeaubert.me/). Warning that the noises are pretty loud.
 
 The code is available on [Github](https://github.com/GeekyAubergine/blahbarian/tree/hackathon).
 
@@ -67,7 +67,7 @@ Overall it was a great experience. It wasn't stressful per se, but very draining
 
 Having dabbled in game building before, I had a plan of how it would work, which saved us a bunch of time. The core of the engine is simple.
 
-The rendering would be handled by canvas. As the game was taking place on a flat plane, it made sense to centre the camera on the player and render everything relative to that. For the floor, this required rendering a simple grid of tiles relative to the player and ensuring the grid was one tile wider than the viewport. 
+The rendering would be handled by canvas. As the game was taking place on a flat plane, it made sense to centre the camera on the player and render everything relative to that. For the floor, this required rendering a simple grid of tiles relative to the player and ensuring the grid was one tile wider than the viewport.
 
 All entities were given a movement enum of 'IDLE', 'DOWN', 'UP', 'LEFT', and 'RIGHT' to allow us to render appropriately rotated sprites and then rendered on the canvas relative to the player. Animations were handled by looping through an array of sprite keys that referenced the sprite sheets and rendering the sprite. The animations were then tied to the movement enum to allow it to swap out the correct sprites depending on movement.
 

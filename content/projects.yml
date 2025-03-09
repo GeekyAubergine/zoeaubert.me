@@ -1,8 +1,28 @@
 projects:
-    - slug: /projects/maxif
-      name: Maxif
+    - name: Maxif
       description: A simple tool for inspecting file sigantures and metadata
       image: https://cdn.geekyaubergine.com/projects/maxif/preview_image.png
       image_alt: 'Three by four grid of hexadecimal numbers with dark biege and blue backgrounds on a light biege background'
       link: https://maxif.zoeaubert.me
-      rank: 4
+      rank: 1
+
+    - name: Blahbarian
+      description: Hackathon project were we made a game based on Blahai the Blahbarain
+      image: https://cdn.geekyaubergine.com/2023/04572345cced.png
+      image_alt: 'Two pixel art blue sharks wearing a barbarian horned had and a white shield with blue cross and red edging'
+      link: /blog/hack-pompey-2023
+      rank: 10
+
+    - name: AccelOS
+      description: Hackathon project were I made a game about balancing the input to an operating system
+      image: https://cdn.geekyaubergine.com/2023/11/19/2023-11-19T22.55.24.png
+      image_alt: 'Screen shot of a basic operating system interface listing Main, Files and Email on the left and side. On the right hand side a maze with various coloured circles and walls'
+      link: /blog/hackathon-accelos
+      rank: 10
+
+    - name: ContrastChecker
+      description: A tool for checking the colour contrast between many colours at once to check your design themes.
+      image: https://cdn.geekyaubergine.com/projects/contrastchecker/ccss.png
+      image_alt: 'White text in a light purple box. Below that is text saying "Normal Text". Below that are two lines, one saying "WCAG AA: Page", the other saying "WCAG AAA: Fail"'
+      link: https://www.contrastchecker.co.uk/
+      rank: 2

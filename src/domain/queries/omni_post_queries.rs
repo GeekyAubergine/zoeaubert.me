@@ -45,8 +45,7 @@ impl OmniPostFilterFlags {
     }
 
     pub fn filter_photos_page() -> OmniPostFilterFlags {
-        OmniPostFilterFlags::BLOG_POST
-            | OmniPostFilterFlags::MICRO_POST
+        OmniPostFilterFlags::MICRO_POST
             | OmniPostFilterFlags::MASTODON_POST
             | OmniPostFilterFlags::ALBUM_PHOTO
     }
@@ -67,6 +66,15 @@ impl OmniPostFilterFlags {
 
     pub fn filter_game_activity() -> OmniPostFilterFlags {
         OmniPostFilterFlags::UNLOCKED_STEAM_ACHIEVEMENT
+    }
+
+    pub fn filter_home_page() -> OmniPostFilterFlags {
+        OmniPostFilterFlags::MICRO_POST
+            | OmniPostFilterFlags::MASTODON_POST
+            | OmniPostFilterFlags::ALBUM
+            | OmniPostFilterFlags::MOVIE_REVIEW
+            | OmniPostFilterFlags::TV_SHOW_REVIEW
+            | OmniPostFilterFlags::BOOK_REVIEW
     }
 }
 

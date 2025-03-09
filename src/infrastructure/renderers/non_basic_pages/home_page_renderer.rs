@@ -1,12 +1,15 @@
 use askama::Template;
 
+use crate::domain::models::omni_post::OmniPost;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
+use crate::domain::queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags};
 use crate::domain::repositories::{AboutTextRepo, BlogPostsRepo, SillyNamesRepo};
 use crate::domain::services::PageRenderingService;
 use crate::domain::state::State;
 use crate::prelude::*;
 
+use crate::domain::models::media::Media;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
@@ -20,6 +23,7 @@ pub struct IndexTemplate {
     about_text: String,
     silly_names: Vec<String>,
     recent_blog_posts: Vec<BlogPost>,
+    recent_omni_posts: Vec<OmniPost>,
 }
 
 pub async fn render_home_page(state: &impl State) -> Result<()> {
@@ -40,11 +44,19 @@ pub async fn render_home_page(state: &impl State) -> Result<()> {
 
     let most_recent_post = recent_blog_posts.first().cloned();
 
+    let recent_omni_posts = find_all_omni_posts(state, OmniPostFilterFlags::filter_home_page())
+        .await?
+        .iter()
+        .take(RECENT_POSTS_COUNT)
+        .cloned()
+        .collect::<Vec<OmniPost>>();
+
     let template = IndexTemplate {
         page,
         silly_names,
         about_text,
         recent_blog_posts,
+        recent_omni_posts,
     };
 
     let updated_at = most_recent_post.map(|p| p.updated_at);

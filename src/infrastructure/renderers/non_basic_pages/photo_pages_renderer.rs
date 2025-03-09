@@ -22,7 +22,7 @@ use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
-const DEFAULT_PAGINATION_SIZE: usize = 48;
+const DEFAULT_PAGINATION_SIZE: usize = 40;
 
 #[derive(Template)]
 #[template(path = "photos.html")]

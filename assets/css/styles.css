@@ -45,7 +45,7 @@
     /* ----------------  Utilities ---------------- */
 
     .width-control {
-        @apply w-[68ch] max-w-[100%] px-4 md:px-0;
+        @apply w-[72ch] max-w-[100%] px-4 md:px-0;
     }
 
     .centered-width-control {
@@ -84,7 +84,7 @@
     }
 
     .wide {
-        @apply w-[102ch] max-w-[100%] px-4 mx-auto;
+        @apply w-[110ch] max-w-[100%] px-4 mx-auto;
     }
 
     .border-hover-accent {
@@ -436,6 +436,35 @@
         a {
             @apply flex justify-center items-center;
         }
+
+        .grid-element-cover-image {
+            @apply flex flex-col justify-center items-center;
+
+            img {
+                @apply object-cover;
+            }
+        }
+    }
+
+    .square-photo-grid {
+        @apply w-full grid gap-x-2 gap-y-0 mx-auto px-0 grid-cols-2 sm:grid-cols-4 sm:gap-y-2 md:grid-cols-5 overflow-hidden;
+
+        .grid-element {
+            @apply flex flex-col justify-center items-center;
+        }
+
+        img,
+        a {
+            @apply m-0 p-0;
+        }
+
+        a {
+            @apply flex justify-center items-center;
+        }
+
+        img {
+            @apply object-cover aspect-square;
+        }
     }
 
     .half-size-media-grid {
@@ -637,7 +666,7 @@
 
     .interests-grid,
     .projects-grid {
-        @apply grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-2 sm:grid-cols-3 mt-2 list-none;
+        @apply grid gap-x-4 gap-y-6 mx-auto px-0 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-2 list-none;
 
         .interest {
             @apply flex flex-col justify-between items-center;
@@ -654,7 +683,7 @@
             }
 
             img {
-                @apply border-hover-accent my-0 max-h-[10rem] w-auto;
+                @apply border-hover-accent my-0 max-h-[7rem] w-auto;
             }
         }
     }
