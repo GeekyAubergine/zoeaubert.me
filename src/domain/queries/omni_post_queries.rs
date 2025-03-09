@@ -67,6 +67,15 @@ impl OmniPostFilterFlags {
     pub fn filter_game_activity() -> OmniPostFilterFlags {
         OmniPostFilterFlags::UNLOCKED_STEAM_ACHIEVEMENT
     }
+
+    pub fn filter_home_page() -> OmniPostFilterFlags {
+        OmniPostFilterFlags::MICRO_POST
+            | OmniPostFilterFlags::MASTODON_POST
+            | OmniPostFilterFlags::ALBUM
+            | OmniPostFilterFlags::MOVIE_REVIEW
+            | OmniPostFilterFlags::TV_SHOW_REVIEW
+            | OmniPostFilterFlags::BOOK_REVIEW
+    }
 }
 
 pub async fn find_all_omni_posts(
