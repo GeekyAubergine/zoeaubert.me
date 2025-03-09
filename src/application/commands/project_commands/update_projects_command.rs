@@ -15,12 +15,11 @@ pub const PROJECTS_FILE: &str = "projects.yml";
 
 #[derive(Debug, Clone, Deserialize, Hash)]
 struct FileProject {
-    slug: String,
     name: String,
     description: String,
     image: Url,
     image_alt: String,
-    link: Url,
+    link: String,
     rank: u8,
 }
 
@@ -44,7 +43,7 @@ pub async fn update_projects_command(state: &impl State) -> Result<()> {
 
         if let Some(existing) = state
             .projects_repo()
-            .find_by_slug(&Slug::new(&file_project.slug))
+            .find_by_name(&file_project.name)
             .await?
         {
             if hash == existing.original_data_hash {
@@ -65,7 +64,6 @@ pub async fn update_projects_command(state: &impl State) -> Result<()> {
             .await?;
 
         let project = Project {
-            slug: Slug::new(&file_project.slug),
             name: file_project.name,
             description: file_project.description,
             image,

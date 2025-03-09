@@ -6,9 +6,7 @@ use tokio::sync::RwLock;
 use crate::{
     domain::{
         models::{
-            movie::{MovieId, MovieReview},
-            project::Project,
-            slug::Slug,
+            movie::{MovieId, MovieReview}, project::Project, slug::Slug
         },
         repositories::{MovieReviewsRepo, ProjectsRepo}, services::FileService,
     },
@@ -24,7 +22,7 @@ fn make_file_path(file_service: &impl FileService) -> PathBuf {
 
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct ProjectsRepoData {
-    projects: HashMap<Slug, Project>,
+    projects: HashMap<String, Project>,
 }
 
 pub struct ProjectsRepoDisk {
@@ -64,14 +62,14 @@ impl ProjectsRepo for ProjectsRepoDisk {
         Ok(projects)
     }
 
-    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<Project>> {
+    async fn find_by_name(&self, name: &String) -> Result<Option<Project>> {
         let data = self.data.read().await;
-        Ok(data.projects.get(slug).cloned())
+        Ok(data.projects.get(name).cloned())
     }
 
     async fn commit(&self, project: &Project) -> Result<()> {
         let mut data = self.data.write().await;
-        data.projects.insert(project.slug.clone(), project.clone());
+        data.projects.insert(project.name.clone(), project.clone());
 
         self.file_service
             .write_json_file(&make_file_path(&self.file_service), &data.clone())

@@ -197,7 +197,7 @@ pub trait OmniPostRepo {
 pub trait ProjectsRepo {
     async fn find_all_by_rank_and_name(&self) -> Result<Vec<Project>>;
 
-    async fn find_by_slug(&self, slug: &Slug) -> Result<Option<Project>>;
+    async fn find_by_name(&self, name: &String) -> Result<Option<Project>>;
 
     async fn commit(&self, project: &Project) -> Result<()>;
 }
