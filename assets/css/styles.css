@@ -163,6 +163,19 @@
         }
     }
 
+    #fundraiser-banner {
+        @apply py-4 bg-accent dark:bg-accent-dark;
+
+        p {
+            @apply centered-width-control text-center;
+        }
+
+        p,
+        a {
+            @apply font-bold text-text-dark decoration-text-dark dark:text-text dark:decoration-text;
+        }
+    }
+
     #theme-toggle {
         @apply w-5 h-5 sm:mt-[0.25rem];
 
