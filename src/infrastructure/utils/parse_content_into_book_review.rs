@@ -4,7 +4,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::{
-    domain::models::{content::Content, omni_post::OmniPost},
+    domain::models::{raw_content::RawContent, omni_post::OmniPost},
     error::{BookError, TvShowsError},
     prelude::*,
 };
@@ -23,10 +23,10 @@ pub struct Review {
     pub review: String,
 }
 
-pub fn parse_content_into_book_review(content: &Content) -> Result<Review> {
+pub fn parse_content_into_book_review(content: &RawContent) -> Result<Review> {
     match content {
-        Content::MicroPost(post) => parse_markdown_into_book_review(&post.content),
-        Content::MastodonPost(post) => parse_markdown_into_book_review(&post.content()),
+        RawContent::MicroPost(post) => parse_markdown_into_book_review(&post.content),
+        RawContent::MastodonPost(post) => parse_markdown_into_book_review(&post.content()),
         _ => Err(TvShowsError::unsupported_content_type(content)),
     }
 }

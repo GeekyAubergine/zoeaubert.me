@@ -8,7 +8,7 @@ use super::{
     album::{Album, AlbumPhoto},
     blog_post::BlogPost,
     book::BookReview,
-    content::Content,
+    raw_content::RawContent,
     image::Image,
     mastodon_post::MastodonPost,
     media::Media,
@@ -188,14 +188,14 @@ impl OmniPost {
     }
 }
 
-impl From<Content> for OmniPost {
-    fn from(content: Content) -> Self {
+impl From<RawContent> for OmniPost {
+    fn from(content: RawContent) -> Self {
         match content {
-            Content::BlogPost(blog_post) => Self::BlogPost(blog_post),
-            Content::MicroPost(micro_post) => Self::MicroPost(micro_post),
-            Content::MastodonPost(mastodon_post) => Self::MastodonPost(mastodon_post),
-            Content::AlbumPhoto { photo, album } => Self::AlbumPhoto { album, photo },
-            Content::Album(album) => Self::Album(album),
+            RawContent::BlogPost(blog_post) => Self::BlogPost(blog_post),
+            RawContent::MicroPost(micro_post) => Self::MicroPost(micro_post),
+            RawContent::MastodonPost(mastodon_post) => Self::MastodonPost(mastodon_post),
+            RawContent::AlbumPhoto { photo, album } => Self::AlbumPhoto { album, photo },
+            RawContent::Album(album) => Self::Album(album),
         }
     }
 }

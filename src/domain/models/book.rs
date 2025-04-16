@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use super::{content::Content, image::Image, slug::Slug};
+use super::{raw_content::RawContent, image::Image, slug::Slug};
 
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Serialize, Eq, Hash)]
 #[serde(tag = "type")]
@@ -29,7 +29,7 @@ pub struct BookReview {
     pub book: Book,
     pub score: u8,
     pub review: String,
-    pub source_content: Content,
+    pub source_content: RawContent,
 }
 
 impl Book {

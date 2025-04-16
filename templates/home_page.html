@@ -10,7 +10,7 @@
     </div>
 
     <div class="home-about prose">
-        {{ about_text.to_html()|safe }}
+        {{ data.about_text.short.to_html()|safe }}
     </div>
 {% endblock %}
 {%- block content %}
@@ -36,7 +36,7 @@
 
         // Cursor, split first and last names
 
-        const names = [{%- for name in silly_names %}"{{ name }}",{%- endfor %}]
+        const names = [{%- for name in data.silly_names.silly_names %}"{{ name }}",{%- endfor %}]
         let memory = ['Zoe Aubert'];
 
         const MEMORY_SIZE = Math.floor(names.length / 2);

@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 
-use super::{content::Content, image::Image};
+use super::{raw_content::RawContent, image::Image};
 
 #[derive(Debug, Clone)]
 pub enum BattleReportGame {
@@ -12,5 +12,5 @@ pub enum BattleReportGame {
 
 #[derive(Debug, Clone)]
 pub struct BattleReport {
-    pub source_content: Content,
+    pub source_content: RawContent,
 }

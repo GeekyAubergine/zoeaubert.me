@@ -4,7 +4,7 @@ use bitflags::bitflags;
 use chrono::Datelike;
 use tracing::warn;
 
-use crate::domain::models::content::Content;
+use crate::domain::models::raw_content::RawContent;
 use crate::domain::repositories::{
     AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, OmniPostRepo,
     SteamAchievementsRepo, SteamGamesRepo,
