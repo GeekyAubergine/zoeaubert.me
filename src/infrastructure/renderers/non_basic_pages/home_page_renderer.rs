@@ -8,6 +8,8 @@ use crate::domain::queries::omni_post_queries::{find_all_omni_posts, OmniPostFil
 use crate::domain::repositories::{AboutTextRepo, BlogPostsRepo, SillyNamesRepo};
 use crate::domain::services::PageRenderingService;
 use crate::domain::state::State;
+use crate::infrastructure::renderers::RendererContext;
+use crate::infrastructure::services::page_renderer::PageRenderer;
 use crate::prelude::*;
 
 use crate::domain::models::media::Media;
@@ -19,14 +21,14 @@ const RECENT_POSTS_COUNT: usize = 5;
 
 #[derive(Template)]
 #[template(path = "home_page.html")]
-pub struct IndexTemplate {
+pub struct IndexTemplate<'t> {
     page: Page,
-    data: Data,
+    data: &'t Data,
     recent_blog_posts: Vec<BlogPost>,
     recent_omni_posts: Vec<OmniPost>,
 }
 
-pub async fn render_home_page(state: &impl State) -> Result<()> {
+pub async fn render_home_page(state: &impl State, context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("/"), None, None);
 
     let recent_blog_posts = state
@@ -49,20 +51,15 @@ pub async fn render_home_page(state: &impl State) -> Result<()> {
 
     let template = IndexTemplate {
         page,
-        data: Data::from_state(state).await?,
+        data: context.data(),
         recent_blog_posts,
         recent_omni_posts,
     };
 
     let updated_at = most_recent_post.map(|p| p.updated_at);
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            updated_at.as_ref(),
-        )
+    context
+        .renderer
+        .render_page(state, &template.page.slug, &template, updated_at.clone())
         .await
 }

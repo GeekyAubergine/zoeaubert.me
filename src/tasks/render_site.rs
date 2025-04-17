@@ -8,6 +8,7 @@ use tokio::fs::copy;
 use tokio::try_join;
 
 use crate::build_data::BUILD_DATE;
+use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::queries::omni_post_queries::{
@@ -22,7 +23,10 @@ use crate::infrastructure::renderers::basic_pages::render_basic_pages;
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 
 use crate::error::FileSystemError;
-use crate::infrastructure::renderers::render_pages;
+use crate::infrastructure::renderers::{
+    new_rendering_context_from_state, render_pages, RendererContext,
+};
+use crate::infrastructure::services::page_renderer::PageRenderer;
 use crate::infrastructure::utils::paginator::paginate;
 use crate::prelude::*;
 
@@ -113,7 +117,9 @@ pub async fn render_site(state: &impl State) -> Result<()> {
 
     let start = std::time::Instant::now();
 
-    render_pages(state).await?;
+    let context: RendererContext = new_rendering_context_from_state(state).await?;
+
+    render_pages(state, &context).await?;
 
     let disallowed_routes = read_disallowed_routes_from_robot_file(state).await?;
 
