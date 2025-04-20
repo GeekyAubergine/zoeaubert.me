@@ -10,7 +10,10 @@ use crate::domain::state::State;
 
 use super::about_text::AboutText;
 use super::blog_post::BlogPost;
+use super::faq::Faq;
+use super::now_text::NowText;
 use super::omni_post::OmniPost;
+use super::referral::Referrals;
 use super::silly_names::SillyNames;
 use super::tag::Tag;
 
@@ -175,6 +178,9 @@ impl Posts {
 pub struct Data {
     pub about_text: AboutText,
     pub silly_names: SillyNames,
+    pub faq: Faq,
+    pub referrals: Referrals,
+    pub now_text: NowText,
     pub posts: Posts,
 }
 
@@ -187,6 +193,9 @@ impl Data {
         Ok(Data {
             about_text: AboutText::from_state(state).await?,
             silly_names: SillyNames::from_state(state).await?,
+            faq: Faq::from_state(state).await?,
+            referrals: Referrals::from_state(state).await?,
+            now_text: NowText::from_state(state).await?,
             posts,
         })
     }

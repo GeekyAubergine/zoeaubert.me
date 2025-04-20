@@ -25,14 +25,8 @@ pub mod non_basic_pages;
 pub mod omni_post;
 
 pub struct RendererContext {
-    data: Data,
-    renderer: PageRenderer,
-}
-
-impl RendererContext {
-    pub fn data(&self) -> &Data {
-        &self.data
-    }
+    pub data: Data,
+    pub renderer: PageRenderer,
 }
 
 pub async fn new_rendering_context_from_state(state: &impl State) -> Result<RendererContext> {
@@ -44,7 +38,7 @@ pub async fn new_rendering_context_from_state(state: &impl State) -> Result<Rend
 
 pub async fn render_pages(state: &impl State, context: &RendererContext) -> Result<()> {
     try_join!(
-        render_basic_pages(state),
+        render_basic_pages(context),
         render_interest_pages(state),
         render_non_basic_pages(state, &context),
         render_omni_post_pages(state),

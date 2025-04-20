@@ -10,7 +10,10 @@ use crate::{
         services::PageRenderingService,
         state::State,
     },
-    infrastructure::utils::paginator::{paginate, PaginatorPage},
+    infrastructure::{
+        renderers::RendererContext,
+        utils::paginator::{paginate, PaginatorPage},
+    },
     prelude::*,
 };
 
@@ -25,18 +28,15 @@ use crate::domain::models::tag::Tag;
 #[template(path = "support.html")]
 struct SaveTemplate {
     page: Page,
-    referrals: Vec<Referral>,
 }
 
-pub async fn render_support_page(state: &impl State) -> Result<()> {
-    let referrals = state.referrals_repo().find_all().await?;
-
+pub async fn render_support_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("support"), Some("Support"), None);
 
-    let template = SaveTemplate { page, referrals };
+    let template = SaveTemplate { page };
 
-    state
-        .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template, None)
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }

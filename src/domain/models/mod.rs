@@ -25,3 +25,5 @@ pub mod project;
 pub mod data;
 pub mod about_text;
 pub mod silly_names;
+pub mod faq;
+pub mod now_text;

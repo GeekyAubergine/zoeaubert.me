@@ -23,8 +23,8 @@ pub async fn render_non_basic_pages(
 ) -> Result<()> {
     try_join!(
         render_album_pages(state),
-        render_feed_files(state),
-        render_home_page(state, &context),
+        render_feed_files(context),
+        render_home_page(context),
         render_photos_page(state),
         render_project_pages(state),
     )?;

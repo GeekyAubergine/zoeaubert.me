@@ -26,7 +26,7 @@ pub struct IndexTemplate<'t> {
     recent_blog_posts: Vec<&'t BlogPost>,
 }
 
-pub async fn render_home_page<'t>(state: &impl State, context: &RendererContext) -> Result<()> {
+pub async fn render_home_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("/"), None, None);
 
     let recent_blog_posts = context
@@ -45,7 +45,7 @@ pub async fn render_home_page<'t>(state: &impl State, context: &RendererContext)
 
     let template = IndexTemplate {
         page,
-        data: context.data(),
+        data: &context.data,
         recent_blog_posts,
     };
 
