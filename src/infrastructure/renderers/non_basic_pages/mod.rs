@@ -7,7 +7,6 @@ use tokio::try_join;
 
 use crate::domain::models::data::Data;
 use crate::domain::state::State;
-use crate::infrastructure::services::page_renderer::PageRenderer;
 use crate::prelude::*;
 
 use super::RendererContext;

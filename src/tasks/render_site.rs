@@ -26,7 +26,6 @@ use crate::error::FileSystemError;
 use crate::infrastructure::renderers::{
     new_rendering_context_from_state, render_pages, RendererContext,
 };
-use crate::infrastructure::services::page_renderer::PageRenderer;
 use crate::infrastructure::utils::paginator::paginate;
 use crate::prelude::*;
 

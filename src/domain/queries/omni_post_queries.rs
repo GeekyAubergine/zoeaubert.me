@@ -101,8 +101,6 @@ pub async fn find_all_omni_posts(
         })
         .collect::<Vec<OmniPost>>();
 
-    // posts.sort_by(|a, b| b.date().cmp(&a.date()));
-
     Ok(posts)
 }
 

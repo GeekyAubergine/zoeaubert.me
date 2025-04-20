@@ -2,7 +2,6 @@ use crate::{
     domain::{
         models::{page::Page, slug::Slug},
         repositories::Profiler,
-        services::FileService,
         state::State,
     },
     error::TemplateError,
@@ -21,6 +20,8 @@ use std::{
 use tokio::sync::RwLock;
 
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
+
+use super::file_service::FileService;
 
 #[derive(Debug, Clone)]
 struct SiteMapPage {
@@ -47,7 +48,6 @@ impl PageRenderer {
 
     pub async fn render_page<'t, T>(
         &self,
-        state: &impl State,
         slug: &Slug,
         template: &'t T,
         last_modified: Option<DateTime<Utc>>,
@@ -61,7 +61,7 @@ impl PageRenderer {
 
         let rendered = template.render().map_err(TemplateError::render_error)?;
 
-        self.save_file(state, &path, &rendered).await?;
+        self.save_file(&path, &rendered).await?;
 
         self.site_map_pages.write().await.push(SiteMapPage {
             url: slug.permalink(),
@@ -71,7 +71,11 @@ impl PageRenderer {
         Ok(())
     }
 
-    pub async fn render_file<'t, T>(&self, state: &impl State, path: PathBuf, template: &'t T) -> Result<()>
+    pub async fn render_file<'t, T>(
+        &self,
+        path: PathBuf,
+        template: &'t T,
+    ) -> Result<()>
     where
         T: Template,
     {
@@ -79,25 +83,13 @@ impl PageRenderer {
 
         let rendered = template.render().map_err(TemplateError::render_error)?;
 
-        self.save_file(state, &path, &rendered).await?;
+        self.save_file(&path, &rendered).await?;
 
         Ok(())
     }
 
-    async fn save_file(&self, state: &impl State, path: &str, rendered: &str) -> Result<()> {
-        let path = state
-            .file_service()
-            .make_output_file_path(&Path::new(&path));
-
-        state
-            .file_service()
-            .write_text_file_blocking(&path, rendered)
-            .await
-    }
-
     pub async fn build_sitemap(
         &self,
-        state: &impl State,
         disallowed_routes: &[String],
     ) -> Result<()> {
         let pages = self.site_map_pages.read().await;
@@ -118,15 +110,14 @@ impl PageRenderer {
 
         let rendered = template.render().map_err(TemplateError::render_error)?;
 
-        let path = state
-            .file_service()
-            .make_output_file_path(&Path::new("sitemap.xml"));
+        self.save_file("sitemap.xml", &rendered).await
+    }
 
-        state
-            .file_service()
-            .write_text_file_blocking(&path, &rendered)
-            .await?;
-
-        Ok(())
+    async fn save_file(&self, path: &str, rendered: &str) -> Result<()> {
+        FileService::write_text_file(
+            &FileService::make_output_file_path(&Path::new(&path)),
+            &rendered,
+        )
+        .await
     }
 }

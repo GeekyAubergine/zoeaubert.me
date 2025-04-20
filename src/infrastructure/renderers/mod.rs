@@ -10,14 +10,13 @@ use tokio::try_join;
 use crate::domain::models::data::Data;
 use crate::domain::state::State;
 use crate::prelude::*;
+use crate::services::page_renderer::PageRenderer;
 use tracing::debug;
 
 use crate::domain::models::page::Page;
 use crate::domain::repositories::Profiler;
 use crate::domain::services::FileService;
 use crate::error::{FileSystemError, TemplateError};
-
-use super::services::page_renderer::PageRenderer;
 
 pub mod basic_pages;
 pub mod formatters;

@@ -7,6 +7,8 @@ pub mod infrastructure;
 pub mod prelude;
 pub mod tasks;
 
+pub mod services;
+
 use std::{
     hash::{DefaultHasher, Hash, Hasher},
     path::Path,

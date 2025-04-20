@@ -8,4 +8,3 @@ pub mod query_limiting_service_disk;
 pub mod tv_shows_service_tmdb;
 pub mod page_rendering_service_impl;
 pub mod book_service_open_library;
-pub mod page_renderer;
