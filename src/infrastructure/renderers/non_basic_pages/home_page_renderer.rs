@@ -1,7 +1,8 @@
 use askama::Template;
 
-use crate::domain::models::data::{Data, PostFilter};
+use crate::domain::models::data::Data;
 use crate::domain::models::omni_post::OmniPost;
+use crate::domain::models::post::PostFilter;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
 use crate::domain::queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags};

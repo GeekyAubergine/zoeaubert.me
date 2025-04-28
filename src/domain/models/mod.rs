@@ -27,3 +27,5 @@ pub mod about_text;
 pub mod silly_names;
 pub mod faq;
 pub mod now_text;
+pub mod post;
+pub mod games;

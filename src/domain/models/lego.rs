@@ -4,7 +4,10 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::prelude::*;
+use crate::{
+    domain::{repositories::LegoRepo, state::State},
+    prelude::*,
+};
 
 use super::image::Image;
 
@@ -90,5 +93,72 @@ impl LegoMinifig {
 
     pub fn link(&self) -> String {
         format!("https://www.brickset.com/minifigs/{}", self.id)
+    }
+}
+
+pub struct Lego {
+    sets: HashMap<u32, LegoSet>,
+    minifigs: HashMap<String, LegoMinifig>,
+}
+
+impl Lego {
+    pub async fn from_state(state: &impl State) -> Result<Self> {
+        let mut lego = Self {
+            sets: HashMap::new(),
+            minifigs: HashMap::new(),
+        };
+
+        let sets = state.lego_repo().find_all_sets().await?;
+
+        for set in sets {
+            lego.add_set(&set);
+        }
+
+        let minifigs = state.lego_repo().find_all_minifigs().await?;
+
+        for minifig in minifigs {
+            lego.add_minifig(&minifig);
+        }
+
+        Ok(lego)
+    }
+
+    pub fn find_all_sets(&self) -> Vec<&LegoSet> {
+        let mut sets = self.sets.values().collect::<Vec<&LegoSet>>();
+
+        sets.sort_by(|a, b| b.pieces.cmp(&a.pieces));
+
+        sets
+    }
+
+    pub fn find_all_minifigs(&self) -> Vec<&LegoMinifig> {
+        let mut minifigs = self
+            .minifigs
+            .values()
+            .collect::<Vec<&LegoMinifig>>();
+
+        minifigs.sort_by(|a, b| a.name.cmp(&b.name));
+
+        minifigs
+    }
+
+    pub fn find_total_pieces(&self) -> u32 {
+        self.sets.values().map(|set| set.pieces).sum()
+    }
+
+    pub fn find_total_sets(&self) -> u32 {
+        self.sets.len() as u32
+    }
+
+    pub fn find_total_minifigs(&self) -> u32 {
+        self.minifigs.len() as u32
+    }
+
+    pub fn add_set(&mut self, set: &LegoSet) {
+        self.sets.insert(set.id, set.clone());
+    }
+
+    pub fn add_minifig(&mut self, minifig: &LegoMinifig) {
+        self.minifigs.insert(minifig.id.clone(), minifig.clone());
     }
 }

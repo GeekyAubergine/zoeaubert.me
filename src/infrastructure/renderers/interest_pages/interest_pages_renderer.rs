@@ -4,7 +4,6 @@ use crate::domain::models::image::{Image};
 use crate::domain::models::lego::{LegoMinifig, LegoSet};
 use crate::domain::models::media::{Media, MediaOrientation};
 use crate::domain::models::slug::Slug;
-use crate::domain::queries::games_queries::find_all_games_by_most_recently_played;
 use crate::domain::queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags};
 use crate::domain::repositories::{AlbumsRepo, LegoRepo};
 use crate::domain::services::PageRenderingService;
@@ -38,17 +37,17 @@ pub async fn render_interests_list_page(state: &impl State) -> Result<()> {
 
     let mut interests = vec![];
 
-    if let Some(most_recent_game) = find_all_games_by_most_recently_played(state)
-        .await?
-        .first()
-        .cloned()
-    {
-        interests.push(Interest {
-            name: "Games".to_string(),
-            slug: page.slug.append("games"),
-            image: most_recent_game.image().clone(),
-        });
-    }
+    // if let Some(most_recent_game) = find_all_games_by_most_recently_played(state)
+    //     .await?
+    //     .first()
+    //     .cloned()
+    // {
+    //     interests.push(Interest {
+    //         name: "Games".to_string(),
+    //         slug: page.slug.append("games"),
+    //         image: most_recent_game.image().clone(),
+    //     });
+    // }
 
     if let Some(biggest_lego_set) = state.lego_repo().find_all_sets().await?.first().cloned() {
         interests.push(Interest {

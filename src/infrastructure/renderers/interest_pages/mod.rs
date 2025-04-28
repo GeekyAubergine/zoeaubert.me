@@ -10,6 +10,8 @@ use tv_pages_show_renderer::render_tv_show_pages;
 use crate::domain::state::State;
 use crate::prelude::*;
 
+use super::RendererContext;
+
 pub mod book_pages_renderer;
 pub mod game_pages_renderer;
 pub mod interest_pages_renderer;
@@ -18,15 +20,15 @@ pub mod lego_pages_renderer;
 pub mod movie_pages_renderer;
 pub mod tv_pages_show_renderer;
 
-pub async fn render_interest_pages(state: &impl State) -> Result<()> {
+pub async fn render_interest_pages(state: &impl State, context: &RendererContext) -> Result<()> {
     try_join!(
         render_interests_list_page(state),
-        render_lego_page(state),
-        render_games_pages(state),
-        render_movie_pages(state),
-        render_tv_show_pages(state),
-        render_league_pages(state),
-        render_book_pages(state)
+        render_lego_page(context),
+        render_games_pages(context),
+        render_movie_pages(context),
+        render_tv_show_pages(context),
+        render_league_pages(context),
+        render_book_pages(context)
     )?;
 
     Ok(())

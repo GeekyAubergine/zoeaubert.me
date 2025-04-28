@@ -6,6 +6,7 @@ use tracing::{error, warn};
 use crate::{
     domain::{
         models::{
+            post::PostFilter,
             media::Media,
             movie::{Movie, MovieId, MovieReview},
             omni_post::OmniPost,
@@ -13,11 +14,14 @@ use crate::{
             slug::Slug,
             tag::Tag,
         },
-        queries::omni_post_queries::{find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags},
+        queries::omni_post_queries::{
+            find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags,
+        },
         repositories::MovieReviewsRepo,
         services::{MovieService, PageRenderingService},
         state::State,
     },
+    infrastructure::renderers::RendererContext,
     prelude::*,
 };
 
@@ -27,10 +31,13 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 const MOVIE_TAG: &str = "Movies";
 
-pub async fn render_movie_pages(state: &impl State) -> Result<()> {
-    let posts = find_all_omni_posts(state, OmniPostFilterFlags::MOVIE_REVIEW).await?;
+pub async fn render_movie_pages(context: &RendererContext) -> Result<()> {
+    let posts = context
+        .data
+        .posts
+        .find_all_by_filter(PostFilter::MOVIE_REVIEW);
 
-    let mut reviews_by_id = HashMap::new();
+    let mut reviews_by_id: HashMap<MovieId, Vec<&MovieReview>> = HashMap::new();
     for post in posts {
         match post {
             OmniPost::MovieReview(post) => {
@@ -41,33 +48,33 @@ pub async fn render_movie_pages(state: &impl State) -> Result<()> {
         }
     }
 
-    render_movies_list_page(state, &reviews_by_id).await?;
+    render_movies_list_page(context, &reviews_by_id).await?;
 
     for reviews in reviews_by_id.into_values() {
         if let Some(movie) = reviews.first().map(|r| r.movie.clone()) {
-            render_movie_page(state, movie, reviews).await?;
+            render_movie_page(context, &movie, &reviews).await?;
         }
     }
 
     Ok(())
 }
 
-struct AverageReviewForMovie {
-    movie: Movie,
+struct AverageReviewForMovie<'m> {
+    movie: &'m Movie,
     average_score: f32,
-    most_recent_review: MovieReview,
+    most_recent_review: &'m MovieReview,
 }
 
 #[derive(Template)]
 #[template(path = "interests/movies/movies_list.html")]
-pub struct MovieListTemplate {
+pub struct MovieListTemplate<'t> {
     page: Page,
-    movies: Vec<AverageReviewForMovie>,
+    movies: Vec<AverageReviewForMovie<'t>>,
 }
 
 async fn render_movies_list_page(
-    state: &impl State,
-    reviews_by_id: &HashMap<MovieId, Vec<MovieReview>>,
+    context: &RendererContext,
+    reviews_by_id: &HashMap<MovieId, Vec<&MovieReview>>,
 ) -> Result<()> {
     let mut movies: Vec<AverageReviewForMovie> = reviews_by_id
         .iter()
@@ -77,9 +84,9 @@ async fn render_movies_list_page(
 
             match reviews.iter().max_by_key(|r| r.source_content.date()) {
                 Some(most_recent_review) => Some(AverageReviewForMovie {
-                    movie: most_recent_review.movie.clone(),
+                    movie: &most_recent_review.movie,
                     average_score,
-                    most_recent_review: most_recent_review.clone(),
+                    most_recent_review,
                 }),
                 None => {
                     error!("No reviews found for movie with id: {:?}", id);
@@ -108,30 +115,25 @@ async fn render_movies_list_page(
 
     let template = MovieListTemplate { page, movies };
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            updated_at.as_ref(),
-        )
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, updated_at)
         .await
 }
 
 #[derive(Template)]
 #[template(path = "interests/movies/movie.html")]
-pub struct MoviePageTemplate {
+pub struct MoviePageTemplate<'t> {
     page: Page,
-    movie: Movie,
+    movie: &'t Movie,
     average_score: f32,
     posts: Vec<OmniPost>,
 }
 
 async fn render_movie_page(
-    state: &impl State,
-    movie: Movie,
-    reviews: Vec<MovieReview>,
+    context: &RendererContext,
+    movie: &Movie,
+    reviews: &Vec<&MovieReview>,
 ) -> Result<()> {
     let average_score: f32 = {
         let total_score: u16 = reviews.iter().map(|r| r.score as u16).sum();
@@ -149,20 +151,18 @@ async fn render_movie_page(
 
     let template = MoviePageTemplate {
         page,
-        movie: movie.clone(),
+        movie,
         average_score,
         posts,
     };
 
-    let most_recent_review = reviews.iter().max_by_key(|r| r.source_content.date());
+    let updated_at = reviews
+        .iter()
+        .max_by_key(|r| r.source_content.date())
+        .map(|r| *r.source_content.date());
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            most_recent_review.map(|r| r.source_content.date()),
-        )
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, updated_at)
         .await
 }

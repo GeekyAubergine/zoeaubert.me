@@ -4,21 +4,21 @@ use askama::Template;
 use chrono::{DateTime, Utc};
 use tokio::try_join;
 
-use crate::domain::models::game::{Game, GameAchievmentLocked, GameAchievmentUnlocked};
+use crate::domain::models::games::steam::{
+    SteamGame, SteamGameAchievementLocked, SteamGameAchievementUnlocked, SteamGameWithAcheivements,
+};
+use crate::domain::models::games::Game;
 use crate::domain::models::image::Image;
 use crate::domain::models::omni_post::OmniPost;
+use crate::domain::models::page::Page;
+use crate::domain::models::post::PostFilter;
 use crate::domain::models::site_config::PageImage;
 use crate::domain::models::slug::Slug;
-use crate::domain::models::steam::{SteamGameAchievementLocked, SteamGameAchievementUnlocked};
-use crate::domain::models::{page::Page, steam::SteamGame};
 
-use crate::domain::queries::games_queries::{
-    find_all_games_by_achievment_unlocked_percentage, find_all_games_by_most_recently_played,
-    GameWithAchievements,
-};
 use crate::domain::queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags};
 use crate::domain::repositories::{SteamAchievementsRepo, SteamGamesRepo};
 use crate::domain::services::PageRenderingService;
+use crate::infrastructure::renderers::RendererContext;
 use crate::infrastructure::utils::paginator::paginate;
 use crate::prelude::*;
 
@@ -32,18 +32,18 @@ const RECENTLY_PLAYED_GAMES_COUNT: usize = 6;
 const HEADER_IMAGE_WIDTH: u32 = 414;
 const HEADER_IMAGE_HEIGHT: u32 = 193;
 
-pub async fn render_games_pages(state: &impl State) -> Result<()> {
-    let games = find_all_games_by_most_recently_played(state).await?;
+pub async fn render_games_pages(context: &RendererContext) -> Result<()> {
+    let games = context.data.games.find_by_most_recently_played();
 
     try_join!(
-        render_games_list_page(state, &games),
-        render_activity_page(state),
-        render_games_list_most_achieved_page(state, &games),
+        render_games_list_page(context),
+        render_activity_page(context),
+        render_games_list_most_achieved_page(context),
     )?;
 
     for game in games {
         match game {
-            Game::Steam(steam_game) => render_steam_game_page(state, &steam_game).await?,
+            Game::Steam(steam_game) => render_steam_game_page(context, &steam_game).await?,
             _ => {}
         }
     }
@@ -53,25 +53,23 @@ pub async fn render_games_pages(state: &impl State) -> Result<()> {
 
 #[derive(Template)]
 #[template(path = "interests/games/games_list.html")]
-struct GamesListTemplate {
+struct GamesListTemplate<'t> {
     page: Page,
-    games_by_recently_played: Vec<Game>,
-    games_by_most_played: Vec<Game>,
+    games_by_recently_played: Vec<&'t Game>,
+    games_by_most_played: Vec<&'t Game>,
     total_games: usize,
     total_playtime: f32,
 }
 
-async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()> {
+async fn render_games_list_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/games"),
         Some("Games"),
         Some("My Games".to_string()),
     );
 
-    let mut games_by_recently_played = games.to_vec();
-    let mut games_by_most_played = games.to_vec();
-
-    games_by_most_played.sort_by(|a, b| b.playtime().partial_cmp(&a.playtime()).unwrap());
+    let mut games_by_recently_played = context.data.games.find_by_most_recently_played().to_vec();
+    let mut games_by_most_played = context.data.games.find_by_most_most_played().to_vec();
 
     let games_by_recently_played = games_by_recently_played
         .iter()
@@ -79,8 +77,11 @@ async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()
         .cloned()
         .collect::<Vec<_>>();
 
-    let total_games = games.len();
-    let total_playtime = games.iter().map(|g| g.playtime_hours()).sum::<f32>();
+    let total_games = games_by_recently_played.len();
+    let total_playtime = games_by_recently_played
+        .iter()
+        .map(|g| g.playtime_hours())
+        .sum::<f32>();
 
     let template = GamesListTemplate {
         page,
@@ -90,84 +91,80 @@ async fn render_games_list_page(state: &impl State, games: &[Game]) -> Result<()
         total_playtime,
     };
 
-    state
-        .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template, None)
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }
 
 #[derive(Template)]
 #[template(path = "interests/games/games_list_most_achievements.html")]
-struct GamesListMostAchievmentsTemplate {
+struct GamesListMostAchievmentsTemplate<'t> {
     page: Page,
-    games: Vec<GameWithAchievements>,
+    games: Vec<&'t Game>,
 }
 
-async fn render_games_list_most_achieved_page(state: &impl State, games: &[Game]) -> Result<()> {
+async fn render_games_list_most_achieved_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/games/achievements"),
         Some("Game Achievements"),
         Some("My Game Achievements".to_string()),
     );
 
-    let games = find_all_games_by_achievment_unlocked_percentage(state)
-        .await?
-        .into_iter()
-        .filter(|game| game.unlocked().len() > 0)
-        .collect();
+    let games = context
+        .data
+        .games
+        .find_by_most_highest_achievement_unlocked_percentage();
 
     let template = GamesListMostAchievmentsTemplate { page, games };
 
-    state
-        .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template, None)
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }
 
 #[derive(Template)]
 #[template(path = "interests/games/steam/steam_game.html")]
-struct SteamGameTemplate {
+struct SteamGameTemplate<'t> {
     page: Page,
-    game: SteamGame,
-    unlocked_achievements: Vec<SteamGameAchievementUnlocked>,
-    locked_achievements: Vec<SteamGameAchievementLocked>,
+    game: &'t SteamGame,
+    unlocked_achievements: Vec<&'t SteamGameAchievementUnlocked>,
+    locked_achievements: Vec<&'t SteamGameAchievementLocked>,
     total_achievements: usize,
 }
 
-async fn render_steam_game_page(state: &impl State, game: &SteamGame) -> Result<()> {
-    let unlocked_achievements = state
-        .steam_achievements_repo()
-        .find_all_unlocked_by_unlocked_date(game.id)
-        .await?;
+async fn render_steam_game_page(
+    context: &RendererContext,
+    game: &SteamGameWithAcheivements,
+) -> Result<()> {
+    let unlocked_achievements = game.find_all_unlocked_by_unlocked_date();
 
-    let locked_achievements = state
-        .steam_achievements_repo()
-        .find_all_locked_by_name(game.id)
-        .await?;
+    let locked_achievements = game.find_all_locked_by_name();
 
     let total_achievements = unlocked_achievements.len() + locked_achievements.len();
 
-    let title = format!("{} Game Stats", game.name);
+    let title = format!("{} Game Stats", game.game.name);
 
     let description = match total_achievements {
-        0 => format!("{}h playtime", game.playtime_hours().format(1, true),),
+        0 => format!("{}h playtime", game.game.playtime_hours().format(1, true),),
         _ => format!(
             "{}h playtime, {}/{} achievements",
-            game.playtime_hours().format(1, true),
-            unlocked_achievements.len(),
+            game.game.playtime_hours().format(1, true),
+            game.unlocked_achievement_count(),
             total_achievements,
         ),
     };
 
     let image = PageImage::new(
-        game.header_image.cdn_url().as_str(),
-        format!("{} Steam header image", game.name).as_str(),
+        game.game.header_image.cdn_url().as_str(),
+        format!("{} Steam header image", game.game.name).as_str(),
         HEADER_IMAGE_WIDTH,
         HEADER_IMAGE_HEIGHT,
     );
 
     let page = Page::new(
-        Slug::new(&format!("/interests/games/{}/", game.id)),
+        Slug::new(&format!("/interests/games/{}/", game.game.id)),
         Some(title.as_str()),
         Some(description),
     )
@@ -175,28 +172,30 @@ async fn render_steam_game_page(state: &impl State, game: &SteamGame) -> Result<
 
     let template = SteamGameTemplate {
         page,
-        game: game.clone(),
+        game: &game.game,
         unlocked_achievements,
         locked_achievements,
-        total_achievements,
+        total_achievements: total_achievements as usize,
     };
 
-    state
-        .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template, None)
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }
 
 #[derive(Template)]
 #[template(path = "omni_post/omni_post_list/omni_post_list_page.html")]
-pub struct ActivityPageTemplate {
+pub struct ActivityPageTemplate<'t> {
     page: Page,
-    posts: Vec<OmniPost>,
+    posts: Vec<&'t OmniPost>,
 }
 
-async fn render_activity_page(state: &impl State) -> Result<()> {
-    let omni_posts =
-        find_all_omni_posts(state, OmniPostFilterFlags::filter_game_activity()).await?;
+async fn render_activity_page(context: &RendererContext) -> Result<()> {
+    let omni_posts = context
+        .data
+        .posts
+        .find_all_by_filter(PostFilter::filter_game_activity());
 
     let paginated = paginate(&omni_posts, 25);
 
@@ -214,18 +213,9 @@ async fn render_activity_page(state: &impl State) -> Result<()> {
             posts: paginator_page.data.to_vec(),
         };
 
-        state
-            .page_rendering_service()
-            .add_page(
-                state,
-                template.page.slug.clone(),
-                template,
-                paginator_page
-                    .data
-                    .first()
-                    .map(|p| p.last_updated_at())
-                    .flatten(),
-            )
+        context
+            .renderer
+            .render_page(&template.page.slug, &template, None)
             .await?;
     }
 

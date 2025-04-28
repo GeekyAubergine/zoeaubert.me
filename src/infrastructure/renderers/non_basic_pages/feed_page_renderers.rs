@@ -7,7 +7,7 @@ use futures::try_join;
 use crate::{
     domain::{
         models::{
-            blog_post::BlogPost, data::PostFilter, omni_post::OmniPost, page::Page,
+            blog_post::BlogPost, post::PostFilter, omni_post::OmniPost, page::Page,
             site_config::SITE_CONFIG, slug::Slug,
         },
         queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags},
