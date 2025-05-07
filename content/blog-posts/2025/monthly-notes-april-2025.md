@@ -3,7 +3,7 @@ date: 2025-05-07T22:30
 title: Monthly Notes - April 2025
 slug: montly-notes-april-2025
 description: I ran lots, the government tried to deny my existence, and I got some new toys. CW for transphobia and government stupidity
-tags: []
+tags: ["Life", "MonthlyNotes"]
 ---
 
 This has been a wild month. So much has happened that it's prompted me to write a mid-year update rather than waiting for my year-in-review post.
