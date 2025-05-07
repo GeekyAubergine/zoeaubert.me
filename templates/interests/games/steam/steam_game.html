@@ -34,7 +34,6 @@
                             <h3>{{ achievement.display_name }}</h3>
                             <p>{{ achievement.description }}</p>
                         </div>
-                        <p class="secondary">{{ achievement.global_unlocked_percentage.format(1, false) }}% of players have this acheivement{%- if achievement.global_unlocked_percentage < 10.0 %}<span class="special">⭐️<span>{% endif %}</p>
                     </div>
                     <div class="right">
                         <time datetime="{{ achievement.unlocked_date.datetime() }}">{{ achievement.unlocked_date.without_time() }}</time>
