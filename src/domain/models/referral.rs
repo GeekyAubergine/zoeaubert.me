@@ -1,5 +1,8 @@
+use crate::prelude::*;
 use serde::{Deserialize, Serialize};
 use url::Url;
+
+use crate::domain::{repositories::ReferralsRepo, state::State};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Referral {
@@ -15,5 +18,17 @@ impl Referral {
             description,
             url,
         }
+    }
+}
+
+pub struct Referrals {
+    pub referrals: Vec<Referral>,
+}
+
+impl Referrals {
+    pub async fn from_state(state: &impl State) -> Result<Self> {
+        Ok(Self {
+            referrals: state.referrals_repo().find_all().await?,
+        })
     }
 }

@@ -3,7 +3,7 @@ use regex::Regex;
 
 use crate::{
     domain::{
-        models::{content::Content, movie::MovieReview, omni_post::OmniPost},
+        models::{raw_content::RawContent, movie::MovieReview, omni_post::OmniPost},
         services::MovieService,
         state::State,
     },
@@ -26,10 +26,10 @@ pub struct Review {
     pub review: String,
 }
 
-pub fn parse_content_into_movie_review(post: &Content) -> Result<Review> {
+pub fn parse_content_into_movie_review(post: &RawContent) -> Result<Review> {
     match post {
-        Content::MicroPost(post) => parse_markdown_into_movie_review(&post.content),
-        Content::MastodonPost(post) => parse_markdown_into_movie_review(&post.content()),
+        RawContent::MicroPost(post) => parse_markdown_into_movie_review(&post.content),
+        RawContent::MastodonPost(post) => parse_markdown_into_movie_review(&post.content()),
         _ => Err(MovieError::unsupported_content_type(post)),
     }
 }

@@ -6,7 +6,7 @@ use crate::prelude::*;
 
 use super::{
     models::{
-        album::{Album, AlbumPhoto}, blog_post::BlogPost, content::Content, league::LeagueChampNote, lego::{LegoMinifig, LegoSet}, mastodon_post::MastodonPost, micro_post::MicroPost, movie::{MovieId, MovieReview}, omni_post::OmniPost, project::Project, referral::Referral, slug::Slug, steam::{
+        album::{Album, AlbumPhoto}, blog_post::BlogPost, raw_content::RawContent, league::LeagueChampNote, lego::{LegoMinifig, LegoSet}, mastodon_post::MastodonPost, micro_post::MicroPost, movie::{MovieId, MovieReview}, omni_post::OmniPost, project::Project, referral::Referral, slug::Slug, steam::{
             SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
             SteamGameAchievementUnlocked,
         }, tag::Tag, tv_show::{TvShowId, TvShowReview}

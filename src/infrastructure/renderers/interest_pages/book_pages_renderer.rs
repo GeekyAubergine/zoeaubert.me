@@ -6,14 +6,7 @@ use tracing::{error, warn};
 use crate::{
     domain::{
         models::{
-            book::{Book, BookID, BookReview},
-            media::Media,
-            movie::{Movie, MovieId, MovieReview},
-            omni_post::OmniPost,
-            page::Page,
-            slug::Slug,
-            tag::Tag,
-            tv_show::{TvShow, TvShowId, TvShowReview},
+            book::{Book, BookID, BookReview}, media::Media, movie::{Movie, MovieId, MovieReview}, omni_post::OmniPost, page::Page, post::PostFilter, slug::Slug, tag::Tag, tv_show::{TvShow, TvShowId, TvShowReview}
         },
         queries::omni_post_queries::{
             find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags,
@@ -22,6 +15,7 @@ use crate::{
         services::{MovieService, PageRenderingService, TvShowsService},
         state::State,
     },
+    infrastructure::renderers::RendererContext,
     prelude::*,
 };
 
@@ -29,8 +23,11 @@ use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
-pub async fn render_book_pages(state: &impl State) -> Result<()> {
-    let posts = find_all_omni_posts(state, OmniPostFilterFlags::BOOK_REVIEW).await?;
+pub async fn render_book_pages(context: &RendererContext) -> Result<()> {
+    let posts = context
+        .data
+        .posts
+        .find_all_by_filter(PostFilter::BOOK_REVIEW);
 
     let mut reviews_by_id = HashMap::new();
     for post in posts {
@@ -42,33 +39,33 @@ pub async fn render_book_pages(state: &impl State) -> Result<()> {
             _ => {}
         }
     }
-    render_book_list_page(state, &reviews_by_id).await?;
+    render_book_list_page(context, &reviews_by_id).await?;
 
     for reviews in reviews_by_id.values() {
         if let Some(tv_show) = reviews.first().map(|r| r.book.clone()) {
-            render_tv_show_page(state, &tv_show, reviews).await?;
+            render_tv_show_page(context, &tv_show, &reviews).await?;
         }
     }
 
     Ok(())
 }
 
-struct AverageReviewForBook {
-    book: Book,
+struct AverageReviewForBook<'b> {
+    book: &'b Book,
     average_score: f32,
-    most_recent_review: BookReview,
+    most_recent_review: &'b BookReview,
 }
 
 #[derive(Template)]
 #[template(path = "interests/books/book_list.html")]
-pub struct BookListTemplate {
+pub struct BookListTemplate<'t> {
     page: Page,
-    books: Vec<AverageReviewForBook>,
+    books: Vec<AverageReviewForBook<'t>>,
 }
 
 async fn render_book_list_page(
-    state: &impl State,
-    reviews_by_id: &HashMap<BookID, Vec<BookReview>>,
+    context: &RendererContext,
+    reviews_by_id: &HashMap<BookID, Vec<&BookReview>>,
 ) -> Result<()> {
     let mut books: Vec<AverageReviewForBook> = reviews_by_id
         .iter()
@@ -80,9 +77,9 @@ async fn render_book_list_page(
 
             match reviews.iter().max_by_key(|r| r.source_content.date()) {
                 Some(most_recent_review) => Some(AverageReviewForBook {
-                    book: most_recent_review.book.clone(),
+                    book: &most_recent_review.book,
                     average_score,
-                    most_recent_review: most_recent_review.clone(),
+                    most_recent_review,
                 }),
                 None => {
                     error!("No reviews found for book with id: {:?}", id);
@@ -111,35 +108,27 @@ async fn render_book_list_page(
 
     let template = BookListTemplate { page, books };
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            updated_at.as_ref(),
-        )
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, updated_at)
         .await
 }
 
 #[derive(Template)]
 #[template(path = "interests/books/book.html")]
-pub struct BookPageTemplate {
+pub struct BookPageTemplate<'t> {
     page: Page,
-    book: Book,
+    book: &'t Book,
     average_score: f32,
     posts: Vec<OmniPost>,
 }
 
 async fn render_tv_show_page(
-    state: &impl State,
+    context: &RendererContext,
     book: &Book,
-    reviews: &[BookReview],
+    reviews: &Vec<&BookReview>,
 ) -> Result<()> {
-    let total_scores = reviews
-        .iter()
-        .map(|r| r.score)
-        .collect::<Vec<u8>>();
+    let total_scores = reviews.iter().map(|r| r.score).collect::<Vec<u8>>();
 
     let average_score: f32 = total_scores.iter().sum::<u8>() as f32 / total_scores.len() as f32;
 
@@ -154,20 +143,18 @@ async fn render_tv_show_page(
 
     let template = BookPageTemplate {
         page,
-        book: book.clone(),
+        book,
         average_score,
         posts,
     };
 
-    let most_recent_review = reviews.iter().max_by_key(|r| r.source_content.date());
+    let updated_at = reviews
+        .iter()
+        .max_by_key(|r| r.source_content.date())
+        .map(|r| *r.source_content.date());
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            most_recent_review.map(|r| r.source_content.date()),
-        )
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, updated_at)
         .await
 }

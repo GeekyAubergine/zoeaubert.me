@@ -18,7 +18,7 @@ use super::{
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Content {
+pub enum RawContent {
     BlogPost(BlogPost),
     MicroPost(MicroPost),
     MastodonPost(MastodonPost),
@@ -26,7 +26,7 @@ pub enum Content {
     Album(Album),
 }
 
-impl Content {
+impl RawContent {
     pub fn slug(&self) -> Slug {
         match self {
             Self::BlogPost(blog_post) => blog_post.slug.clone(),
@@ -125,37 +125,37 @@ impl Content {
     }
 }
 
-impl From<BlogPost> for Content {
+impl From<BlogPost> for RawContent {
     fn from(blog_post: BlogPost) -> Self {
         Self::BlogPost(blog_post)
     }
 }
 
-impl From<MicroPost> for Content {
+impl From<MicroPost> for RawContent {
     fn from(micro_post: MicroPost) -> Self {
         Self::MicroPost(micro_post)
     }
 }
 
-impl From<MastodonPost> for Content {
+impl From<MastodonPost> for RawContent {
     fn from(mastodon_post: MastodonPost) -> Self {
         Self::MastodonPost(mastodon_post)
     }
 }
 
-impl From<(Album, AlbumPhoto)> for Content {
+impl From<(Album, AlbumPhoto)> for RawContent {
     fn from((album, photo): (Album, AlbumPhoto)) -> Self {
         Self::AlbumPhoto { album, photo }
     }
 }
 
-impl From<(AlbumPhoto, Album)> for Content {
+impl From<(AlbumPhoto, Album)> for RawContent {
     fn from((photo, album): (AlbumPhoto, Album)) -> Self {
         Self::AlbumPhoto { album, photo }
     }
 }
 
-impl From<Album> for Content {
+impl From<Album> for RawContent {
     fn from(album: Album) -> Self {
         Self::Album(album)
     }
