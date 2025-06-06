@@ -55,6 +55,12 @@ impl Game {
             Game::Steam(game) => game.achievement_unlocked_percentage(),
         }
     }
+
+    pub fn image(&self) -> &Image {
+        match self {
+            Game::Steam(game) => &game.game.header_image,
+        }
+    }
 }
 
 pub struct Games {

@@ -5,12 +5,15 @@ use chrono::Utc;
 
 use crate::{
     domain::{
-        models::{omni_post::OmniPost, page::Page, slug::Slug},
+        models::{omni_post::OmniPost, page::Page, post::PostFilter, slug::Slug},
         queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags},
         services::PageRenderingService,
         state::State,
     },
-    infrastructure::utils::paginator::{paginate, PaginatorPage},
+    infrastructure::{
+        renderers::RendererContext,
+        utils::paginator::{paginate, PaginatorPage},
+    },
     prelude::*,
 };
 
@@ -23,15 +26,12 @@ use crate::domain::models::tag::Tag;
 
 const DEFAULT_PAGINATION_SIZE: usize = 25;
 
-fn group_posts_by_tag(posts: Vec<OmniPost>) -> HashMap<Tag, Vec<OmniPost>> {
+fn group_posts_by_tag(posts: Vec<&OmniPost>) -> HashMap<Tag, Vec<&OmniPost>> {
     let mut grouped = HashMap::new();
 
     for post in posts {
         for tag in post.tags() {
-            grouped
-                .entry(tag)
-                .or_insert_with(Vec::new)
-                .push(post.clone());
+            grouped.entry(tag).or_insert_with(Vec::new).push(post);
         }
     }
 
@@ -43,8 +43,11 @@ pub struct TagCount {
     pub count: usize,
 }
 
-pub async fn render_tags_pages(state: &impl State) -> Result<()> {
-    let posts = find_all_omni_posts(state, OmniPostFilterFlags::filter_tags_page()).await?;
+pub async fn render_tags_pages(context: &RendererContext) -> Result<()> {
+    let posts = context
+        .data
+        .posts
+        .find_all_by_filter(PostFilter::filter_tags_page());
 
     let grouped = group_posts_by_tag(posts);
 
@@ -53,7 +56,7 @@ pub async fn render_tags_pages(state: &impl State) -> Result<()> {
         .map(|(tag, posts)| (tag.clone(), posts.len()))
         .collect::<HashMap<Tag, usize>>();
 
-    render_tags_list_page(state, &tag_counts).await?;
+    render_tags_list_page(context, &tag_counts).await?;
 
     for (tag, posts) in grouped {
         let paginated = paginate(&posts, DEFAULT_PAGINATION_SIZE);
@@ -65,7 +68,7 @@ pub async fn render_tags_pages(state: &impl State) -> Result<()> {
         );
 
         for page in paginated {
-            render_tag_page(state, &base_page, &tag, &page).await?;
+            render_tag_page(context, &base_page, &tag, &page).await?;
         }
     }
 
@@ -79,7 +82,10 @@ struct TagsListTemplate {
     tags: Vec<TagCount>,
 }
 
-async fn render_tags_list_page(state: &impl State, tag_counts: &HashMap<Tag, usize>) -> Result<()> {
+async fn render_tags_list_page(
+    context: &RendererContext,
+    tag_counts: &HashMap<Tag, usize>,
+) -> Result<()> {
     let mut tags = tag_counts
         .into_iter()
         .map(|(tag, count)| TagCount {
@@ -87,15 +93,20 @@ async fn render_tags_list_page(state: &impl State, tag_counts: &HashMap<Tag, usi
             count: *count,
         })
         .collect::<Vec<TagCount>>();
+
     tags.sort_by(|a, b| a.tag.cmp(&b.tag));
 
-    let page = Page::new(Slug::new("tags"), Some("Tags"), Some("All Tags".to_string()));
+    let page = Page::new(
+        Slug::new("tags"),
+        Some("Tags"),
+        Some("All Tags".to_string()),
+    );
 
     let template = TagsListTemplate { page, tags };
 
-    state
-        .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template, None)
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }
 
@@ -107,31 +118,20 @@ struct TagPostsTemplate {
 }
 
 async fn render_tag_page<'d>(
-    state: &impl State,
+    context: &RendererContext,
     base_page: &Page,
     tag: &Tag,
-    paginator_page: &PaginatorPage<'d, OmniPost>,
+    paginator_page: &PaginatorPage<'d, &OmniPost>,
 ) -> Result<()> {
     let page = Page::from_page_and_pagination_page(base_page, paginator_page, "Posts");
 
     let template = TagPostsTemplate {
         page,
-        posts: paginator_page.data.to_vec(),
+        posts: paginator_page.data.iter().cloned().cloned().collect(),
     };
 
-    let most_recent_post = paginator_page
-        .data
-        .first()
-        .map(|p| p.last_updated_at())
-        .flatten();
-
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            most_recent_post,
-        )
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }

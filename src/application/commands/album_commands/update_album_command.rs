@@ -11,7 +11,7 @@ use crate::{
     calculate_hash,
     domain::{
         models::{
-            album::{Album, AlbumPhoto}, image::Image, media::{MediaDimensions, MediaOrientation}, slug::Slug, tag::Tag
+            albums::{album::Album, album_photo::AlbumPhoto}, image::Image, media::{MediaDimensions, MediaOrientation}, slug::Slug, tag::Tag
         },
         repositories::{AlbumsRepo, Profiler},
         services::{FileService, ImageService},

@@ -5,12 +5,19 @@ use crate::{
         models::{
             omni_post::OmniPost,
             page::{Page, PagePagination},
+            post::PostFilter,
             slug::Slug,
-        }, queries::omni_post_queries::{
+        },
+        queries::omni_post_queries::{
             find_all_omni_posts, find_omni_posts_grouped_by_year, OmniPostFilterFlags,
-        }, services::PageRenderingService, state::State
+        },
+        services::PageRenderingService,
+        state::State,
     },
-    infrastructure::utils::paginator::{paginate, PaginatorPage},
+    infrastructure::{
+        renderers::RendererContext,
+        utils::paginator::{paginate, PaginatorPage},
+    },
 };
 
 use crate::prelude::*;
@@ -22,12 +29,14 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 const DEFAULT_PAGINATION_SIZE: usize = 25;
 
-pub async fn render_years_pages<'d>(state: &impl State) -> Result<()> {
-    let posts =
-        find_omni_posts_grouped_by_year(state, OmniPostFilterFlags::filter_main_timeline()).await?;
+pub async fn render_years_pages<'d>(context: &RendererContext) -> Result<()> {
+    let posts = context
+        .data
+        .posts
+        .find_all_by_year_and_grouped_by_year(PostFilter::filter_main_timeline());
 
     for (year, posts) in posts {
-        render_year_pages(state, year, &posts).await?;
+        render_year_pages(context, year, &posts).await?;
     }
 
     Ok(())
@@ -38,10 +47,14 @@ pub async fn render_years_pages<'d>(state: &impl State) -> Result<()> {
 pub struct YearTemplate {
     page: Page,
     year: u16,
-    posts:  Vec<OmniPost>,
+    posts: Vec<OmniPost>,
 }
 
-async fn render_year_pages<'d>(state: &impl State, year: u16, posts: &[OmniPost]) -> Result<()> {
+async fn render_year_pages<'d>(
+    context: &RendererContext,
+    year: u16,
+    posts: &[&OmniPost],
+) -> Result<()> {
     let page = Page::new(
         Slug::new(&format!("/years/{}", year)),
         Some(&format!("{} posts", year)),
@@ -49,19 +62,18 @@ async fn render_year_pages<'d>(state: &impl State, year: u16, posts: &[OmniPost]
     );
 
     for paginator_page in paginate(posts, DEFAULT_PAGINATION_SIZE) {
-        let page = Page::from_page_and_pagination_page(
-            &page,
-            &paginator_page, "Posts");
+        let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
 
         let template = YearTemplate {
             page,
             year,
-            posts: paginator_page.data.to_vec(),
+            posts: paginator_page.data.iter().cloned().cloned().collect(),
         };
 
-        state
-            .page_rendering_service()
-            .add_page(state, template.page.slug.clone(), template, None).await?;
+        context
+            .renderer
+            .render_page(&template.page.slug, &template, None)
+            .await?;
     }
 
     Ok(())

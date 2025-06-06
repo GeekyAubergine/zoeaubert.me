@@ -6,7 +6,8 @@ use chrono::Datelike;
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::domain::models::album::{Album, AlbumPhoto};
+use crate::domain::models::albums::album::Album;
+use crate::domain::models::albums::album_photo::AlbumPhoto;
 use crate::domain::models::slug::Slug;
 use crate::domain::repositories::AlbumsRepo;
 use crate::domain::services::FileService;

@@ -6,13 +6,17 @@ use crate::{
             image::Image,
             omni_post::OmniPost,
             page::{Page, PagePagination},
+            post::PostFilter,
             slug::Slug,
         },
         queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags},
         services::PageRenderingService,
         state::State,
     },
-    infrastructure::utils::paginator::{paginate, PaginatorPage},
+    infrastructure::{
+        renderers::RendererContext,
+        utils::paginator::{paginate, PaginatorPage},
+    },
 };
 
 use crate::prelude::*;
@@ -31,8 +35,11 @@ pub struct PhotosPage {
     photos: Vec<Image>,
 }
 
-pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
-    let omni_posts = find_all_omni_posts(state, OmniPostFilterFlags::filter_photos_page()).await?;
+pub async fn render_photos_page<'d>(context: &RendererContext) -> Result<()> {
+    let omni_posts = context
+        .data
+        .posts
+        .find_all_by_filter(PostFilter::filter_photos_page());
 
     let photos = omni_posts
         .iter()
@@ -45,7 +52,11 @@ pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
 
     let paginated = paginate(&photos, DEFAULT_PAGINATION_SIZE);
 
-    let page = Page::new(Slug::new("photos"), Some("Photos"), Some("All my photos".to_string()));
+    let page = Page::new(
+        Slug::new("photos"),
+        Some("Photos"),
+        Some("All my photos".to_string()),
+    );
 
     for paginator_page in paginated {
         let mut page = Page::from_page_and_pagination_page(&page, &paginator_page, "Photos");
@@ -59,9 +70,9 @@ pub async fn render_photos_page<'d>(state: &impl State) -> Result<()> {
             photos: paginator_page.data.to_vec(),
         };
 
-        state
-            .page_rendering_service()
-            .add_page(state, template.page.slug.clone(), template, None)
+        context
+            .renderer
+            .render_page(&template.page.slug, &template, None)
             .await?;
     }
 

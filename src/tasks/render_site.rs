@@ -118,7 +118,7 @@ pub async fn render_site(state: &impl State) -> Result<()> {
 
     let context: RendererContext = new_rendering_context_from_state(state).await?;
 
-    render_pages(state, &context).await?;
+    render_pages(&context).await?;
 
     let disallowed_routes = read_disallowed_routes_from_robot_file(state).await?;
 

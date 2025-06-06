@@ -4,8 +4,9 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::domain::models::albums::{album::Album, album_photo::AlbumPhoto};
+
 use super::{
-    album::{Album, AlbumPhoto},
     blog_post::BlogPost,
     book::BookReview,
     raw_content::RawContent,

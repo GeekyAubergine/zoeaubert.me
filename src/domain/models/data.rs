@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use bitflags::bitflags;
 use chrono::Datelike;
 
+use crate::domain::models::albums::Albums;
+use crate::domain::models::projects::Projects;
 use crate::domain::repositories::{AboutTextRepo, OmniPostRepo};
 use crate::prelude::*;
 
@@ -31,6 +33,8 @@ pub struct Data {
     pub lego: Lego,
     pub games: Games,
     pub posts: Posts,
+    pub albums: Albums,
+    pub projects: Projects,
 }
 
 impl Data {
@@ -49,6 +53,8 @@ impl Data {
             lego: Lego::from_state(state).await?,
             games: Games::from_state(state).await?,
             posts,
+            albums: Albums::from_state(state).await?,
+            projects: Projects::from_state(state).await?,
         })
     }
 }

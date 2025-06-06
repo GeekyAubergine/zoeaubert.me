@@ -18,15 +18,14 @@ pub mod photo_pages_renderer;
 pub mod project_pages_renderers;
 
 pub async fn render_non_basic_pages(
-    state: &impl State,
     context: &RendererContext,
 ) -> Result<()> {
     try_join!(
-        render_album_pages(state),
+        render_album_pages(context),
         render_feed_files(context),
         render_home_page(context),
-        render_photos_page(state),
-        render_project_pages(state),
+        render_photos_page(context),
+        render_project_pages(context),
     )?;
 
     Ok(())

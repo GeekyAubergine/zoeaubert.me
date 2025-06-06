@@ -2,11 +2,13 @@ use askama::Template;
 
 use crate::domain::models::omni_post::OmniPost;
 use crate::domain::models::page::Page;
+use crate::domain::models::post::PostFilter;
 use crate::domain::models::slug::Slug;
 use crate::domain::repositories::BlogPostsRepo;
 use crate::domain::services::PageRenderingService;
 use crate::domain::{models::blog_post::BlogPost, state::State};
 
+use crate::infrastructure::renderers::RendererContext;
 use crate::prelude::*;
 
 use crate::domain::models::media::Media;
@@ -21,8 +23,16 @@ struct BlogsListTemplate {
     blog_posts: Vec<BlogPost>,
 }
 
-pub async fn render_blog_list_page(state: &impl State) -> Result<()> {
-    let blog_posts = state.blog_posts_repo().find_all_by_date().await?;
+pub async fn render_blog_list_page(context: &RendererContext) -> Result<()> {
+    let blog_posts = context.data.posts.find_all_by_filter(PostFilter::BLOG_POST);
+
+    let blog_posts = blog_posts
+        .iter()
+        .filter_map(|post| match post {
+            OmniPost::BlogPost(post) => Some(post.clone()),
+            _ => None,
+        })
+        .collect::<Vec<BlogPost>>();
 
     let page = Page::new(
         Slug::new("/blog"),
@@ -30,22 +40,11 @@ pub async fn render_blog_list_page(state: &impl State) -> Result<()> {
         Some("My blog posts".to_string()),
     );
 
-    let template = BlogsListTemplate {
-        page,
-        blog_posts: blog_posts.to_vec(),
-    };
-
     let most_recent_blog_post = blog_posts.first().map(|p| p.updated_at);
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            most_recent_blog_post.as_ref(),
-        )
-        .await
+    let template = BlogsListTemplate { page, blog_posts };
+
+    context.renderer.render_page(&template.page.slug, &template, most_recent_blog_post).await
 }
 
 // #[derive(Template)]

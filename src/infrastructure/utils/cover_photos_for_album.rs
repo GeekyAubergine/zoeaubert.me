@@ -1,6 +1,6 @@
 use bitflags::iter;
 
-use crate::domain::models::album::{Album, AlbumPhoto};
+use crate::domain::models::albums::{album::Album, album_photo::AlbumPhoto};
 
 pub fn cover_photos_for_album(album: &Album) -> Vec<&AlbumPhoto> {
     let (featured, non_featured): (Vec<&AlbumPhoto>, Vec<&AlbumPhoto>) =
@@ -62,7 +62,7 @@ mod test {
 
     use crate::{
         domain::models::{
-            album::{Album, AlbumPhoto}, image::Image, media::MediaDimensions, slug::Slug
+            albums::{album::Album, album_photo::AlbumPhoto}, image::Image, media::MediaDimensions, slug::Slug
         },
         infrastructure::utils::cover_photos_for_album::cover_photos_for_album,
     };

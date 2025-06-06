@@ -20,9 +20,9 @@ pub mod lego_pages_renderer;
 pub mod movie_pages_renderer;
 pub mod tv_pages_show_renderer;
 
-pub async fn render_interest_pages(state: &impl State, context: &RendererContext) -> Result<()> {
+pub async fn render_interest_pages(context: &RendererContext) -> Result<()> {
     try_join!(
-        render_interests_list_page(state),
+        render_interests_list_page(context),
         render_lego_page(context),
         render_games_pages(context),
         render_movie_pages(context),

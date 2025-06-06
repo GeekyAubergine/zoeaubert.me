@@ -4,7 +4,7 @@ use serde::Deserialize;
 use url::Url;
 
 use crate::domain::models::image::Image;
-use crate::domain::models::project::Project;
+use crate::domain::models::projects::Project;
 use crate::domain::models::slug::Slug;
 use crate::domain::repositories::ProjectsRepo;
 use crate::domain::services::{FileService, ImageService};
