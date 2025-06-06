@@ -6,6 +6,7 @@ use crate::domain::repositories::LegoRepo;
 use crate::domain::services::PageRenderingService;
 use crate::domain::{models::page::Page, state::State};
 
+use crate::infrastructure::renderers::RendererContext;
 use crate::prelude::*;
 
 use crate::infrastructure::renderers::formatters::format_date::FormatDate;
@@ -14,16 +15,16 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 #[derive(Template)]
 #[template(path = "interests/lego_list.html")]
-pub struct LegoListTemplate {
+pub struct LegoListTemplate<'t> {
     page: Page,
     total_sets: u32,
     total_pieces: u32,
-    sets: Vec<LegoSet>,
+    sets: Vec<&'t LegoSet>,
     total_minifigs: u32,
-    minifigs: Vec<LegoMinifig>,
+    minifigs: Vec<&'t LegoMinifig>,
 }
 
-pub async fn render_lego_page(state: &impl State) -> Result<()> {
+pub async fn render_lego_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(
         Slug::new("/interests/lego"),
         Some("Lego"),
@@ -32,14 +33,15 @@ pub async fn render_lego_page(state: &impl State) -> Result<()> {
 
     let template = LegoListTemplate {
         page,
-        total_sets: state.lego_repo().find_total_sets().await?,
-        total_pieces: state.lego_repo().find_total_pieces().await?,
-        sets: state.lego_repo().find_all_sets().await?,
-        total_minifigs: state.lego_repo().find_total_minifigs().await?,
-        minifigs:state.lego_repo().find_all_minifigs().await?,
+        total_sets: context.data.lego.find_total_sets(),
+        total_pieces: context.data.lego.find_total_pieces(),
+        sets: context.data.lego.find_all_sets(),
+        total_minifigs: context.data.lego.find_total_minifigs(),
+        minifigs: context.data.lego.find_all_minifigs(),
     };
 
-    state
-        .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template, None).await
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
+        .await
 }

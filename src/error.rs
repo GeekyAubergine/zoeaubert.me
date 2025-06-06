@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::domain::models::{content::Content, slug::Slug};
+use crate::domain::models::{raw_content::RawContent, slug::Slug};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -410,7 +410,7 @@ impl MovieError {
         Error::MovieError(Self::MovieNotFound(error))
     }
 
-    pub fn unsupported_content_type(content: &Content) -> Error {
+    pub fn unsupported_content_type(content: &RawContent) -> Error {
         Error::MovieError(Self::UnsupportedContenttType(content.slug()))
     }
 
@@ -471,7 +471,7 @@ impl TvShowsError {
         Error::TvShowsError(Self::TvShowNotFound(error))
     }
 
-    pub fn unsupported_content_type(content: &Content) -> Error {
+    pub fn unsupported_content_type(content: &RawContent) -> Error {
         Error::TvShowsError(Self::UnsupportedContentType(content.slug()))
     }
 

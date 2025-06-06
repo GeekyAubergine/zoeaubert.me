@@ -6,7 +6,6 @@ use chrono::Datelike;
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::domain::models::album::{Album, AlbumPhoto};
 use crate::domain::models::league::LeagueChampNote;
 use crate::domain::models::slug::Slug;
 use crate::domain::repositories::LeagueRepo;

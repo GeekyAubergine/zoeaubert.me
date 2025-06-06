@@ -5,13 +5,17 @@ use crate::{
         models::{
             omni_post::OmniPost,
             page::{Page, PagePagination},
+            post::PostFilter,
             slug::Slug,
         },
         queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags},
         services::PageRenderingService,
         state::State,
     },
-    infrastructure::utils::paginator::{paginate, PaginatorPage},
+    infrastructure::{
+        renderers::RendererContext,
+        utils::paginator::{paginate, PaginatorPage},
+    },
 };
 
 use crate::prelude::*;
@@ -28,21 +32,20 @@ pub struct PostTemplate {
     omni_post: OmniPost,
 }
 
-pub async fn render_omni_post_pages(state: &impl State) -> Result<()> {
-    let omni_posts = find_all_omni_posts(
-        state,
-        OmniPostFilterFlags::filter_all(),
-    )
-    .await?;
+pub async fn render_omni_post_pages(context: &RendererContext) -> Result<()> {
+    let omni_posts = context
+        .data
+        .posts
+        .find_all_by_filter(PostFilter::filter_all());
 
     for omni_post in omni_posts {
-        render_omni_post_page(state, &omni_post).await?;
+        render_omni_post_page(context, &omni_post).await?;
     }
 
     Ok(())
 }
 
-async fn render_omni_post_page(state: &impl State, omni_post: &OmniPost) -> Result<()> {
+async fn render_omni_post_page(context: &RendererContext, omni_post: &OmniPost) -> Result<()> {
     match omni_post.page() {
         Some(page) => {
             let template = PostTemplate {
@@ -50,13 +53,11 @@ async fn render_omni_post_page(state: &impl State, omni_post: &OmniPost) -> Resu
                 omni_post: omni_post.clone(),
             };
 
-            state
-                .page_rendering_service()
-                .add_page(state, page.slug.clone(), template, None)
+            context
+                .renderer
+                .render_page(&template.page.slug, &template, None)
                 .await
         }
-        None => {
-            Ok(())
-        }
+        None => Ok(()),
     }
 }

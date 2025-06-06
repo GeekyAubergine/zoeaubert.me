@@ -10,15 +10,19 @@ use crate::{
             movie::{Movie, MovieId, MovieReview},
             omni_post::OmniPost,
             page::Page,
+            post::PostFilter,
             slug::Slug,
             tag::Tag,
             tv_show::{TvShow, TvShowId, TvShowReview},
         },
-        queries::omni_post_queries::{find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags},
+        queries::omni_post_queries::{
+            find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags,
+        },
         repositories::TvShowReviewsRepo,
         services::{MovieService, PageRenderingService, TvShowsService},
         state::State,
     },
+    infrastructure::renderers::RendererContext,
     prelude::*,
 };
 
@@ -26,46 +30,51 @@ use crate::infrastructure::renderers::formatters::format_date::FormatDate;
 use crate::infrastructure::renderers::formatters::format_markdown::FormatMarkdown;
 use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
-pub async fn render_tv_show_pages(state: &impl State) -> Result<()> {
-    let posts = find_all_omni_posts(state, OmniPostFilterFlags::TV_SHOW_REVIEW).await?;
+pub async fn render_tv_show_pages(context: &RendererContext) -> Result<()> {
+    let posts = context
+        .data
+        .posts
+        .find_all_by_filter(PostFilter::TV_SHOW_REVIEW);
 
-    let mut reviews_by_id = HashMap::new();
+    let mut reviews_by_id: HashMap<TvShowId, Vec<&TvShowReview>> = HashMap::new();
     for post in posts {
         match post {
             OmniPost::TvShowReview(post) => {
-                let entry = reviews_by_id.entry(post.tv_show.id).or_insert_with(Vec::new);
+                let entry = reviews_by_id
+                    .entry(post.tv_show.id)
+                    .or_insert_with(Vec::new);
                 entry.push(post);
             }
             _ => {}
         }
     }
-    render_tv_show_list_page(state, &reviews_by_id).await?;
+    render_tv_show_list_page(context, &reviews_by_id).await?;
 
     for reviews in reviews_by_id.values() {
         if let Some(tv_show) = reviews.first().map(|r| r.tv_show.clone()) {
-            render_tv_show_page(state, &tv_show, reviews).await?;
+            render_tv_show_page(context, &tv_show, reviews).await?;
         }
     }
 
     Ok(())
 }
 
-struct AverageReviewForTvShow {
-    tv_show: TvShow,
+struct AverageReviewForTvShow<'t> {
+    tv_show: &'t TvShow,
     average_score: f32,
-    most_recent_review: TvShowReview,
+    most_recent_review: &'t TvShowReview,
 }
 
 #[derive(Template)]
 #[template(path = "interests/tv/tv_show_list.html")]
-pub struct TvShowListTemplate {
+pub struct TvShowListTemplate<'t> {
     page: Page,
-    tv_shows: Vec<AverageReviewForTvShow>,
+    tv_shows: Vec<AverageReviewForTvShow<'t>>,
 }
 
 async fn render_tv_show_list_page(
-    state: &impl State,
-    reviews_by_id: &HashMap<TvShowId, Vec<TvShowReview>>,
+    context: &RendererContext,
+    reviews_by_id: &HashMap<TvShowId, Vec<&TvShowReview>>,
 ) -> Result<()> {
     let mut tv_shows: Vec<AverageReviewForTvShow> = reviews_by_id
         .iter()
@@ -81,9 +90,9 @@ async fn render_tv_show_list_page(
 
             match reviews.iter().max_by_key(|r| r.source_content.date()) {
                 Some(most_recent_review) => Some(AverageReviewForTvShow {
-                    tv_show: most_recent_review.tv_show.clone(),
+                    tv_show: &most_recent_review.tv_show,
                     average_score,
-                    most_recent_review: most_recent_review.clone(),
+                    most_recent_review,
                 }),
                 None => {
                     error!("No reviews found for tv show with id: {:?}", id);
@@ -112,14 +121,9 @@ async fn render_tv_show_list_page(
 
     let template = TvShowListTemplate { page, tv_shows };
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            updated_at.as_ref(),
-        )
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, updated_at)
         .await
 }
 
@@ -133,9 +137,9 @@ pub struct TvShowPageTemplate {
 }
 
 async fn render_tv_show_page(
-    state: &impl State,
+    context: &RendererContext,
     tv_show: &TvShow,
-    reviews: &[TvShowReview],
+    reviews: &Vec<&TvShowReview>,
 ) -> Result<()> {
     let total_scores = reviews
         .iter()
@@ -161,15 +165,13 @@ async fn render_tv_show_page(
         posts,
     };
 
-    let most_recent_review = reviews.iter().max_by_key(|r| r.source_content.date());
+    let updated_at = reviews
+        .iter()
+        .max_by_key(|r| r.source_content.date())
+        .map(|r| *r.source_content.date());
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            most_recent_review.map(|r| r.source_content.date()),
-        )
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, updated_at)
         .await
 }

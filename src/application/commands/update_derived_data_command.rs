@@ -4,7 +4,7 @@ use tokio::try_join;
 
 use crate::{
     domain::{
-        models::{content::Content, omni_post::OmniPost, tag::Tag},
+        models::{raw_content::RawContent, omni_post::OmniPost, tag::Tag},
         queries::omni_post_queries::find_all_omni_posts_by_tag,
         repositories::{
             AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo,
@@ -20,7 +20,7 @@ const MOVIE_REVIEW_POST_TAG: &str = "Movies";
 const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
 const BOOK_REVIEW_POST_TAG: &str = "Books";
 
-async fn content_to_omni_post(state: &impl State, content: Content) -> Result<OmniPost> {
+async fn content_to_omni_post(state: &impl State, content: RawContent) -> Result<OmniPost> {
     if (content
         .tags()
         .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG)))
@@ -90,7 +90,7 @@ async fn content_to_omni_post(state: &impl State, content: Content) -> Result<Om
 
 async fn content_posts_to_omni_post(
     state: &impl State,
-    content: Vec<Content>,
+    content: Vec<RawContent>,
 ) -> Result<Vec<OmniPost>> {
     let mut posts = Vec::new();
 
@@ -101,55 +101,55 @@ async fn content_posts_to_omni_post(
     Ok(posts)
 }
 
-async fn get_blog_post_content(state: &impl State) -> Result<Vec<Content>> {
+async fn get_blog_post_content(state: &impl State) -> Result<Vec<RawContent>> {
     let blog_posts = state
         .blog_posts_repo()
         .find_all_by_date()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<Content>>();
+        .collect::<Vec<RawContent>>();
 
     Ok(blog_posts)
 }
 
-async fn get_micro_post_content(state: &impl State) -> Result<Vec<Content>> {
+async fn get_micro_post_content(state: &impl State) -> Result<Vec<RawContent>> {
     let micro_posts = state
         .micro_posts_repo()
         .find_all()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<Content>>();
+        .collect::<Vec<RawContent>>();
 
     Ok(micro_posts)
 }
 
-async fn get_mastodon_post_content(state: &impl State) -> Result<Vec<Content>> {
+async fn get_mastodon_post_content(state: &impl State) -> Result<Vec<RawContent>> {
     let mastodon_posts = state
         .mastodon_posts_repo()
         .find_all_by_date()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<Content>>();
+        .collect::<Vec<RawContent>>();
 
     Ok(mastodon_posts)
 }
 
-async fn get_album_content(state: &impl State) -> Result<Vec<Content>> {
+async fn get_album_content(state: &impl State) -> Result<Vec<RawContent>> {
     let albums = state
         .albums_repo()
         .find_all_by_date()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<Content>>();
+        .collect::<Vec<RawContent>>();
 
     Ok(albums)
 }
 
-async fn get_album_photos_content(state: &impl State) -> Result<Vec<Content>> {
+async fn get_album_photos_content(state: &impl State) -> Result<Vec<RawContent>> {
     let photos = state
         .albums_repo()
         .find_all_by_date()
@@ -160,10 +160,10 @@ async fn get_album_photos_content(state: &impl State) -> Result<Vec<Content>> {
                 .photos
                 .iter()
                 .map(|photo| (album.clone(), photo.clone()).into())
-                .collect::<Vec<Content>>()
+                .collect::<Vec<RawContent>>()
         })
         .flatten()
-        .collect::<Vec<Content>>();
+        .collect::<Vec<RawContent>>();
 
     Ok(photos)
 }

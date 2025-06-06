@@ -1,61 +1,10 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::infrastructure::utils::cover_photos_for_album::cover_photos_for_album;
-
-use super::{image::Image, page::Page, slug::Slug, tag::Tag};
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AlbumPhoto {
-    pub slug: Slug,
-    pub description: String,
-    pub date: DateTime<Utc>,
-    pub tags: Vec<Tag>,
-    pub small_image: Image,
-    pub large_image: Image,
-    pub original_image: Image,
-    pub featured: bool,
-    pub updated_at: DateTime<Utc>,
-}
-
-impl AlbumPhoto {
-    pub fn new(
-        slug: Slug,
-        description: String,
-        date: DateTime<Utc>,
-        tags: Vec<Tag>,
-        small_image: Image,
-        large_image: Image,
-        original_image: Image,
-        updated_at: DateTime<Utc>,
-    ) -> Self {
-        Self {
-            slug,
-            description,
-            date,
-            tags,
-            small_image,
-            large_image,
-            original_image,
-            featured: false,
-            updated_at,
-        }
-    }
-
-    pub fn set_featured(mut self, featured: bool) -> Self {
-        self.featured = featured;
-        self
-    }
-
-    pub fn page(&self) -> Page {
-        Page::new(
-            self.slug.clone(),
-            Some(&self.description),
-            Some(self.small_image.alt.clone()),
-        )
-        .with_image(self.small_image.clone().into())
-    }
-}
+use crate::{
+    domain::models::{albums::album_photo::AlbumPhoto, image::Image, page::Page, slug::Slug},
+    infrastructure::utils::cover_photos_for_album::cover_photos_for_album,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Album {
@@ -92,12 +41,12 @@ impl Album {
         self.photos.push(photo);
     }
 
-    pub fn cover_images(&self) -> Vec<Image> {
+    pub fn cover_images(&self) -> Vec<&Image> {
         let cover_photos = cover_photos_for_album(&self);
 
         let cover_images = cover_photos
             .into_iter()
-            .map(|photo| photo.small_image.clone())
+            .map(|photo| &photo.small_image)
             .collect::<Vec<_>>();
 
         cover_images
@@ -106,13 +55,13 @@ impl Album {
     pub fn page(&self) -> Page {
         let description = self.description.clone().unwrap_or("".to_string());
 
-        let mut page = Page::new(self.slug.clone(), Some(&self.title), Some(description))
-            .with_date(self.date);
+        let mut page =
+            Page::new(self.slug.clone(), Some(&self.title), Some(description)).with_date(self.date);
 
         let cover_images = self.cover_images();
 
         if let Some(cover_image) = cover_images.first() {
-            page = page.with_image(cover_image.clone().into());
+            page = page.with_image(cover_image.clone().clone().into());
         }
 
         page

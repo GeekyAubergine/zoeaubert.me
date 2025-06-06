@@ -1,15 +1,13 @@
 use crate::{
     domain::{
-        models::{
-            album::{Album, AlbumPhoto},
-            image::Image,
-            slug::Slug,
-        },
+        models::{albums::album::Album, image::Image, slug::Slug},
         repositories::AlbumsRepo,
         services::PageRenderingService,
         state::State,
     },
-    infrastructure::utils::cover_photos_for_album::cover_photos_for_album,
+    infrastructure::{
+        renderers::RendererContext, utils::cover_photos_for_album::cover_photos_for_album,
+    },
     prelude::*,
 };
 
@@ -21,11 +19,11 @@ use crate::infrastructure::renderers::formatters::format_number::FormatNumber;
 
 use crate::domain::models::page::Page;
 
-pub async fn render_album_pages(state: &impl State) -> Result<()> {
-    render_album_list_page(state).await?;
-    render_all_albums_page(state).await?;
+pub async fn render_album_pages(context: &RendererContext) -> Result<()> {
+    render_album_list_page(context).await?;
+    render_all_albums_page(context).await?;
 
-    let albums = state.albums_repo().find_all_by_date().await?;
+    let albums = context.data.albums.find_all_by_date();
 
     for album in albums {
         // render_album_page(state, album).await?;
@@ -46,14 +44,14 @@ struct AlbumListPage {
     albums_by_year: Vec<(u16, Vec<AlbumListItem>)>,
 }
 
-async fn render_album_list_page(state: &impl State) -> Result<()> {
+async fn render_album_list_page(context: &RendererContext) -> Result<()> {
     let mut page = Page::new(
         Slug::new("/albums"),
         Some("Albums"),
         Some("My photo albums".to_string()),
     );
 
-    let albums_by_year = state.albums_repo().find_grouped_by_year().await?;
+    let albums_by_year = context.data.albums.find_grouped_by_year();
 
     let albums_by_year = albums_by_year
         .into_iter()
@@ -62,8 +60,8 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
                 .into_iter()
                 .map(|album| {
                     Ok(AlbumListItem {
-                        cover_images: album.cover_images(),
-                        album,
+                        cover_images: album.cover_images().iter().cloned().cloned().collect(),
+                        album: album.clone(),
                     })
                 })
                 .collect::<Result<Vec<_>>>();
@@ -75,7 +73,7 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
     if let Some((_, albums)) = albums_by_year.first() {
         if let Some(album) = albums.first() {
             if let Some(cover_image) = album.album.cover_images().first() {
-                page = page.with_image(cover_image.clone().into());
+                page = page.with_image(cover_image.clone().clone().into());
             }
         }
     }
@@ -89,17 +87,14 @@ async fn render_album_list_page(state: &impl State) -> Result<()> {
         albums_by_year,
     };
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            most_recent_updated_at.flatten().as_ref(),
+    context
+        .renderer
+        .render_page(
+            &template.page.slug,
+            &template,
+            most_recent_updated_at.flatten(),
         )
-        .await?;
-
-    Ok(())
+        .await
 }
 
 #[derive(Template)]
@@ -109,18 +104,25 @@ struct AllAlbumsPage {
     albums: Vec<Album>,
 }
 
-async fn render_all_albums_page(state: &impl State) -> Result<()> {
+async fn render_all_albums_page(context: &RendererContext) -> Result<()> {
     let mut page = Page::new(
         Slug::new("/albums/all"),
         Some("All Albums"),
         Some("All photo albums".to_string()),
     );
 
-    let albums = state.albums_repo().find_all_by_date().await?;
+    let albums = context
+        .data
+        .albums
+        .find_all_by_date()
+        .iter()
+        .cloned()
+        .cloned()
+        .collect::<Vec<Album>>();
 
     if let Some(album) = albums.first() {
         if let Some(cover_image) = album.cover_images().first() {
-            page = page.with_image(cover_image.clone().into());
+            page = page.with_image(cover_image.clone().clone().into());
         }
     }
 
@@ -128,15 +130,8 @@ async fn render_all_albums_page(state: &impl State) -> Result<()> {
 
     let template = AllAlbumsPage { page, albums };
 
-    state
-        .page_rendering_service()
-        .add_page(
-            state,
-            template.page.slug.clone(),
-            template,
-            most_recent_updated_at.as_ref(),
-        )
-        .await?;
-
-    Ok(())
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, most_recent_updated_at)
+        .await
 }

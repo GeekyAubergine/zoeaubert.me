@@ -10,7 +10,10 @@ use crate::{
         services::PageRenderingService,
         state::State,
     },
-    infrastructure::utils::paginator::{paginate, PaginatorPage},
+    infrastructure::{
+        renderers::RendererContext,
+        utils::paginator::{paginate, PaginatorPage},
+    },
     prelude::*,
 };
 
@@ -23,20 +26,21 @@ use crate::domain::models::tag::Tag;
 
 #[derive(Template)]
 #[template(path = "faq.html")]
-struct FaqTemplate {
+struct FaqTemplate<'t> {
     page: Page,
-    faq: String,
+    faq: &'t str,
 }
 
-pub async fn render_faq_page(state: &impl State) -> Result<()> {
-    let faq = state.faq_repo().find().await?;
-
+pub async fn render_faq_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("faq"), Some("FAQ"), None);
 
-    let template = FaqTemplate { page, faq };
+    let template = FaqTemplate {
+        page,
+        faq: &context.data.faq.faq,
+    };
 
-    state
-        .page_rendering_service()
-        .add_page(state, template.page.slug.clone(), template, None)
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }

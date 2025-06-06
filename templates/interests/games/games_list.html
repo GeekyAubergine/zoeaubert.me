@@ -18,13 +18,15 @@
     <h2>Recently Played</h2>
     <div class="games-grid">
         {% for game in games_by_recently_played %}
-            {% include "interests/games/games_list_game.html" %}
+            {% match game %}
+            {% when Game::Steam with (game) %}
+            {% include "interests/games/games_list_steam_game.html" %}
+            {% endmatch %}
         {% endfor %}
     </div>
     <h2 class="mt-16">All Games</h2>
     <div class="games-grid mb-8">
         {% for game in games_by_most_played %}
-            {% include "interests/games/games_list_game.html" %}
         {% endfor %}
     </div>
     <p><a class="mt-8" href="/interests/games/achievements/">Sort by Achievement Progress</a></p>

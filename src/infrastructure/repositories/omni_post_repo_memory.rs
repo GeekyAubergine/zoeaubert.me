@@ -7,7 +7,7 @@ use tracing::warn;
 use crate::{
     domain::{
         models::{
-            content::Content,
+            raw_content::RawContent,
             movie::{MovieId, MovieReview},
             omni_post::OmniPost,
             slug::Slug,

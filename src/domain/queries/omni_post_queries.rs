@@ -4,7 +4,7 @@ use bitflags::bitflags;
 use chrono::Datelike;
 use tracing::warn;
 
-use crate::domain::models::content::Content;
+use crate::domain::models::raw_content::RawContent;
 use crate::domain::repositories::{
     AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, OmniPostRepo,
     SteamAchievementsRepo, SteamGamesRepo,
@@ -100,8 +100,6 @@ pub async fn find_all_omni_posts(
             OmniPost::BookReview(_) => filter_flags.contains(OmniPostFilterFlags::BOOK_REVIEW),
         })
         .collect::<Vec<OmniPost>>();
-
-    // posts.sort_by(|a, b| b.date().cmp(&a.date()));
 
     Ok(posts)
 }

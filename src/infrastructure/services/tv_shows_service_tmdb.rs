@@ -9,7 +9,7 @@ use url::Url;
 
 use serde::{Deserialize, Serialize};
 
-use crate::domain::models::content::Content;
+use crate::domain::models::raw_content::RawContent;
 use crate::domain::models::omni_post::OmniPost;
 use crate::domain::models::tv_show::{TvShow, TvShowId, TvShowReview};
 use crate::domain::services::{FileService, ImageService, NetworkService, TvShowsService};
@@ -154,7 +154,7 @@ impl TvShowsService for TvShowsServiceTmdb {
     async fn tv_show_review_from_content(
         &self,
         state: &impl State,
-        post: &Content,
+        post: &RawContent,
     ) -> Result<TvShowReview> {
         let review = parse_content_into_tv_show_review(post)?;
 

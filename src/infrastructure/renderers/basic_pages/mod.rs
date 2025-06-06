@@ -14,18 +14,20 @@ use save_page_renderer::render_save_page;
 use support_page_renderer::render_support_page;
 use tokio::try_join;
 
+use super::RendererContext;
+
 pub mod faq_page_renderer;
 pub mod now_page_renderer;
 pub mod save_page_renderer;
 pub mod support_page_renderer;
 
-pub async fn render_basic_pages(state: &impl State) -> Result<()> {
+pub async fn render_basic_pages(context: &RendererContext) -> Result<()> {
     try_join!(
-        render_save_page(state),
-        render_faq_page(state),
-        render_now_page(state),
-        render_support_page(state),
-        render_404_page(state),
+        render_save_page(context),
+        render_faq_page(context),
+        render_now_page(context),
+        render_support_page(context),
+        render_404_page(context),
     )?;
 
     Ok(())
@@ -37,11 +39,13 @@ pub struct FourOFourTemplate {
     page: Page,
 }
 
-async fn render_404_page(state: &impl State) -> Result<()> {
+async fn render_404_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("/404"), None, None);
 
-    state
-        .page_rendering_service()
-        .add_page(state, page.slug.clone(), FourOFourTemplate { page }, None)
+    let template = FourOFourTemplate { page };
+
+    context
+        .renderer
+        .render_page(&template.page.slug, &template, None)
         .await
 }

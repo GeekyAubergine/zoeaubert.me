@@ -1,4 +1,8 @@
-use std::{collections::HashMap, path::{Path, PathBuf}, sync::Arc};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
@@ -6,9 +10,10 @@ use tokio::sync::RwLock;
 use crate::{
     domain::{
         models::{
-            movie::{MovieId, MovieReview}, project::Project, slug::Slug
+            movie::{MovieId, MovieReview}, projects::Project, slug::Slug
         },
-        repositories::{MovieReviewsRepo, ProjectsRepo}, services::FileService,
+        repositories::{MovieReviewsRepo, ProjectsRepo},
+        services::FileService,
     },
     infrastructure::services::file_service_disk::FileServiceDisk,
     prelude::*,
