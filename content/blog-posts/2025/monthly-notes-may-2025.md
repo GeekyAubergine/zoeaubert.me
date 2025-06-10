@@ -62,7 +62,7 @@ Overall, I finished with a time of 1 hour 56 minutes, which was not only a signi
 
 #### Add a Parkrun
 
-After my first 16km, my friend helpfully suggested to me "do it again before [Parkrun]((https://www.parkrun.org.uk/)". Ok, sure buddy, "just" add on a Parkrun, no troubles.
+After my first 16km, my friend helpfully suggested to me "do it again before [Parkrun](https://www.parkrun.org.uk/)". Ok, sure buddy, "just" add on a Parkrun, no troubles.
 
 This was going to be tough. I left the house at 06:45. I was warm, humid, and only going to get worse. And as a nice bonus, at about 8 minutes in, my watch kindly informed me that my "Performance Condition" was -2, which was great.
 
