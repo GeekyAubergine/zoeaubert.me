@@ -1,25 +1,14 @@
-use std::path::Path;
-
-use chrono::{DateTime, Utc};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use tracing::info;
 
 use crate::{
-    calculate_hash,
-    domain::{
-        models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
-        repositories::{MicroPostsRepo, Profiler},
-        services::{CacheService, CdnService, FileService, ImageService},
-        state::State,
-    },
+    domain::models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
     error::MicroPostError,
     infrastructure::utils::date::parse_date,
+    prelude::*,
+    services::{file_service::FilePath, ServiceContext},
 };
-
-use crate::prelude::*;
-
 const MICRO_POSTS_DIR: &str = "micros";
 
 pub const MARKDOWN_LINK_REGEX: Lazy<Regex> =
@@ -58,9 +47,11 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
     serde_yaml::from_str(s).map_err(MicroPostError::unable_to_parse_front_matter)
 }
 
-async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Result<()> {
-    let hash = calculate_hash(&content);
-
+async fn process_file(
+    ctx: &ServiceContext,
+    file_path: FilePath,
+    content: &str,
+) -> Result<MicroPost> {
     let split = content.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -68,12 +59,12 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
 
     let content = match content.get(front_matter_len + 6..) {
         Some(content) => Ok(content.to_string()),
-        None => Err(MicroPostError::no_content(file_path.to_path_buf())),
+        None => Err(MicroPostError::no_content(file_path)),
     }?;
 
     let front_matter = match front_matter {
         Some(front_matter) => front_matter_from_string(front_matter),
-        None => Err(MicroPostError::no_front_matter(file_path.to_path_buf())),
+        None => Err(MicroPostError::no_front_matter(file_path)),
     }?;
 
     let date = parse_date(front_matter.date.as_str())?;
@@ -82,22 +73,16 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
 
     let file_name = file_path
         .file_name()
-        .ok_or(MicroPostError::invalid_file_name(file_path.to_path_buf()))?
+        .ok_or(MicroPostError::invalid_file_name(file_path))?
         .to_str()
-        .ok_or(MicroPostError::invalid_file_name(file_path.to_path_buf()))?
+        .ok_or(MicroPostError::invalid_file_name(file_path))?
         .replace(".md", "");
 
     let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
-    if let Some(existing) = state.micro_posts_repo().find_by_slug(&slug).await? {
-        if hash == existing.original_data_hash {
-            return Ok(());
-        }
-    }
-
-    let media = state
-        .image_service()
-        .find_images_in_markdown(state, &content, &date, &slug)
+    let media = ctx
+        .image
+        .find_images_in_markdown(ctx, &content, &date, &slug)
         .await?
         .iter()
         .map(|i| Media::from(i))
@@ -111,51 +96,21 @@ async fn process_file(state: &impl State, file_path: &Path, content: &str) -> Re
 
     let description = description_from_string(&content);
 
-    info!("Updating micro post: {:?}", slug);
+    let micro_post = MicroPost::new(slug, date, content.to_string(), description, media, tags);
 
-    let micro_post = MicroPost::new(
-        slug,
-        date,
-        content.to_string(),
-        description,
-        media,
-        tags,
-        Some(Utc::now()),
-        hash,
-    );
-
-    state.micro_posts_repo().commit(&micro_post).await?;
-
-    Ok(())
+    Ok(micro_post)
 }
 
-pub async fn update_micro_posts(state: &impl State) -> Result<()> {
-    let files = state
-        .file_service()
-        .find_files_rescurse(
-            &state
-                .file_service()
-                .make_content_file_path(&Path::new(MICRO_POSTS_DIR)),
-            "md",
-        )
+pub async fn process_micro_posts(ctx: &ServiceContext) -> Result<()> {
+    let files = FilePath::content(MICRO_POSTS_DIR)
+        .find_recurisve_files("md")
         .await?;
 
     for file in files {
-        state.profiler().entity_processed().await?;
+        let content = file.read_text().await?;
 
-        let file = Path::new(&file);
-        let content = state.file_service().read_text_file(&file).await?;
-
-        process_file(state, &file, &content).await?;
+        process_file(ctx, file, &content).await?;
     }
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_should_extract_description_from_string() {}
 }

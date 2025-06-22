@@ -5,7 +5,7 @@ use chrono::{DateTime, Utc};
 use tokio::try_join;
 
 use crate::domain::models::games::steam::{
-    SteamGame, SteamGameAchievementLocked, SteamGameAchievementUnlocked, SteamGameWithAcheivements,
+    SteamGameL, SteamGameAchievementLocked, SteamGameAchievementUnlocked, SteamGameWithAchievements,
 };
 use crate::domain::models::games::Game;
 use crate::domain::models::image::Image;
@@ -128,7 +128,7 @@ async fn render_games_list_most_achieved_page(context: &RendererContext) -> Resu
 #[template(path = "interests/games/steam/steam_game.html")]
 struct SteamGameTemplate<'t> {
     page: Page,
-    game: &'t SteamGame,
+    game: &'t SteamGameL,
     unlocked_achievements: Vec<&'t SteamGameAchievementUnlocked>,
     locked_achievements: Vec<&'t SteamGameAchievementLocked>,
     total_achievements: usize,
@@ -136,7 +136,7 @@ struct SteamGameTemplate<'t> {
 
 async fn render_steam_game_page(
     context: &RendererContext,
-    game: &SteamGameWithAcheivements,
+    game: &SteamGameWithAchievements,
 ) -> Result<()> {
     let unlocked_achievements = game.find_all_unlocked_by_unlocked_date();
 

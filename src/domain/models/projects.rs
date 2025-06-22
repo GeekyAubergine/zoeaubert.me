@@ -17,7 +17,6 @@ pub struct Project {
     pub image: Image,
     pub rank: u8,
     pub link: String,
-    pub original_data_hash: u64,
 }
 
 #[derive(Clone, Default)]
@@ -26,6 +25,12 @@ pub struct Projects {
 }
 
 impl Projects {
+    pub fn new() -> Self {
+        Self {
+            projects: HashMap::new(),
+        }
+    }
+
     pub async fn from_state(state: &impl State) -> Result<Self> {
         let mut projects = Self {
             projects: HashMap::new(),

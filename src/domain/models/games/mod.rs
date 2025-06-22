@@ -2,7 +2,7 @@ use std::{collections::HashMap, time::Duration};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use steam::SteamGameWithAcheivements;
+use steam::SteamGameWithAchievements;
 
 use crate::{
     domain::{
@@ -24,7 +24,7 @@ pub enum GameId {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Game {
-    Steam(SteamGameWithAcheivements),
+    Steam(SteamGameWithAchievements),
 }
 
 impl Game {
@@ -68,6 +68,12 @@ pub struct Games {
 }
 
 impl Games {
+    pub fn new() -> Self {
+        Self {
+            games: HashMap::new(),
+        }
+    }
+
     pub async fn from_state(state: &impl State) -> Result<Self> {
         let mut games = Self {
             games: HashMap::new(),
@@ -83,7 +89,7 @@ impl Games {
                 link_url: game.link_url,
             };
 
-            let mut game = SteamGameWithAcheivements::from_game(game);
+            let mut game = SteamGameWithAchievements::from_game(game);
 
             for achievement in state
                 .steam_achievements_repo()

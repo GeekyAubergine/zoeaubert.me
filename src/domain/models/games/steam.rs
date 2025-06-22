@@ -147,13 +147,13 @@ impl SteamGameAchievement {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SteamGameWithAcheivements {
+pub struct SteamGameWithAchievements {
     pub game: SteamGame,
     pub locked_achievements: HashMap<String, SteamGameAchievementLocked>,
     pub unlocked_achievements: HashMap<String, SteamGameAchievementUnlocked>,
 }
 
-impl SteamGameWithAcheivements {
+impl SteamGameWithAchievements {
     pub fn from_game(game: SteamGame) -> Self {
         Self {
             game,
@@ -204,5 +204,20 @@ impl SteamGameWithAcheivements {
         locked_achievements.sort_by(|a, b| a.display_name.cmp(&b.display_name));
 
         locked_achievements
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Default)]
+pub struct SteamGames {
+    pub games: HashMap<u32, SteamGameWithAchievements>,
+}
+
+impl SteamGames {
+    pub fn find_game_by_id(&self, game_id: u32) -> Option<&SteamGameWithAchievements> {
+        self.games.get(&game_id)
+    }
+
+    pub fn add_game(&mut self, game: SteamGameWithAchievements) {
+        self.games.insert(game.game.id, game);
     }
 }

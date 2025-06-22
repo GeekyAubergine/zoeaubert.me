@@ -1,29 +1,38 @@
-use std::path::Path;
-
-use crate::application::commands::blog_posts_commands::front_matter_from_string;
-use crate::calculate_hash;
-use crate::domain::models::slug::Slug;
-use crate::domain::repositories::{BlogPostsRepo, Profiler};
-use crate::domain::services::{FileService, ImageService};
-use crate::infrastructure::utils::date::parse_date;
-use chrono::Utc;
-use serde::Deserialize;
-use tracing::{debug, info};
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    domain::{
-        models::{blog_post::BlogPost, image::Image, tag::Tag},
-        state::State,
-    },
-    error::{BlogPostError, Error},
+    domain::models::{blog_post::BlogPost, slug::Slug, tag::Tag},
+    error::BlogPostError,
+    infrastructure::utils::date::parse_date,
     prelude::*,
+    services::{file_service::FilePath, ServiceContext},
 };
 
-pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> Result<()> {
-    let file_contents = state.file_service().read_text_file(file_path).await?;
+pub const BLOG_POSTS_DIR: &str = "blog-posts";
 
-    let hash = calculate_hash(&file_contents);
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BlogPostFileFrontMatter {
+    slug: String,
+    date: String,
+    title: String,
+    description: String,
+    tags: Vec<String>,
+    hero: Option<String>,
+    #[serde(rename = "heroAlt")]
+    hero_alt: Option<String>,
+    #[serde(rename = "heroWidth")]
+    hero_width: Option<u32>,
+    #[serde(rename = "heroHeight")]
+    hero_height: Option<u32>,
+}
+
+pub fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
+    serde_yaml::from_str(s).map_err(BlogPostError::unparsable_front_matter)
+}
+
+pub async fn process_blog_post(ctx: &ServiceContext, file_path: &FilePath) -> Result<BlogPost> {
+    let file_contents = file_path.read_text().await?;
 
     let split = file_contents.split("---").collect::<Vec<&str>>();
 
@@ -46,14 +55,6 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
 
             let slug = Slug::new(&format!("/blog/{}", front_matter.slug));
 
-            if let Some(existing) = state.blog_posts_repo().find_by_slug(&slug).await? {
-                if hash == existing.original_data_hash {
-                    return Ok(());
-                }
-            }
-
-            info!("Updating blog post: {:?}", slug);
-
             let mut post = BlogPost::new(
                 slug.clone(),
                 date,
@@ -61,8 +62,6 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
                 front_matter.description,
                 tags,
                 content.to_owned().to_owned(),
-                Utc::now(),
-                hash,
             );
 
             if let (Some(url), Some(alt), Some(width), Some(height)) = (
@@ -75,11 +74,11 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
 
                 let path = url.path();
 
-                let path = Path::new(&path);
+                let path = FilePath::cache(&path);
 
-                let image = state
-                    .image_service()
-                    .copy_image_from_url(state, &url, &path, &alt)
+                let image = ctx
+                    .image
+                    .copy_image_from_url(ctx, &url, &path, &alt)
                     .await?
                     .with_date(&date)
                     .with_parent_slug(&slug);
@@ -88,18 +87,27 @@ pub async fn update_blog_post_command(state: &impl State, file_path: &Path) -> R
             }
 
             post = post.with_images(
-                state
-                    .image_service()
-                    .find_images_in_markdown(state, content, &date, &slug)
+                ctx.image
+                    .find_images_in_markdown(ctx, content, &date, &slug)
                     .await?,
             );
 
-            state.blog_posts_repo().commit(&post).await?;
-
-            state.profiler().entity_processed().await?;
-
-            Ok(())
+            Ok(post)
         }
         _ => Err(BlogPostError::unparsable_blog_post()),
     }
+}
+
+pub async fn process_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
+    let blog_posts_files = FilePath::content(BLOG_POSTS_DIR)
+        .find_recurisve_files("md")
+        .await?;
+
+    let mut posts = vec![];
+
+    for file_path in blog_posts_files {
+        process_blog_post(ctx, &file_path).await?;
+    }
+
+    Ok(posts)
 }

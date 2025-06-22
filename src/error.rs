@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::domain::models::{raw_content::RawContent, slug::Slug};
+use crate::{domain::models::{raw_content::RawContent, slug::Slug}, services::file_service::FilePath};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -87,6 +87,9 @@ pub enum FileSystemError {
 
     #[error("Unable to delete file: {0}")]
     DeleteFileError(std::io::Error),
+
+    #[error("Path is not representable as URL: {0}")]
+    PathIsNotUrl(url::ParseError),
 }
 
 impl FileSystemError {
@@ -120,6 +123,10 @@ impl FileSystemError {
 
     pub fn delete_file_error(error: std::io::Error) -> Error {
         Error::FileSystemError(Self::DeleteFileError(error))
+    }
+
+    pub fn path_is_not_url(error: url::ParseError) -> Error {
+        Error::FileSystemError(Self::PathIsNotUrl(error))
     }
 }
 
@@ -260,16 +267,16 @@ pub enum MicroPostError {
     UnparsableFrontMatter(serde_yaml::Error),
 
     #[error("Post has no content {0}")]
-    PostHasNoContent(PathBuf),
+    PostHasNoContent(FilePath),
 
     #[error("Post has not front matter {0}")]
-    PostHasNoFrontMatter(PathBuf),
+    PostHasNoFrontMatter(FilePath),
 
     #[error("Post has invalid file path {0}")]
-    InvalidFilePath(PathBuf),
+    InvalidFilePath(FilePath),
 
     #[error("Post has invalid file name {0}")]
-    InvalidFileName(PathBuf),
+    InvalidFileName(FilePath),
 }
 
 impl MicroPostError {
@@ -277,19 +284,19 @@ impl MicroPostError {
         Error::MicroPostError(Self::UnparsableFrontMatter(error))
     }
 
-    pub fn no_content(post: PathBuf) -> Error {
+    pub fn no_content(post: FilePath) -> Error {
         Error::MicroPostError(Self::PostHasNoContent(post))
     }
 
-    pub fn no_front_matter(post: PathBuf) -> Error {
+    pub fn no_front_matter(post: FilePath) -> Error {
         Error::MicroPostError(Self::PostHasNoFrontMatter(post))
     }
 
-    pub fn invalid_file_path(post: PathBuf) -> Error {
+    pub fn invalid_file_path(post: FilePath) -> Error {
         Error::MicroPostError(Self::InvalidFilePath(post))
     }
 
-    pub fn invalid_file_name(post: PathBuf) -> Error {
+    pub fn invalid_file_name(post: FilePath) -> Error {
         Error::MicroPostError(Self::InvalidFileName(post))
     }
 }

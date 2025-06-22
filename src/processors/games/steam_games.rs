@@ -1,20 +1,34 @@
-use std::path::Path;
+use std::{collections::HashMap, path::Path, time::Duration};
 
-use chrono::DateTime;
+use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 use url::Url;
 
-use crate::domain::models::steam::{
-    SteamGame, SteamGameAchievement, SteamGameAchievementLocked, SteamGameAchievementUnlocked,
+use crate::{
+    domain::models::{
+        games::steam::{
+            SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
+            SteamGameAchievementUnlocked, SteamGameWithAchievements, SteamGames,
+        },
+        image::Image,
+        slug::Slug,
+    },
+    prelude::*,
+    services::{
+        file_service::{FilePath, FileService},
+        ServiceContext,
+    },
 };
-use crate::domain::repositories::{Profiler, SteamAchievementsRepo, SteamGamesRepo};
-use crate::domain::services::{CdnService, ImageService, NetworkService};
-use crate::domain::state::State;
-use crate::error::GameError;
 
-use crate::prelude::*;
+const QUERY: &str = "games";
+
+const FILE_NAME: &str = "steam_games.json";
+
+const GAMES_TO_IGNORE: &[u32] = &[
+    219540, // Arma 2: Opertion Arrowhead - Beta (Obsolete)
+];
 
 const STEAM_OWNED_GAMES_URL: &str =
   "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?format=json&include_appinfo=true";
@@ -75,11 +89,11 @@ pub struct SteamAvailableGameStatsResponse {
 }
 
 async fn get_steam_game_data(
-    state: &impl State,
+    ctx: &ServiceContext,
     appid: u32,
 ) -> Result<Vec<SteamGameDataAcheivement>> {
-    let response = state
-        .network_service()
+    let response = ctx
+        .network
         .download_json::<SteamAvailableGameStatsResponse>(&make_steam_game_data_url(appid))
         .await?;
 
@@ -135,11 +149,11 @@ struct SteamGetPlayerStatsResponse {
 }
 
 async fn get_steam_player_achievements(
-    state: &impl State,
+    ctx: &ServiceContext,
     appid: u32,
 ) -> Result<Vec<SteamGamePlayerAchievement>> {
-    let response = state
-        .network_service()
+    let response = ctx
+        .network
         .download_json::<SteamGetPlayerStatsResponse>(&make_get_player_achievements_url(appid))
         .await?;
 
@@ -183,11 +197,11 @@ enum SteamGetGlobalAchievementPercentagesResponse {
 }
 
 async fn get_steam_global_achievement_percentage(
-    state: &impl State,
+    ctx: &ServiceContext,
     appid: u32,
 ) -> Result<Vec<SteamGameGlobalAchievement>> {
-    let response = state
-        .network_service()
+    let response = ctx
+        .network
         .download_json::<SteamGetGlobalAchievementPercentagesResponse>(
             &make_get_global_achievement_percentage_url(appid),
         )
@@ -201,25 +215,25 @@ async fn get_steam_global_achievement_percentage(
     }
 }
 
-pub async fn update_steam_game_achievements_command(
-    state: &impl State,
-    game: &SteamGame,
-) -> Result<()> {
+pub async fn process_steam_game_achievements(
+    ctx: &ServiceContext,
+    game: SteamGame,
+) -> Result<SteamGameWithAchievements> {
     info!(
         "Updating game achievements for game: {} [{}]",
         game.id, game.name
     );
 
-    let player_achievements = get_steam_player_achievements(state, game.id).await?;
+    let player_achievements = get_steam_player_achievements(ctx, game.id).await?;
 
-    let game_data = get_steam_game_data(state, game.id).await?;
+    let game_data = get_steam_game_data(ctx, game.id).await?;
 
     let global_achievement_percentage =
-        get_steam_global_achievement_percentage(state, game.id).await?;
+        get_steam_global_achievement_percentage(ctx, game.id).await?;
+
+    let mut game = SteamGameWithAchievements::from_game(game);
 
     for achievement in game_data {
-        state.profiler().entity_processed().await?;
-
         // Sometimes the icon urls are just a directory
         if achievement.icon.as_str().ends_with("/") || achievement.icon_gray.as_str().ends_with("/")
         {
@@ -250,76 +264,192 @@ pub async fn update_steam_game_achievements_command(
             None => 0.0,
         };
 
-        let achievment = match unlocked_date {
+        match unlocked_date {
             Some(unlocked_date) => {
                 let path = &format!(
                     "/games/{}-{}-unlocked.jpg",
-                    game.id,
+                    game.game.id,
                     achievement.name.replace(' ', "").replace('%', "")
                 );
 
-                let path = Path::new(&path);
+                let path = FilePath::cache(path);
 
-                let image = state
-                    .image_service()
+                let image = ctx
+                    .image
                     .copy_image_from_url(
-                        state,
+                        ctx,
                         &achievement.icon,
                         &path,
                         &format!("{} achievement icon", achievement.display_name),
                     )
                     .await?;
 
-                SteamGameAchievement::Unlocked(SteamGameAchievementUnlocked::new(
+                let achievement = SteamGameAchievementUnlocked::new(
                     achievement.name,
-                    game.id,
+                    game.game.id,
                     achievement.display_name,
                     achievement.description.unwrap_or("".to_string()),
                     image,
                     unlocked_date,
                     global_percentage,
-                ))
+                );
+
+                game.add_unlocked_achievement(achievement);
             }
             None => {
                 let path = &format!(
                     "/games/{}-{}-locked.jpg",
-                    game.id,
+                    game.game.id,
                     achievement.name.replace(' ', "").replace('%', "")
                 );
 
-                let path = Path::new(&path);
+                let path = FilePath::cache(path);
 
                 let icon = match &achievement.icon_gray.as_str().ends_with("/") {
                     true => achievement.icon,
                     false => achievement.icon_gray,
                 };
 
-                let image = state
-                    .image_service()
+                let image = ctx
+                    .image
                     .copy_image_from_url(
-                        state,
+                        ctx,
                         &icon,
                         &path,
                         &format!("{} achievement icon", achievement.display_name),
                     )
                     .await?;
 
-                SteamGameAchievement::Locked(SteamGameAchievementLocked::new(
+                let achievement = SteamGameAchievementLocked::new(
                     achievement.name,
-                    game.id,
+                    game.game.id,
                     achievement.display_name,
                     achievement.description.unwrap_or("".to_string()),
                     image,
                     global_percentage,
-                ))
+                );
+
+                game.add_locked_achievement(achievement);
             }
         };
-
-        state
-            .steam_achievements_repo()
-            .commit(&game, &achievment)
-            .await?;
     }
 
-    Ok(())
+    Ok(game)
+}
+
+// ---- Games
+
+fn make_get_games_url() -> Url {
+    format!(
+        "{}&key={}&steamid={}",
+        STEAM_OWNED_GAMES_URL,
+        dotenv!("STEAM_API_KEY"),
+        dotenv!("STEAM_ID")
+    )
+    .parse()
+    .unwrap()
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SteamOwnedGame {
+    appid: u32,
+    name: String,
+    playtime_forever: u32,
+    img_icon_url: String,
+    rtime_last_played: u32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SteamGetOwnedGamesResponseInner {
+    game_count: u32,
+    games: Vec<SteamOwnedGame>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SteamGetOwnedGamesResponse {
+    response: SteamGetOwnedGamesResponseInner,
+}
+
+pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
+    match DateTime::from_timestamp(last_played as i64, 0) {
+        Some(date) => date,
+        None => Utc::now(),
+    }
+}
+
+async fn process_game(
+    ctx: &ServiceContext,
+    game: SteamOwnedGame,
+    stored_game: Option<&SteamGameWithAchievements>,
+) -> Result<SteamGameWithAchievements> {
+    if let Some(stored_game) = stored_game {
+        if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.game.last_played {
+            return Ok(stored_game.clone());
+        }
+    }
+
+    let game_header_image_cdn_path = &format!("games/{}-header.jpg", game.appid);
+
+    let game_header_image_cdn_path = FilePath::cache(&game_header_image_cdn_path);
+
+    let image_src_url: Url = format!(
+        "https://steamcdn-a.akamaihd.net/steam/apps/{}/header.jpg",
+        game.appid
+    )
+    .parse()
+    .unwrap();
+
+    let image = ctx
+        .image
+        .copy_image_from_url(
+            ctx,
+            &image_src_url,
+            &game_header_image_cdn_path,
+            &format!("{} steam header image", &game.name),
+        )
+        .await?;
+
+    let game = SteamGame::new(
+        game.appid,
+        game.name,
+        image,
+        Duration::from_secs(game.playtime_forever as u64),
+        steam_last_played_to_datetime(game.rtime_last_played),
+        format!("https://store.steampowered.com/app/{}", game.appid),
+    );
+
+    let game = process_steam_game_achievements(ctx, game).await?;
+
+    Ok(game)
+}
+
+pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
+    if !ctx.query_limiter.can_query_within_hour(QUERY_KEY).await? {
+        return Ok(());
+    }
+
+    let mut data: SteamGames = FilePath::archive(FILE_NAME)
+        .read_as_json_or_default()
+        .await?;
+
+    info!("Processing steam games");
+
+    let games = ctx
+        .network
+        .download_json::<SteamGetOwnedGamesResponse>(&make_get_games_url())
+        .await?;
+
+    for game in games.response.games {
+        if GAMES_TO_IGNORE.contains(&game.appid) {
+            continue;
+        }
+
+        let id = game.appid;
+
+        data.add_game(process_game(ctx, game, data.find_game_by_id(id)).await?);
+
+        break;
+    }
+
+    Ok(data)
 }

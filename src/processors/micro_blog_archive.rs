@@ -1,25 +1,18 @@
-use chrono::{DateTime, Datelike, Utc};
+use chrono::{DateTime, Utc};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use std::path::Path;
-use tracing::info;
 
 use crate::{
-    calculate_hash,
-    domain::{
-        models::{
-            image::Image,
-            media::{Media, MediaDimensions},
-            micro_post::MicroPost,
-            slug::Slug,
-            tag::Tag,
-        },
-        repositories::{MicroPostsRepo, Profiler},
-        services::{CdnService, FileService},
-        state::State,
+    domain::models::{
+        image::Image,
+        media::{Media, MediaDimensions},
+        micro_post::MicroPost,
+        slug::Slug,
+        tag::Tag,
     },
     prelude::*,
+    services::{file_service::FilePath, ServiceContext},
 };
 
 const MICRO_POSTS_DIR: &str = "micro-blog-archive/feed.json";
@@ -96,7 +89,7 @@ fn extract_images_from_html(markup: &str, date: &DateTime<Utc>, parent_slug: &Sl
 
         let path = src.replace("uploads/", "");
 
-        let path = Path::new(&path);
+        let path = FilePath::content(&path);
 
         images.push(
             Image::new(&path, alt, &MediaDimensions::new(width, height))
@@ -125,8 +118,6 @@ fn slug_for_item(item: &ArchiveFileItem) -> Slug {
 }
 
 fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
-    let hash = calculate_hash(&item);
-
     let slug = slug_for_item(&item);
 
     let tags: Vec<String> = match item.tags {
@@ -165,40 +156,23 @@ fn archive_item_to_post(item: ArchiveFileItem) -> Result<Option<MicroPost>> {
         description,
         media,
         tags,
-        None,
-        hash,
     )))
 }
 
-pub async fn update_micro_blog_archive_posts_command(state: &impl State) -> Result<()> {
-    let archive_file: ArchiveFile = state
-        .file_service()
-        .read_json_file(
-            &state
-                .file_service()
-                .make_content_file_path(&Path::new(MICRO_POSTS_DIR)),
-        )
-        .await?;
+pub async fn process_micro_blog_archive(
+    ctx: &ServiceContext,
+) -> Result<Vec<MicroPost>> {
+    let archive_file: ArchiveFile = FilePath::content(MICRO_POSTS_DIR).read_as_json().await?;
+
+    let mut posts = vec![];
 
     for item in archive_file.items {
-        state.profiler().entity_processed().await?;
-
-        let slug = slug_for_item(&item);
-
-        let existing = state.micro_posts_repo().find_by_slug(&slug).await?;
-
-        // These never update so if it's here, just skip
-        if existing.is_some() {
-            continue;
-        }
-
         if let Some(post) = archive_item_to_post(item)? {
-            info!("Updating micro blog archive post {:?}", post.slug);
-            state.micro_posts_repo().commit(&post).await?;
+            posts.push(post);
         }
     }
 
-    Ok(())
+    Ok(posts)
 }
 
 #[cfg(test)]
@@ -222,7 +196,7 @@ mod tests {
 
         assert_eq!(media.len(), 1);
 
-        let expected_path = Path::new("2022/ced7ff5352.jpg");
+        let expected_path = FilePath::cache("2022/ced7ff5352.jpg");
 
         let expected = Image::new(&expected_path,
             "Picture of my tabby cat called Muffin. She is curled up in a ball with her tail reaching round to her forehead. She is a mix of black and brown fur with white feet. Some of her feet are sticking out. She is sat on a brown-grey textured sofa",

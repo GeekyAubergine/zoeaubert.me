@@ -96,12 +96,20 @@ impl LegoMinifig {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Lego {
     sets: HashMap<u32, LegoSet>,
     minifigs: HashMap<String, LegoMinifig>,
 }
 
 impl Lego {
+    pub fn new() -> Self {
+        Self {
+            sets: HashMap::new(),
+            minifigs: HashMap::new(),
+        }
+    }
+
     pub async fn from_state(state: &impl State) -> Result<Self> {
         let mut lego = Self {
             sets: HashMap::new(),
@@ -132,10 +140,7 @@ impl Lego {
     }
 
     pub fn find_all_minifigs(&self) -> Vec<&LegoMinifig> {
-        let mut minifigs = self
-            .minifigs
-            .values()
-            .collect::<Vec<&LegoMinifig>>();
+        let mut minifigs = self.minifigs.values().collect::<Vec<&LegoMinifig>>();
 
         minifigs.sort_by(|a, b| a.name.cmp(&b.name));
 

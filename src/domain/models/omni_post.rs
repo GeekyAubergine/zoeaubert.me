@@ -4,12 +4,11 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::domain::models::albums::{album::Album, album_photo::AlbumPhoto};
-
 use super::{
+    album::{Album, AlbumPhoto},
     blog_post::BlogPost,
     book::BookReview,
-    raw_content::RawContent,
+    content::Content,
     image::Image,
     mastodon_post::MastodonPost,
     media::Media,
@@ -189,14 +188,14 @@ impl OmniPost {
     }
 }
 
-impl From<RawContent> for OmniPost {
-    fn from(content: RawContent) -> Self {
+impl From<Content> for OmniPost {
+    fn from(content: Content) -> Self {
         match content {
-            RawContent::BlogPost(blog_post) => Self::BlogPost(blog_post),
-            RawContent::MicroPost(micro_post) => Self::MicroPost(micro_post),
-            RawContent::MastodonPost(mastodon_post) => Self::MastodonPost(mastodon_post),
-            RawContent::AlbumPhoto { photo, album } => Self::AlbumPhoto { album, photo },
-            RawContent::Album(album) => Self::Album(album),
+            Content::BlogPost(blog_post) => Self::BlogPost(blog_post),
+            Content::MicroPost(micro_post) => Self::MicroPost(micro_post),
+            Content::MastodonPost(mastodon_post) => Self::MastodonPost(mastodon_post),
+            Content::AlbumPhoto { photo, album } => Self::AlbumPhoto { album, photo },
+            Content::Album(album) => Self::Album(album),
         }
     }
 }

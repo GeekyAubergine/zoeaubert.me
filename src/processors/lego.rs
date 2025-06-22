@@ -1,18 +1,15 @@
-use chrono::Utc;
 use dotenvy_macro::dotenv;
-use serde::{Deserialize, Serialize};
-use std::path::Path;
+use serde::Deserialize;
 use tracing::info;
 use url::Url;
 
-use crate::domain::{
-    models::lego::{LegoMinifig, LegoSet},
-    repositories::LegoRepo,
-    services::{CacheService, CdnService, ImageService, NetworkService, QueryLimitingService},
-    state::State,
+use crate::{
+    domain::models::lego::{Lego, LegoMinifig, LegoSet},
+    prelude::*,
+    services::{file_service::FilePath, ServiceContext},
 };
 
-use crate::prelude::*;
+const STORE: &str = "lego.json";
 
 const QUERY_KEY: &str = "lego";
 
@@ -20,12 +17,12 @@ const LOGIN_URL: &str = "https://brickset.com/api/v3.asmx/login";
 const GET_SET_URL: &str = "https://brickset.com/api/v3.asmx/getSets";
 const GET_MINIFIG_URL: &str = "https://brickset.com/api/v3.asmx/getMinifigCollection";
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BricksetLoginResponse {
     hash: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BricksetSetImages {
     #[serde(rename = "imageURL")]
     image_url: Url,
@@ -33,13 +30,13 @@ pub struct BricksetSetImages {
     thumbnail_url: Url,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BricksetSetCollection {
     #[serde(rename = "qtyOwned")]
     qty_owned: u32,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BricksetSet {
     #[serde(rename = "setID")]
     set_id: u32,
@@ -53,13 +50,13 @@ pub struct BricksetSet {
     collection: BricksetSetCollection,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetSetResponse {
     status: String,
     sets: Vec<BricksetSet>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BricksetMinifig {
     #[serde(rename = "minifigNumber")]
     minifig_number: String,
@@ -71,7 +68,7 @@ pub struct BricksetMinifig {
     owned_loose: u32,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetMinifigsResponse {
     status: String,
     minifigs: Vec<BricksetMinifig>,
@@ -111,48 +108,47 @@ fn make_get_minifig_url(hash: &str) -> Url {
     .unwrap()
 }
 
-pub async fn update_lego_command(state: &impl State) -> Result<()> {
-    if !state
-        .query_limiting_service()
-        .can_query_within_day(QUERY_KEY)
-        .await?
-    {
-        return Ok(());
+pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
+    if !ctx.query_limiter.can_query_within_day(QUERY_KEY).await? {
+        let existing: Lego = FilePath::archive(STORE).read_as_json_or_default().await?;
+        return Ok(existing);
     }
+
+    let mut lego = Lego::new();
 
     info!("Updating lego sets and minifigs");
 
-    let login_reponse = state
-        .network_service()
+    let login_reponse = ctx
+        .network
         .download_json::<BricksetLoginResponse>(&make_login_url())
         .await?;
 
-    let sets_response = state
-        .network_service()
+    let sets_response = ctx
+        .network
         .download_json::<GetSetResponse>(&make_get_set_url(&login_reponse.hash))
         .await?;
 
-    let minifigs_response = state
-        .network_service()
+    let minifigs_response = ctx
+        .network
         .download_json::<GetMinifigsResponse>(&make_get_minifig_url(&login_reponse.hash))
         .await?;
 
     if sets_response.status == "success" {
         for set in sets_response.sets {
             let cdn_path = format!("lego/{}.jpg", set.set_id);
-            let cdn_path = Path::new(&cdn_path);
+            let cdn_path = FilePath::cache(&cdn_path);
 
             let thumbnail_cdn_url = format!("lego/{}-thumbnail.jpg", set.set_id);
-            let thumbnail_cdn_path = Path::new(&thumbnail_cdn_url);
+            let thumbnail_cdn_path = FilePath::cache(&thumbnail_cdn_url);
 
-            let image = state
-                .image_service()
-                .copy_image_from_url(state, &set.image.image_url, &cdn_path, &set.name)
+            let image = ctx
+                .image
+                .copy_image_from_url(ctx, &set.image.image_url, &cdn_path, &set.name)
                 .await?;
-            let thumbnail = state
-                .image_service()
+            let thumbnail = ctx
+                .image
                 .copy_image_from_url(
-                    state,
+                    ctx,
                     &set.image.thumbnail_url,
                     &thumbnail_cdn_path,
                     &set.name,
@@ -171,7 +167,7 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
                 set.collection.qty_owned,
             );
 
-            state.lego_repo().commit_set(&set).await?;
+            lego.add_set(&set);
         }
     }
 
@@ -185,11 +181,11 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
             .unwrap();
 
             let cdn_path = format!("lego/{}.png", minifig.minifig_number);
-            let cdn_path = Path::new(&cdn_path);
+            let cdn_path = FilePath::cache(&cdn_path);
 
-            let image = state
-                .image_service()
-                .copy_image_from_url(state, &image_url, &cdn_path, &minifig.name)
+            let image = ctx
+                .image
+                .copy_image_from_url(ctx, &image_url, &cdn_path, &minifig.name)
                 .await?;
 
             let minifig = LegoMinifig::new(
@@ -202,9 +198,9 @@ pub async fn update_lego_command(state: &impl State) -> Result<()> {
                 image,
             );
 
-            state.lego_repo().commit_minifig(&minifig).await?;
+            lego.add_minifig(&minifig);
         }
     }
 
-    Ok(())
+    Ok(lego)
 }

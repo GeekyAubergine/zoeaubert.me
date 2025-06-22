@@ -5,7 +5,7 @@ use crate::{
         state::State,
     },
     error::TemplateError,
-    prelude::*,
+    prelude::*, services::{file_service::FilePath, ServiceContext},
 };
 
 use askama::Template;
@@ -114,10 +114,6 @@ impl PageRenderer {
     }
 
     async fn save_file(&self, path: &str, rendered: &str) -> Result<()> {
-        FileService::write_text_file(
-            &FileService::make_output_file_path(&Path::new(&path)),
-            &rendered,
-        )
-        .await
+        FilePath::output(path).write_text(&rendered).await
     }
 }

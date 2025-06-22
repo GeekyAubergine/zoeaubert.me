@@ -9,11 +9,16 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-use super::{media::{Media, MediaDimensions, MediaOrientation}, slug::Slug};
+use crate::services::file_service::FilePath;
+
+use super::{
+    media::{Media, MediaDimensions, MediaOrientation},
+    slug::Slug,
+};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Image {
-    pub path: PathBuf,
+    pub path: FilePath,
     pub alt: String,
     pub dimensions: MediaDimensions,
     pub title: Option<String>,
@@ -24,9 +29,9 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(path: &Path, alt: &str, dimensions: &MediaDimensions) -> Self {
+    pub fn new(path: &FilePath, alt: &str, dimensions: &MediaDimensions) -> Self {
         Self {
-            path: path.to_path_buf(),
+            path: path.clone(),
             alt: alt.to_string(),
             dimensions: *dimensions,
             title: None,
@@ -96,16 +101,11 @@ impl Image {
     }
 
     pub fn cdn_url(&self) -> Url {
-        // Some legacy thing from microblog is causing headaches with paths getting double cdn
-        let path_as_str = self.path.to_str().unwrap();
-
-        if path_as_str.starts_with("http") {
-            return path_as_str.parse().unwrap();
+        if self.path.starts_with("http") {
+            return self.path.as_url().unwrap().unwrap();
         }
 
-        let path = self.path.strip_prefix("/").unwrap_or(&self.path);
-
-        let path = format!("{}/{}", dotenv!("CDN_URL"), path.to_string_lossy());
+        let path = format!("{}/{}", dotenv!("CDN_URL"), self.path.to_string_lossy());
 
         path.parse().unwrap()
     }
