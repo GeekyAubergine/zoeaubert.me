@@ -1,11 +1,8 @@
 use crate::{
-    domain::{
-        models::{page::Page, slug::Slug},
-        repositories::Profiler,
-        state::State,
-    },
+    domain::models::{page::Page, slug::Slug},
     error::TemplateError,
-    prelude::*, services::{file_service::FilePath, ServiceContext},
+    prelude::*,
+    services::{file_service::FilePath, ServiceContext},
 };
 
 use askama::Template;
@@ -19,7 +16,7 @@ use std::{
 };
 use tokio::sync::RwLock;
 
-use crate::infrastructure::renderers::formatters::format_date::FormatDate;
+use crate::renderers::formatters::format_date::FormatDate;
 
 use super::file_service::FileService;
 
@@ -71,11 +68,7 @@ impl PageRenderer {
         Ok(())
     }
 
-    pub async fn render_file<'t, T>(
-        &self,
-        path: PathBuf,
-        template: &'t T,
-    ) -> Result<()>
+    pub async fn render_file<'t, T>(&self, path: PathBuf, template: &'t T) -> Result<()>
     where
         T: Template,
     {
@@ -88,10 +81,7 @@ impl PageRenderer {
         Ok(())
     }
 
-    pub async fn build_sitemap(
-        &self,
-        disallowed_routes: &[String],
-    ) -> Result<()> {
+    pub async fn build_sitemap(&self, disallowed_routes: &[String]) -> Result<()> {
         let pages = self.site_map_pages.read().await;
 
         let pages: Vec<SiteMapPage> = pages

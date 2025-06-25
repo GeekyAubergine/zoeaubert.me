@@ -22,7 +22,7 @@ use crate::{
     },
 };
 
-const QUERY: &str = "games";
+const QUERY_KEY: &str = "steam_games";
 
 const FILE_NAME: &str = "steam_games.json";
 
@@ -424,13 +424,13 @@ async fn process_game(
 }
 
 pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
-    if !ctx.query_limiter.can_query_within_hour(QUERY_KEY).await? {
-        return Ok(());
-    }
-
     let mut data: SteamGames = FilePath::archive(FILE_NAME)
         .read_as_json_or_default()
         .await?;
+
+    if !ctx.query_limiter.can_query_within_hour(QUERY_KEY).await? {
+        return Ok(data);
+    }
 
     info!("Processing steam games");
 

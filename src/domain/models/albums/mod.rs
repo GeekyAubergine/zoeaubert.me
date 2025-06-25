@@ -8,8 +8,6 @@ use crate::{
             albums::{album::Album, album_photo::AlbumPhoto},
             slug::Slug,
         },
-        repositories::AlbumsRepo,
-        state::State,
     },
     prelude::Result,
 };
@@ -23,18 +21,6 @@ pub struct Albums {
 }
 
 impl Albums {
-    pub async fn from_state(state: &impl State) -> Result<Self> {
-        let mut albums = Self {
-            albums: HashMap::new(),
-        };
-
-        for album in state.albums_repo().find_all_by_date().await? {
-            albums.commit(&album);
-        }
-
-        Ok(albums)
-    }
-
     pub fn find_all_by_date(&self) -> Vec<&Album> {
         let mut albums = self.albums.values().collect::<Vec<&Album>>();
 

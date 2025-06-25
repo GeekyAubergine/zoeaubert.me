@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     domain::models::{albums::album_photo::AlbumPhoto, image::Image, page::Page, slug::Slug},
-    infrastructure::utils::cover_photos_for_album::cover_photos_for_album,
+    utils::cover_photos_for_album::cover_photos_for_album,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -13,8 +13,6 @@ pub struct Album {
     pub description: Option<String>,
     pub date: DateTime<Utc>,
     pub photos: Vec<AlbumPhoto>,
-    pub updated_at: DateTime<Utc>,
-    pub original_data_hash: u64,
 }
 
 impl Album {
@@ -23,8 +21,6 @@ impl Album {
         title: String,
         description: Option<String>,
         date: DateTime<Utc>,
-        updated_at: DateTime<Utc>,
-        original_data_hash: u64,
     ) -> Self {
         Self {
             slug,
@@ -32,8 +28,6 @@ impl Album {
             description,
             date,
             photos: vec![],
-            updated_at,
-            original_data_hash,
         }
     }
 

@@ -180,8 +180,6 @@ mod tests {
     use chrono::Utc;
     use url::Url;
 
-    use crate::domain::services::CdnService;
-
     use super::*;
 
     #[test]

@@ -13,12 +13,12 @@ use super::{
     models::{
         book::{Book, BookReview},
         cache_path::CachePath,
-        raw_content::RawContent,
+        source_post::SourcePost,
         image::Image,
         media::{Media, MediaDimensions},
         movie::{Movie, MovieReview},
         network_response::{NetworkResponse, NetworkResponseBodyJson, NetworkResponseBytes},
-        omni_post::OmniPost,
+        omni_post::Post,
         page::Page,
         slug::Slug,
         tag::Tag,
@@ -56,7 +56,7 @@ pub trait MovieService {
     async fn movie_review_from_content(
         &self,
         state: &impl State,
-        post: &RawContent,
+        post: &SourcePost,
     ) -> Result<MovieReview>;
 }
 
@@ -67,7 +67,7 @@ pub trait TvShowsService {
     async fn tv_show_review_from_content(
         &self,
         state: &impl State,
-        post: &RawContent,
+        post: &SourcePost,
     ) -> Result<TvShowReview>;
 }
 
@@ -84,7 +84,7 @@ pub trait BookService {
     async fn book_review_from_content(
         &self,
         state: &impl State,
-        post: &RawContent,
+        post: &SourcePost,
     ) -> Result<BookReview>;
 }
 

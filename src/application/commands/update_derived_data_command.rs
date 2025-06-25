@@ -4,7 +4,7 @@ use tokio::try_join;
 
 use crate::{
     domain::{
-        models::{raw_content::RawContent, omni_post::OmniPost, tag::Tag},
+        models::{source_post::SourcePost, omni_post::Post, tag::Tag},
         queries::omni_post_queries::find_all_omni_posts_by_tag,
         repositories::{
             AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, MovieReviewsRepo,
@@ -20,7 +20,7 @@ const MOVIE_REVIEW_POST_TAG: &str = "Movies";
 const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
 const BOOK_REVIEW_POST_TAG: &str = "Books";
 
-async fn content_to_omni_post(state: &impl State, content: RawContent) -> Result<OmniPost> {
+async fn content_to_omni_post(state: &impl State, content: SourcePost) -> Result<Post> {
     if (content
         .tags()
         .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG)))
@@ -90,8 +90,8 @@ async fn content_to_omni_post(state: &impl State, content: RawContent) -> Result
 
 async fn content_posts_to_omni_post(
     state: &impl State,
-    content: Vec<RawContent>,
-) -> Result<Vec<OmniPost>> {
+    content: Vec<SourcePost>,
+) -> Result<Vec<Post>> {
     let mut posts = Vec::new();
 
     for c in content {
@@ -101,55 +101,55 @@ async fn content_posts_to_omni_post(
     Ok(posts)
 }
 
-async fn get_blog_post_content(state: &impl State) -> Result<Vec<RawContent>> {
+async fn get_blog_post_content(state: &impl State) -> Result<Vec<SourcePost>> {
     let blog_posts = state
         .blog_posts_repo()
         .find_all_by_date()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<RawContent>>();
+        .collect::<Vec<SourcePost>>();
 
     Ok(blog_posts)
 }
 
-async fn get_micro_post_content(state: &impl State) -> Result<Vec<RawContent>> {
+async fn get_micro_post_content(state: &impl State) -> Result<Vec<SourcePost>> {
     let micro_posts = state
         .micro_posts_repo()
         .find_all()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<RawContent>>();
+        .collect::<Vec<SourcePost>>();
 
     Ok(micro_posts)
 }
 
-async fn get_mastodon_post_content(state: &impl State) -> Result<Vec<RawContent>> {
+async fn get_mastodon_post_content(state: &impl State) -> Result<Vec<SourcePost>> {
     let mastodon_posts = state
         .mastodon_posts_repo()
         .find_all_by_date()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<RawContent>>();
+        .collect::<Vec<SourcePost>>();
 
     Ok(mastodon_posts)
 }
 
-async fn get_album_content(state: &impl State) -> Result<Vec<RawContent>> {
+async fn get_album_content(state: &impl State) -> Result<Vec<SourcePost>> {
     let albums = state
         .albums_repo()
         .find_all_by_date()
         .await?
         .into_iter()
         .map(|p| p.into())
-        .collect::<Vec<RawContent>>();
+        .collect::<Vec<SourcePost>>();
 
     Ok(albums)
 }
 
-async fn get_album_photos_content(state: &impl State) -> Result<Vec<RawContent>> {
+async fn get_album_photos_content(state: &impl State) -> Result<Vec<SourcePost>> {
     let photos = state
         .albums_repo()
         .find_all_by_date()
@@ -160,15 +160,15 @@ async fn get_album_photos_content(state: &impl State) -> Result<Vec<RawContent>>
                 .photos
                 .iter()
                 .map(|photo| (album.clone(), photo.clone()).into())
-                .collect::<Vec<RawContent>>()
+                .collect::<Vec<SourcePost>>()
         })
         .flatten()
-        .collect::<Vec<RawContent>>();
+        .collect::<Vec<SourcePost>>();
 
     Ok(photos)
 }
 
-async fn get_steam_achievement_unlocked_content(state: &impl State) -> Result<Vec<OmniPost>> {
+async fn get_steam_achievement_unlocked_content(state: &impl State) -> Result<Vec<Post>> {
     let mut posts = vec![];
 
     let games = state.steam_games_repo().find_all().await?;
@@ -180,7 +180,7 @@ async fn get_steam_achievement_unlocked_content(state: &impl State) -> Result<Ve
             .await?
             .into_iter()
             .map(|a| (game.clone(), a).into())
-            .collect::<Vec<OmniPost>>();
+            .collect::<Vec<Post>>();
 
         posts.extend(achievements);
     }

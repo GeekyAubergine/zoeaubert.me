@@ -7,9 +7,9 @@ use tracing::warn;
 use crate::{
     domain::{
         models::{
-            raw_content::RawContent,
+            source_post::SourcePost,
             movie::{MovieId, MovieReview},
-            omni_post::OmniPost,
+            omni_post::Post,
             slug::Slug,
             tag::Tag,
         },
@@ -22,7 +22,7 @@ use crate::{
 
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct OmniPostRepoData {
-    posts: HashMap<String, OmniPost>,
+    posts: HashMap<String, Post>,
     post_date_order: Vec<String>,
     posts_by_tag: HashMap<Tag, Vec<String>>,
 }
@@ -42,7 +42,7 @@ impl OmniPostRepoMemory {
         &self,
         mut data: RwLockWriteGuard<'_, OmniPostRepoData>,
     ) -> Result<()> {
-        let mut posts = data.posts.values().cloned().collect::<Vec<OmniPost>>();
+        let mut posts = data.posts.values().cloned().collect::<Vec<Post>>();
 
         posts.sort_by(|a, b| b.date().cmp(&a.date()));
 
@@ -63,7 +63,7 @@ impl OmniPostRepoMemory {
 
 #[async_trait::async_trait]
 impl OmniPostRepo for OmniPostRepoMemory {
-    async fn find_all_by_date(&self) -> Result<Vec<OmniPost>> {
+    async fn find_all_by_date(&self) -> Result<Vec<Post>> {
         let data = self.data.read().await;
 
         let posts = data
@@ -71,12 +71,12 @@ impl OmniPostRepo for OmniPostRepoMemory {
             .iter()
             .filter_map(|slug| data.posts.get(slug))
             .cloned()
-            .collect::<Vec<OmniPost>>();
+            .collect::<Vec<Post>>();
 
         Ok(posts)
     }
 
-    async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<OmniPost>> {
+    async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<Post>> {
         let data = self.data.read().await;
 
         let posts = data
@@ -87,14 +87,14 @@ impl OmniPostRepo for OmniPostRepoMemory {
                     .iter()
                     .filter_map(|slug| data.posts.get(slug))
                     .cloned()
-                    .collect::<Vec<OmniPost>>()
+                    .collect::<Vec<Post>>()
             })
             .unwrap_or_default();
 
         Ok(posts)
     }
 
-    async fn commit(&self, state: &impl State, posts: Vec<OmniPost>) -> Result<()> {
+    async fn commit(&self, state: &impl State, posts: Vec<Post>) -> Result<()> {
         let mut data = self.data.write().await;
 
         for post in posts {

@@ -9,9 +9,9 @@ use url::Url;
 
 use serde::{Deserialize, Serialize};
 
-use crate::domain::models::raw_content::RawContent;
+use crate::domain::models::raw_content::SourcePost;
 use crate::domain::models::movie::{MovieId, MovieReview};
-use crate::domain::models::omni_post::OmniPost;
+use crate::domain::models::omni_post::Post;
 use crate::domain::services::{FileService, ImageService, NetworkService};
 use crate::domain::state::State;
 use crate::domain::{models::movie::Movie, services::MovieService};
@@ -166,7 +166,7 @@ impl MovieService for MovieServiceTmdb {
     async fn movie_review_from_content(
         &self,
         state: &impl State,
-        post: &RawContent,
+        post: &SourcePost,
     ) -> Result<MovieReview> {
         let review = parse_content_into_movie_review(post)?;
 

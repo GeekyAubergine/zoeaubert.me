@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    domain::{repositories::LegoRepo, state::State},
     prelude::*,
 };
 
@@ -96,7 +95,7 @@ impl LegoMinifig {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Lego {
     sets: HashMap<u32, LegoSet>,
     minifigs: HashMap<String, LegoMinifig>,
@@ -108,27 +107,6 @@ impl Lego {
             sets: HashMap::new(),
             minifigs: HashMap::new(),
         }
-    }
-
-    pub async fn from_state(state: &impl State) -> Result<Self> {
-        let mut lego = Self {
-            sets: HashMap::new(),
-            minifigs: HashMap::new(),
-        };
-
-        let sets = state.lego_repo().find_all_sets().await?;
-
-        for set in sets {
-            lego.add_set(&set);
-        }
-
-        let minifigs = state.lego_repo().find_all_minifigs().await?;
-
-        for minifig in minifigs {
-            lego.add_minifig(&minifig);
-        }
-
-        Ok(lego)
     }
 
     pub fn find_all_sets(&self) -> Vec<&LegoSet> {

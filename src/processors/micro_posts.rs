@@ -5,7 +5,7 @@ use serde::Deserialize;
 use crate::{
     domain::models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
     error::MicroPostError,
-    infrastructure::utils::date::parse_date,
+    utils::date::parse_date,
     prelude::*,
     services::{file_service::FilePath, ServiceContext},
 };
@@ -59,12 +59,12 @@ async fn process_file(
 
     let content = match content.get(front_matter_len + 6..) {
         Some(content) => Ok(content.to_string()),
-        None => Err(MicroPostError::no_content(file_path)),
+        None => Err(MicroPostError::no_content(file_path.clone())),
     }?;
 
     let front_matter = match front_matter {
         Some(front_matter) => front_matter_from_string(front_matter),
-        None => Err(MicroPostError::no_front_matter(file_path)),
+        None => Err(MicroPostError::no_front_matter(file_path.clone())),
     }?;
 
     let date = parse_date(front_matter.date.as_str())?;
@@ -73,9 +73,9 @@ async fn process_file(
 
     let file_name = file_path
         .file_name()
-        .ok_or(MicroPostError::invalid_file_name(file_path))?
+        .ok_or(MicroPostError::invalid_file_name(file_path.clone()))?
         .to_str()
-        .ok_or(MicroPostError::invalid_file_name(file_path))?
+        .ok_or(MicroPostError::invalid_file_name(file_path.clone()))?
         .replace(".md", "");
 
     let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
@@ -101,16 +101,16 @@ async fn process_file(
     Ok(micro_post)
 }
 
-pub async fn process_micro_posts(ctx: &ServiceContext) -> Result<()> {
-    let files = FilePath::content(MICRO_POSTS_DIR)
-        .find_recurisve_files("md")
-        .await?;
+pub async fn process_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
+    let files = FilePath::content(MICRO_POSTS_DIR).find_recurisve_files("md")?;
+
+    let mut posts = vec![];
 
     for file in files {
         let content = file.read_text().await?;
 
-        process_file(ctx, file, &content).await?;
+        posts.push(process_file(ctx, file, &content).await?);
     }
 
-    Ok(())
+    Ok(posts)
 }

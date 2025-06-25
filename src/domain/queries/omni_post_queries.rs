@@ -4,7 +4,7 @@ use bitflags::bitflags;
 use chrono::Datelike;
 use tracing::warn;
 
-use crate::domain::models::raw_content::RawContent;
+use crate::domain::models::source_post::SourcePost;
 use crate::domain::repositories::{
     AlbumsRepo, BlogPostsRepo, MastodonPostsRepo, MicroPostsRepo, OmniPostRepo,
     SteamAchievementsRepo, SteamGamesRepo,
@@ -12,7 +12,7 @@ use crate::domain::repositories::{
 use crate::domain::services::{MovieService, TvShowsService};
 use crate::prelude::*;
 
-use crate::domain::{models::omni_post::OmniPost, models::tag::Tag, state::State};
+use crate::domain::{models::omni_post::Post, models::tag::Tag, state::State};
 
 bitflags! {
     #[derive(Debug, Clone, Default, Copy, PartialEq, Eq)]
@@ -81,40 +81,40 @@ impl OmniPostFilterFlags {
 pub async fn find_all_omni_posts(
     state: &impl State,
     filter_flags: OmniPostFilterFlags,
-) -> Result<Vec<OmniPost>> {
+) -> Result<Vec<Post>> {
     let posts = state.omni_post_repo().find_all_by_date().await?;
 
     let posts = posts
         .into_iter()
         .filter(|p| match p {
-            OmniPost::BlogPost(_) => filter_flags.contains(OmniPostFilterFlags::BLOG_POST),
-            OmniPost::MicroPost(_) => filter_flags.contains(OmniPostFilterFlags::MICRO_POST),
-            OmniPost::MastodonPost(_) => filter_flags.contains(OmniPostFilterFlags::MASTODON_POST),
-            OmniPost::Album(_) => filter_flags.contains(OmniPostFilterFlags::ALBUM),
-            OmniPost::AlbumPhoto { .. } => filter_flags.contains(OmniPostFilterFlags::ALBUM_PHOTO),
-            OmniPost::SteamAcheivementUnlocked { .. } => {
+            Post::BlogPost(_) => filter_flags.contains(OmniPostFilterFlags::BLOG_POST),
+            Post::MicroPost(_) => filter_flags.contains(OmniPostFilterFlags::MICRO_POST),
+            Post::MastodonPost(_) => filter_flags.contains(OmniPostFilterFlags::MASTODON_POST),
+            Post::Album(_) => filter_flags.contains(OmniPostFilterFlags::ALBUM),
+            Post::AlbumPhoto { .. } => filter_flags.contains(OmniPostFilterFlags::ALBUM_PHOTO),
+            Post::SteamAcheivementUnlocked { .. } => {
                 filter_flags.contains(OmniPostFilterFlags::UNLOCKED_STEAM_ACHIEVEMENT)
             }
-            OmniPost::MovieReview(_) => filter_flags.contains(OmniPostFilterFlags::MOVIE_REVIEW),
-            OmniPost::TvShowReview(_) => filter_flags.contains(OmniPostFilterFlags::TV_SHOW_REVIEW),
-            OmniPost::BookReview(_) => filter_flags.contains(OmniPostFilterFlags::BOOK_REVIEW),
+            Post::MovieReview(_) => filter_flags.contains(OmniPostFilterFlags::MOVIE_REVIEW),
+            Post::TvShowReview(_) => filter_flags.contains(OmniPostFilterFlags::TV_SHOW_REVIEW),
+            Post::BookReview(_) => filter_flags.contains(OmniPostFilterFlags::BOOK_REVIEW),
         })
-        .collect::<Vec<OmniPost>>();
+        .collect::<Vec<Post>>();
 
     Ok(posts)
 }
 
-pub async fn find_all_omni_posts_by_tag(state: &impl State, tag: &Tag) -> Result<Vec<OmniPost>> {
+pub async fn find_all_omni_posts_by_tag(state: &impl State, tag: &Tag) -> Result<Vec<Post>> {
     state.omni_post_repo().find_all_by_tag(tag).await
 }
 
 pub async fn find_omni_posts_grouped_by_year(
     state: &impl State,
     filter_flags: OmniPostFilterFlags,
-) -> Result<HashMap<u16, Vec<OmniPost>>> {
+) -> Result<HashMap<u16, Vec<Post>>> {
     let posts = find_all_omni_posts(state, filter_flags).await?;
 
-    let years: HashMap<u16, Vec<OmniPost>> =
+    let years: HashMap<u16, Vec<Post>> =
         posts.into_iter().fold(HashMap::new(), |mut acc, post| {
             acc.entry(post.date().year() as u16)
                 .or_insert_with(Vec::new)

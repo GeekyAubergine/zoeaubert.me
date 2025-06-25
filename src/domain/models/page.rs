@@ -2,17 +2,12 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use url::Url;
 
-use crate::{
-    build_data::BUILD_DATE,
-    infrastructure::{
-        renderers::formatters::format_date::FormatDate, utils::paginator::PaginatorPage,
-    },
-};
+use crate::{build_data::BUILD_DATE, renderers::formatters::format_date::FormatDate, utils::paginator::PaginatorPage};
 
 use super::{
     mastodon_post::MastodonPost,
     media::Media,
-    omni_post::OmniPost,
+    post::Post,
     site_config::{HeaderLink, PageImage, PageLinkGroup, SocialNetworkLink, SITE_CONFIG},
     slug::Slug,
     tag::Tag,

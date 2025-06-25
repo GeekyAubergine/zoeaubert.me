@@ -15,8 +15,8 @@ use super::{
         mastodon_post::MastodonPost,
         micro_post::MicroPost,
         movie::{MovieId, MovieReview},
-        omni_post::OmniPost,
-        raw_content::RawContent,
+        omni_post::Post,
+        raw_content::SourcePost,
         referral::Referral,
         slug::Slug,
         steam::{
@@ -201,11 +201,11 @@ pub trait LeagueRepo {
 
 #[async_trait::async_trait]
 pub trait OmniPostRepo {
-    async fn find_all_by_date(&self) -> Result<Vec<OmniPost>>;
+    async fn find_all_by_date(&self) -> Result<Vec<Post>>;
 
-    async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<OmniPost>>;
+    async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<Post>>;
 
-    async fn commit(&self, state: &impl State, posts: Vec<OmniPost>) -> Result<()>;
+    async fn commit(&self, state: &impl State, posts: Vec<Post>) -> Result<()>;
 }
 
 #[async_trait::async_trait]

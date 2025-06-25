@@ -5,15 +5,9 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::domain::services::{FileService, QueryLimitingService};
-use crate::domain::state::State;
-use crate::infrastructure::services::file_service_disk::FileServiceDisk;
 use crate::prelude::*;
 
-use crate::domain::{
-    models::lego::{LegoMinifig, LegoSet},
-    repositories::LegoRepo,
-};
+use crate::domain::models::lego::{LegoMinifig, LegoSet};
 use crate::services::file_service::FilePath;
 
 const FILE_NAME: &str = "query_limiting_service.json";
@@ -22,10 +16,6 @@ const FILE_NAME: &str = "query_limiting_service.json";
 pub const FIFTEEN_MINUTES_PERIOD: Duration = Duration::new(15 * 60 - 60, 0);
 pub const ONE_HOUR_PERIOD: Duration = Duration::new(60 * 60 - 60, 0);
 pub const ONE_DAY_PERIOD: Duration = Duration::new(60 * 60 * 24 - 60, 0);
-
-fn make_file_path(file_service: &impl FileService) -> PathBuf {
-    file_service.make_archive_file_path(&Path::new(FILE_NAME))
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct QueryLimitingData {

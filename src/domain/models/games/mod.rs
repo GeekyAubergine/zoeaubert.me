@@ -4,13 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use steam::SteamGameWithAchievements;
 
-use crate::{
-    domain::{
-        repositories::{SteamAchievementsRepo, SteamGamesRepo},
-        state::State,
-    },
-    prelude::Result,
-};
+use crate::prelude::Result;
 
 use super::image::Image;
 
@@ -72,60 +66,6 @@ impl Games {
         Self {
             games: HashMap::new(),
         }
-    }
-
-    pub async fn from_state(state: &impl State) -> Result<Self> {
-        let mut games = Self {
-            games: HashMap::new(),
-        };
-
-        for game in state.steam_games_repo().find_all().await? {
-            let game = steam::SteamGame {
-                id: game.id,
-                name: game.name,
-                header_image: game.header_image,
-                playtime: Duration::from_secs(game.playtime as u64 * 60),
-                last_played: game.last_played,
-                link_url: game.link_url,
-            };
-
-            let mut game = SteamGameWithAchievements::from_game(game);
-
-            for achievement in state
-                .steam_achievements_repo()
-                .find_all_locked_by_name(game.game.id)
-                .await?
-                .iter()
-            {
-                game.add_locked_achievement(steam::SteamGameAchievementLocked {
-                    id: achievement.id.clone(),
-                    game_id: achievement.game_id,
-                    display_name: achievement.display_name.clone(),
-                    description: achievement.description.clone(),
-                    image: achievement.image.clone(),
-                    global_unlocked_percentage: achievement.global_unlocked_percentage,
-                });
-            }
-
-            for achievement in state
-                .steam_achievements_repo()
-                .find_all_unlocked_by_unlocked_date(game.game.id)
-                .await?
-                .iter()
-            {
-                game.add_unlocked_achievement(steam::SteamGameAchievementUnlocked {
-                    id: achievement.id.clone(),
-                    game_id: achievement.game_id,
-                    display_name: achievement.display_name.clone(),
-                    description: achievement.description.clone(),
-                    image: achievement.image.clone(),
-                    unlocked_date: achievement.unlocked_date,
-                    global_unlocked_percentage: achievement.global_unlocked_percentage,
-                });
-            }
-        }
-
-        Ok(games)
     }
 
     pub fn find_by_id(&self, game_id: &GameId) -> Option<&Game> {

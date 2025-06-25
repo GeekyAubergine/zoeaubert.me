@@ -3,10 +3,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::{
-    domain::{repositories::ProjectsRepo, state::State},
-    prelude::Result,
-};
+use crate::prelude::Result;
 
 use super::{image::Image, slug::Slug};
 
@@ -29,18 +26,6 @@ impl Projects {
         Self {
             projects: HashMap::new(),
         }
-    }
-
-    pub async fn from_state(state: &impl State) -> Result<Self> {
-        let mut projects = Self {
-            projects: HashMap::new(),
-        };
-
-        for project in state.projects_repo().find_all_by_rank_and_name().await? {
-            projects.commit(&project);
-        }
-
-        Ok(projects)
     }
 
     pub fn find_all_by_rank_and_name(&self) -> Vec<Project> {

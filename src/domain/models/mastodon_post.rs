@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::Url;
@@ -224,5 +226,24 @@ impl MastodonPost {
         }
 
         page
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Default)]
+pub struct MastodonPosts {
+    mastodon_posts: HashMap<String, MastodonPost>,
+}
+
+impl MastodonPosts {
+    pub fn add(&mut self, post: MastodonPost) {
+        self.mastodon_posts.insert(post.id().to_string(), post);
+    }
+
+    pub fn posts(&self) -> Vec<&MastodonPost> {
+        let mut posts = self.mastodon_posts.values().collect::<Vec<&MastodonPost>>();
+
+        posts.sort_by(|a, b| b.updated_at().cmp(a.updated_at()));
+
+        posts
     }
 }

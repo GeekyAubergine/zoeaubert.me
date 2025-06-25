@@ -34,6 +34,15 @@ impl FilePath {
         }
     }
 
+    pub fn assets(path: &str) -> Self {
+        let path = path.strip_prefix("/").unwrap_or(path);
+
+        Self {
+            path: PathBuf::new().join("assets").join(path),
+        }
+    }
+
+
     pub fn content(path: &str) -> Self {
         let path = path.strip_prefix("/").unwrap_or(path);
 
@@ -55,6 +64,30 @@ impl FilePath {
 
         Self {
             path: PathBuf::new().join(dotenv!("OUTPUT_DIR")).join(path),
+        }
+    }
+
+    pub fn path_from_date_and_file_name(
+        date: &DateTime<Utc>,
+        file_name: &str,
+        suffix: Option<&str>,
+    ) -> Self {
+        let date_str = date.format("%Y/%m/%d").to_string();
+
+        let file_name = file_name.split('/').last().unwrap();
+
+        let name = file_name.split('.').next().unwrap();
+        let ext = file_name.split('.').last().unwrap();
+
+        let suffix_str = match suffix {
+            Some(suffix) => format!("-{}", suffix),
+            None => "".to_string(),
+        };
+
+        let path = format!("/{}/{}{}.{}", date_str, name, suffix_str, ext);
+
+        Self {
+            path: Path::new(&path).to_path_buf()
         }
     }
 
@@ -158,8 +191,8 @@ impl FilePath {
             .map(|path| path.parse().map_err(FileSystemError::path_is_not_url))
     }
 
-    pub async fn find_recurisve_files(&self, extension: &str) -> Result<Vec<FilePath>> {
-        let paths = FileService::find_files_recursive(&self.path, extension).await?;
+    pub fn find_recurisve_files(&self, extension: &str) -> Result<Vec<FilePath>> {
+        let paths = FileService::find_files_recursive(&self.path, extension)?;
 
         Ok(paths
             .iter()
@@ -167,6 +200,13 @@ impl FilePath {
             .collect())
     }
 }
+
+impl std::fmt::Display for FilePath {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.to_string_lossy())
+    }
+}
+
 
 pub struct FileService;
 
@@ -266,14 +306,14 @@ impl FileService {
 
     // -------- Utils
 
-    async fn make_dir(path: &Path) -> Result<()> {
+    pub async fn make_dir(path: &Path) -> Result<()> {
         debug!("Making directory [{:?}]", path);
         tokio::fs::create_dir_all(path)
             .await
             .map_err(FileSystemError::create_dir_error)
     }
 
-    async fn find_files_recursive(path: &Path, extension: &str) -> Result<Vec<String>> {
+    fn find_files_recursive(path: &Path, extension: &str) -> Result<Vec<String>> {
         debug!("Finding files in [{:?}]", path);
 
         let mut files = vec![];
@@ -283,7 +323,7 @@ impl FileService {
             let path = entry.path();
 
             if path.is_dir() {
-                let children = Self::find_files_recursive(&path, extension).await?;
+                let children = Self::find_files_recursive(&path, extension)?;
 
                 for child in children {
                     files.push(child);
@@ -296,5 +336,21 @@ impl FileService {
         }
 
         Ok(files)
+    }
+
+    pub async fn copy(source: &Path, destination: &Path) -> Result<()> {
+        debug!("Copying [{:?}] to [{:?}]", source, destination);
+        tokio::fs::copy(source, destination)
+            .await
+            .map_err(FileSystemError::copy_file_error)?;
+
+        Ok(())
+    }
+
+    pub async fn copy_dir(source: &Path, destination: &Path) -> Result<()> {
+        debug!("Copying directory [{:?}] to [{:?}]", source, destination);
+        copy_dir(source, destination).map_err(FileSystemError::copy_dir_error)?;
+
+        Ok(())
     }
 }

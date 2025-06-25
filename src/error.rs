@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::{domain::models::{raw_content::RawContent, slug::Slug}, services::file_service::FilePath};
+use crate::{domain::models::{source_post::SourcePost, slug::Slug}, services::file_service::FilePath};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -417,7 +417,7 @@ impl MovieError {
         Error::MovieError(Self::MovieNotFound(error))
     }
 
-    pub fn unsupported_content_type(content: &RawContent) -> Error {
+    pub fn unsupported_content_type(content: &SourcePost) -> Error {
         Error::MovieError(Self::UnsupportedContenttType(content.slug()))
     }
 
@@ -478,7 +478,7 @@ impl TvShowsError {
         Error::TvShowsError(Self::TvShowNotFound(error))
     }
 
-    pub fn unsupported_content_type(content: &RawContent) -> Error {
+    pub fn unsupported_content_type(content: &SourcePost) -> Error {
         Error::TvShowsError(Self::UnsupportedContentType(content.slug()))
     }
 
@@ -490,11 +490,11 @@ impl TvShowsError {
 #[derive(Debug, thiserror::Error)]
 pub enum AlbumError {
     #[error("Invalid file name {0}")]
-    InvalidFileName(PathBuf),
+    InvalidFileName(FilePath),
 }
 
 impl AlbumError {
-    pub fn invalid_file_name(file_name: PathBuf) -> Error {
+    pub fn invalid_file_name(file_name: FilePath) -> Error {
         Error::AlbumError(Self::InvalidFileName(file_name))
     }
 }

@@ -22,11 +22,11 @@ pub struct ServiceContext {
 
 impl ServiceContext {
     pub async fn new() -> Result<Self> {
-        Self {
+        Ok(Self {
             network: NetworkService2::new(),
             cdn: CdnService::new(),
             image: ImageService2::new(),
-            query_limiter: QueryLimitingService2::new().await?
-        }
+            query_limiter: QueryLimitingService2::new().await?,
+        })
     }
 }

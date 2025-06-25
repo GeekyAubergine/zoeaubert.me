@@ -4,7 +4,7 @@ use url::Url;
 use crate::{
     domain::models::{blog_post::BlogPost, slug::Slug, tag::Tag},
     error::BlogPostError,
-    infrastructure::utils::date::parse_date,
+    utils::date::parse_date,
     prelude::*,
     services::{file_service::FilePath, ServiceContext},
 };
@@ -99,9 +99,7 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &FilePath) -> Re
 }
 
 pub async fn process_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
-    let blog_posts_files = FilePath::content(BLOG_POSTS_DIR)
-        .find_recurisve_files("md")
-        .await?;
+    let blog_posts_files = FilePath::content(BLOG_POSTS_DIR).find_recurisve_files("md")?;
 
     let mut posts = vec![];
 
