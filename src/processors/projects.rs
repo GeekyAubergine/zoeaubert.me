@@ -4,7 +4,12 @@ use url::Url;
 use crate::{
     domain::models::projects::{Project, Projects},
     prelude::*,
-    services::{file_service::FilePath, ServiceContext},
+    services::{
+        cdn_service::CdnFile,
+        file_service::{File, FilePath},
+        media_service::MediaService,
+        ServiceContext,
+    },
 };
 
 pub const PROJECTS_FILE: &str = "projects.yml";
@@ -27,20 +32,23 @@ struct ProjectsFile {
 pub async fn process_projects(ctx: &ServiceContext) -> Result<Projects> {
     let mut projects: Projects = Projects::new();
 
-    let yaml: ProjectsFile = FilePath::content(PROJECTS_FILE).read_as_yaml().await?;
+    let yaml: ProjectsFile = File::from_path(FilePath::content(PROJECTS_FILE))
+        .read_as_yaml()
+        .await?;
 
     for file_project in yaml.projects {
         let path = file_project.image.path();
 
-        let image = ctx
-            .image
-            .copy_image_from_url(
-                ctx,
-                &file_project.image,
-                &FilePath::cache(file_project.image.path()),
-                &file_project.image_alt,
-            )
-            .await?;
+        let cdn_file = CdnFile::from_str(path);
+
+        let image = MediaService::image_from_url(
+            ctx,
+            &file_project.image,
+            &cdn_file,
+            &file_project.image_alt,
+            None,
+        )
+        .await?;
 
         let project = Project {
             name: file_project.name,

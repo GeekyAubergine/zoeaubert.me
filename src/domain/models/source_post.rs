@@ -57,14 +57,6 @@ impl SourcePost {
         }
     }
 
-    pub fn optimised_media(&self) -> Vec<Media> {
-        match self {
-            Self::BlogPost(blog_post) => blog_post.media.clone(),
-            Self::MicroPost(micro_post) => micro_post.media.clone(),
-            Self::MastodonPost(mastodon_post) => mastodon_post.optimised_media(),
-        }
-    }
-
     pub fn tags(&self) -> Vec<Tag> {
         match self {
             Self::BlogPost(blog_post) => blog_post.tags.clone(),

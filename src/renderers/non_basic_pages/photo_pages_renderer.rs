@@ -2,7 +2,7 @@ use askama::Template;
 
 use crate::{
     domain::models::{
-        image::Image,
+        image::LegacyImage,
         page::{Page, PagePagination},
         post::Post,
         post::PostFilter,
@@ -25,7 +25,7 @@ const DEFAULT_PAGINATION_SIZE: usize = 40;
 #[template(path = "photos.html")]
 pub struct PhotosPage {
     page: Page,
-    photos: Vec<Image>,
+    photos: Vec<LegacyImage>,
 }
 
 pub async fn render_photos_page<'d>(context: &RendererContext) -> Result<()> {

@@ -1,6 +1,6 @@
 use askama::Template;
 
-use crate::domain::models::image::Image;
+use crate::domain::models::image::LegacyImage;
 use crate::domain::models::lego::{LegoMinifig, LegoSet};
 use crate::domain::models::media::{Media, MediaOrientation};
 use crate::domain::models::post::PostFilter;
@@ -17,7 +17,7 @@ use crate::renderers::formatters::format_number::FormatNumber;
 struct Interest {
     name: String,
     slug: Slug,
-    image: Image,
+    image: LegacyImage,
 }
 
 #[derive(Template)]

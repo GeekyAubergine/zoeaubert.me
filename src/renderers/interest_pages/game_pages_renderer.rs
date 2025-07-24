@@ -8,7 +8,7 @@ use crate::domain::models::games::steam::{
     SteamGame, SteamGameAchievementLocked, SteamGameAchievementUnlocked, SteamGameWithAchievements,
 };
 use crate::domain::models::games::Game;
-use crate::domain::models::image::Image;
+use crate::domain::models::image::LegacyImage;
 use crate::domain::models::page::Page;
 use crate::domain::models::post::Post;
 use crate::domain::models::post::PostFilter;

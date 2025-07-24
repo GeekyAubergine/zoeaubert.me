@@ -5,10 +5,8 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    prelude::*,
+    domain::models::image::Image, prelude::*
 };
-
-use super::image::Image;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LegoSet {
@@ -18,7 +16,6 @@ pub struct LegoSet {
     pub category: String,
     pub pieces: u32,
     pub image: Image,
-    pub thumbnail: Image,
     pub link: Url,
     pub quantity: u32,
 }
@@ -31,7 +28,6 @@ impl LegoSet {
         category: String,
         pieces: u32,
         image: Image,
-        thumbnail: Image,
         link: Url,
         quantity: u32,
     ) -> Self {
@@ -42,7 +38,6 @@ impl LegoSet {
             category,
             pieces,
             image,
-            thumbnail,
             link,
             quantity,
         }

@@ -2,7 +2,7 @@ use crate::{
     domain::models::{page::Page, slug::Slug},
     error::TemplateError,
     prelude::*,
-    services::{file_service::FilePath, ServiceContext},
+    services::{file_service::{File, FilePath}, ServiceContext},
 };
 
 use askama::Template;
@@ -104,6 +104,6 @@ impl PageRenderer {
     }
 
     async fn save_file(&self, path: &str, rendered: &str) -> Result<()> {
-        FilePath::output(path).write_text(&rendered).await
+        File::from_path(FilePath::output(path)).write_text(&rendered).await
     }
 }

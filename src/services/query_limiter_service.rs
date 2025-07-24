@@ -8,7 +8,7 @@ use tokio::sync::RwLock;
 use crate::prelude::*;
 
 use crate::domain::models::lego::{LegoMinifig, LegoSet};
-use crate::services::file_service::FilePath;
+use crate::services::file_service::{File, FilePath};
 
 const FILE_NAME: &str = "query_limiting_service.json";
 
@@ -28,7 +28,7 @@ pub struct QueryLimitingService2 {
 
 impl QueryLimitingService2 {
     pub async fn new() -> Result<Self> {
-        let data = FilePath::archive(FILE_NAME)
+        let data = File::from_path(FilePath::archive(FILE_NAME))
             .read_as_json_or_default()
             .await?;
 
@@ -54,7 +54,7 @@ impl QueryLimitingService2 {
         if can_query {
             data.queries.insert(query.to_string(), Utc::now());
 
-            FilePath::archive(FILE_NAME).write_json(&*data).await?;
+            File::from_path(FilePath::archive(FILE_NAME)).write_json(&*data).await?;
         }
 
         Ok(can_query)

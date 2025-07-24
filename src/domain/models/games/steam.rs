@@ -51,7 +51,6 @@ pub struct SteamGameAchievementUnlocked {
     pub description: String,
     pub image: Image,
     pub unlocked_date: DateTime<Utc>,
-    pub global_unlocked_percentage: f32,
 }
 
 impl SteamGameAchievementUnlocked {
@@ -62,7 +61,6 @@ impl SteamGameAchievementUnlocked {
         description: String,
         image: Image,
         unlocked_date: DateTime<Utc>,
-        global_unlocked_percentage: f32,
     ) -> Self {
         Self {
             id,
@@ -71,7 +69,6 @@ impl SteamGameAchievementUnlocked {
             description,
             image,
             unlocked_date,
-            global_unlocked_percentage,
         }
     }
 }
@@ -83,7 +80,6 @@ pub struct SteamGameAchievementLocked {
     pub display_name: String,
     pub description: String,
     pub image: Image,
-    pub global_unlocked_percentage: f32,
 }
 
 impl SteamGameAchievementLocked {
@@ -93,7 +89,6 @@ impl SteamGameAchievementLocked {
         display_name: String,
         description: String,
         image: Image,
-        global_unlocked_percentage: f32,
     ) -> Self {
         Self {
             id,
@@ -101,7 +96,6 @@ impl SteamGameAchievementLocked {
             display_name,
             description,
             image,
-            global_unlocked_percentage,
         }
     }
 }

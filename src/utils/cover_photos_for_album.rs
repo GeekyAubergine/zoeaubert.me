@@ -8,11 +8,11 @@ pub fn cover_photos_for_album(album: &Album) -> Vec<&AlbumPhoto> {
 
     let (featured_portrait, featured_landscape): (Vec<&AlbumPhoto>, Vec<&AlbumPhoto>) = featured
         .iter()
-        .partition(|photo| !photo.small_image.dimensions.orientation().is_landscape());
+        .partition(|photo| !photo.image.orientation().is_landscape());
     let (non_featured_portrait, non_featured_landscape): (Vec<&AlbumPhoto>, Vec<&AlbumPhoto>) =
         non_featured
             .iter()
-            .partition(|photo| !photo.small_image.dimensions.orientation().is_landscape());
+            .partition(|photo| !photo.image.orientation().is_landscape());
 
     // If featured landscape
     if let Some(photo) = featured_landscape.first() {
@@ -66,7 +66,7 @@ mod test {
             image::Image,
             media::MediaDimensions,
             slug::Slug,
-        }, services::file_service::FilePath, utils::cover_photos_for_album::cover_photos_for_album
+        }, services::file_service::File, utils::cover_photos_for_album::cover_photos_for_album
     };
 
     #[test]
@@ -85,9 +85,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(30, 20)),
             )
             .set_featured(true),
         );
@@ -97,9 +97,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(true),
         );
@@ -109,9 +109,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(30, 20)),
             )
             .set_featured(false),
         );
@@ -129,9 +129,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(true),
         );
@@ -141,9 +141,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(true),
         );
@@ -153,9 +153,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );
@@ -174,9 +174,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(true),
         );
@@ -186,9 +186,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );
@@ -198,9 +198,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(30, 20)),
             )
             .set_featured(false),
         );
@@ -219,9 +219,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );
@@ -231,9 +231,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );
@@ -243,9 +243,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(30, 20)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(30, 20)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(30, 20)),
             )
             .set_featured(false),
         );
@@ -264,9 +264,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );
@@ -276,9 +276,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_2"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );
@@ -288,9 +288,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_3"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_3"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );
@@ -309,9 +309,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(true),
         );
@@ -329,9 +329,9 @@ mod test {
                 "".to_string(),
                 Utc::now(),
                 vec![],
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
-                Image::new(&FilePath::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
+                Image::new(&File::cache("file_1"), "", &MediaDimensions::new(20, 30)),
             )
             .set_featured(false),
         );

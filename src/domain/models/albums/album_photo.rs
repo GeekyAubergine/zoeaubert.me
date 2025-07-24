@@ -12,9 +12,7 @@ pub struct AlbumPhoto {
     pub description: String,
     pub date: DateTime<Utc>,
     pub tags: Vec<Tag>,
-    pub small_image: Image,
-    pub large_image: Image,
-    pub original_image: Image,
+    pub image: Image,
     pub featured: bool,
 }
 
@@ -24,18 +22,14 @@ impl AlbumPhoto {
         description: String,
         date: DateTime<Utc>,
         tags: Vec<Tag>,
-        small_image: Image,
-        large_image: Image,
-        original_image: Image,
+        image: Image,
     ) -> Self {
         Self {
             slug,
             description,
             date,
             tags,
-            small_image,
-            large_image,
-            original_image,
+            image,
             featured: false,
         }
     }
@@ -49,8 +43,8 @@ impl AlbumPhoto {
         Page::new(
             self.slug.clone(),
             Some(&self.description),
-            Some(self.small_image.alt.clone()),
+            Some(self.image.description.clone()),
         )
-        .with_image(self.small_image.clone().into())
+        .with_image(self.image.clone().into())
     }
 }

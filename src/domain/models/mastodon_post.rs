@@ -15,7 +15,6 @@ pub struct MastodonPostNonSpoiler {
     created_at: DateTime<Utc>,
     content: String,
     media: Vec<Media>,
-    media_previews: Vec<Media>,
     tags: Vec<Tag>,
     updated_at: DateTime<Utc>,
 }
@@ -35,17 +34,13 @@ impl MastodonPostNonSpoiler {
             created_at,
             content,
             media: vec![],
-            media_previews: vec![],
             tags,
             updated_at,
         }
     }
 
-    pub fn add_media(&mut self, media: Media, preview: Option<Media>) {
+    pub fn add_media(&mut self, media: Media) {
         self.media.push(media);
-        if let Some(preview) = preview {
-            self.media_previews.push(preview);
-        }
     }
 }
 
@@ -85,11 +80,8 @@ impl MastodonPostSpoiler {
         }
     }
 
-    pub fn add_media(&mut self, media: Media, preview: Option<Media>) {
+    pub fn add_media(&mut self, media: Media) {
         self.media.push(media);
-        if let Some(preview) = preview {
-            self.media_previews.push(preview);
-        }
     }
 }
 
@@ -147,29 +139,10 @@ impl MastodonPost {
         Slug::new(&format!("micros/{}", self.id()))
     }
 
-    pub fn add_media(&mut self, media: Media, preview: Option<Media>) {
+    pub fn add_media(&mut self, media: Media) {
         match self {
-            MastodonPost::NonSpoiler(post) => post.add_media(media, preview),
-            MastodonPost::Spoiler(post) => post.add_media(media, preview),
-        }
-    }
-
-    pub fn optimised_media(&self) -> Vec<Media> {
-        match self {
-            MastodonPost::NonSpoiler(post) => {
-                if post.media_previews.is_empty() {
-                    post.media.clone()
-                } else {
-                    post.media_previews.clone()
-                }
-            }
-            MastodonPost::Spoiler(post) => {
-                if post.media_previews.is_empty() {
-                    post.media.clone()
-                } else {
-                    post.media_previews.clone()
-                }
-            }
+            MastodonPost::NonSpoiler(post) => post.add_media(media),
+            MastodonPost::Spoiler(post) => post.add_media(media),
         }
     }
 

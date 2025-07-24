@@ -3,6 +3,7 @@ use std::{collections::HashMap, path::Path, time::Duration};
 use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
+use tokio::time::sleep;
 use tracing::info;
 use url::Url;
 
@@ -12,12 +13,13 @@ use crate::{
             SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
             SteamGameAchievementUnlocked, SteamGameWithAchievements, SteamGames,
         },
-        image::Image,
         slug::Slug,
     },
     prelude::*,
     services::{
-        file_service::{FilePath, FileService},
+        cdn_service::CdnFile,
+        file_service::{File, FilePath, FileService},
+        media_service::MediaService,
         ServiceContext,
     },
 };
@@ -38,9 +40,6 @@ const STEAM_PLAYER_ACHEIVEMENTS_URL: &str =
 
 const STEAM_GAME_DATA_URL: &str =
     "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?format=json";
-
-const STEAM_GAME_GLOBAL_ACHIEMENT_PERCENTAGE_URL: &str =
-    "http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?format=json";
 
 // ---- Steam Game Data
 
@@ -163,58 +162,6 @@ async fn get_steam_player_achievements(
     }
 }
 
-// ---- Steam Game Global Achievement Percentage
-
-fn make_get_global_achievement_percentage_url(appid: u32) -> Url {
-    format!(
-        "{}&key={}&gameid={}",
-        STEAM_GAME_GLOBAL_ACHIEMENT_PERCENTAGE_URL,
-        dotenv!("STEAM_API_KEY"),
-        appid
-    )
-    .parse()
-    .unwrap()
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SteamGameGlobalAchievement {
-    name: String,
-    percent: f32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct SteamGetGlobalAchievementPercentagesResponseInner {
-    achievements: Vec<SteamGameGlobalAchievement>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-enum SteamGetGlobalAchievementPercentagesResponse {
-    WithAchievements {
-        achievementpercentages: SteamGetGlobalAchievementPercentagesResponseInner,
-    },
-    Empty {},
-}
-
-async fn get_steam_global_achievement_percentage(
-    ctx: &ServiceContext,
-    appid: u32,
-) -> Result<Vec<SteamGameGlobalAchievement>> {
-    let response = ctx
-        .network
-        .download_json::<SteamGetGlobalAchievementPercentagesResponse>(
-            &make_get_global_achievement_percentage_url(appid),
-        )
-        .await?;
-
-    match response {
-        SteamGetGlobalAchievementPercentagesResponse::Empty {} => Ok(vec![]),
-        SteamGetGlobalAchievementPercentagesResponse::WithAchievements {
-            achievementpercentages,
-        } => Ok(achievementpercentages.achievements),
-    }
-}
-
 pub async fn process_steam_game_achievements(
     ctx: &ServiceContext,
     game: SteamGame,
@@ -227,9 +174,6 @@ pub async fn process_steam_game_achievements(
     let player_achievements = get_steam_player_achievements(ctx, game.id).await?;
 
     let game_data = get_steam_game_data(ctx, game.id).await?;
-
-    let global_achievement_percentage =
-        get_steam_global_achievement_percentage(ctx, game.id).await?;
 
     let mut game = SteamGameWithAchievements::from_game(game);
 
@@ -255,34 +199,22 @@ pub async fn process_steam_game_achievements(
             None => None,
         };
 
-        let global_achievement = global_achievement_percentage
-            .iter()
-            .find(|global_achievement| global_achievement.name == achievement.name);
-
-        let global_percentage = match global_achievement {
-            Some(global_achievement) => global_achievement.percent,
-            None => 0.0,
-        };
-
         match unlocked_date {
             Some(unlocked_date) => {
-                let path = &format!(
+                let cdn_file = CdnFile::from_str(&format!(
                     "/games/{}-{}-unlocked.jpg",
                     game.game.id,
                     achievement.name.replace(' ', "").replace('%', "")
-                );
+                ));
 
-                let path = FilePath::cache(path);
-
-                let image = ctx
-                    .image
-                    .copy_image_from_url(
-                        ctx,
-                        &achievement.icon,
-                        &path,
-                        &format!("{} achievement icon", achievement.display_name),
-                    )
-                    .await?;
+                let image = MediaService::image_from_url(
+                    ctx,
+                    &achievement.icon,
+                    &cdn_file,
+                    &format!("{} achievement icon", achievement.display_name),
+                    None,
+                )
+                .await?;
 
                 let achievement = SteamGameAchievementUnlocked::new(
                     achievement.name,
@@ -291,34 +223,30 @@ pub async fn process_steam_game_achievements(
                     achievement.description.unwrap_or("".to_string()),
                     image,
                     unlocked_date,
-                    global_percentage,
                 );
 
                 game.add_unlocked_achievement(achievement);
             }
             None => {
-                let path = &format!(
+                let cdn_file = CdnFile::from_str(&format!(
                     "/games/{}-{}-locked.jpg",
                     game.game.id,
                     achievement.name.replace(' ', "").replace('%', "")
-                );
-
-                let path = FilePath::cache(path);
+                ));
 
                 let icon = match &achievement.icon_gray.as_str().ends_with("/") {
                     true => achievement.icon,
                     false => achievement.icon_gray,
                 };
 
-                let image = ctx
-                    .image
-                    .copy_image_from_url(
-                        ctx,
-                        &icon,
-                        &path,
-                        &format!("{} achievement icon", achievement.display_name),
-                    )
-                    .await?;
+                let image = MediaService::image_from_url(
+                    ctx,
+                    &icon,
+                    &cdn_file,
+                    &format!("{} achievement icon", achievement.display_name),
+                    None,
+                )
+                .await?;
 
                 let achievement = SteamGameAchievementLocked::new(
                     achievement.name,
@@ -326,7 +254,6 @@ pub async fn process_steam_game_achievements(
                     achievement.display_name,
                     achievement.description.unwrap_or("".to_string()),
                     image,
-                    global_percentage,
                 );
 
                 game.add_locked_achievement(achievement);
@@ -388,9 +315,7 @@ async fn process_game(
         }
     }
 
-    let game_header_image_cdn_path = &format!("games/{}-header.jpg", game.appid);
-
-    let game_header_image_cdn_path = FilePath::cache(&game_header_image_cdn_path);
+    let game_header_cdn_file = CdnFile::from_str(&format!("games/{}-header.jpg", game.appid));
 
     let image_src_url: Url = format!(
         "https://steamcdn-a.akamaihd.net/steam/apps/{}/header.jpg",
@@ -399,15 +324,14 @@ async fn process_game(
     .parse()
     .unwrap();
 
-    let image = ctx
-        .image
-        .copy_image_from_url(
-            ctx,
-            &image_src_url,
-            &game_header_image_cdn_path,
-            &format!("{} steam header image", &game.name),
-        )
-        .await?;
+    let image = MediaService::image_from_url(
+        ctx,
+        &image_src_url,
+        &game_header_cdn_file,
+        &format!("{} steam header image", &game.name),
+        None,
+    )
+    .await?;
 
     let game = SteamGame::new(
         game.appid,
@@ -424,7 +348,7 @@ async fn process_game(
 }
 
 pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
-    let mut data: SteamGames = FilePath::archive(FILE_NAME)
+    let mut data: SteamGames = File::from_path(FilePath::archive(FILE_NAME))
         .read_as_json_or_default()
         .await?;
 
@@ -446,9 +370,13 @@ pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
 
         let id = game.appid;
 
+        sleep(Duration::from_secs(5));
+
         data.add_game(process_game(ctx, game, data.find_game_by_id(id)).await?);
 
-        break;
+        File::from_path(FilePath::archive(FILE_NAME))
+            .write_json(&data)
+            .await?;
     }
 
     Ok(data)

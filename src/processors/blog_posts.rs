@@ -1,12 +1,18 @@
 use serde::{Deserialize, Serialize};
+use tracing::{debug, info};
 use url::Url;
 
 use crate::{
     domain::models::{blog_post::BlogPost, slug::Slug, tag::Tag},
     error::BlogPostError,
-    utils::date::parse_date,
     prelude::*,
-    services::{file_service::FilePath, ServiceContext},
+    services::{
+        cdn_service::CdnFile,
+        file_service::{File, FilePath},
+        media_service::MediaService,
+        ServiceContext,
+    },
+    utils::date::parse_date,
 };
 
 pub const BLOG_POSTS_DIR: &str = "blog-posts";
@@ -31,7 +37,9 @@ pub fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
     serde_yaml::from_str(s).map_err(BlogPostError::unparsable_front_matter)
 }
 
-pub async fn process_blog_post(ctx: &ServiceContext, file_path: &FilePath) -> Result<BlogPost> {
+pub async fn process_blog_post(ctx: &ServiceContext, file_path: &File) -> Result<BlogPost> {
+    debug!("Processing Blog Post [{}]", file_path);
+
     let file_contents = file_path.read_text().await?;
 
     let split = file_contents.split("---").collect::<Vec<&str>>();
@@ -71,25 +79,16 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &FilePath) -> Re
                 front_matter.hero_height,
             ) {
                 let url: Url = url.parse().unwrap();
+                let cdn_file = CdnFile::from_str(&url.path());
 
-                let path = url.path();
-
-                let path = FilePath::cache(&path);
-
-                let image = ctx
-                    .image
-                    .copy_image_from_url(ctx, &url, &path, &alt)
-                    .await?
-                    .with_date(&date)
-                    .with_parent_slug(&slug);
+                let image =
+                    MediaService::image_from_url(ctx, &url, &cdn_file, &alt, Some(&slug)).await?;
 
                 post = post.with_hero_image(image);
             }
 
             post = post.with_images(
-                ctx.image
-                    .find_images_in_markdown(ctx, content, &date, &slug)
-                    .await?,
+                MediaService::find_images_in_markdown(ctx, content, &date, Some(&slug)).await?,
             );
 
             Ok(post)
@@ -99,7 +98,8 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &FilePath) -> Re
 }
 
 pub async fn process_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
-    let blog_posts_files = FilePath::content(BLOG_POSTS_DIR).find_recurisve_files("md")?;
+    let blog_posts_files =
+        File::from_path(FilePath::content(BLOG_POSTS_DIR)).find_recurisve_files("md")?;
 
     let mut posts = vec![];
 

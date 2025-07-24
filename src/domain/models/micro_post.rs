@@ -1,6 +1,5 @@
 use std::fmt;
 
-use super::image::Image;
 use super::page::Page;
 use super::tag::Tag;
 use chrono::{DateTime, Utc};

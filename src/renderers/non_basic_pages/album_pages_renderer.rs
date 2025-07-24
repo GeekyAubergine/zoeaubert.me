@@ -1,5 +1,5 @@
 use crate::{
-    domain::models::{albums::album::Album, image::Image, slug::Slug},
+    domain::models::{albums::album::Album, image::LegacyImage, slug::Slug},
     prelude::*,
     renderers::RendererContext,
     utils::cover_photos_for_album::cover_photos_for_album,
@@ -28,7 +28,7 @@ pub async fn render_album_pages(context: &RendererContext) -> Result<()> {
 
 struct AlbumListItem {
     pub album: Album,
-    pub cover_images: Vec<Image>,
+    pub cover_images: Vec<LegacyImage>,
 }
 
 #[derive(Template)]

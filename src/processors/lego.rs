@@ -6,7 +6,9 @@ use url::Url;
 use crate::{
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
-    services::{file_service::FilePath, ServiceContext},
+    services::{
+        cdn_service::CdnFile, file_service::{File, FilePath}, media_service::MediaService, ServiceContext
+    },
 };
 
 const STORE: &str = "lego.json";
@@ -110,7 +112,9 @@ fn make_get_minifig_url(hash: &str) -> Url {
 
 pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
     if !ctx.query_limiter.can_query_within_day(QUERY_KEY).await? {
-        let existing: Lego = FilePath::archive(STORE).read_as_json_or_default().await?;
+        let existing: Lego = File::from_path(FilePath::archive(STORE))
+            .read_as_json_or_default()
+            .await?;
         return Ok(existing);
     }
 
@@ -135,25 +139,9 @@ pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
 
     if sets_response.status == "success" {
         for set in sets_response.sets {
-            let cdn_path = format!("lego/{}.jpg", set.set_id);
-            let cdn_path = FilePath::cache(&cdn_path);
+            let cdn_file = CdnFile::from_str(&format!("lego/{}.png", set.set_id));
 
-            let thumbnail_cdn_url = format!("lego/{}-thumbnail.jpg", set.set_id);
-            let thumbnail_cdn_path = FilePath::cache(&thumbnail_cdn_url);
-
-            let image = ctx
-                .image
-                .copy_image_from_url(ctx, &set.image.image_url, &cdn_path, &set.name)
-                .await?;
-            let thumbnail = ctx
-                .image
-                .copy_image_from_url(
-                    ctx,
-                    &set.image.thumbnail_url,
-                    &thumbnail_cdn_path,
-                    &set.name,
-                )
-                .await?;
+            let image = MediaService::image_from_url(ctx, &set.image.image_url, &cdn_file, &set.name, None).await?;
 
             let set = LegoSet::new(
                 set.set_id,
@@ -162,7 +150,6 @@ pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
                 set.category,
                 set.pieces.unwrap_or(1),
                 image,
-                thumbnail,
                 set.brickset_url,
                 set.collection.qty_owned,
             );
@@ -180,13 +167,9 @@ pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
             .parse()
             .unwrap();
 
-            let cdn_path = format!("lego/{}.png", minifig.minifig_number);
-            let cdn_path = FilePath::cache(&cdn_path);
+            let cdn_file = CdnFile::from_str(&format!("lego/{}.png", minifig.minifig_number));
 
-            let image = ctx
-                .image
-                .copy_image_from_url(ctx, &image_url, &cdn_path, &minifig.name)
-                .await?;
+            let image = MediaService::image_from_url(ctx, &image_url, &cdn_file, &minifig.name, None).await?;
 
             let minifig = LegoMinifig::new(
                 minifig.minifig_number,

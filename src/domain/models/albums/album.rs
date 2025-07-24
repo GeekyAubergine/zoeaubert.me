@@ -40,7 +40,7 @@ impl Album {
 
         let cover_images = cover_photos
             .into_iter()
-            .map(|photo| &photo.small_image)
+            .map(|photo| &photo.image)
             .collect::<Vec<_>>();
 
         cover_images

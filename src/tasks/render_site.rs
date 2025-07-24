@@ -22,7 +22,7 @@ use crate::renderers::{
 };
 use crate::utils::paginator::paginate;
 use crate::prelude::*;
-use crate::services::file_service::{FilePath, FileService};
+use crate::services::file_service::{File, FileService};
 use crate::services::ServiceContext;
 
 use tracing::{error, info};
@@ -33,7 +33,7 @@ const COMPILED_ASSETS_DIR: &str = "./_assets";
 const ASSETS_DIR: &str = "./output/assets";
 
 const ROBOTS_INPUT_FILE: &str = "./assets/robots.txt";
-const ROBOTS_OUTPUT_FILE: &str = "robots.txt";
+const ROBOTS_OUTPUT_FILE: &str = "./output/robots.txt";
 
 async fn prepare_folders() -> Result<()> {
     Command::new("rm")
@@ -76,7 +76,7 @@ async fn compile_assets() -> Result<()> {
 }
 
 async fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
-    let robots_txt = FilePath::output(ROBOTS_OUTPUT_FILE).read_text().await?;
+    let robots_txt = File::output("robots.txt").read_text().await?;
 
     let split_before_blanket_disallow = robots_txt
         .split("User-agent: AdsBot-Google")

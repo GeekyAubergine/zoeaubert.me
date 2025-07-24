@@ -1,13 +1,18 @@
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
+use tracing::{debug, info};
 
 use crate::{
     domain::models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
     error::MicroPostError,
-    utils::date::parse_date,
     prelude::*,
-    services::{file_service::FilePath, ServiceContext},
+    services::{
+        file_service::{File, FilePath},
+        media_service::MediaService,
+        ServiceContext,
+    },
+    utils::date::parse_date,
 };
 const MICRO_POSTS_DIR: &str = "micros";
 
@@ -47,11 +52,9 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
     serde_yaml::from_str(s).map_err(MicroPostError::unable_to_parse_front_matter)
 }
 
-async fn process_file(
-    ctx: &ServiceContext,
-    file_path: FilePath,
-    content: &str,
-) -> Result<MicroPost> {
+async fn process_file(ctx: &ServiceContext, file: File, content: &str) -> Result<MicroPost> {
+    debug!("Processing Micro Post [{}]", file);
+
     let split = content.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -59,30 +62,23 @@ async fn process_file(
 
     let content = match content.get(front_matter_len + 6..) {
         Some(content) => Ok(content.to_string()),
-        None => Err(MicroPostError::no_content(file_path.clone())),
+        None => Err(MicroPostError::no_content(file.clone())),
     }?;
 
     let front_matter = match front_matter {
         Some(front_matter) => front_matter_from_string(front_matter),
-        None => Err(MicroPostError::no_front_matter(file_path.clone())),
+        None => Err(MicroPostError::no_front_matter(file.clone())),
     }?;
 
     let date = parse_date(front_matter.date.as_str())?;
 
     let slug_date = date.format("%Y-%m-%d").to_string();
 
-    let file_name = file_path
-        .file_name()
-        .ok_or(MicroPostError::invalid_file_name(file_path.clone()))?
-        .to_str()
-        .ok_or(MicroPostError::invalid_file_name(file_path.clone()))?
-        .replace(".md", "");
+    let file_name = file.path.file_name().replace(".md", "");
 
     let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
-    let media = ctx
-        .image
-        .find_images_in_markdown(ctx, &content, &date, &slug)
+    let media = MediaService::find_images_in_markdown(ctx, &content, &date, Some(&slug))
         .await?
         .iter()
         .map(|i| Media::from(i))
@@ -102,7 +98,7 @@ async fn process_file(
 }
 
 pub async fn process_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
-    let files = FilePath::content(MICRO_POSTS_DIR).find_recurisve_files("md")?;
+    let files = File::from_path(FilePath::content(MICRO_POSTS_DIR)).find_recurisve_files("md")?;
 
     let mut posts = vec![];
 

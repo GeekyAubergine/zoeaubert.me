@@ -127,23 +127,7 @@ impl Post {
             Self::MicroPost(micro_post) => micro_post.media.clone(),
             Self::MastodonPost(mastodon_post) => mastodon_post.media(),
             Self::AlbumPhoto { photo, .. } => {
-                vec![photo.small_image.clone().into()]
-            }
-            Self::Album(_) => vec![], // It does it's own thing
-            Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos
-            Self::MovieReview(_) => vec![], // Don't want this showing up in photos
-            Self::TvShowReview(_) => vec![], // Don't want this showing up in photos
-            Self::BookReview(review) => vec![],
-        }
-    }
-
-    pub fn optimised_media(&self) -> Vec<Media> {
-        match self {
-            Self::BlogPost(blog_post) => blog_post.media.clone(),
-            Self::MicroPost(micro_post) => micro_post.media.clone(),
-            Self::MastodonPost(mastodon_post) => mastodon_post.optimised_media(),
-            Self::AlbumPhoto { photo, .. } => {
-                vec![photo.small_image.clone().into()]
+                vec![photo.image.clone().into()]
             }
             Self::Album(_) => vec![], // It does it's own thing
             Self::SteamAcheivementUnlocked { .. } => vec![], // Don't want this showing up in photos

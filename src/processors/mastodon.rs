@@ -11,10 +11,16 @@ use url::Url;
 use crate::{
     domain::models::{
         mastodon_post::{MastodonPost, MastodonPostNonSpoiler, MastodonPostSpoiler, MastodonPosts},
-        media::Media, tag::Tag,
+        media::Media,
+        tag::Tag,
     },
     prelude::*,
-    services::{file_service::FilePath, ServiceContext},
+    services::{
+        cdn_service::CdnFile,
+        file_service::{File, FilePath},
+        media_service::MediaService,
+        ServiceContext,
+    },
 };
 
 const FILE_NAME: &str = "mastodon_posts.json";
@@ -241,47 +247,19 @@ async fn mastodon_status_to_post(
 
                     let file_name = url_path.file_name().unwrap().to_str().unwrap();
 
-                    let path = FilePath::path_from_date_and_file_name(
-                        &status.created_at,
-                        &file_name,
-                        None,
-                    );
+                    let cdn_file =
+                        CdnFile::from_date_and_file_name(&status.created_at, &file_name, None);
 
-                    let image = ctx
-                        .image
-                        .copy_image_from_url(ctx, &url, &path, &description)
-                        .await?
-                        .with_date(post.created_at())
-                        .with_parent_slug(&post.slug());
+                    let image = MediaService::image_from_url(
+                        ctx,
+                        &url,
+                        &cdn_file,
+                        &description,
+                        Some(&post.slug()),
+                    )
+                    .await?;
 
-                    let preview = match preview_url {
-                        Some(preview_url) => {
-                            let url_path = Path::new(preview_url.path());
-
-                            let file_name = url_path.file_name().unwrap().to_str().unwrap();
-
-                            let path = FilePath::path_from_date_and_file_name(
-                                &status.created_at,
-                                file_name,
-                                Some("preview"),
-                            );
-
-                            let preview_image = ctx
-                                .image
-                                .copy_image_from_url(ctx, &preview_url, &path, &description)
-                                .await?
-                                .with_date(post.created_at())
-                                .with_parent_slug(&post.slug());
-
-                            Some(preview_image)
-                        }
-                        None => None,
-                    };
-
-                    let image = Media::from_image(image);
-                    let preview = preview.map(|p| Media::from_image(p));
-
-                    post.add_media(image, preview);
+                    post.add_media(image.into());
                 }
             }
         }
@@ -291,7 +269,7 @@ async fn mastodon_status_to_post(
 }
 
 pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
-    let mut posts: MastodonPosts = FilePath::archive(FILE_NAME)
+    let mut posts: MastodonPosts = File::from_path(FilePath::archive(FILE_NAME))
         .read_as_json_or_default()
         .await?;
 
@@ -343,7 +321,9 @@ pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
         }
     }
 
-    FilePath::archive(FILE_NAME).write_json(&posts).await?;
+    File::from_path(FilePath::archive(FILE_NAME))
+        .write_json(&posts)
+        .await?;
 
     Ok(posts)
 }
