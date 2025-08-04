@@ -8,7 +8,7 @@ use crate::{
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{File, FilePath},
+        file_service::{ContentFile, FileService, ReadableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -37,10 +37,10 @@ pub fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
     serde_yaml::from_str(s).map_err(BlogPostError::unparsable_front_matter)
 }
 
-pub async fn process_blog_post(ctx: &ServiceContext, file_path: &File) -> Result<BlogPost> {
+pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) -> Result<BlogPost> {
     debug!("Processing Blog Post [{}]", file_path);
 
-    let file_contents = file_path.read_text().await?;
+    let file_contents = file_path.read_text()?;
 
     let split = file_contents.split("---").collect::<Vec<&str>>();
 
@@ -99,12 +99,14 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &File) -> Result
 
 pub async fn process_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
     let blog_posts_files =
-        File::from_path(FilePath::content(BLOG_POSTS_DIR)).find_recurisve_files("md")?;
+        FileService::content(BLOG_POSTS_DIR.into()).find_files_recursive("md")?;
 
     let mut posts = vec![];
 
     for file_path in blog_posts_files {
-        process_blog_post(ctx, &file_path).await?;
+        let file = FileService::content(file_path.into());
+
+        process_blog_post(ctx, &file).await?;
     }
 
     Ok(posts)

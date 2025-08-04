@@ -8,7 +8,7 @@ use crate::{
     error::MicroPostError,
     prelude::*,
     services::{
-        file_service::{File, FilePath},
+        file_service::{ContentFile, FileService, ReadableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -52,8 +52,8 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
     serde_yaml::from_str(s).map_err(MicroPostError::unable_to_parse_front_matter)
 }
 
-async fn process_file(ctx: &ServiceContext, file: File, content: &str) -> Result<MicroPost> {
-    debug!("Processing Micro Post [{}]", file);
+async fn process_file(ctx: &ServiceContext, file: ContentFile, content: &str) -> Result<MicroPost> {
+    debug!("Processing Micro Post [{:?}]", file.as_path());
 
     let split = content.split("---").collect::<Vec<&str>>();
 
@@ -74,7 +74,12 @@ async fn process_file(ctx: &ServiceContext, file: File, content: &str) -> Result
 
     let slug_date = date.format("%Y-%m-%d").to_string();
 
-    let file_name = file.path.file_name().replace(".md", "");
+    let file_name = file
+        .as_path()
+        .file_name()
+        .unwrap()
+        .to_string_lossy()
+        .replace(".md", "");
 
     let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
@@ -98,12 +103,14 @@ async fn process_file(ctx: &ServiceContext, file: File, content: &str) -> Result
 }
 
 pub async fn process_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
-    let files = File::from_path(FilePath::content(MICRO_POSTS_DIR)).find_recurisve_files("md")?;
+    let files = FileService::content(MICRO_POSTS_DIR.into()).find_files_recursive("md")?;
 
     let mut posts = vec![];
 
     for file in files {
-        let content = file.read_text().await?;
+        let file = FileService::content(file.into());
+
+        let content = file.read_text()?;
 
         posts.push(process_file(ctx, file, &content).await?);
     }

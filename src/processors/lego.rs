@@ -7,7 +7,10 @@ use crate::{
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
     services::{
-        cdn_service::CdnFile, file_service::{File, FilePath}, media_service::MediaService, ServiceContext
+        cdn_service::CdnFile,
+        file_service::{FileService, ReadableFile},
+        media_service::MediaService,
+        ServiceContext,
     },
 };
 
@@ -112,9 +115,7 @@ fn make_get_minifig_url(hash: &str) -> Url {
 
 pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
     if !ctx.query_limiter.can_query_within_day(QUERY_KEY).await? {
-        let existing: Lego = File::from_path(FilePath::archive(STORE))
-            .read_as_json_or_default()
-            .await?;
+        let existing: Lego = FileService::archive(STORE.into()).read_json_or_default()?;
         return Ok(existing);
     }
 
@@ -141,7 +142,9 @@ pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
         for set in sets_response.sets {
             let cdn_file = CdnFile::from_str(&format!("lego/{}.png", set.set_id));
 
-            let image = MediaService::image_from_url(ctx, &set.image.image_url, &cdn_file, &set.name, None).await?;
+            let image =
+                MediaService::image_from_url(ctx, &set.image.image_url, &cdn_file, &set.name, None)
+                    .await?;
 
             let set = LegoSet::new(
                 set.set_id,
@@ -169,7 +172,9 @@ pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
 
             let cdn_file = CdnFile::from_str(&format!("lego/{}.png", minifig.minifig_number));
 
-            let image = MediaService::image_from_url(ctx, &image_url, &cdn_file, &minifig.name, None).await?;
+            let image =
+                MediaService::image_from_url(ctx, &image_url, &cdn_file, &minifig.name, None)
+                    .await?;
 
             let minifig = LegoMinifig::new(
                 minifig.minifig_number,

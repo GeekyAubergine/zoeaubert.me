@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use url::Url;
 
-use crate::{build_data::BUILD_DATE, renderers::formatters::format_date::FormatDate, utils::paginator::PaginatorPage};
+use crate::{build_data::BUILD_DATE, renderer::formatters::format_date::FormatDate, utils::paginator::PaginatorPage};
 
 use super::{
     mastodon_post::MastodonPost,

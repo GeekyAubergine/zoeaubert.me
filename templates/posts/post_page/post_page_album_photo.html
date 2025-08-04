@@ -3,7 +3,7 @@
 
 <div class="wide photo-page">
     <div class="img-container">
-        {% let image = photo.large_image.clone() %} {% include
+        {% let image = photo.image.large() %} {% include
         "partials/media/image.html" %}
     </div>
     <div class="buttons-and-text">
@@ -40,7 +40,7 @@
             <a href="{{ album.slug.relative_link() }}">Album</a>
             <p class="mx-2 my-0">-</p>
             <a
-                href="{{ photo.original_image.cdn_url() }}"
+                href="{{ photo.original().url }}"
                 target="_blank"
                 rel="noopener"
             >

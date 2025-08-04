@@ -6,6 +6,7 @@
     </h1>
     {% match post.side_image() %}
     {% when Some with (image) %}
+    {% let image = image.large() %}
     <div class="image mt-0 mb-4">
         {% include "partials/media/image.html" %}
     </div>

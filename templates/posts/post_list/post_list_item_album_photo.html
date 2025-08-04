@@ -1,5 +1,5 @@
 <div class="w-full justify-center">
-    {% let image = photo.large_image.clone() %} {% include
+    {% let image = photo.image.large() %} {% include
     "partials/media/image.html" %}
 </div>
 <p class="album-description">{{photo.description}}</p>

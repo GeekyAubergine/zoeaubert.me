@@ -12,7 +12,7 @@
                 href="{{ book.book.slug().relative_link() }}"
                 rel="noopener noreferrer"
             >
-                {% let image = book.book.cover.clone() %}
+                {% let image = book.book.cover.small() %}
                 {% include "partials/media/image.html" %}
             </a>
         </div>

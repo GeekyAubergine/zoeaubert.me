@@ -16,7 +16,7 @@
         <div class="media-grid">
             {% for photo in album.photos %}
             {% let image = photo.small_image.clone() %}
-            <div class="grid-element {{ image.dimensions.orientation().to_string() }}">
+            <div class="grid-element {{ image.orientation().to_string() }}">
                 <a href="{{ photo.slug.relative_link() }}">
                     {% include "partials/media/image.html" %}
                 </a>

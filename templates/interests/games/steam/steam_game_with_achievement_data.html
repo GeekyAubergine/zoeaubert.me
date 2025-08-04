@@ -4,7 +4,7 @@
         href="{{ game.game.slug() }}"
         rel="noopener noreferrer"
     >
-        {% let image = game.game.header_image.clone() %}
+        {% let image = game.game.header_image.small() %}
         {% include "partials/media/image.html" %}
     </a>
     <a

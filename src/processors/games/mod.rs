@@ -16,9 +16,9 @@ pub async fn process_games(ctx: &ServiceContext) -> Result<Games> {
 
     let mut games = Games::new();
 
-    for (_, game) in steam_games.games {
-        games.add_game(Game::Steam(game));
-    }
+    // for (_, game) in steam_games.games {
+    //     games.add_game(Game::Steam(game));
+    // }
 
     Ok(games)
 }

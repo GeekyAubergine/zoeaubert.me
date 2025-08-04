@@ -7,7 +7,7 @@ pub mod infrastructure;
 pub mod prelude;
 pub mod processors;
 pub mod tasks;
-pub mod renderers;
+pub mod renderer;
 pub mod utils;
 
 pub mod services;

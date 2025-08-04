@@ -18,7 +18,7 @@ use crate::{
     error::{CdnError, FileSystemError, NetworkError},
     prelude::*,
     services::{
-        file_service::{File, FilePath, FileService},
+        file_service::{CacheFile, FileService},
         ServiceContext,
     },
 };
@@ -92,8 +92,8 @@ impl CdnFile {
         format!("{}/{}.{}", self.directory, self.file_name, self.extension)
     }
 
-    pub fn as_file_path(&self) -> FilePath {
-        FilePath::cache(&self.as_string())
+    pub fn as_cache_file(&self) -> CacheFile {
+        FileService::cache(PathBuf::from(&self.as_string()))
     }
 
     fn as_cdn_api_url(&self) -> Url {
@@ -250,7 +250,7 @@ impl CdnService {
     pub async fn upload_file(
         &self,
         ctx: &ServiceContext,
-        file: &File,
+        file: &CacheFile,
         cdn_file: &CdnFile,
     ) -> Result<()> {
         dbg!(file);
@@ -261,10 +261,10 @@ impl CdnService {
 
         debug!(
             "CdnService | Uploading [{}]",
-            file.path.as_path().to_string_lossy(),
+            file.as_path().to_string_lossy(),
         );
 
-        let file = fs::File::open(file.path.as_path())
+        let file = fs::File::open(file.as_path())
             .await
             .map_err(FileSystemError::read_error)?;
 

@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use askama::Template;
@@ -12,18 +12,15 @@ use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 
-use crate::renderers::basic_pages::render_basic_pages;
-use crate::renderers::formatters::format_date::FormatDate;
+// use crate::renderers::basic_pages::render_basic_pages;
+// use crate::renderers::formatters::format_date::FormatDate;
 
 use crate::error::FileSystemError;
-use crate::renderers::{
-    new_rendering_context_from_data, render_pages,
-    RendererContext,
-};
-use crate::utils::paginator::paginate;
 use crate::prelude::*;
-use crate::services::file_service::{File, FileService};
+// use crate::renderers::{new_rendering_context_from_data, render_pages, RendererContext};
+use crate::services::file_service::{FileService, ReadableFile};
 use crate::services::ServiceContext;
+use crate::utils::paginator::paginate;
 
 use tracing::{error, info};
 
@@ -48,17 +45,15 @@ async fn prepare_folders() -> Result<()> {
         .output()
         .expect("Failed to create assets directory");
 
-    FileService::copy_dir(Path::new("assets"), Path::new("output/assets")).await?;
+    FileService::copy_dir(Path::new("assets"), Path::new("output/assets"))?;
 
     copy_dir("_assets", "output/assets");
-
-    FileService::make_dir(Path::new("./output")).await?;
 
     Ok(())
 }
 
 async fn compile_css() -> Result<()> {
-    FileService::copy_dir(Path::new(COMPILED_ASSETS_DIR), Path::new(ASSETS_DIR)).await?;
+    FileService::copy_dir(Path::new(COMPILED_ASSETS_DIR), Path::new(ASSETS_DIR))?;
 
     Ok(())
 }
@@ -69,14 +64,13 @@ async fn compile_assets() -> Result<()> {
     FileService::copy(
         &Path::new(ROBOTS_INPUT_FILE),
         &Path::new(ROBOTS_OUTPUT_FILE),
-    )
-    .await?;
+    )?;
 
     Ok(())
 }
 
 async fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
-    let robots_txt = File::output("robots.txt").read_text().await?;
+    let robots_txt = FileService::asset(PathBuf::from("robots.txt")).read_text()?;
 
     let split_before_blanket_disallow = robots_txt
         .split("User-agent: AdsBot-Google")
@@ -101,13 +95,13 @@ pub async fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
 
     let start = std::time::Instant::now();
 
-    let context: RendererContext = new_rendering_context_from_data(data).await?;
+    // let context: RendererContext = new_rendering_context_from_data(data).await?;
 
-    render_pages(&context).await?;
+    // render_pages(&context).await?;
 
-    let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
+    // let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
 
-    context.renderer.build_sitemap(&disallowed_routes).await?;
+    // context.renderer.build_sitemap(&disallowed_routes).await?;
 
     Ok(())
 }

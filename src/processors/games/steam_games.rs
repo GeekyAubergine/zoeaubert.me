@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
 use tokio::time::sleep;
-use tracing::info;
+use tracing::{debug, info};
 use url::Url;
 
 use crate::{
@@ -18,7 +18,7 @@ use crate::{
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{File, FilePath, FileService},
+        file_service::{FileService, ReadableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -348,9 +348,12 @@ async fn process_game(
 }
 
 pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
-    let mut data: SteamGames = File::from_path(FilePath::archive(FILE_NAME))
-        .read_as_json_or_default()
-        .await?;
+    debug!("A");
+    let file = FileService::archive(FILE_NAME.into());
+
+    let mut data: SteamGames = file.read_json_or_default()?;
+
+    debug!("B");
 
     if !ctx.query_limiter.can_query_within_hour(QUERY_KEY).await? {
         return Ok(data);
@@ -363,21 +366,21 @@ pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
         .download_json::<SteamGetOwnedGamesResponse>(&make_get_games_url())
         .await?;
 
-    for game in games.response.games {
-        if GAMES_TO_IGNORE.contains(&game.appid) {
-            continue;
-        }
+    // for game in games.response.games {
+    //     if GAMES_TO_IGNORE.contains(&game.appid) {
+    //         continue;
+    //     }
 
-        let id = game.appid;
+    //     let id = game.appid;
 
-        sleep(Duration::from_secs(5));
+    //     sleep(Duration::from_secs(5));
 
-        data.add_game(process_game(ctx, game, data.find_game_by_id(id)).await?);
+    //     data.add_game(process_game(ctx, game, data.find_game_by_id(id)).await?);
 
-        File::from_path(FilePath::archive(FILE_NAME))
-            .write_json(&data)
-            .await?;
-    }
+    //     File::from_path(FilePath::archive(FILE_NAME))
+    //         .write_json(&data)
+    //         .await?;
+    // }
 
     Ok(data)
 }

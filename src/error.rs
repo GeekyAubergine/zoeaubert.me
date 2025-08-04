@@ -1,6 +1,9 @@
 use std::path::PathBuf;
 
-use crate::{domain::models::{source_post::SourcePost, slug::Slug}, services::file_service::File};
+use crate::{
+    domain::models::{slug::Slug, source_post::SourcePost},
+    services::file_service::ContentFile,
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -60,6 +63,9 @@ pub enum Error {
 
     #[error("Inquire Error: {0}")]
     InquireError(#[from] inquire::error::InquireError),
+
+    #[error("Unknown")]
+    Unknown(),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -274,16 +280,16 @@ pub enum MicroPostError {
     UnparsableFrontMatter(serde_yaml::Error),
 
     #[error("Post has no content {0}")]
-    PostHasNoContent(File),
+    PostHasNoContent(ContentFile),
 
     #[error("Post has not front matter {0}")]
-    PostHasNoFrontMatter(File),
+    PostHasNoFrontMatter(ContentFile),
 
     #[error("Post has invalid file path {0}")]
-    InvalidFilePath(File),
+    InvalidFilePath(ContentFile),
 
     #[error("Post has invalid file name {0}")]
-    InvalidFileName(File),
+    InvalidFileName(ContentFile),
 }
 
 impl MicroPostError {
@@ -291,19 +297,19 @@ impl MicroPostError {
         Error::MicroPostError(Self::UnparsableFrontMatter(error))
     }
 
-    pub fn no_content(post: File) -> Error {
+    pub fn no_content(post: ContentFile) -> Error {
         Error::MicroPostError(Self::PostHasNoContent(post))
     }
 
-    pub fn no_front_matter(post: File) -> Error {
+    pub fn no_front_matter(post: ContentFile) -> Error {
         Error::MicroPostError(Self::PostHasNoFrontMatter(post))
     }
 
-    pub fn invalid_file_path(post: File) -> Error {
+    pub fn invalid_file_path(post: ContentFile) -> Error {
         Error::MicroPostError(Self::InvalidFilePath(post))
     }
 
-    pub fn invalid_file_name(post: File) -> Error {
+    pub fn invalid_file_name(post: ContentFile) -> Error {
         Error::MicroPostError(Self::InvalidFileName(post))
     }
 }
@@ -497,11 +503,11 @@ impl TvShowsError {
 #[derive(Debug, thiserror::Error)]
 pub enum AlbumError {
     #[error("Invalid file name {0}")]
-    InvalidFileName(File),
+    InvalidFileName(ContentFile),
 }
 
 impl AlbumError {
-    pub fn invalid_file_name(file_name: File) -> Error {
+    pub fn invalid_file_name(file_name: ContentFile) -> Error {
         Error::AlbumError(Self::InvalidFileName(file_name))
     }
 }

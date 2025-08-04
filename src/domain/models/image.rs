@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-use crate::services::{cdn_service::CdnFile, file_service::File};
+use crate::services::cdn_service::CdnFile;
 
 use super::{
     media::{Media, MediaDimensions, MediaOrientation},
@@ -20,6 +20,12 @@ use super::{
 pub struct SizedImage {
     pub file: CdnFile,
     pub dimensions: MediaDimensions,
+}
+
+pub struct RenderableImage<'l> {
+    pub url: Url,
+    pub dimensions: &'l MediaDimensions,
+    pub description: &'l str,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
@@ -35,6 +41,30 @@ impl Image {
     pub fn orientation(&self) -> MediaOrientation {
         self.original.dimensions.orientation()
     }
+
+    // pub fn original(&self) -> RenderableImage {
+    //     RenderableImage {
+    //         url: self.original.file.as_cdn_url(),
+    //         dimensions: &self.original.dimensions,
+    //         description: &self.description,
+    //     }
+    // }
+
+    // pub fn large(&self) -> RenderableImage {
+    //     RenderableImage {
+    //         url: self.large.file.as_cdn_url(),
+    //         dimensions: &self.large.dimensions,
+    //         description: &self.description,
+    //     }
+    // }
+
+    // pub fn small(&self) -> RenderableImage {
+    //     RenderableImage {
+    //         url: self.small.file.as_cdn_url(),
+    //         dimensions: &self.small.dimensions,
+    //         description: &self.description,
+    //     }
+    // }
 }
 
 // #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]

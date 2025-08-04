@@ -13,8 +13,8 @@
                 rel="noopener noreferrer"
             >
                 <img
-                    src="{{ tv_show.tv_show.poster.cdn_url() }}"
-                    alt="{{ tv_show.tv_show.poster.alt }}"
+                    src="{{ tv_show.tv_show.poster.small().url }}"
+                    alt="{{ tv_show.tv_show.poster.description }}"
                     class="max-h-[12rem] rounded-sm hobbyGridItemImage"
                 />
             </a>

@@ -6,7 +6,7 @@ use crate::{
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{File, FilePath},
+        file_service::{FileService, ReadableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -32,9 +32,7 @@ struct ProjectsFile {
 pub async fn process_projects(ctx: &ServiceContext) -> Result<Projects> {
     let mut projects: Projects = Projects::new();
 
-    let yaml: ProjectsFile = File::from_path(FilePath::content(PROJECTS_FILE))
-        .read_as_yaml()
-        .await?;
+    let yaml: ProjectsFile = FileService::content(PROJECTS_FILE.into()).read_yaml()?;
 
     for file_project in yaml.projects {
         let path = file_project.image.path();

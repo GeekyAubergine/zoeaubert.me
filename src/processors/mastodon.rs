@@ -17,7 +17,7 @@ use crate::{
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{File, FilePath},
+        file_service::{FileService, ReadableFile, WritableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -269,9 +269,9 @@ async fn mastodon_status_to_post(
 }
 
 pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
-    let mut posts: MastodonPosts = File::from_path(FilePath::archive(FILE_NAME))
-        .read_as_json_or_default()
-        .await?;
+    let file = FileService::archive(FILE_NAME.into());
+
+    let mut posts: MastodonPosts = file.read_json_or_default()?;
 
     if !ctx
         .query_limiter
@@ -321,9 +321,7 @@ pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
         }
     }
 
-    File::from_path(FilePath::archive(FILE_NAME))
-        .write_json(&posts)
-        .await?;
+    file.write_json(&posts)?;
 
     Ok(posts)
 }

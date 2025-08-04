@@ -8,7 +8,7 @@ use crate::domain::models::games::steam::{
     SteamGame, SteamGameAchievementLocked, SteamGameAchievementUnlocked, SteamGameWithAchievements,
 };
 use crate::domain::models::games::Game;
-use crate::domain::models::image::LegacyImage;
+use crate::domain::models::image::Image;
 use crate::domain::models::page::Page;
 use crate::domain::models::post::Post;
 use crate::domain::models::post::PostFilter;
@@ -153,7 +153,7 @@ async fn render_steam_game_page(
     };
 
     let image = PageImage::new(
-        game.game.header_image.cdn_url().as_str(),
+        game.game.header_image.small().url.as_str(),
         format!("{} Steam header image", game.game.name).as_str(),
         HEADER_IMAGE_WIDTH,
         HEADER_IMAGE_HEIGHT,

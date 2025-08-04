@@ -2,10 +2,10 @@ use askama::Template;
 
 use crate::{
     domain::models::{
-        image::LegacyImage,
+        image::Image,
         page::{Page, PagePagination},
-        post::Post,
-        post::PostFilter,
+        post::{Post, PostFilter},
+        site_config::PageImage,
         slug::Slug,
     },
     renderers::RendererContext,
@@ -25,7 +25,7 @@ const DEFAULT_PAGINATION_SIZE: usize = 40;
 #[template(path = "photos.html")]
 pub struct PhotosPage {
     page: Page,
-    photos: Vec<LegacyImage>,
+    photos: Vec<Image>,
 }
 
 pub async fn render_photos_page<'d>(context: &RendererContext) -> Result<()> {
@@ -36,10 +36,9 @@ pub async fn render_photos_page<'d>(context: &RendererContext) -> Result<()> {
 
     let photos = omni_posts
         .iter()
-        .flat_map(|post| post.optimised_media())
+        .flat_map(|post| post.media())
         .filter_map(|media| match media {
-            Media::Image(image) => Some(image),
-            _ => None,
+            Media::Image(img) => Some(img),
         })
         .collect::<Vec<_>>();
 
@@ -55,7 +54,7 @@ pub async fn render_photos_page<'d>(context: &RendererContext) -> Result<()> {
         let mut page = Page::from_page_and_pagination_page(&page, &paginator_page, "Photos");
 
         if let Some(first_image) = paginator_page.data.first() {
-            page = page.with_image(first_image.clone().into());
+            page = page.with_image(first_image.into());
         }
 
         let template = PhotosPage {

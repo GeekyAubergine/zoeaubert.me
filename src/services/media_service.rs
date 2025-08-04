@@ -14,7 +14,11 @@ use crate::{
     },
     error::ImageError,
     prelude::*,
-    services::{cdn_service::CdnFile, file_service::File, ServiceContext},
+    services::{
+        cdn_service::CdnFile,
+        file_service::{ReadableFile, WritableFile},
+        ServiceContext,
+    },
     utils::resize_image::{resize_image, ImageSize},
 };
 pub const MARKDOWN_IMAGE_REGEX: Lazy<Regex> =
@@ -28,15 +32,15 @@ impl MediaService {
         url: &Url,
         cdn_path: &CdnFile,
     ) -> Result<Vec<u8>> {
-        let file = File::from_path(cdn_path.as_file_path());
+        let file = cdn_path.as_cache_file();
 
-        if file.exists().await? {
-            return file.read().await;
+        if file.exists()? {
+            return file.read();
         }
 
         let data = ctx.network.download_bytes(url).await?;
 
-        file.write(&data).await?;
+        file.write(&data)?;
 
         Ok(data)
     }
@@ -66,10 +70,10 @@ impl MediaService {
     ) -> Result<SizedImage> {
         let cdn_file = cdn_file.add_suffix_to_file_name(&format!("-{}", size.as_str()));
 
-        let file = File::from_path(cdn_file.as_file_path());
+        let file = cdn_file.as_cache_file();
 
         // If we already have it, don't bother processing
-        if file.exists().await? {
+        if file.exists()? {
             let image = Self::read_or_download_image(ctx, url, &cdn_file).await?;
 
             return Ok(SizedImage {
@@ -88,7 +92,7 @@ impl MediaService {
             )
             .map_err(ImageError::encode_error)?;
 
-        file.write(&resized_image_data).await?;
+        file.write(&resized_image_data)?;
 
         ctx.cdn.upload_file(ctx, &file, &cdn_file).await?;
 

@@ -1,22 +1,25 @@
 use crate::{
     domain::models::{page::Page, slug::Slug},
-    error::TemplateError,
+    error::{Error, FileSystemError, TemplateError},
     prelude::*,
-    services::{file_service::{File, FilePath}, ServiceContext},
+    services::{
+        file_service::{WritableFile},
+        ServiceContext,
+    },
 };
 
 use askama::Template;
 use chrono::{DateTime, Utc};
+use hypertext::Rendered;
 use rayon::iter::ParallelBridge;
 use tracing::debug;
 
 use std::{
     path::{Path, PathBuf},
-    sync::Arc,
+    sync::{Arc, RwLock},
 };
-use tokio::sync::RwLock;
 
-use crate::renderers::formatters::format_date::FormatDate;
+use crate::renderer::formatters::format_date::FormatDate;
 
 use super::file_service::FileService;
 
@@ -43,46 +46,45 @@ impl PageRenderer {
         }
     }
 
-    pub async fn render_page<'t, T>(
+    pub fn render_page(
         &self,
         slug: &Slug,
-        template: &'t T,
+        rendered: Rendered<String>,
         last_modified: Option<DateTime<Utc>>,
-    ) -> Result<()>
-    where
-        T: Template,
-    {
+    ) -> Result<()> {
         debug!("Rendering page: {}", slug);
 
         let path = format!("{}index.html", slug.relative_link());
 
-        let rendered = template.render().map_err(TemplateError::render_error)?;
+        let rendered = rendered.as_str();
 
-        self.save_file(&path, &rendered).await?;
+        self.save_file(&path, &rendered)?;
 
-        self.site_map_pages.write().await.push(SiteMapPage {
-            url: slug.permalink(),
-            last_modified,
-        });
+        self.site_map_pages
+            .write()
+            .map_err(|_| Error::Unknown())?
+            .push(SiteMapPage {
+                url: slug.permalink(),
+                last_modified,
+            });
 
         Ok(())
     }
 
-    pub async fn render_file<'t, T>(&self, path: PathBuf, template: &'t T) -> Result<()>
-    where
-        T: Template,
-    {
+    pub fn render_file<'t, T>(&self, path: PathBuf, rendered: Rendered<String>) -> Result<()> {
         let path = path.to_string_lossy().to_string();
 
-        let rendered = template.render().map_err(TemplateError::render_error)?;
-
-        self.save_file(&path, &rendered).await?;
+        self.save_file(&path, &rendered.as_str())?;
 
         Ok(())
     }
 
-    pub async fn build_sitemap(&self, disallowed_routes: &[String]) -> Result<()> {
-        let pages = self.site_map_pages.read().await;
+    pub fn build_sitemap(&self, disallowed_routes: &[String]) -> Result<()> {
+        let pages = self
+            .site_map_pages
+            .read()
+            .map_err(|_| Error::Unknown())?
+            .clone();
 
         let pages: Vec<SiteMapPage> = pages
             .iter()
@@ -100,10 +102,10 @@ impl PageRenderer {
 
         let rendered = template.render().map_err(TemplateError::render_error)?;
 
-        self.save_file("sitemap.xml", &rendered).await
+        self.save_file("sitemap.xml", &rendered)
     }
 
-    async fn save_file(&self, path: &str, rendered: &str) -> Result<()> {
-        File::from_path(FilePath::output(path)).write_text(&rendered).await
+    fn save_file(&self, path: &str, rendered: &str) -> Result<()> {
+        FileService::output(PathBuf::from(path)).write_text(&rendered)
     }
 }

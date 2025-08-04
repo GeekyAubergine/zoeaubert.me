@@ -15,7 +15,7 @@ use crate::{
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{File, FilePath},
+        file_service::{ContentFile, FileService, ReadableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -44,12 +44,17 @@ pub struct FileAlbum {
     pub photos: Vec<FileAlbumPhoto>,
 }
 
-pub async fn process_album(ctx: &ServiceContext, file: File) -> Result<Album> {
+pub async fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Album> {
     info!("Processing album: [{}]", file);
 
-    let yaml: FileAlbum = file.read_as_yaml().await?;
+    let yaml: FileAlbum = file.read_yaml()?;
 
-    let file_name = file.path.file_name().replace(".yml", "");
+    let file_name = file
+        .as_path()
+        .file_name()
+        .unwrap()
+        .to_string_lossy()
+        .replace(".yml", "");
 
     let date = parse_date(&yaml.date)?;
 
@@ -93,11 +98,13 @@ pub async fn process_album(ctx: &ServiceContext, file: File) -> Result<Album> {
 }
 
 pub async fn process_albums(ctx: &ServiceContext) -> Result<Albums> {
-    let files = File::from_path(FilePath::content(ALBUMS_POSTS_DIR)).find_recurisve_files("yml")?;
+    let files = FileService::content(ALBUMS_POSTS_DIR.into()).find_files_recursive("yml")?;
 
     let mut albums = Albums::default();
 
     for file in files {
+        let file = FileService::content(file.into());
+
         albums.commit(&process_album(ctx, file).await?);
     }
 

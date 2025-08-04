@@ -31,7 +31,7 @@
                 rel="noopener noreferrer"
             >
                 <img
-                    src="{{ set.thumbnail.cdn_url() }}"
+                    src="{{ set.image.small().url }}"
                     alt="{{ set.name }}"
                     class="max-h-[12rem] bg-white rounded-sm"
                 />
@@ -67,7 +67,7 @@
                 rel="noopener noreferrer"
             >
                 <img
-                    src="{{ minifig.image.cdn_url() }}"
+                    src="{{ minifig.image.small().url }}"
                     alt="{{ minifig.name }}"
                     class="max-h-[12rem] bg-white rounded-sm"
                 />

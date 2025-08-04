@@ -13,8 +13,8 @@
                 rel="noopener noreferrer"
             >
                 <img
-                    src="{{ movie.movie.poster.cdn_url() }}"
-                    alt="{{ movie.movie.poster.alt }}"
+                    src="{{ movie.movie.poster.small().url }}"
+                    alt="{{ movie.movie.poster.description }}"
                     class="max-h-[12rem] rounded-sm hobbyGridItemImage"
                 />
             </a>

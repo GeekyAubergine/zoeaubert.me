@@ -16,7 +16,7 @@ use crate::{
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{File, FilePath},
+        file_service::{FileService, ReadableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -102,8 +102,16 @@ async fn extract_images_from_html(
         let path = src.replace("uploads/", dotenv!("CDN_URL"));
         let cdn_file = &CdnFile::from_str(&path);
 
-        images
-            .push(MediaService::image_from_url(ctx, &path.parse().unwrap(), cdn_file, alt, Some(parent_slug)).await?);
+        images.push(
+            MediaService::image_from_url(
+                ctx,
+                &path.parse().unwrap(),
+                cdn_file,
+                alt,
+                Some(parent_slug),
+            )
+            .await?,
+        );
     }
 
     Ok(images)
@@ -125,7 +133,10 @@ fn slug_for_item(item: &ArchiveFileItem) -> Slug {
     Slug::new(&slug)
 }
 
-async fn archive_item_to_post(ctx: &ServiceContext, item: ArchiveFileItem) -> Result<Option<MicroPost>> {
+async fn archive_item_to_post(
+    ctx: &ServiceContext,
+    item: ArchiveFileItem,
+) -> Result<Option<MicroPost>> {
     let slug = slug_for_item(&item);
 
     debug!("Processing Micro Blog Archive Post [{}]", slug);
@@ -171,9 +182,7 @@ async fn archive_item_to_post(ctx: &ServiceContext, item: ArchiveFileItem) -> Re
 }
 
 pub async fn process_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
-    let archive_file: ArchiveFile = File::from_path(FilePath::content(MICRO_POSTS_DIR))
-        .read_as_json()
-        .await?;
+    let archive_file: ArchiveFile = FileService::content(MICRO_POSTS_DIR.into()).read_json()?;
 
     let mut posts = vec![];
 
