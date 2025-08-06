@@ -30,7 +30,7 @@ pub struct QueryLimitingService2 {
 }
 
 impl QueryLimitingService2 {
-    pub async fn new() -> Result<Self> {
+    pub fn new() -> Result<Self> {
         let file = FileService::archive(PathBuf::from(FILE_NAME));
         let data = file.read_json_or_default()?;
 

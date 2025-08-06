@@ -11,7 +11,7 @@ use reqwest::{header::ACCEPT, Body, ClientBuilder};
 use serde::{Deserialize, Serialize};
 use tokio::{fs, sync::RwLock};
 use tokio_util::codec::{BytesCodec, FramedRead};
-use tracing::debug;
+use tracing::{debug, info};
 use url::Url;
 
 use crate::{
@@ -40,7 +40,7 @@ impl CdnFile {
     pub fn from_str(string: &str) -> Self {
         let path = PathBuf::from(string);
 
-        let file_name = path.file_name().unwrap().to_string_lossy().to_string();
+        let file_name = path.file_stem().unwrap().to_string_lossy().to_string();
         let extension = path.extension().unwrap().to_string_lossy().to_string();
         let directory = path.parent().unwrap().to_string_lossy().to_string();
 
@@ -93,6 +93,12 @@ impl CdnFile {
     }
 
     pub fn as_cache_file(&self) -> CacheFile {
+        debug!(
+            "as cache file [{:?}] [{:?}]",
+            FileService::cache(PathBuf::from(&self.as_string())),
+            &self
+        );
+
         FileService::cache(PathBuf::from(&self.as_string()))
     }
 
@@ -199,8 +205,6 @@ impl CdnService {
 
                 dbg!(cache);
 
-                exit(1);
-
                 Ok(files.iter().map(|f| f.object_name.clone()).collect())
             }
             Ok(None) => Ok(vec![]),
@@ -230,8 +234,6 @@ impl CdnService {
                 }
 
                 dbg!(cache);
-
-                exit(1);
             }
             Ok(None) => {}
             Err(e) => {
@@ -253,18 +255,16 @@ impl CdnService {
         file: &CacheFile,
         cdn_file: &CdnFile,
     ) -> Result<()> {
-        dbg!(file);
-
         if self.file_exists(cdn_file).await? {
             return Ok(());
         }
 
         debug!(
             "CdnService | Uploading [{}]",
-            file.as_path().to_string_lossy(),
+            file.as_path_buff().to_string_lossy(),
         );
 
-        let file = fs::File::open(file.as_path())
+        let file = fs::File::open(file.as_path_buff())
             .await
             .map_err(FileSystemError::read_error)?;
 
@@ -286,8 +286,6 @@ impl CdnService {
         let mut cache = self.existing_folders_cache.write().await;
 
         cache.insert(cdn_file.clone());
-
-        exit(0);
 
         Ok(())
     }

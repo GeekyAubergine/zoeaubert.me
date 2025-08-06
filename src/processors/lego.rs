@@ -121,7 +121,7 @@ pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
 
     let mut lego = Lego::new();
 
-    info!("Updating lego sets and minifigs");
+    info!("Processing lego sets and minifigs");
 
     let login_reponse = ctx
         .network

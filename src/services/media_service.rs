@@ -1,9 +1,10 @@
 use std::io::Cursor;
 
 use chrono::{DateTime, Utc};
-use image::{DynamicImage, GenericImageView, ImageReader};
+use image::{DynamicImage, GenericImageView, ImageFormat, ImageReader};
 use once_cell::sync::Lazy;
 use regex::Regex;
+use tracing::{debug, info};
 use url::Url;
 
 use crate::{
@@ -16,7 +17,7 @@ use crate::{
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{ReadableFile, WritableFile},
+        file_service::{CacheFile, ReadableFile, WritableFile},
         ServiceContext,
     },
     utils::resize_image::{resize_image, ImageSize},
@@ -61,6 +62,18 @@ impl MediaService {
         Ok(original_image)
     }
 
+    fn read_image_size(ctx: &ServiceContext, file: &CacheFile) -> Result<MediaDimensions> {
+        let byes = file.read()?;
+
+        match imagesize::blob_size(&byes) {
+            Ok(size) => Ok(MediaDimensions {
+                width: size.width as u32,
+                height: size.height as u32,
+            }),
+            Err(e) => Err(ImageError::size_error(e)),
+        }
+    }
+
     async fn resize_image(
         ctx: &ServiceContext,
         url: &Url,
@@ -68,28 +81,25 @@ impl MediaService {
         original_image: &DynamicImage,
         size: &ImageSize,
     ) -> Result<SizedImage> {
-        let cdn_file = cdn_file.add_suffix_to_file_name(&format!("-{}", size.as_str()));
-
         let file = cdn_file.as_cache_file();
 
         // If we already have it, don't bother processing
         if file.exists()? {
-            let image = Self::read_or_download_image(ctx, url, &cdn_file).await?;
+            let dimensions = Self::read_image_size(ctx, &file)?;
 
             return Ok(SizedImage {
                 file: cdn_file.clone(),
-                dimensions: image.dimensions().into(),
+                dimensions,
             });
         }
 
         let resized_image = resize_image(&original_image, size);
 
+        let format = ImageFormat::from_path(&file.as_path_buff()).unwrap();
+
         let mut resized_image_data = vec![];
         resized_image
-            .write_to(
-                &mut Cursor::new(&mut resized_image_data),
-                image::ImageFormat::Jpeg,
-            )
+            .write_to(&mut Cursor::new(&mut resized_image_data), format)
             .map_err(ImageError::encode_error)?;
 
         file.write(&resized_image_data)?;
@@ -109,12 +119,76 @@ impl MediaService {
         alt: &str,
         link_on_click: Option<&Slug>,
     ) -> Result<Image> {
+        let large_cdn_file =
+            cdn_file.add_suffix_to_file_name(&format!("-{}", ImageSize::Large.as_str()));
+        let small_cdn_file =
+            cdn_file.add_suffix_to_file_name(&format!("-{}", ImageSize::Small.as_str()));
+        let tiny_cdn_file =
+            cdn_file.add_suffix_to_file_name(&format!("-{}", ImageSize::Tiny.as_str()));
+
+        let original_file = cdn_file.as_cache_file();
+        let large_file = large_cdn_file.as_cache_file();
+        let small_file = small_cdn_file.as_cache_file();
+        let tiny_file = tiny_cdn_file.as_cache_file();
+
+        // If all exist, then don't process
+        if original_file.exists()?
+            && large_file.exists()?
+            && small_file.exists()?
+            && tiny_file.exists()?
+        {
+            debug!("Image already processed [{:?}]", &url.to_string());
+            let original_size = Self::read_image_size(ctx, &original_file)?;
+            let large_size = Self::read_image_size(ctx, &large_file)?;
+            let small_size = Self::read_image_size(ctx, &small_file)?;
+            let tiny_size = Self::read_image_size(ctx, &tiny_file)?;
+
+            return Ok(Image {
+                original: SizedImage {
+                    file: cdn_file.clone(),
+                    dimensions: original_size,
+                },
+                large: SizedImage {
+                    file: large_cdn_file,
+                    dimensions: large_size,
+                },
+                small: SizedImage {
+                    file: small_cdn_file,
+                    dimensions: small_size,
+                },
+                tiny: SizedImage {
+                    file: tiny_cdn_file,
+                    dimensions: tiny_size,
+                },
+                description: alt.to_string(),
+                link_on_click: link_on_click.cloned(),
+            });
+        }
+
+        info!("Processing image from URL [{:?}]", &url.to_string());
+
         let original_image = Self::read_or_download_image(ctx, url, cdn_file).await?;
 
-        let small_image =
-            Self::resize_image(ctx, url, cdn_file, &original_image, &ImageSize::Small).await?;
-        let large_image =
-            Self::resize_image(ctx, url, cdn_file, &original_image, &ImageSize::Large).await?;
+        let large_image = Self::resize_image(
+            ctx,
+            url,
+            &large_cdn_file,
+            &original_image,
+            &ImageSize::Large,
+        )
+        .await?;
+
+        let small_image = Self::resize_image(
+            ctx,
+            url,
+            &small_cdn_file,
+            &original_image,
+            &ImageSize::Small,
+        )
+        .await?;
+
+        let tiny_image =
+            Self::resize_image(ctx, url, &tiny_cdn_file, &original_image, &ImageSize::Tiny).await?;
 
         Ok(Image {
             original: SizedImage {
@@ -123,6 +197,7 @@ impl MediaService {
             },
             large: large_image,
             small: small_image,
+            tiny: tiny_image,
             description: alt.to_string(),
             link_on_click: link_on_click.cloned(),
         })

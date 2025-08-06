@@ -1,17 +1,18 @@
 use image::{DynamicImage, GenericImageView};
 
-use crate::domain::models::{
-    media::{MediaDimensions, MediaOrientation},
-};
+use crate::domain::models::media::{MediaDimensions, MediaOrientation};
 
-const LANDSCAPE_SMALL_IMAGE_WIDTH: u32 = 500;
 const LANDSCAPE_LARGE_IMAGE_WIDTH: u32 = 2000;
+const LANDSCAPE_SMALL_IMAGE_WIDTH: u32 = 500;
+const LANDSCAPE_TINY_IMAGE_WIDTH: u32 = 200;
 
-const PORTRAIT_SMALL_IMAGE_WIDTH: u32 = 300;
 const PORTRAIT_LARGE_IMAGE_WIDTH: u32 = 1500;
+const PORTRAIT_SMALL_IMAGE_WIDTH: u32 = 300;
+const PORTRAIT_TINY_IMAGE_WIDTH: u32 = 200;
 
-const SQUARE_SMALL_IMAGE_WIDTH: u32 = 400;
 const SQUARE_LARGE_IMAGE_WIDTH: u32 = 1500;
+const SQUARE_SMALL_IMAGE_WIDTH: u32 = 400;
+const SQUARE_TINY_IMAGE_WIDTH: u32 = 200;
 
 impl From<(u32, u32)> for MediaDimensions {
     fn from(value: (u32, u32)) -> Self {
@@ -22,6 +23,7 @@ impl From<(u32, u32)> for MediaDimensions {
 pub enum ImageSize {
     Large,
     Small,
+    Tiny,
 }
 
 impl ImageSize {
@@ -29,6 +31,7 @@ impl ImageSize {
         match self {
             Self::Large => "large",
             Self::Small => "small",
+            Self::Tiny => "tiny",
         }
     }
 }
@@ -85,6 +88,11 @@ pub fn resize_image(image: &DynamicImage, size: &ImageSize) -> DynamicImage {
             MediaOrientation::Landscape => LANDSCAPE_SMALL_IMAGE_WIDTH,
             MediaOrientation::Portrait => PORTRAIT_SMALL_IMAGE_WIDTH,
             MediaOrientation::Square => SQUARE_SMALL_IMAGE_WIDTH,
+        },
+        ImageSize::Tiny => match image_dimensions.orientation() {
+            MediaOrientation::Landscape => LANDSCAPE_TINY_IMAGE_WIDTH,
+            MediaOrientation::Portrait => PORTRAIT_TINY_IMAGE_WIDTH,
+            MediaOrientation::Square => SQUARE_TINY_IMAGE_WIDTH,
         },
     };
 

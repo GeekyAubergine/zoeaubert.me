@@ -9,7 +9,7 @@ use crate::{
 
 const FILE_NAME: &str = "now.md";
 
-pub async fn process_now_text(ctx: &ServiceContext) -> Result<NowText> {
+pub fn process_now_text(ctx: &ServiceContext) -> Result<NowText> {
     let text = FileService::content(FILE_NAME.into()).read_text()?;
 
     Ok(NowText { now_text: text })

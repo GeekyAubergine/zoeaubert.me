@@ -10,7 +10,7 @@ use crate::{
 const SHORT_TEXT_FILE_NAME: &str = "about_short.md";
 const LONG_TEXT_FILE_NAME: &str = "about_long.md";
 
-pub async fn process_about_text(ctx: &ServiceContext) -> Result<AboutText> {
+pub fn process_about_text(ctx: &ServiceContext) -> Result<AboutText> {
     let short = FileService::content(SHORT_TEXT_FILE_NAME.into()).read_text()?;
     let long = FileService::content(LONG_TEXT_FILE_NAME.into()).read_text()?;
 

@@ -19,5 +19,5 @@ pub async fn render_home_page(context: &RendererContext) -> Result<()> {
 
     context
         .renderer
-        .render_page(&page.slug, render_page_base(&page, None, None), None)
+        .render_page(&page.slug, render_page_base(&page, "test"), None)
 }

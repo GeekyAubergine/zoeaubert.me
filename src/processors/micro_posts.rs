@@ -53,8 +53,6 @@ fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
 }
 
 async fn process_file(ctx: &ServiceContext, file: ContentFile, content: &str) -> Result<MicroPost> {
-    debug!("Processing Micro Post [{:?}]", file.as_path());
-
     let split = content.split("---").collect::<Vec<&str>>();
 
     let front_matter = split.get(1);
@@ -75,7 +73,7 @@ async fn process_file(ctx: &ServiceContext, file: ContentFile, content: &str) ->
     let slug_date = date.format("%Y-%m-%d").to_string();
 
     let file_name = file
-        .as_path()
+        .as_path_buff()
         .file_name()
         .unwrap()
         .to_string_lossy()
@@ -103,6 +101,8 @@ async fn process_file(ctx: &ServiceContext, file: ContentFile, content: &str) ->
 }
 
 pub async fn process_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
+    info!("Processing micro posts");
+
     let files = FileService::content(MICRO_POSTS_DIR.into()).find_files_recursive("md")?;
 
     let mut posts = vec![];

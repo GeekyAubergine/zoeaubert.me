@@ -11,20 +11,24 @@ fn render_sized(sized_image: &SizedImage, description: &str) -> Rendered<String>
             alt={(description)}
             width={(sized_image.dimensions.width)}
             height={(sized_image.dimensions.height)};
-    }.render()
+    }
+    .render()
 }
 
 impl Image {
-    pub fn render_small(&self) -> Rendered<String> {
-        render_sized(&self.small, &self.description)
+    pub fn render_original(&self) -> Rendered<String> {
+        render_sized(&self.original, &self.description)
     }
 
     pub fn render_large(&self) -> Rendered<String> {
         render_sized(&self.large, &self.description)
-
     }
 
-    pub fn redner_original(&self) -> Rendered<String> {
-        render_sized(&self.original, &self.description)
+    pub fn render_small(&self) -> Rendered<String> {
+        render_sized(&self.small, &self.description)
+    }
+
+    pub fn render_tiny(&self) -> Rendered<String> {
+        render_sized(&self.tiny, &self.description)
     }
 }

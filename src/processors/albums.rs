@@ -50,7 +50,7 @@ pub async fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Al
     let yaml: FileAlbum = file.read_yaml()?;
 
     let file_name = file
-        .as_path()
+        .as_path_buff()
         .file_name()
         .unwrap()
         .to_string_lossy()
@@ -102,11 +102,11 @@ pub async fn process_albums(ctx: &ServiceContext) -> Result<Albums> {
 
     let mut albums = Albums::default();
 
-    for file in files {
-        let file = FileService::content(file.into());
+    // for file in files {
+    //     let file = FileService::content(file.into());
 
-        albums.commit(&process_album(ctx, file).await?);
-    }
+    //     albums.commit(&process_album(ctx, file).await?);
+    // }
 
     Ok(albums)
 }

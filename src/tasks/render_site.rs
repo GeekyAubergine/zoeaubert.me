@@ -17,6 +17,7 @@ use crate::domain::models::slug::Slug;
 
 use crate::error::FileSystemError;
 use crate::prelude::*;
+use crate::renderer::{new_rendering_context_from_data, render_pages, RendererContext};
 // use crate::renderers::{new_rendering_context_from_data, render_pages, RendererContext};
 use crate::services::file_service::{FileService, ReadableFile};
 use crate::services::ServiceContext;
@@ -39,31 +40,26 @@ async fn prepare_folders() -> Result<()> {
         .output()
         .expect("Failed to remove output directory");
 
-    Command::new("mkdir")
-        .arg("-p")
-        .arg("./output/assets/.")
-        .output()
-        .expect("Failed to create assets directory");
-
-    FileService::copy_dir(Path::new("assets"), Path::new("output/assets"))?;
-
-    copy_dir("_assets", "output/assets");
-
     Ok(())
 }
 
-async fn compile_css() -> Result<()> {
-    FileService::copy_dir(Path::new(COMPILED_ASSETS_DIR), Path::new(ASSETS_DIR))?;
-
-    Ok(())
-}
-
-async fn compile_assets() -> Result<()> {
-    compile_css().await?;
+async fn copy_assets() -> Result<()> {
+    FileService::copy_dir(
+        Path::new("./assets/fonts"),
+        Path::new("./output/assets/fonts"),
+    );
+    FileService::copy_dir(Path::new("./assets/img"), Path::new("./output/assets/img"));
 
     FileService::copy(
-        &Path::new(ROBOTS_INPUT_FILE),
-        &Path::new(ROBOTS_OUTPUT_FILE),
+        Path::new("./assets/css/codestyle.css"),
+        Path::new("./output/css/codestyle.css"),
+    )?;
+
+    let css_file_name = format!("styles-{}.css", BUILD_DATE);
+
+    FileService::copy(
+        Path::new(&format!("./_assets/css/{}", css_file_name)),
+        Path::new(&format!("./output/assets/css/{}", css_file_name)),
     )?;
 
     Ok(())
@@ -88,20 +84,22 @@ async fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
 }
 
 pub async fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
-    info!("Building site");
+    info!("Rendering site");
+
+    let start = Utc::now();
 
     prepare_folders().await?;
-    compile_assets().await?;
+    copy_assets().await?;
 
-    let start = std::time::Instant::now();
+    let context: RendererContext = new_rendering_context_from_data(data).await?;
 
-    // let context: RendererContext = new_rendering_context_from_data(data).await?;
+    render_pages(&context).await?;
 
-    // render_pages(&context).await?;
+    let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
 
-    // let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
+    context.renderer.build_sitemap(&disallowed_routes)?;
 
-    // context.renderer.build_sitemap(&disallowed_routes).await?;
+    info!("Rendering site - done [{}ms]", (Utc::now() - start).num_milliseconds());
 
     Ok(())
 }

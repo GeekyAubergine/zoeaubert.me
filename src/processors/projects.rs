@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use tracing::info;
 use url::Url;
 
 use crate::{
@@ -30,6 +31,7 @@ struct ProjectsFile {
 }
 
 pub async fn process_projects(ctx: &ServiceContext) -> Result<Projects> {
+    info!("Processing Projects");
     let mut projects: Projects = Projects::new();
 
     let yaml: ProjectsFile = FileService::content(PROJECTS_FILE.into()).read_yaml()?;

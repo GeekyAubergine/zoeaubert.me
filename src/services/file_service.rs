@@ -24,14 +24,14 @@ use crate::{
 pub struct CacheFile(PathBuf);
 
 impl CacheFile {
-    pub fn as_path(&self) -> &PathBuf {
-        &self.0
+    pub fn as_path_buff(&self) -> PathBuf {
+        Path::new(dotenv!("CACHE_DIR")).join(&self.0)
     }
 }
 
 impl std::fmt::Display for CacheFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.as_path().to_string_lossy())
+        write!(f, "{}", self.as_path_buff().to_string_lossy())
     }
 }
 
@@ -39,14 +39,14 @@ impl std::fmt::Display for CacheFile {
 pub struct ArchiveFile(PathBuf);
 
 impl ArchiveFile {
-    pub fn as_path(&self) -> &PathBuf {
-        &self.0
+    pub fn as_path_buff(&self) -> PathBuf {
+        Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0)
     }
 }
 
 impl std::fmt::Display for ArchiveFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.as_path().to_string_lossy())
+        write!(f, "{}", self.as_path_buff().to_string_lossy())
     }
 }
 
@@ -54,14 +54,14 @@ impl std::fmt::Display for ArchiveFile {
 pub struct ContentFile(PathBuf);
 
 impl ContentFile {
-    pub fn as_path(&self) -> &PathBuf {
-        &self.0
+    pub fn as_path_buff(&self) -> PathBuf {
+        Path::new(dotenv!("CONTENT_DIR")).join(&self.0)
     }
 }
 
 impl std::fmt::Display for ContentFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.as_path().to_string_lossy())
+        write!(f, "{}", self.as_path_buff().to_string_lossy())
     }
 }
 
@@ -69,14 +69,14 @@ impl std::fmt::Display for ContentFile {
 pub struct OutputFile(PathBuf);
 
 impl OutputFile {
-    pub fn as_path(&self) -> &PathBuf {
-        &self.0
+    pub fn as_path_buff(&self) -> PathBuf {
+        Path::new(dotenv!("OUTPUT_DIR")).join(&self.0)
     }
 }
 
 impl std::fmt::Display for OutputFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.as_path().to_string_lossy())
+        write!(f, "{}", self.as_path_buff().to_string_lossy())
     }
 }
 
@@ -84,24 +84,26 @@ impl std::fmt::Display for OutputFile {
 pub struct AssetFile(PathBuf);
 
 impl AssetFile {
-    pub fn as_path(&self) -> &PathBuf {
-        &self.0
+    pub fn as_path_buff(&self) -> PathBuf {
+        Path::new("assets").join(&self.0)
     }
 }
 
 impl std::fmt::Display for AssetFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.as_path().to_string_lossy())
+        write!(f, "{}", self.as_path_buff().to_string_lossy())
     }
 }
 
 // -------- Read --------
 
 fn read_file(path: &Path) -> Result<Vec<u8>> {
+    debug!("Reading file [{:?}]", path);
     std::fs::read(path).map_err(FileSystemError::read_error)
 }
 
 fn read_text_file(path: &Path) -> Result<String> {
+    debug!("Reading file [{:?}]", path);
     std::fs::read_to_string(path).map_err(FileSystemError::read_error)
 }
 
@@ -134,6 +136,7 @@ fn read_csv_file<D>(path: &Path) -> Result<Vec<D>>
 where
     D: DeserializeOwned,
 {
+    debug!("Reading file [{:?}]", path);
     let mut reader = csv::Reader::from_path(path).map_err(CsvError::read_error)?;
     let mut records = Vec::new();
     for record in reader.deserialize() {
@@ -203,185 +206,185 @@ pub trait ReadableFile {
 
 impl ReadableFile for CacheFile {
     fn read(&self) -> Result<Vec<u8>> {
-        read_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0))
+        read_file(&self.as_path_buff())
     }
 
     fn read_text(&self) -> Result<String> {
-        read_text_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0))
+        read_text_file(&self.as_path_buff())
     }
 
     fn read_json<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_json_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0))
+        read_json_file(&self.as_path_buff())
     }
 
     fn read_json_or_default<D>(&self) -> Result<D>
     where
         D: DeserializeOwned + Default,
     {
-        read_json_file_or_default(&Path::new(dotenv!("CACHE_DIR")).join(&self.0))
+        read_json_file_or_default(&self.as_path_buff())
     }
 
     fn read_yaml<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_yaml_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0))
+        read_yaml_file(&self.as_path_buff())
     }
 
     fn read_csv<D>(&self) -> Result<Vec<D>>
     where
         D: DeserializeOwned,
     {
-        read_csv_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0))
+        read_csv_file(&self.as_path_buff())
     }
 
     fn exists(&self) -> Result<bool> {
-        file_exists(&Path::new(dotenv!("CACHE_DIR")).join(&self.0))
+        file_exists(&self.as_path_buff())
     }
 
     fn find_files_recursive(&self, extension: &str) -> Result<Vec<String>> {
-        find_files_recursive(&Path::new(dotenv!("CACHE_DIR")).join(&self.0), extension)
+        find_files_recursive(&self.as_path_buff(), extension)
     }
 }
 
 impl ReadableFile for ArchiveFile {
     fn read(&self) -> Result<Vec<u8>> {
-        read_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0))
+        read_file(&self.as_path_buff())
     }
 
     fn read_text(&self) -> Result<String> {
-        read_text_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0))
+        read_text_file(&self.as_path_buff())
     }
 
     fn read_json<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_json_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0))
+        read_json_file(&self.as_path_buff())
     }
 
     fn read_json_or_default<D>(&self) -> Result<D>
     where
         D: DeserializeOwned + Default,
     {
-        read_json_file_or_default(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0))
+        read_json_file_or_default(&self.as_path_buff())
     }
 
     fn read_yaml<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_yaml_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0))
+        read_yaml_file(&self.as_path_buff())
     }
 
     fn read_csv<D>(&self) -> Result<Vec<D>>
     where
         D: DeserializeOwned,
     {
-        read_csv_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0))
+        read_csv_file(&self.as_path_buff())
     }
 
     fn exists(&self) -> Result<bool> {
-        file_exists(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0))
+        file_exists(&self.as_path_buff())
     }
 
     fn find_files_recursive(&self, extension: &str) -> Result<Vec<String>> {
-        find_files_recursive(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0), extension)
+        find_files_recursive(&self.as_path_buff(), extension)
     }
 }
 
 impl ReadableFile for ContentFile {
     fn read(&self) -> Result<Vec<u8>> {
-        read_file(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0))
+        read_file(&self.as_path_buff())
     }
 
     fn read_text(&self) -> Result<String> {
-        read_text_file(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0))
+        read_text_file(&self.as_path_buff())
     }
 
     fn read_json<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_json_file(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0))
+        read_json_file(&self.as_path_buff())
     }
 
     fn read_json_or_default<D>(&self) -> Result<D>
     where
         D: DeserializeOwned + Default,
     {
-        read_json_file_or_default(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0))
+        read_json_file_or_default(&self.as_path_buff())
     }
 
     fn read_yaml<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_yaml_file(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0))
+        read_yaml_file(&self.as_path_buff())
     }
 
     fn read_csv<D>(&self) -> Result<Vec<D>>
     where
         D: DeserializeOwned,
     {
-        read_csv_file(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0))
+        read_csv_file(&self.as_path_buff())
     }
 
     fn exists(&self) -> Result<bool> {
-        file_exists(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0))
+        file_exists(&self.as_path_buff())
     }
 
     fn find_files_recursive(&self, extension: &str) -> Result<Vec<String>> {
-        find_files_recursive(&Path::new(dotenv!("CONTENT_DIR")).join(&self.0), extension)
+        find_files_recursive(&self.as_path_buff(), extension)
     }
 }
 
 impl ReadableFile for AssetFile {
     fn read(&self) -> Result<Vec<u8>> {
-        read_file(&Path::new("assets").join(&self.0))
+        read_file(&self.as_path_buff())
     }
 
     fn read_text(&self) -> Result<String> {
-        read_text_file(&Path::new("assets").join(&self.0))
+        read_text_file(&self.as_path_buff())
     }
 
     fn read_json<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_json_file(&Path::new("assets").join(&self.0))
+        read_json_file(&self.as_path_buff())
     }
 
     fn read_json_or_default<D>(&self) -> Result<D>
     where
         D: DeserializeOwned + Default,
     {
-        read_json_file_or_default(&Path::new("assets").join(&self.0))
+        read_json_file_or_default(&self.as_path_buff())
     }
 
     fn read_yaml<D>(&self) -> Result<D>
     where
         D: DeserializeOwned,
     {
-        read_yaml_file(&Path::new("assets").join(&self.0))
+        read_yaml_file(&self.as_path_buff())
     }
 
     fn read_csv<D>(&self) -> Result<Vec<D>>
     where
         D: DeserializeOwned,
     {
-        read_csv_file(&Path::new("assets").join(&self.0))
+        read_csv_file(&self.as_path_buff())
     }
 
     fn exists(&self) -> Result<bool> {
-        file_exists(&Path::new("assets").join(&self.0))
+        file_exists(&self.as_path_buff())
     }
 
     fn find_files_recursive(&self, extension: &str) -> Result<Vec<String>> {
-        find_files_recursive(&Path::new("assets").join(&self.0), extension)
+        find_files_recursive(&self.as_path_buff(), extension)
     }
 }
 
@@ -424,52 +427,52 @@ pub trait WritableFile {
 
 impl WritableFile for CacheFile {
     fn write(&self, data: &[u8]) -> Result<()> {
-        write_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0), data)
+        write_file(&self.as_path_buff(), data)
     }
 
     fn write_text(&self, data: &str) -> Result<()> {
-        write_text_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0), data)
+        write_text_file(&self.as_path_buff(), data)
     }
 
     fn write_json<D>(&self, data: &D) -> Result<()>
     where
         D: Serialize + Send + Sync,
     {
-        write_json_file(&Path::new(dotenv!("CACHE_DIR")).join(&self.0), data)
+        write_json_file(&self.as_path_buff(), data)
     }
 }
 
 impl WritableFile for ArchiveFile {
     fn write(&self, data: &[u8]) -> Result<()> {
-        write_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0), data)
+        write_file(&self.as_path_buff(), data)
     }
 
     fn write_text(&self, data: &str) -> Result<()> {
-        write_text_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0), data)
+        write_text_file(&self.as_path_buff(), data)
     }
 
     fn write_json<D>(&self, data: &D) -> Result<()>
     where
         D: Serialize + Send + Sync,
     {
-        write_json_file(&Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0), data)
+        write_json_file(&self.as_path_buff(), data)
     }
 }
 
 impl WritableFile for OutputFile {
     fn write(&self, data: &[u8]) -> Result<()> {
-        write_file(&Path::new(dotenv!("OUTPUT_DIR")).join(&self.0), data)
+        write_file(&self.as_path_buff(), data)
     }
 
     fn write_text(&self, data: &str) -> Result<()> {
-        write_text_file(&Path::new(dotenv!("OUTPUT_DIR")).join(&self.0), data)
+        write_text_file(&self.as_path_buff(), data)
     }
 
     fn write_json<D>(&self, data: &D) -> Result<()>
     where
         D: Serialize + Send + Sync,
     {
-        write_json_file(&Path::new(dotenv!("OUTPUT_DIR")).join(&self.0), data)
+        write_json_file(&self.as_path_buff(), data)
     }
 }
 
@@ -479,31 +482,77 @@ fn make_dir(path: &Path) -> Result<()> {
     std::fs::create_dir_all(path).map_err(FileSystemError::create_dir_error)
 }
 
+fn clean_path(path: PathBuf) -> PathBuf {
+    match path.starts_with("/") {
+        true => path.strip_prefix("/").unwrap().to_path_buf(),
+        false => path,
+    }
+}
+
 pub struct FileService;
 
 impl FileService {
     pub fn cache(path: PathBuf) -> CacheFile {
-        CacheFile(path)
+        let path = match path.starts_with(dotenv!("CACHE_DIR")) {
+            true => path
+                .strip_prefix(dotenv!("CACHE_DIR"))
+                .unwrap()
+                .to_path_buf(),
+            false => path,
+        };
+
+        CacheFile(clean_path(path))
     }
 
     pub fn archive(path: PathBuf) -> ArchiveFile {
-        ArchiveFile(path)
+        let path = match path.starts_with(dotenv!("ARCHIVE_DIR")) {
+            true => path
+                .strip_prefix(dotenv!("ARCHIVE_DIR"))
+                .unwrap()
+                .to_path_buf(),
+            false => path,
+        };
+
+        ArchiveFile(clean_path(path))
     }
 
     pub fn content(path: PathBuf) -> ContentFile {
-        ContentFile(path)
+        let path = match path.starts_with(dotenv!("CONTENT_DIR")) {
+            true => path
+                .strip_prefix(dotenv!("CONTENT_DIR"))
+                .unwrap()
+                .to_path_buf(),
+            false => path,
+        };
+
+        ContentFile(clean_path(path))
     }
 
     pub fn output(path: PathBuf) -> OutputFile {
-        OutputFile(path)
+        let path = match path.starts_with(dotenv!("OUTPUT_DIR")) {
+            true => path
+                .strip_prefix(dotenv!("OUTPUT_DIR"))
+                .unwrap()
+                .to_path_buf(),
+            false => path,
+        };
+
+        OutputFile(clean_path(path))
     }
 
     pub fn asset(path: PathBuf) -> AssetFile {
-        AssetFile(path)
+        let path = match path.starts_with("assets") {
+            true => path.strip_prefix("assets").unwrap().to_path_buf(),
+            false => path,
+        };
+
+        AssetFile(clean_path(path))
     }
 
     pub fn copy(source: &Path, destination: &Path) -> Result<()> {
         debug!("Copying [{:?}] to [{:?}]", source, destination);
+
+        make_dir(&destination.parent().unwrap())?;
 
         std::fs::copy(source, destination).map_err(FileSystemError::copy_file_error)?;
 
@@ -512,6 +561,7 @@ impl FileService {
 
     pub fn copy_dir(source: &Path, destination: &Path) -> Result<()> {
         debug!("Copying directory [{:?}] to [{:?}]", source, destination);
+
         copy_dir(source, destination).map_err(FileSystemError::copy_dir_error)?;
 
         Ok(())

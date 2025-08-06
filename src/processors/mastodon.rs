@@ -25,7 +25,7 @@ use crate::{
 
 const FILE_NAME: &str = "mastodon_posts.json";
 const QUERY: &str = "mastodon";
-const SELF_URL: &str = "zoeaubert.me";
+const SELF_URL: &str = "zoeaubert.me/blog";
 const APPLICATIONS_TO_IGNORE: [&str; 2] = ["Micro.blog", "status.lol"];
 
 static TAGS_REGEX: Lazy<Regex> =
@@ -97,71 +97,27 @@ static API_BASE_URL: Lazy<String> = Lazy::new(|| {
     )
 });
 
-struct PostIdBoundaries {
-    min_id: Option<String>,
-    max_id: Option<String>,
-}
+async fn fetch_page(ctx: &ServiceContext, oldest: Option<&String>) -> Result<Vec<MastodonStatus>> {
+    let mut url: Url = API_BASE_URL.parse().unwrap();
 
-impl PostIdBoundaries {
-    fn new() -> Self {
-        Self {
-            min_id: None,
-            max_id: None,
-        }
+    if let Some(since) = oldest {
+        url.query_pairs_mut().append_pair("max_id", since);
     }
-
-    fn with_min_id(mut self, min_id: String) -> Self {
-        self.set_min_id(min_id);
-
-        self
-    }
-
-    fn with_max_id(mut self, max_id: String) -> Self {
-        self.set_max_id(max_id);
-
-        self
-    }
-
-    fn set_min_id(&mut self, min_id: String) {
-        self.min_id = Some(min_id);
-    }
-
-    fn set_max_id(&mut self, max_id: String) {
-        self.max_id = Some(max_id);
-    }
-
-    fn add_to_url(&self, url: &Url) -> Url {
-        let mut url = url.clone();
-
-        if let Some(min_id) = &self.min_id {
-            url.query_pairs_mut().append_pair("min_id", min_id);
-        }
-
-        if let Some(max_id) = &self.max_id {
-            url.query_pairs_mut().append_pair("max_id", max_id);
-        }
-
-        url
-    }
-}
-
-async fn fetch_page(
-    ctx: &ServiceContext,
-    boundaries: &PostIdBoundaries,
-) -> Result<Vec<MastodonStatus>> {
-    let url = boundaries.add_to_url(&API_BASE_URL.parse().unwrap());
 
     ctx.network.download_json(&url).await
 }
 
-async fn fetch_pages(
-    ctx: &ServiceContext,
-    mut boundaries: PostIdBoundaries,
-) -> Result<Vec<MastodonStatus>> {
-    let mut statuses = Vec::new();
+async fn fetch_most_recent(ctx: &ServiceContext) -> Result<Vec<MastodonStatus>> {
+    fetch_page(ctx, None).await
+}
+
+async fn fetch_all(ctx: &ServiceContext) -> Result<Vec<MastodonStatus>> {
+    let mut statuses: Vec<MastodonStatus> = Vec::new();
 
     loop {
-        let page = fetch_page(ctx, &boundaries).await?;
+        let oldest = statuses.last().map(|s| &s.id);
+
+        let page = fetch_page(ctx, oldest).await?;
 
         if page.is_empty() {
             break;
@@ -172,8 +128,6 @@ async fn fetch_pages(
         if statuses.len() < MASTODON_PAGINATION_LIMIT as usize {
             break;
         }
-
-        boundaries.set_max_id(statuses.last().unwrap().id.clone());
     }
 
     Ok(statuses)
@@ -283,35 +237,10 @@ pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
 
     info!("Fetching mastodon posts data");
 
-    let mut oldest_post_to_update_since: Option<&MastodonPost> = None;
-
-    // Only update posts that have been created or edited within the last two weeks
-    let two_weeks_ago = Utc::now() - Duration::weeks(2);
-
-    for post in posts.posts().iter() {
-        if post.created_at() < &two_weeks_ago {
-            break;
-        }
-
-        oldest_post_to_update_since = Some(post);
-    }
-
-    // If there is not post within the last two weeks, use the newest post
-    if oldest_post_to_update_since.is_none() {
-        oldest_post_to_update_since = posts.posts().first().map(|p| p.clone());
-    }
-
-    let min_id = oldest_post_to_update_since.map(|p| p.id().to_string());
-
-    let client = reqwest::Client::new();
-
-    let mut boundaries = PostIdBoundaries::new();
-
-    if let Some(min_id) = min_id {
-        boundaries.set_min_id(min_id);
-    }
-
-    let statuses = fetch_pages(ctx, boundaries).await?;
+    let statuses = match posts.count() {
+        0 => fetch_all(ctx).await?,
+        _ => fetch_most_recent(ctx).await?,
+    };
 
     for status in statuses.into_iter() {
         let post = mastodon_status_to_post(ctx, status).await?;

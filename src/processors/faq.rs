@@ -9,7 +9,7 @@ use crate::{
 
 const FILE_NAME: &str = "faq.md";
 
-pub async fn process_faq(ctx: &ServiceContext) -> Result<Faq> {
+pub fn process_faq(ctx: &ServiceContext) -> Result<Faq> {
     let text = FileService::content(FILE_NAME.into()).read_text()?;
 
     Ok(Faq { faq: text })

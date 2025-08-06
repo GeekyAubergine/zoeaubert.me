@@ -38,8 +38,6 @@ pub fn front_matter_from_string(s: &str) -> Result<BlogPostFileFrontMatter> {
 }
 
 pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) -> Result<BlogPost> {
-    debug!("Processing Blog Post [{}]", file_path);
-
     let file_contents = file_path.read_text()?;
 
     let split = file_contents.split("---").collect::<Vec<&str>>();
@@ -98,6 +96,8 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) ->
 }
 
 pub async fn process_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
+    info!("Processing Blog Posts");
+
     let blog_posts_files =
         FileService::content(BLOG_POSTS_DIR.into()).find_files_recursive("md")?;
 
@@ -106,7 +106,7 @@ pub async fn process_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
     for file_path in blog_posts_files {
         let file = FileService::content(file_path.into());
 
-        process_blog_post(ctx, &file).await?;
+        posts.push(process_blog_post(ctx, &file).await?);
     }
 
     Ok(posts)

@@ -1,6 +1,8 @@
 use std::process::exit;
 
+use chrono::Utc;
 use tokio::try_join;
+use tracing::info;
 
 use crate::{
     domain::models::{data::Data, post::Posts},
@@ -32,14 +34,18 @@ pub mod referrals;
 pub mod silly_names;
 
 pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
+    info!("Processing data");
+
+    let start = Utc::now();
+
     let games = process_games(ctx).await?;
 
-    let now_text = process_now_text(ctx).await?;
-    let about_text = process_about_text(ctx).await?;
-    let faq = process_faq(ctx).await?;
+    let now_text = process_now_text(ctx)?;
+    let about_text = process_about_text(ctx)?;
+    let faq = process_faq(ctx)?;
     let projects = process_projects(ctx).await?;
-    let referrals = process_referrals(ctx).await?;
-    let silly_names = process_silly_names(ctx).await?;
+    let referrals = process_referrals(ctx)?;
+    let silly_names = process_silly_names(ctx)?;
     let blog_posts = process_blog_posts(ctx).await?;
     let micro_posts = process_micro_posts(ctx).await?;
     let micro_blog_archive = process_micro_blog_archive(ctx).await?;
@@ -82,6 +88,11 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let posts = extract_posts(ctx, blog_posts, micro_posts, &mastodon, &albums, &games).await?;
 
     let posts = Posts::from_posts(posts);
+
+    info!(
+        "Processing data - done [{}ms]",
+        (Utc::now() - start).num_milliseconds()
+    );
 
     Ok(Data {
         about_text,

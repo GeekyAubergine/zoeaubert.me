@@ -6,8 +6,8 @@ pub mod error;
 pub mod infrastructure;
 pub mod prelude;
 pub mod processors;
-pub mod tasks;
 pub mod renderer;
+pub mod tasks;
 pub mod utils;
 
 pub mod services;
@@ -50,11 +50,11 @@ enum Commands {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt().with_max_level(Level::DEBUG).init();
+    tracing_subscriber::fmt().with_max_level(Level::INFO).init();
 
     let args = Args::parse();
 
-    let ctx = ServiceContext::new().await?;
+    let ctx = ServiceContext::new()?;
 
     match args.command {
         Commands::Create => {
@@ -68,10 +68,4 @@ async fn main() -> Result<()> {
     }
 
     Ok(())
-}
-
-pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
-    let mut s = DefaultHasher::new();
-    t.hash(&mut s);
-    s.finish()
 }

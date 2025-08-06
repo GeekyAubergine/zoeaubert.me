@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::models::{image::Image, slug::Slug};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SteamGame {
     pub id: u32,
     pub name: String,
@@ -43,7 +43,7 @@ impl SteamGame {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SteamGameAchievementUnlocked {
     pub id: String,
     pub game_id: u32,
@@ -73,7 +73,7 @@ impl SteamGameAchievementUnlocked {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SteamGameAchievementLocked {
     pub id: String,
     pub game_id: u32,
@@ -100,7 +100,7 @@ impl SteamGameAchievementLocked {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum SteamGameAchievement {
     Unlocked(SteamGameAchievementUnlocked),
     Locked(SteamGameAchievementLocked),
@@ -140,7 +140,7 @@ impl SteamGameAchievement {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SteamGameWithAchievements {
     pub game: SteamGame,
     pub locked_achievements: HashMap<String, SteamGameAchievementLocked>,

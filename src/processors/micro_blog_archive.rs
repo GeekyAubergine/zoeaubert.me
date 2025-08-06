@@ -1,9 +1,12 @@
+use std::process::exit;
+
 use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use tracing::debug;
+use tracing::{debug, info};
+use url::Url;
 
 use crate::{
     domain::models::{
@@ -100,7 +103,10 @@ async fn extract_images_from_html(
         let height = height.parse::<u32>().unwrap_or(0);
 
         let path = src.replace("uploads/", dotenv!("CDN_URL"));
-        let cdn_file = &CdnFile::from_str(&path);
+
+        let url: Url = path.parse().unwrap();
+
+        let cdn_file = &CdnFile::from_str(url.path());
 
         images.push(
             MediaService::image_from_url(
@@ -138,8 +144,6 @@ async fn archive_item_to_post(
     item: ArchiveFileItem,
 ) -> Result<Option<MicroPost>> {
     let slug = slug_for_item(&item);
-
-    debug!("Processing Micro Blog Archive Post [{}]", slug);
 
     let tags: Vec<String> = match item.tags {
         Some(tags) => tags,
@@ -182,6 +186,8 @@ async fn archive_item_to_post(
 }
 
 pub async fn process_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
+    info!("Processing micro blog archive");
+
     let archive_file: ArchiveFile = FileService::content(MICRO_POSTS_DIR.into()).read_json()?;
 
     let mut posts = vec![];

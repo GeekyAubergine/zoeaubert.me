@@ -3,7 +3,6 @@ use std::{collections::HashMap, path::Path, time::Duration};
 use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
-use tokio::time::sleep;
 use tracing::{debug, info};
 use url::Url;
 
@@ -13,12 +12,13 @@ use crate::{
             SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
             SteamGameAchievementUnlocked, SteamGameWithAchievements, SteamGames,
         },
+        image::Image,
         slug::Slug,
     },
     prelude::*,
     services::{
         cdn_service::CdnFile,
-        file_service::{FileService, ReadableFile},
+        file_service::{FileService, ReadableFile, WritableFile},
         media_service::MediaService,
         ServiceContext,
     },
@@ -304,6 +304,47 @@ pub fn steam_last_played_to_datetime(last_played: u32) -> DateTime<Utc> {
     }
 }
 
+async fn get_game_header_image(
+    ctx: &ServiceContext,
+    game: &SteamOwnedGame,
+    cdn_file: &CdnFile,
+) -> Result<Image> {
+    let image_src_url: Url = format!(
+        "https://steamcdn-a.akamaihd.net/steam/apps/{}/header.jpg",
+        game.appid
+    )
+    .parse()
+    .unwrap();
+
+    if let Ok(image) = MediaService::image_from_url(
+        ctx,
+        &image_src_url,
+        &cdn_file,
+        &format!("{} steam header image", &game.name),
+        None,
+    )
+    .await
+    {
+        return Ok(image);
+    }
+
+    let image_src_url: Url = format!(
+        "https://media.steampowered.com/steamcommunity/public/images/apps/{}/{}.jpg",
+        game.appid, game.img_icon_url,
+    )
+    .parse()
+    .unwrap();
+
+    MediaService::image_from_url(
+        ctx,
+        &image_src_url,
+        &cdn_file,
+        &format!("{} steam header image", &game.name),
+        None,
+    )
+    .await
+}
+
 async fn process_game(
     ctx: &ServiceContext,
     game: SteamOwnedGame,
@@ -315,23 +356,11 @@ async fn process_game(
         }
     }
 
+    info!("Processing game [{}]", game.name);
+
     let game_header_cdn_file = CdnFile::from_str(&format!("games/{}-header.jpg", game.appid));
 
-    let image_src_url: Url = format!(
-        "https://steamcdn-a.akamaihd.net/steam/apps/{}/header.jpg",
-        game.appid
-    )
-    .parse()
-    .unwrap();
-
-    let image = MediaService::image_from_url(
-        ctx,
-        &image_src_url,
-        &game_header_cdn_file,
-        &format!("{} steam header image", &game.name),
-        None,
-    )
-    .await?;
+    let image = get_game_header_image(ctx, &game, &game_header_cdn_file).await?;
 
     let game = SteamGame::new(
         game.appid,
@@ -348,16 +377,13 @@ async fn process_game(
 }
 
 pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
-    debug!("A");
     let file = FileService::archive(FILE_NAME.into());
 
     let mut data: SteamGames = file.read_json_or_default()?;
 
-    debug!("B");
-
-    if !ctx.query_limiter.can_query_within_hour(QUERY_KEY).await? {
-        return Ok(data);
-    }
+    // if !ctx.query_limiter.can_query_within_hour(QUERY_KEY).await? {
+    //     return Ok(data);
+    // }
 
     info!("Processing steam games");
 
@@ -366,21 +392,26 @@ pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
         .download_json::<SteamGetOwnedGamesResponse>(&make_get_games_url())
         .await?;
 
-    // for game in games.response.games {
-    //     if GAMES_TO_IGNORE.contains(&game.appid) {
-    //         continue;
-    //     }
+    for game in games.response.games {
+        if GAMES_TO_IGNORE.contains(&game.appid) {
+            continue;
+        }
 
-    //     let id = game.appid;
+        let stored = data.find_game_by_id(game.appid);
 
-    //     sleep(Duration::from_secs(5));
+        if let Ok(game) = process_game(ctx, game, stored).await {
+            let should_save = match stored {
+                Some(stored) => !stored.eq(&game),
+                None => true,
+            };
 
-    //     data.add_game(process_game(ctx, game, data.find_game_by_id(id)).await?);
+            data.add_game(game);
 
-    //     File::from_path(FilePath::archive(FILE_NAME))
-    //         .write_json(&data)
-    //         .await?;
-    // }
+            if should_save {
+                file.write_json(&data)?;
+            }
+        }
+    }
 
     Ok(data)
 }

@@ -219,4 +219,8 @@ impl MastodonPosts {
 
         posts
     }
+
+    pub fn count(&self) -> usize {
+        self.posts().len()
+    }
 }
