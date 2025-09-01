@@ -35,9 +35,9 @@ impl SourcePost {
 
     pub fn link(&self) -> String {
         match self {
-            Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
-            Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
-            Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_link(),
+            Self::BlogPost(blog_post) => blog_post.slug.relative_string(),
+            Self::MicroPost(micro_post) => micro_post.slug.relative_string(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_string(),
         }
     }
 

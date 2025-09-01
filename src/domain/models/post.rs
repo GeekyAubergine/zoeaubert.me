@@ -42,7 +42,6 @@ bitflags! {
     }
 }
 
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Post {
     BlogPost(BlogPost),
@@ -95,15 +94,15 @@ impl Post {
 
     pub fn link(&self) -> String {
         match self {
-            Self::BlogPost(blog_post) => blog_post.slug.relative_link(),
-            Self::MicroPost(micro_post) => micro_post.slug.relative_link(),
-            Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_link(),
-            Self::AlbumPhoto { photo, .. } => photo.slug.relative_link(),
-            Self::Album(album) => album.slug.relative_link(),
-            Self::SteamAcheivementUnlocked { game, .. } => game.slug().relative_link(),
-            Self::MovieReview(review) => review.source_content.slug().relative_link(),
-            Self::TvShowReview(review) => review.source_content.slug().relative_link(),
-            Self::BookReview(review) => review.source_content.slug().relative_link(),
+            Self::BlogPost(blog_post) => blog_post.slug.relative_string(),
+            Self::MicroPost(micro_post) => micro_post.slug.relative_string(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.slug().relative_string(),
+            Self::AlbumPhoto { photo, .. } => photo.slug.relative_string(),
+            Self::Album(album) => album.slug.relative_string(),
+            Self::SteamAcheivementUnlocked { game, .. } => game.slug().relative_string(),
+            Self::MovieReview(review) => review.source_content.slug().relative_string(),
+            Self::TvShowReview(review) => review.source_content.slug().relative_string(),
+            Self::BookReview(review) => review.source_content.slug().relative_string(),
         }
     }
 
@@ -121,7 +120,7 @@ impl Post {
         }
     }
 
-    pub fn media(&self) -> Vec<Media> {
+pub fn media(&self) -> Vec<Media> {
         match self {
             Self::BlogPost(blog_post) => blog_post.media.clone(),
             Self::MicroPost(micro_post) => micro_post.media.clone(),
@@ -336,6 +335,12 @@ impl Posts {
             .collect::<Vec<&Post>>()
     }
 
+    pub fn find_all_by_date_iter(&self) -> impl Iterator<Item = &Post> {
+        self.post_date_order
+            .iter()
+            .filter_map(|slug| self.posts.get(slug))
+    }
+
     pub fn find_all_by_tag(&self, tag: &Tag) -> Vec<&Post> {
         self.posts_by_tag
             .get(tag)
@@ -365,6 +370,22 @@ impl Posts {
                 Post::BookReview(_) => filter_flags.contains(PostFilter::BOOK_REVIEW),
             })
             .collect::<Vec<&Post>>()
+    }
+
+    pub fn find_all_by_filter_iter(&self, filter_flags: PostFilter) -> impl Iterator<Item = &Post> {
+        self.find_all_by_date_iter().filter(move |p| match p {
+            Post::BlogPost(_) => filter_flags.contains(PostFilter::BLOG_POST),
+            Post::MicroPost(_) => filter_flags.contains(PostFilter::MICRO_POST),
+            Post::MastodonPost(_) => filter_flags.contains(PostFilter::MASTODON_POST),
+            Post::Album(_) => filter_flags.contains(PostFilter::ALBUM),
+            Post::AlbumPhoto { .. } => filter_flags.contains(PostFilter::ALBUM_PHOTO),
+            Post::SteamAcheivementUnlocked { .. } => {
+                filter_flags.contains(PostFilter::UNLOCKED_STEAM_ACHIEVEMENT)
+            }
+            Post::MovieReview(_) => filter_flags.contains(PostFilter::MOVIE_REVIEW),
+            Post::TvShowReview(_) => filter_flags.contains(PostFilter::TV_SHOW_REVIEW),
+            Post::BookReview(_) => filter_flags.contains(PostFilter::BOOK_REVIEW),
+        })
     }
 
     pub fn find_all_by_year_and_grouped_by_year(

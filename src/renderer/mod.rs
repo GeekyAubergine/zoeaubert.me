@@ -11,6 +11,7 @@ use tokio::try_join;
 use crate::domain::models::data::Data;
 use crate::prelude::*;
 use crate::renderer::pages::home_page_renderer::render_home_page;
+use crate::renderer::pages::render_blog_page;
 use crate::services::page_renderer::PageRenderer;
 use tracing::debug;
 
@@ -44,6 +45,7 @@ pub async fn render_pages(context: &RendererContext) -> Result<()> {
     // )?;
 
     render_home_page(context).await?;
+    render_blog_page(context).await?;
 
     Ok(())
 }

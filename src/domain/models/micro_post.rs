@@ -39,7 +39,7 @@ impl MicroPost {
     }
 
     pub fn permalink(&self) -> String {
-        self.slug.permalink()
+        self.slug.permalink_string()
     }
 
     pub fn media(&self) -> &Vec<Media> {

@@ -210,7 +210,7 @@ impl Page {
     }
 
     pub fn permalink(&self) -> String {
-        self.slug.permalink()
+        self.slug.permalink_string()
     }
 
     pub fn title(&self) -> &str {

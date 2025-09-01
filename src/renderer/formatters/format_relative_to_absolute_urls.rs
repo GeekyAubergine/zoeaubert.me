@@ -17,7 +17,7 @@ fn replace_relative_links_wtih_absolute_links(markdown: &str) -> String {
         if !url.starts_with("http") {
             let slug = Slug::new(url);
 
-            out = out.replace(full_match, &format!("[{}]({})", alt_text, slug.permalink()));
+            out = out.replace(full_match, &format!("[{}]({})", alt_text, slug.permalink_string()));
         }
     }
 

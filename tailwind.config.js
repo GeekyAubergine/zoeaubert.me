@@ -1,6 +1,6 @@
 module.exports = {
     darkMode: 'class',
-    content: ['./templates/**/*.html'],
+    content: ['./templates/**/*.html', './src/renderer/**/*.rs'],
     safelist: [
         'gatsby-highlight',
         'photogrid',
@@ -21,6 +21,15 @@ module.exports = {
         'col-span-7',
         'col-span-8',
         'col-span-9',
+        'row-span-1',
+        'row-span-2',
+        'row-span-3',
+        'row-span-4',
+        'row-span-5',
+        'row-span-6',
+        'row-span-7',
+        'row-span-8',
+        'row-span-9',
     ],
     theme: {
         extend: {
@@ -38,7 +47,7 @@ module.exports = {
                     dark: '#EDEDED',
                 },
                 secondary: {
-                    DEFAULT: '#5A5861',
+                    DEFAULT: '#56545D',
                     dark: '#ABA9B0',
                 },
                 accent: {

@@ -52,7 +52,7 @@ impl BlogPost {
     }
 
     pub fn permalink(&self) -> String {
-        self.slug.permalink()
+        self.slug.permalink_string()
     }
 
     pub fn page(&self) -> Page {

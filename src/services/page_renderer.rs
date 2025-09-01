@@ -2,15 +2,12 @@ use crate::{
     domain::models::{page::Page, slug::Slug},
     error::{Error, FileSystemError, TemplateError},
     prelude::*,
-    services::{
-        file_service::{WritableFile},
-        ServiceContext,
-    },
+    services::{file_service::WritableFile, ServiceContext},
 };
 
 use askama::Template;
 use chrono::{DateTime, Utc};
-use hypertext::Rendered;
+use hypertext::{Renderable, Rendered};
 use rayon::iter::ParallelBridge;
 use tracing::debug;
 
@@ -49,22 +46,22 @@ impl PageRenderer {
     pub fn render_page(
         &self,
         slug: &Slug,
-        rendered: Rendered<String>,
+        rendered: impl Renderable,
         last_modified: Option<DateTime<Utc>>,
     ) -> Result<()> {
         debug!("Rendering page: {}", slug);
 
-        let path = format!("{}index.html", slug.relative_link());
+        let path = format!("{}index.html", slug.relative_string());
 
-        let rendered = rendered.as_str();
+        let rendered = rendered.render();
 
-        self.save_file(&path, &rendered)?;
+        self.save_file(&path, &rendered.as_str())?;
 
         self.site_map_pages
             .write()
             .map_err(|_| Error::Unknown())?
             .push(SiteMapPage {
-                url: slug.permalink(),
+                url: slug.permalink_string(),
                 last_modified,
             });
 

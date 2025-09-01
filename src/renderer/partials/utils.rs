@@ -1,20 +1,33 @@
-use crate::prelude::*;
+use crate::{domain::models::slug::Link, prelude::*};
 use hypertext::prelude::*;
 use url::Url;
 
-pub struct PageParts {
-    pub header: Rendered<String>,
-    pub content: Rendered<String>,
-}
+// TODO, option to not open in new tab?
 
-pub fn link<'a>(url: &Url, children: Rendered<String>) -> Rendered<String> {
+#[component]
+pub fn link_component<'l>(
+    link: &'l Link<'l>,
+    children: &'l dyn Renderable,
+) -> impl Renderable + 'l {
     maud! {
-        a
-            class="items-center border-hover-accent"
-            href={ (url.to_string()) }
-            target="_blank"
-            rel="noopener noreferrer" {
-                { (children.as_str()) }
-            }
-    }.render()
+         @match link {
+             Link::External(url) => {
+                a
+                    class="items-center border-hover-accent"
+                    href={ (url.as_str()) }
+                    target="_blank"
+                    rel="noopener noreferrer" {
+                        { (children) }
+                    }
+             },
+             Link::Internal(url) => {
+                a
+                    class="items-center border-hover-accent"
+                    href={ (url) }
+                    rel="noopener noreferrer" {
+                        { (children) }
+                    }
+            },
+        }
+    }
 }
