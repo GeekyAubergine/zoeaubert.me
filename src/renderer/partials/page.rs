@@ -1,4 +1,8 @@
-use crate::{build_data::BUILD_DATE, domain::models::page::PagePagination, prelude::*};
+use crate::{
+    build_data::BUILD_DATE,
+    domain::models::{page::PagePaginationData, site_config::SITE_CONFIG},
+    prelude::*,
+};
 use hypertext::prelude::*;
 use maud::DOCTYPE;
 
@@ -25,12 +29,17 @@ pub fn nav_bar_component<'l>(page: &'l Page) -> impl Renderable + 'l {
             ul class="links" {
                 @for link in &page.header_links {
                     li class=(link.url.replace("/", "")) {
-                        // @if page.slug.as_str().starts_with(&link.url) {
-                        //     a href=(link.url) class="active" { (link.name) }
-                        // }
-                        // @else {
+                        @if page.slug.as_str().starts_with(&link.url) {
+                            a
+                                href=(link.url)
+                                class="active"
+                                aria-current="location" {
+                                    (link.name)
+                                }
+                        }
+                        @else {
                             a href=(link.url) { (link.name) }
-                        // }
+                        }
                     }
                 }
             }
@@ -38,22 +47,87 @@ pub fn nav_bar_component<'l>(page: &'l Page) -> impl Renderable + 'l {
     }
 }
 
-#[component]
-pub fn page_pagination_component<'l>(pagination: &'l PagePagination) -> impl Renderable + 'l {
+pub fn page_pagination<'l>(pagination: &'l PagePaginationData) -> impl Renderable + 'l {
+    let show_first = pagination.current_index > 2;
+    let show_previous = pagination.current_index > 1;
+
+    let last_index = pagination.last.index;
+
+    let show_next = pagination.current_index < last_index;
+    let show_last = pagination.current_index < last_index - 1;
+
     maud! {
-        div class="flex-row w-full justify-between mt-11" {
-            div {
-                @if let Some(link) = &pagination.previous {
-                    a href=(link.url.relative_string())
-                        class="secondary items-center under"
-                        { (link.label) }
+        div class="pagination" {
+            div class="left" {
+                @if show_previous {
+                    a
+                        href=(pagination.previous.slug.relative_string())
+                        class="previous" {
+                            ("〈")
+                        }
+                } @else {
+                    div
+                        class="spacer previous disabled"
+                        aria_disabled {
+                            p { ("〈") }
+                        }
+                }
+                @if show_first {
+                    a
+                        href=(pagination.first.slug.relative_string())
+                        class="first" {
+                            (pagination.first.index)
+                        }
+                } @else {
+                    div class="spacer first" aria_hidden {}
+                }
+                @if show_previous {
+                    a
+                        href=(pagination.previous.slug.relative_string())
+                        class="previous" {
+                            (pagination.previous.index)
+                        }
+                } @else {
+                    div class="spacer previous" aria_hidden {}
                 }
             }
-            div {
-                @if let Some(link) = &pagination.next {
-                    a href=(link.url.relative_string())
-                        class="secondary items-center under"
-                        { (link.label) }
+            a
+                href="#"
+                class="active"
+                aria_current="page" {
+                (pagination.current_index)
+            }
+            div class="right" {
+                @if show_next {
+                    a
+                        href=(pagination.next.slug.relative_string())
+                        class="next" {
+                            (pagination.next.index)
+                    }
+                } @else {
+                    div class="spacer next" aria_hidden {}
+                }
+                @if show_last {
+                    a
+                        href=(pagination.last.slug.relative_string())
+                        class="last" {
+                            (pagination.last.index)
+                        }
+                } @else {
+                    div class="spacer last" aria_hidden {}
+                }
+                @if show_next {
+                    a
+                        href=(pagination.next.slug.relative_string())
+                        class="next" {
+                            ("〉")
+                    }
+                } @else {
+                    div
+                        class="spacer next disabled"
+                        aria_disabled {
+                            p { ("〉") }
+                        }
                 }
             }
         }
@@ -61,7 +135,12 @@ pub fn page_pagination_component<'l>(pagination: &'l PagePagination) -> impl Ren
 }
 
 #[component]
-pub fn page_base_component<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl Renderable + 'l {
+fn page_base_component<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl Renderable + 'l {
+    let title = match &page.title {
+        Some(t) => format!("{} | {}", t, SITE_CONFIG.title),
+        None => SITE_CONFIG.title.clone(),
+    };
+
     maud! {
         !DOCTYPE
         html lang={ (page.language) } {
@@ -80,9 +159,9 @@ pub fn page_base_component<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl
 
                 title {(page.title)}
 
-                meta name="title" content=(page.title);
-                meta name="og:title" content=(page.title);
-                meta name="twitter:title" content=(page.title);
+                meta name="title" content=(title);
+                meta name="og:title" content=(title);
+                meta name="twitter:title" content=(title);
 
                 meta name="description" content=(page.description);
                 meta name="og:description" content=(page.description);
@@ -110,12 +189,65 @@ pub fn page_base_component<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl
     }
 }
 
+pub enum PageWidth {
+    Wide,
+    Mid,
+    Narrow,
+}
+
+impl PageWidth {
+    pub fn wide() -> Self {
+        PageWidth::Wide
+    }
+
+    pub fn mid() -> Self {
+        PageWidth::Mid
+    }
+
+    pub fn narrow() -> Self {
+        PageWidth::Narrow
+    }
+}
+
+pub struct PageOptions {
+    width: PageWidth,
+}
+
+impl PageOptions {
+    pub fn new() -> Self {
+        Self {
+            width: PageWidth::Narrow,
+        }
+    }
+
+    pub fn with_width(mut self, width: PageWidth) -> Self {
+        self.width = width;
+        self
+    }
+}
+
 #[component]
-pub fn page_component<'l>(page: &'l Page, content: &'l dyn Renderable) -> impl Renderable + 'l {
+pub fn page_component<'l>(
+    page: &'l Page,
+    options: &'l PageOptions,
+    content: &'l dyn Renderable,
+) -> impl Renderable + 'l {
+    let main_class = match options.width {
+        PageWidth::Narrow => "width-narrow",
+        PageWidth::Mid => "width-middle",
+        PageWidth::Wide => "width-wide",
+    };
+
     let body = maud! {
         NavBarComponent page=(&page);
-        main {
+        main class=(main_class) {
+            @if let Some(title) = &page.title {
+                h1 { (title) }
+            }
             (content)
+            @if let Some(pagination) = &page.page_pagination {
+                (page_pagination(pagination))
+            }
         }
     };
 

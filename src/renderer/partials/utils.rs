@@ -4,11 +4,7 @@ use url::Url;
 
 // TODO, option to not open in new tab?
 
-#[component]
-pub fn link_component<'l>(
-    link: &'l Link<'l>,
-    children: &'l dyn Renderable,
-) -> impl Renderable + 'l {
+pub fn link<'l>(link: &'l Link<'l>, children: &'l dyn Renderable) -> impl Renderable + 'l {
     maud! {
          @match link {
              Link::External(url) => {

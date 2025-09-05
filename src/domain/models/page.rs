@@ -2,7 +2,10 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use url::Url;
 
-use crate::{build_data::BUILD_DATE, renderer::formatters::format_date::FormatDate, utils::paginator::PaginatorPage};
+use crate::{
+    build_data::BUILD_DATE, renderer::formatters::format_date::FormatDate,
+    utils::paginator::PaginatorPage,
+};
 
 use super::{
     mastodon_post::MastodonPost,
@@ -14,31 +17,43 @@ use super::{
 };
 
 #[derive(Debug, Clone)]
-pub struct PagePaginationLabel {
-    pub url: Slug,
-    pub label: String,
+pub struct PagePaginationDataLink {
+    pub index: usize,
+    pub slug: Slug,
 }
 
-impl PagePaginationLabel {
-    pub fn new(url: &Slug, title: &str) -> Self {
+impl PagePaginationDataLink {
+    pub fn new(index: usize, slug: Slug) -> Self {
         Self {
-            url: url.to_owned(),
-            label: title.to_owned(),
+            index,
+            slug: slug.to_owned(),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct PagePagination {
-    pub next: Option<PagePaginationLabel>,
-    pub previous: Option<PagePaginationLabel>,
+pub struct PagePaginationData {
+    pub current_index: usize,
+    pub first: PagePaginationDataLink,
+    pub previous: PagePaginationDataLink,
+    pub next: PagePaginationDataLink,
+    pub last: PagePaginationDataLink,
 }
 
-impl PagePagination {
-    pub fn new(next: Option<PagePaginationLabel>, prev: Option<PagePaginationLabel>) -> Self {
+impl PagePaginationData {
+    pub fn new(
+        index: usize,
+        first: PagePaginationDataLink,
+        previous: PagePaginationDataLink,
+        next: PagePaginationDataLink,
+        last: PagePaginationDataLink,
+    ) -> Self {
         Self {
+            current_index: index,
+            first,
+            previous,
             next,
-            previous: prev,
+            last,
         }
     }
 
@@ -47,27 +62,35 @@ impl PagePagination {
         page: &PaginatorPage<'d, D>,
         entity_name: &str,
     ) -> Self {
-        let next = match page.has_next() {
-            true => Some(PagePaginationLabel::new(
-                &slug.append(&format!("page-{}", page.page_number + 1)),
-                &format!("Older {}", entity_name),
-            )),
-            false => None,
-        };
+        // let next = match page.has_next() {
+        //     true => Some(PagePaginationDataLink::new(
+        //         page.page_number + 1,
+        //         slug.append(&format!("page-{}", page.page_number + 1)),
+        //     )),
+        //     false => None,
+        // };
 
         let prev = match page.page_number {
-            0 | 1 => None,
-            2 => Some(PagePaginationLabel::new(
-                slug,
-                &format!("Newer {}", entity_name),
-            )),
-            _ => Some(PagePaginationLabel::new(
-                &slug.append(&format!("page-{}", page.page_number - 1)),
-                &format!("Newer {}", entity_name),
-            )),
+            2 => PagePaginationDataLink::new(page.page_number - 1, slug.clone()),
+            _ => PagePaginationDataLink::new(
+                page.page_number - 1,
+                slug.append(&format!("page-{}", page.page_number - 1)),
+            ),
         };
 
-        Self::new(next, prev)
+        Self::new(
+            page.page_number,
+            PagePaginationDataLink::new(1, slug.clone()),
+            prev,
+            PagePaginationDataLink::new(
+                page.page_number + 1,
+                slug.append(&format!("page-{}", page.page_number + 1)),
+            ),
+            PagePaginationDataLink::new(
+                page.total_pages,
+                slug.append(&format!("page-{}", page.total_pages)),
+            ),
+        )
     }
 }
 
@@ -86,7 +109,7 @@ pub struct PageConfig {
 #[derive(Debug, Clone)]
 pub struct Page {
     pub slug: Slug,
-    pub title: String,
+    pub title: Option<String>,
     pub description: String,
     pub author: String,
     pub image: PageImage,
@@ -95,22 +118,14 @@ pub struct Page {
     pub header_links: Vec<HeaderLink>,
     pub page_links: Vec<PageLinkGroup>,
     pub social_links: Vec<SocialNetworkLink>,
-    pub heading: Option<String>,
     pub date: Option<DateTime<Utc>>,
     pub read_time: Option<String>,
     pub tags: Vec<Tag>,
-    pub page_pagination: Option<PagePagination>,
+    pub page_pagination: Option<PagePaginationData>,
 }
 
 impl Page {
-    pub fn new(slug: Slug, title: Option<&str>, description: Option<String>) -> Self {
-        let heading = title.map(|t| t.to_owned());
-
-        let title = match title {
-            Some(t) => format!("{} | {}", t, SITE_CONFIG.title),
-            None => SITE_CONFIG.title.clone(),
-        };
-
+    pub fn new(slug: Slug, title: Option<String>, description: Option<String>) -> Self {
         let description = match description {
             Some(d) => d.to_owned(),
             None => SITE_CONFIG.description.clone(),
@@ -127,7 +142,6 @@ impl Page {
             header_links: SITE_CONFIG.header_links.clone(),
             page_links: SITE_CONFIG.page_links.clone(),
             social_links: SITE_CONFIG.social_links.clone(),
-            heading,
             date: None,
             read_time: None,
             tags: vec![],
@@ -142,8 +156,11 @@ impl Page {
     ) -> Self {
         let mut page = page.clone();
 
-        let pagination =
-            PagePagination::from_slug_and_pagniator_page(&page.slug, paginator_page, entity_name);
+        let pagination = PagePaginationData::from_slug_and_pagniator_page(
+            &page.slug,
+            paginator_page,
+            entity_name,
+        );
 
         page.page_pagination = Some(pagination);
 
@@ -163,11 +180,6 @@ impl Page {
 
     pub fn with_date(mut self, date: DateTime<Utc>) -> Self {
         self.date = Some(date);
-
-        if !self.title.contains(" | ") {
-            self.title = format!("{} | {}", date.without_time(), self.title);
-        }
-
         self
     }
 
@@ -181,7 +193,7 @@ impl Page {
         self
     }
 
-    pub fn with_pagination(mut self, pagination: PagePagination) -> Self {
+    pub fn with_pagination(mut self, pagination: PagePaginationData) -> Self {
         self.page_pagination = Some(pagination);
         self
     }
@@ -205,16 +217,8 @@ impl Page {
     //     self
     // }
 
-    pub fn hide_heading(&mut self) {
-        self.heading = None;
-    }
-
     pub fn permalink(&self) -> String {
         self.slug.permalink_string()
-    }
-
-    pub fn title(&self) -> &str {
-        &self.title
     }
 
     pub fn description(&self) -> &str {
@@ -253,14 +257,6 @@ impl Page {
         &self.social_links
     }
 
-    pub fn hide_header(&self) -> bool {
-        self.heading.is_none()
-    }
-
-    pub fn heading(&self) -> Option<&str> {
-        self.heading.as_deref()
-    }
-
     pub fn date(&self) -> Option<&DateTime<Utc>> {
         self.date.as_ref()
     }
@@ -273,7 +269,7 @@ impl Page {
         &self.tags
     }
 
-    pub fn page_pagination(&self) -> Option<&PagePagination> {
+    pub fn page_pagination(&self) -> Option<&PagePaginationData> {
         self.page_pagination.as_ref()
     }
 

@@ -49,8 +49,12 @@ impl Album {
     pub fn page(&self) -> Page {
         let description = self.description.clone().unwrap_or("".to_string());
 
-        let mut page =
-            Page::new(self.slug.clone(), Some(&self.title), Some(description)).with_date(self.date);
+        let mut page = Page::new(
+            self.slug.clone(),
+            Some(self.title.clone()),
+            Some(description),
+        )
+        .with_date(self.date);
 
         let cover_images = self.cover_images();
 

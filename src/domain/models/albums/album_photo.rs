@@ -42,7 +42,7 @@ impl AlbumPhoto {
     pub fn page(&self) -> Page {
         Page::new(
             self.slug.clone(),
-            Some(&self.description),
+            Some(self.description.clone()),
             Some(self.image.description.clone()),
         )
         .with_image(self.image.clone().into())

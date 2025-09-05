@@ -58,7 +58,7 @@ impl BlogPost {
     pub fn page(&self) -> Page {
         let mut page = Page::new(
             self.slug.clone(),
-            Some(&self.title),
+            Some(self.title.clone()),
             Some(self.description.clone()),
         )
         .with_date(self.date)

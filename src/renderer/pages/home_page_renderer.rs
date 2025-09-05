@@ -17,9 +17,9 @@ use crate::domain::models::media::Media;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::partials::bento::BentoBoxComponent;
 use crate::renderer::partials::bento::BentoBoxOptions;
-use crate::renderer::partials::page::PageBaseComponent;
 use crate::renderer::partials::page::PageComponent;
-use crate::renderer::partials::utils::link_component;
+use crate::renderer::partials::page::PageOptions;
+use crate::renderer::partials::utils::link;
 use crate::renderer::RendererContext;
 use crate::services::file_service::ContentFile;
 
@@ -95,7 +95,7 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
     let content = maud! {
         @for photo in &photos {
             @match &photo.link_on_click {
-                Some(link) => (link_component(&link.as_link(), &photo.render_tiny())),
+                Some(l) => (link(&l.as_link(), &photo.render_tiny())),
                 None => (photo.render_tiny()),
             }
         }
@@ -256,8 +256,10 @@ pub async fn render_home_page(context: &RendererContext) -> Result<()> {
         // }
     };
 
+    let options = PageOptions::new();
+
     let renderer = maud! {
-        PageComponent page=(&page) content=(&content);
+        PageComponent page=(&page) options=(&options) content=(&content);
     };
 
     context.renderer.render_page(&slug, &renderer, None)

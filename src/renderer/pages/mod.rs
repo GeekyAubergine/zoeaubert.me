@@ -6,15 +6,15 @@ use crate::domain::models::post::{Post, PostFilter};
 use crate::domain::models::slug::Slug;
 use crate::prelude::*;
 use crate::renderer::partials::blog::blog_post_list_item;
-use crate::renderer::partials::page::PageComponent;
+use crate::renderer::partials::page::{PageComponent, PageOptions, PageWidth};
 use crate::renderer::RendererContext;
+use crate::utils::paginator::paginate;
 
 pub mod home_page_renderer;
 
-pub async fn render_blog_page(context: &RendererContext) -> Result<()> {
-    let page = Page::new(Slug::new("/blog"), None, None);
-    let slug = page.slug.clone();
+const DEFAULT_PAGINATION_SIZE: usize = 25;
 
+pub async fn render_blog_page(context: &RendererContext) -> Result<()> {
     // BLOG -
 
     // Sport Recent - Month - Yeah
@@ -29,26 +29,37 @@ pub async fn render_blog_page(context: &RendererContext) -> Result<()> {
         })
         .collect::<Vec<&BlogPost>>();
 
-    let content = maud! {
-        h1 { ("Blog") }
+    let paginated = paginate(&posts, DEFAULT_PAGINATION_SIZE);
 
-        ul class="blog-post-list" {
-            @for post in &posts {
-                    (blog_post_list_item(post))
+    let page = Page::new(Slug::new("/blog"), Some("Blog".to_string()), None);
+    for paginator_page in paginated {
+        let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
+
+        let slug = page.slug.clone();
+
+        let content = maud! {
+            ul class="blog-post-list" {
+                @for post in paginator_page.data {
+                        (blog_post_list_item(post))
+                }
             }
-        }
-        // div class="bento home-bento" {
-        //     (blog_posts(&context))
-        //     (photos(&context))
-        //     (exercise_activity(&context))
-        //     (exercise_stats_monthly(&context))
-        //     (exercise_stats_yearly(&context))
-        // }
-    };
+            // div class="bento home-bento" {
+            //     (blog_posts(&context))
+            //     (photos(&context))
+            //     (exercise_activity(&context))
+            //     (exercise_stats_monthly(&context))
+            //     (exercise_stats_yearly(&context))
+            // }
+        };
 
-    let renderer = maud! {
-        PageComponent page=(&page) content=(&content);
-    };
+        let options = PageOptions::new().with_width(PageWidth::Narrow);
 
-    context.renderer.render_page(&slug, &renderer, None)
+        let renderer = maud! {
+            PageComponent page=(&page) options=(&options) content=(&content);
+        };
+
+        context.renderer.render_page(&slug, &renderer, None)?;
+    }
+
+    Ok(())
 }

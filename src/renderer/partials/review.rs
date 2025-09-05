@@ -1,4 +1,4 @@
-use crate::{domain::models::slug::Link, prelude::*, renderer::partials::utils::LinkComponent};
+use crate::{domain::models::slug::Link, prelude::*, renderer::partials::utils::link};
 use hypertext::prelude::*;
 use url::Url;
 
@@ -37,10 +37,7 @@ impl<'l> Renderable for RenderableReviewPageHeader<'l> {
                 h1 { (self.title) }
                 div class="items-center my-4" {
                     @if let Some(external_link) = self.external_link {
-                        LinkComponent
-                            link=(&Link::External(&external_link))
-                            children=(&self.image.render_large())
-                        ;
+                        (link(&Link::External(&external_link), &self.image.render_large()))
                     } @else {
                         (self.image.render_large())
                     }

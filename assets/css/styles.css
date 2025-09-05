@@ -1,6 +1,70 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Where Tailwind should scan for classes */
+@source "./templates/**/*.html" "./src/renderer/**/*.rs";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-background: #ffffff;
+    /*--color-background: #ffffff;*/
+    --color-text: #000000;
+    --color-text-disabled: #919397;
+    --color-text-secondary: #57585c;
+    --color-headings: #080808;
+    --color-accent: #784387;
+    --color-code: #d4d4d4;
+    --color-border: #d8d8d8;
+    --color-middleGray: #888888;
+}
+
+@layer theme {
+    .dark {
+        --color-background: #0c0c0e;
+        --color-text: #ededed;
+        --color-text-secondary: #aba9b0;
+        --color-headings: #ededed;
+        --color-accent: #ea93e3;
+        --color-code: #303030;
+        --color-border: #404040;
+        --color-middleGray: #181818;
+    }
+}
+
+/* ---- Fonts ---- */
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Regular.otf')
+        format('opentype');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Bold.otf')
+        format('opentype');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Italic.otf')
+        format('opentype');
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/assets/fonts/Atkinson-HyperlegibleNext-BoldItalic.otf')
+        format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+/* @font-face {
+  font-family: "WilcoLoftSans";
+  src: url("/assets/fonts/WilcoLoftSans-Treble.woff2") format("woff2");
+  font-display: swap;
+} */
 
 @keyframes blink {
     0% {
@@ -14,385 +78,391 @@
     }
 }
 
-@font-face {
-    font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Regular.otf')
-        format('otf');
+@utility animate-blink {
+    animation: blink 1.5s infinite;
 }
-@font-face {
-    font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Bold.otf') format('otf');
-    font-weight: bold;
+
+@utility text {
+    color: var(--color-text);
+    text-wrap: pretty;
+    font-variant-numeric: tabular-nums;
 }
-@font-face {
-    font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Italic.otf') format('otf');
-    font-style: italic;
+
+@utility accent {
+    @apply text-accent decoration-accent;
 }
-@font-face {
-    font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-BoldItalic.otf')
-        format('otf');
-    font-weight: bold;
-    font-style: italic;
+
+@utility no-accent {
+    @apply decoration-text;
 }
-/* @font-face {
-    font-family: 'WilcoLoftSans';
-    src: url('/assets/fonts/WilcoLoftSans-Treble.woff2') format('woff2');
-} */
 
-@layer components {
-    /* -------- Utilities -------- */
+@utility under {
+    @apply underline hover:!underline;
+    text-underline-offset: 0.15em;
+    text-decoration-thickness: 1px;
+}
 
-    .text {
-        @apply text-text dark:text-text-dark tabular-nums;
-        text-wrap: pretty;
+@utility link {
+    /*@apply under text-accent decoration-accent;*/
+    @apply under;
+}
+
+@utility secondary {
+    @apply text-text-secondary decoration-text-secondary;
+}
+
+@utility disabled {
+    @apply text-text-disabled no-underline;
+}
+
+@utility width-control {
+    @apply w-[80ch] max-w-full px-4 md:px-0;
+}
+
+@utility centered-width-control {
+    @apply width-control mx-auto;
+}
+
+@utility centered-to-width {
+    @apply w-full mx-auto px-4 md:px-4;
+}
+
+@utility width-wide {
+    @apply centered-to-width max-w-[72rem];
+}
+
+@utility width-middle {
+    @apply centered-to-width max-w-[66rem];
+}
+
+@utility width-narrow {
+    @apply centered-to-width max-w-[72ch];
+}
+
+@utility article-spacing {
+    @apply my-2 md:my-3;
+}
+
+body {
+    @apply bg-background text;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
+main {
+}
+
+div,
+nav,
+footer,
+article {
+    @apply flex flex-col;
+}
+
+a {
+    @apply link;
+}
+
+h1 {
+    @apply w-full my-10 md:my-12 mx-auto font-bold text-4xl md:text-5xl text-center sm:max-w-[80%];
+}
+
+article,
+.prose {
+    p,
+    li,
+    th,
+    td {
+        font-family: 'Atkinson Hyperlegible', system-ui, -apple-system,
+            BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+            'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+            'Segoe UI Symbol', 'Noto Color Emoji';
     }
 
-    .accent {
-        @apply text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
-    }
-
-    .no-accent {
-        @apply text-text dark:text-text-dark decoration-text dark:decoration-text-dark;
-    }
-
-    .under {
-        @apply underline hover:!underline;
-        text-underline-offset: 0.15em;
-        text-decoration-thickness: 1px;
-    }
-
-    .link {
-        @apply under text-accent dark:text-accent-dark decoration-accent dark:decoration-accent-dark;
-    }
-
-    .secondary {
-        @apply !text-secondary dark:!text-secondary-dark !decoration-secondary dark:!decoration-secondary-dark;
-    }
-
-    .width-control {
-        @apply w-[80ch] max-w-[100%] px-4 md:px-0;
-    }
-
-    .centered-width-control {
-        @apply width-control mx-auto;
-    }
-
-    .nav-width {
-        @apply w-full max-w-[72rem] mx-auto;
-    }
-
-    /* -------- Base -------- */
-
-    * {
-        @apply text;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-            Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
-            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-            'Noto Color Emoji';
-        font-display: swap;
-    }
-
-    body {
-        @apply bg-[#FDF7F5];
-        /*background: #96ecff;
-        background: linear-gradient(
-            90deg,
-            rgba(150, 236, 255, 1) 0%,
-            rgba(255, 255, 255, 1) 50%,
-            rgba(255, 168, 242, 1) 100%
-        );*/
-    }
-
-    main {
-        @apply mx-4 md:mx-auto;
-    }
-
-    div,
-    nav,
-    footer,
-    article {
-        @apply flex flex-col;
-    }
-
-    a {
-        @apply link;
-    }
-
-    h1,
     h2,
     h3,
     h4,
     h5,
     h6,
     p,
+    ol,
+    ul,
     img,
-    li,
-    th,
-    td {
-        @apply text;
+    blockquote,
+    table {
+        @apply article-spacing;
     }
 
-    h1 {
-        @apply w-full mt-8 mb-4 font-bold text-3xl md:text-5xl text-center sm:max-w-[80%];
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply text-xl leading-6 font-bold mt-9 mb-0;
+    }
+    h2 {
+        @apply text-2xl leading-6;
     }
 
-    .article-spacing {
-        @apply my-2 md:my-3;
+    h2 + h3,
+    h3 + h4,
+    h4 + h5 {
+        @apply mt-2;
+    }
+    h2 + p,
+    h3 + p,
+    h4 + p,
+    h5 + p {
+        @apply mt-1;
     }
 
-    article,
-    .prose {
-        p,
-        li,
-        th,
-        td {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p {
+        @apply leading-7;
+    }
+
+    a {
+        @apply accent under;
+    }
+
+    ol {
+        @apply list-decimal list-outside ml-6;
+    }
+    ul {
+        @apply list-disc list-outside ml-5;
+    }
+
+    li {
+        @apply my-3 md:my-4 first-of-type:mt-0 last-of-type:mb-0;
+    }
+    li > ul > li,
+    li > ol > li {
+        @apply ml-4;
+    }
+
+    p + ol,
+    p + ul {
+        @apply mt-0 mb-5 md:mb-6;
+    }
+
+    blockquote {
+        @apply border-l-4 border-accent pl-4;
+    }
+    h2 + blockquote,
+    h3 + blockquote,
+    h4 + blockquote,
+    h5 + blockquote,
+    h6 + blockquote {
+        @apply mt-6;
+    }
+
+    :not(pre) > code {
+        @apply article-spacing bg-code pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+            'Courier New', monospace;
+    }
+    pre {
+        @apply article-spacing bg-code pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
+            'Courier New', monospace;
+    }
+    p > img {
+        @apply mx-auto my-0;
+    }
+    img {
+        @apply w-full mx-auto;
+    }
+}
+
+nav {
+    @apply width-middle py-1 md:flex-row md:justify-between md:items-baseline;
+
+    .name-and-toggle {
+        @apply flex flex-row justify-between;
+
+        .toggle {
+            @apply w-[4rem];
+        }
+
+        .name {
+            @apply w-full md:flex-shrink-0 ml-[4rem] md:ml-0 py-2 pr-2 accent text-4xl text-center md:text-left;
+        }
+    }
+
+    .links {
+        @apply flex flex-row justify-between text-lg md:mr-0;
+
+        li {
+            @apply flex justify-center mx-2 md:last-of-type:mr-0;
+
+            &.photos {
+                @apply max-sm:hidden;
+            }
+
+            &.tags {
+                @apply max-md:hidden;
+            }
+
+            a {
+                @apply text py-0 rounded-sm text-center secondary no-underline;
+
+                &.active {
+                    @apply text;
+                }
+
+                &:hover {
+                    @apply text under;
+                }
+            }
+        }
+    }
+
+    a {
+        @apply no-underline;
+    }
+}
+
+/* Components*/
+
+.tags-list {
+    @apply flex flex-row flex-wrap;
+
+    li {
+        @apply ml-0 mr-[0.5ch] my-0 py-0 last-of-type:mr-0;
+    }
+
+    & .tag {
+        @apply secondary no-underline;
+    }
+}
+
+.pagination {
+    @apply w-full flex-row justify-center pt-16 pb-8;
+
+    .left,
+    .right {
+        @apply flex-row;
+    }
+
+    a,
+    .spacer {
+        @apply w-10 mx-1 text-lg no-underline secondary text-center;
+
+        &.active {
             @apply text;
-            font-family: 'Atkinson Hyperlegible', system-ui, -apple-system,
-                BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-                'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-                'Segoe UI Symbol', 'Noto Color Emoji';
         }
 
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        p,
-        ol,
-        ul,
-        img,
-        blockquote,
-        table {
-            @apply article-spacing;
+        &.first,
+        &.last {
+            @apply w-16;
         }
 
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            @apply text-xl leading-6 font-bold mt-9 mb-0;
+        &.first {
+            @apply text-left;
         }
 
-        h2 {
-            @apply text-2xl leading-6;
+        &.last {
+            @apply text-right;
         }
 
-        h2 + h3,
-        h3 + h4,
-        h4 + h5 {
-            @apply mt-2;
-        }
-
-        h2 + p,
-        h3 + p,
-        h4 + p,
-        h5 + p {
-            @apply mt-1;
-        }
-
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        p {
-            @apply leading-7;
-        }
-
-        a {
-            @apply accent under;
-        }
-
-        ol {
-            @apply list-decimal list-outside ml-6;
-        }
-
-        ul {
-            @apply list-disc list-outside ml-5;
-        }
-
-        li {
-            @apply my-3 md:my-4 first-of-type:mt-0 last-of-type:mb-0;
-        }
-
-        li > ul > li,
-        li > ol > li {
-            @apply ml-4;
-        }
-
-        p + ol,
-        p + ul {
-            @apply mt-0 mb-5 md:mb-6;
-        }
-
-        blockquote {
-            @apply border-l-4 border-accent dark:border-accent-dark pl-4;
-        }
-
-        h2 + blockquote,
-        h3 + blockquote,
-        h4 + blockquote,
-        h5 + blockquote,
-        h6 + blockquote {
-            @apply mt-6;
-        }
-
-        :not(pre) > code {
-            @apply article-spacing bg-code dark:bg-code-dark pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
-            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
-                'Courier New', monospace;
-        }
-
-        pre {
-            @apply article-spacing bg-code-dark pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
-            font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
-                'Courier New', monospace;
-        }
-
-        p > img {
-            @apply mx-auto my-0;
-        }
-
-        img {
-            @apply text-text dark:text-text-dark w-full mx-auto;
-        }
-
-        pre > code {
-            @apply text-text-dark;
+        &.disabled {
+            @apply disabled;
         }
     }
+}
 
-    /* -------- Components -------- */
+.blog-post-list {
+    .blog-post-list-item {
+        @apply py-8 border-border border-b-1 last-of-type:border-b-0;
 
-    nav {
-        @apply nav-width py-1 md:flex-row md:justify-between;
+        .title-and-date {
+            @apply md:flex-row md:justify-between md:items-baseline;
 
-        .name-and-toggle {
-            @apply flex flex-row justify-between;
-
-            .toggle {
-                @apply w-[4rem];
-            }
-
-            .name {
-                @apply w-full ml-[4rem] py-1 px-2 accent text-4xl text-center;
+            a {
+                @apply no-underline;
             }
         }
 
-        .links {
-            @apply flex flex-row justify-between px-2 text-lg;
-
-            li {
-                @apply flex justify-center mx-1 sm:min-w-[5rem];
-
-                &.photos {
-                    @apply max-sm:hidden;
-                }
-
-                &.tags {
-                    @apply max-md:hidden;
-                }
-
-                a {
-                    @apply p-1 rounded-sm text-center hover:bg-white text;
-
-                    &.active {
-                        @apply accent underline hover:!underline;
-                        text-underline-offset: 0.25em;
-                        text-decoration-thickness: 2px;
-                    }
-                }
-            }
+        .title {
+            @apply mt-0 text-xl md:text-2xl font-bold tracking-tight md:tracking-normal;
         }
 
-        a {
-            @apply no-underline;
+        .date {
+            @apply secondary text-sm leading-6 italic;
+        }
+
+        .description {
+            @apply mt-3;
+        }
+
+        .tags-list {
+            @apply mt-3;
         }
     }
+}
 
-    .tags-list {
-        @apply flex flex-row flex-wrap;
+/*.blog-post-list {
+    @apply sm:grid sm:grid-cols-3 sm:gap-12 sm:wide md:grid-cols-4;
 
-        li {
-            @apply ml-0 mr-[0.5ch] my-0 py-0 last-of-type:mr-0;
+    .blog-post-list-item {
+        @apply border-border border-b-[1px] py-6 md:border-0 md:my-0;
+
+        .title-and-date {
+            @apply sm:h-20;
         }
 
-        & .tag {
-            @apply secondary no-underline;
+        .title {
+            @apply mt-0 text-xl font-bold;
         }
-    }
 
-    .blog-post-list {
-        /*@apply grid grid-cols-1 gap-y-12;*/
+        .date {
+            @apply secondary text-sm leading-6 italic;
+        }
 
-        .blog-post-list-item {
-            @apply border-border border-b-[1px] py-6;
-
-            .title {
-                /*@apply text mt-0 text-xl pr-8 sm:pr-0 font-bold;*/
-                @apply text mt-0 text-xl pr-8 sm:pr-0 font-bold;
-            }
-
-            .description {
-                @apply my-3;
-            }
-
-            .tags-list {
-            }
-
-            .date {
-                @apply secondary text-sm leading-6;
-            }
-
-            /*&:hover {
-                .title {
-                    @apply accent under;
-                }
-            }*/
+        .description {
+            @apply my-3;
         }
     }
+}*/
 
-    .bento {
-        @apply grid grid-cols-1 gap-2 md:grid-cols-3;
+.bento {
+    @apply grid grid-cols-1 gap-2 md:grid-cols-3;
 
-        & > * {
-            @apply rounded-lg p-4 border-4 backdrop-blur-[36px] backdrop-saturate-50 backdrop-brightness-110;
-        }
-
-        .wide {
-            @apply col-span-1 md:col-span-2;
-        }
-
-        .thin {
-            @apply col-span-1;
-        }
+    & > * {
+        @apply rounded-lg p-4 border-4 backdrop-blur-[36px] backdrop-saturate-50 backdrop-brightness-110;
     }
-    /* -------- Page Specific -------- */
-    .home-bento {
-        @apply grid-cols-9;
 
-        .blog {
-            @apply border-blue-300 row-start-1 col-span-6 row-span-2;
-        }
+    .wide {
+        @apply col-span-1 md:col-span-2;
+    }
+    .thin {
+        @apply col-span-1;
+    }
+}
 
-        .photos {
-            @apply border-pink-400 row-start-1 col-span-3 row-span-1;
-        }
+/* -------- Page Specific -------- */
+.home-bento {
+    @apply grid-cols-9;
 
-        .exercise-activity {
-            @apply border-orange-300 row-start-3 col-span-4;
-        }
-
-        .exercise-monthly {
-            @apply border-green-300 row-start-3 col-span-2;
-        }
-
-        .exercise-yearly {
-            @apply border-purple-300 row-start-3 col-span-2;
-        }
+    .blog {
+        @apply border-blue-300   row-start-1 col-span-6 row-span-2;
+    }
+    .photos {
+        @apply border-pink-400   row-start-1 col-span-3 row-span-1;
+    }
+    .exercise-activity {
+        @apply border-orange-300 row-start-3 col-span-4;
+    }
+    .exercise-monthly {
+        @apply border-green-300  row-start-3 col-span-2;
+    }
+    .exercise-yearly {
+        @apply border-purple-300 row-start-3 col-span-2;
     }
 }

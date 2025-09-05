@@ -64,14 +64,20 @@ impl QueryLimitingService2 {
     }
 
     pub async fn can_query_within_fifteen_minutes(&self, query: &str) -> Result<bool> {
+        return Ok(false);
+
         self.can_query(query, &FIFTEEN_MINUTES_PERIOD).await
     }
 
     pub async fn can_query_within_hour(&self, query: &str) -> Result<bool> {
+        return Ok(false);
+
         self.can_query(query, &ONE_HOUR_PERIOD).await
     }
 
     pub async fn can_query_within_day(&self, query: &str) -> Result<bool> {
+        return Ok(false);
+
         self.can_query(query, &ONE_DAY_PERIOD).await
     }
 }
