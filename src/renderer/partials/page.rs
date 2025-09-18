@@ -1,9 +1,15 @@
+use std::option;
+
 use crate::{
     build_data::BUILD_DATE,
     domain::models::{page::PagePaginationData, site_config::SITE_CONFIG},
     prelude::*,
+    renderer::{
+        formatters::format_date::FormatDate,
+        partials::{date::date, tag::tags},
+    },
 };
-use hypertext::prelude::*;
+use hypertext::{html_elements::main, prelude::*, Raw};
 use maud::DOCTYPE;
 
 use crate::domain::models::page::Page;
@@ -22,8 +28,21 @@ pub fn nav_bar_component<'l>(page: &'l Page) -> impl Renderable + 'l {
                 a class="name" href="/" {
                     ("Zoe Aubert")
                 }
-                div class="toggle" {
-                    // TODO THEME TOGGLE
+                div id="theme-toggle" {
+                    (Raw(
+                    r#"
+                        <svg
+                            id="toggle-button"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 100 100"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                        >
+                            <path class="fill-current" d="M 50 0 A 1 1 0 0 0 50 100"/>
+                            <circle cx="50" cy="50" r="44" class="stroke-current" stroke-width="8"/>
+                        </svg>
+                    "#))
                 }
             }
             ul class="links" {
@@ -44,6 +63,37 @@ pub fn nav_bar_component<'l>(page: &'l Page) -> impl Renderable + 'l {
                 }
             }
         }
+        (Raw(r##"
+            <script type="text/javascript">
+                const bodyClassList = document.body.classList;
+                const htmlClassList = document
+                    .querySelector("html")
+                    .classList;
+                const toggleButton = document.querySelector("#toggle-button");
+                const systemDarkSetting = window.matchMedia("(prefers-color-scheme: dark)");
+                const storedDarkValue = localStorage.getItem("dark");
+
+                const setDark = (isDark) => {
+                    htmlClassList[
+                        isDark
+                            ? "add"
+                            : "remove"
+                    ]("dark");
+                    localStorage.setItem(
+                        "dark", isDark
+                        ? "yes"
+                        : "no");
+                };
+
+                setDark(
+                    storedDarkValue
+                    ? storedDarkValue === "yes"
+                    : systemDarkSetting.matches);
+
+                toggleButton.addEventListener("click", () => setDark(!htmlClassList.contains("dark")));
+                systemDarkSetting.addEventListener("change", (event) => setDark(event.matches));
+            </script>
+        "##))
     }
 }
 
@@ -157,7 +207,7 @@ fn page_base_component<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl Ren
 
                 link rel="alternate" type="application/rss+xml" title="Zoe Aubert's RSS Feed" href="https://zoeaubert.me/feeds/blog-rss.xml";
 
-                title {(page.title)}
+                title { (title) }
 
                 meta name="title" content=(title);
                 meta name="og:title" content=(title);
@@ -209,14 +259,16 @@ impl PageWidth {
     }
 }
 
-pub struct PageOptions {
+pub struct PageOptions<'l> {
     width: PageWidth,
+    main_class: Option<&'l str>,
 }
 
-impl PageOptions {
+impl<'l> PageOptions<'l> {
     pub fn new() -> Self {
         Self {
             width: PageWidth::Narrow,
+            main_class: None,
         }
     }
 
@@ -224,30 +276,43 @@ impl PageOptions {
         self.width = width;
         self
     }
+
+    pub fn with_main_class(mut self, main_class: &'l str) -> Self {
+        self.main_class = Some(main_class);
+        self
+    }
 }
 
-#[component]
-pub fn page_component<'l>(
+pub fn render_page<'l>(
     page: &'l Page,
-    options: &'l PageOptions,
+    options: &'l PageOptions<'l>,
     content: &'l dyn Renderable,
+    scripts: Option<&'l dyn Renderable>,
 ) -> impl Renderable + 'l {
-    let main_class = match options.width {
-        PageWidth::Narrow => "width-narrow",
-        PageWidth::Mid => "width-middle",
-        PageWidth::Wide => "width-wide",
+    let main_class = match options.main_class {
+        Some(class) => class,
+        None => "",
     };
 
     let body = maud! {
         NavBarComponent page=(&page);
         main class=(main_class) {
-            @if let Some(title) = &page.title {
-                h1 { (title) }
+            div class="header" {
+                @if let Some(title) = &page.title {
+                    h1 { (title) }
+                }
+                @if let Some(d) = &page.date {
+                    (date(d))
+                }
+                (tags(&page.tags, None))
             }
             (content)
             @if let Some(pagination) = &page.page_pagination {
                 (page_pagination(pagination))
             }
+        }
+        @if let Some(scripts) = scripts {
+            (scripts)
         }
     };
 

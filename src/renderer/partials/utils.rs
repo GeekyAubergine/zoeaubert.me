@@ -9,7 +9,6 @@ pub fn link<'l>(link: &'l Link<'l>, children: &'l dyn Renderable) -> impl Render
          @match link {
              Link::External(url) => {
                 a
-                    class="items-center border-hover-accent"
                     href={ (url.as_str()) }
                     target="_blank"
                     rel="noopener noreferrer" {
@@ -18,7 +17,6 @@ pub fn link<'l>(link: &'l Link<'l>, children: &'l dyn Renderable) -> impl Render
              },
              Link::Internal(url) => {
                 a
-                    class="items-center border-hover-accent"
                     href={ (url) }
                     rel="noopener noreferrer" {
                         { (children) }

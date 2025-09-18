@@ -77,9 +77,15 @@ pub async fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Al
 
         let cdn_file = CdnFile::from_date_and_file_name(&date, url.as_str(), None);
 
-        let image =
-            MediaService::image_from_url(ctx, &url, &cdn_file, &photo.alt, Some(&album.slug))
-                .await?;
+        let image = MediaService::image_from_url(
+            ctx,
+            &url,
+            &cdn_file,
+            &photo.alt,
+            Some(&album.slug),
+            Some(album.date),
+        )
+        .await?;
 
         let file_name = url.path_segments().unwrap().last().unwrap();
         let file_name_without_extension = file_name.split('.').next().unwrap();

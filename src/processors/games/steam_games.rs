@@ -213,6 +213,7 @@ pub async fn process_steam_game_achievements(
                     &cdn_file,
                     &format!("{} achievement icon", achievement.display_name),
                     None,
+                    None,
                 )
                 .await?;
 
@@ -244,6 +245,7 @@ pub async fn process_steam_game_achievements(
                     &icon,
                     &cdn_file,
                     &format!("{} achievement icon", achievement.display_name),
+                    None,
                     None,
                 )
                 .await?;
@@ -322,6 +324,7 @@ async fn get_game_header_image(
         &cdn_file,
         &format!("{} steam header image", &game.name),
         None,
+        None,
     )
     .await
     {
@@ -340,6 +343,7 @@ async fn get_game_header_image(
         &image_src_url,
         &cdn_file,
         &format!("{} steam header image", &game.name),
+        None,
         None,
     )
     .await

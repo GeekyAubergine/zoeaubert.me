@@ -118,6 +118,7 @@ impl MediaService {
         cdn_file: &CdnFile,
         alt: &str,
         link_on_click: Option<&Slug>,
+        date: Option<DateTime<Utc>>,
     ) -> Result<Image> {
         let large_cdn_file =
             cdn_file.add_suffix_to_file_name(&format!("-{}", ImageSize::Large.as_str()));
@@ -162,6 +163,7 @@ impl MediaService {
                 },
                 description: alt.to_string(),
                 link_on_click: link_on_click.cloned(),
+                date,
             });
         }
 
@@ -200,13 +202,14 @@ impl MediaService {
             tiny: tiny_image,
             description: alt.to_string(),
             link_on_click: link_on_click.cloned(),
+            date,
         })
     }
 
     pub async fn find_images_in_markdown(
         ctx: &ServiceContext,
         markdown: &str,
-        date: &DateTime<Utc>,
+        date: Option<DateTime<Utc>>,
         link_on_click: Option<&Slug>,
     ) -> Result<Vec<Image>> {
         let mut media = vec![];
@@ -218,7 +221,7 @@ impl MediaService {
             let url: Url = url.parse().unwrap();
             let cdn_file = CdnFile::from_str(url.path());
 
-            let image = Self::image_from_url(ctx, &url, &cdn_file, alt, link_on_click).await?;
+            let image = Self::image_from_url(ctx, &url, &cdn_file, alt, link_on_click, date).await?;
 
             media.push(image);
         }

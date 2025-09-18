@@ -1,3 +1,4 @@
+use chrono::DateTime;
 use serde::Deserialize;
 use tracing::info;
 use url::Url;
@@ -46,6 +47,7 @@ pub async fn process_projects(ctx: &ServiceContext) -> Result<Projects> {
             &file_project.image,
             &cdn_file,
             &file_project.image_alt,
+            None,
             None,
         )
         .await?;

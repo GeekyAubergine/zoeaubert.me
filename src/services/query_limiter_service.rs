@@ -8,9 +8,7 @@ use tokio::sync::RwLock;
 use crate::prelude::*;
 
 use crate::domain::models::lego::{LegoMinifig, LegoSet};
-use crate::services::file_service::{
-    ArchiveFile, FileService, ReadableFile, WritableFile,
-};
+use crate::services::file_service::{ArchiveFile, FileService, ReadableFile, WritableFile};
 
 const FILE_NAME: &str = "query_limiting_service.json";
 
@@ -64,20 +62,14 @@ impl QueryLimitingService2 {
     }
 
     pub async fn can_query_within_fifteen_minutes(&self, query: &str) -> Result<bool> {
-        return Ok(false);
-
         self.can_query(query, &FIFTEEN_MINUTES_PERIOD).await
     }
 
     pub async fn can_query_within_hour(&self, query: &str) -> Result<bool> {
-        return Ok(false);
-
         self.can_query(query, &ONE_HOUR_PERIOD).await
     }
 
     pub async fn can_query_within_day(&self, query: &str) -> Result<bool> {
-        return Ok(false);
-
         self.can_query(query, &ONE_DAY_PERIOD).await
     }
 }

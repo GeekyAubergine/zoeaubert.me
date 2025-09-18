@@ -26,6 +26,7 @@ pub struct RenderableImage<'l> {
     pub url: Url,
     pub dimensions: &'l MediaDimensions,
     pub description: &'l str,
+    pub date: Option<&'l DateTime<Utc>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
@@ -36,6 +37,7 @@ pub struct Image {
     pub tiny: SizedImage,
     pub description: String,
     pub link_on_click: Option<Slug>,
+    pub date: Option<DateTime<Utc>>,
 }
 
 impl Image {

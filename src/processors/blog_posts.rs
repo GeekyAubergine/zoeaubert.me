@@ -79,14 +79,22 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) ->
                 let url: Url = url.parse().unwrap();
                 let cdn_file = CdnFile::from_str(&url.path());
 
-                let image =
-                    MediaService::image_from_url(ctx, &url, &cdn_file, &alt, Some(&slug)).await?;
+                let image = MediaService::image_from_url(
+                    ctx,
+                    &url,
+                    &cdn_file,
+                    &alt,
+                    Some(&slug),
+                    Some(date),
+                )
+                .await?;
 
                 post = post.with_hero_image(image);
             }
 
             post = post.with_images(
-                MediaService::find_images_in_markdown(ctx, content, &date, Some(&slug)).await?,
+                MediaService::find_images_in_markdown(ctx, content, Some(date), Some(&slug))
+                    .await?,
             );
 
             Ok(post)

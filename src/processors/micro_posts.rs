@@ -81,7 +81,7 @@ async fn process_file(ctx: &ServiceContext, file: ContentFile, content: &str) ->
 
     let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
-    let media = MediaService::find_images_in_markdown(ctx, &content, &date, Some(&slug))
+    let media = MediaService::find_images_in_markdown(ctx, &content, Some(date.clone()), Some(&slug))
         .await?
         .iter()
         .map(|i| Media::from(i))

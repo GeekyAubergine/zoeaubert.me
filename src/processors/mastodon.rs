@@ -210,6 +210,7 @@ async fn mastodon_status_to_post(
                         &cdn_file,
                         &description,
                         Some(&post.slug()),
+                        Some(status.created_at),
                     )
                     .await?;
 

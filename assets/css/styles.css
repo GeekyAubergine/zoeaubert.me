@@ -14,8 +14,25 @@
     --color-headings: #080808;
     --color-accent: #784387;
     --color-code: #d4d4d4;
+    /*--color-code: #d4d4d4;*/
     --color-border: #d8d8d8;
     --color-middleGray: #888888;
+
+    --color-blog-bg: #004a86;
+    --color-blog-text-primary: #ffffff;
+    --color-blog-text-secondary: #e4e4e4;
+
+    --color-sport-bg: #ff7c24;
+    --color-sport-text-primary: #000000;
+    --color-sport-text-secondary: #e4e4e4;
+
+    --color-toots-bg: #005900;
+    --color-toots-text-primary: #ffffff;
+    --color-toots-text-secondary: #e4e4e4;
+
+    --color-photos-bg: #1d2124;
+    --color-photos-text-primary: #ffffff;
+    --color-photos-text-secondary: #e4e4e4;
 }
 
 @layer theme {
@@ -136,45 +153,19 @@
 }
 
 @utility width-narrow {
-    @apply centered-to-width max-w-[72ch];
+    @apply centered-to-width max-w-[68ch];
 }
 
 @utility article-spacing {
-    @apply my-2 md:my-3;
+    @apply my-4;
 }
 
-body {
-    @apply bg-background text;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-        Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
-}
-
-main {
-}
-
-div,
-nav,
-footer,
-article {
-    @apply flex flex-col;
-}
-
-a {
-    @apply link;
-}
-
-h1 {
-    @apply w-full my-10 md:my-12 mx-auto font-bold text-4xl md:text-5xl text-center sm:max-w-[80%];
-}
-
-article,
-.prose {
+@utility prose {
     p,
     li,
     th,
     td {
+        @apply text-[17px];
         font-family: 'Atkinson Hyperlegible', system-ui, -apple-system,
             BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
             'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -200,10 +191,7 @@ article,
     h4,
     h5,
     h6 {
-        @apply text-xl leading-6 font-bold mt-9 mb-0;
-    }
-    h2 {
-        @apply text-2xl leading-6;
+        @apply mt-8 mb-0 max-w-[80%] overflow-clip;
     }
 
     h2 + h3,
@@ -211,24 +199,37 @@ article,
     h4 + h5 {
         @apply mt-2;
     }
+
     h2 + p,
     h3 + p,
     h4 + p,
     h5 + p {
-        @apply mt-1;
+        @apply mt-4;
     }
 
-    h2,
+    /*h2,
     h3,
     h4,
     h5,
     h6,
     p {
-        @apply leading-7;
+        @apply leading-6;
+    }*/
+
+    h2 {
+        @apply text-2xl md:text-3xl;
+    }
+
+    h3 {
+        @apply text-xl md:text-2xl;
+    }
+
+    h4 {
+        @apply md:text-xl;
     }
 
     a {
-        @apply accent under;
+        @apply under;
     }
 
     ol {
@@ -241,6 +242,7 @@ article,
     li {
         @apply my-3 md:my-4 first-of-type:mt-0 last-of-type:mb-0;
     }
+
     li > ul > li,
     li > ol > li {
         @apply ml-4;
@@ -262,36 +264,94 @@ article,
         @apply mt-6;
     }
 
+    /* Not codeblock */
     :not(pre) > code {
         @apply article-spacing bg-code pt-[.05rem] pb-[.1rem] px-[.3rem] rounded !font-normal;
         font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
             'Courier New', monospace;
     }
+
+    /* Codeblock */
     pre {
-        @apply article-spacing bg-code pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
+        @apply article-spacing bg-[#303030] pt-[.45rem] pb-[.5rem] px-[.6rem] rounded !font-normal overflow-x-auto;
         font-family: 'Fira Code', 'JetBrains Mono', 'Source Code Pro',
             'Courier New', monospace;
     }
-    p > img {
+
+    /*p > img {
         @apply mx-auto my-0;
-    }
+    }*/
+
     img {
         @apply w-full mx-auto;
     }
+
+    table {
+        @apply overflow-x-scroll;
+    }
+
+    p {
+        /* Not sure why, but sometimes some text is slightly wider than it should be and causes horizontal scroll on mobile */
+        @apply leading-7 overflow-x-clip;
+    }
+}
+
+@utility full-stop {
+    &::after {
+        content: '.';
+    }
+}
+
+body {
+    @apply bg-background text;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
+div,
+nav,
+footer,
+section,
+article {
+    @apply flex flex-col;
+}
+
+a {
+    @apply link;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    @apply text-xl font-bold;
+}
+
+article {
+    @apply prose;
 }
 
 nav {
     @apply width-middle py-1 md:flex-row md:justify-between md:items-baseline;
 
     .name-and-toggle {
-        @apply flex flex-row justify-between;
+        @apply flex flex-row justify-between items-baseline;
 
-        .toggle {
-            @apply w-[4rem];
+        a.name {
+            @apply w-full md:w-auto md:flex-shrink-0 ml-[4rem] md:ml-0 py-2 pr-2 accent text-4xl text-center md:text-left;
+            /*@apply w-full md:w-auto md:flex-shrink-0 py-2 pr-2 accent text-4xl md:text-left;*/
         }
 
-        .name {
-            @apply w-full md:flex-shrink-0 ml-[4rem] md:ml-0 py-2 pr-2 accent text-4xl text-center md:text-left;
+        #theme-toggle {
+            @apply w-[4rem] flex-row justify-end items-end md:w-auto md:ml-2;
+
+            #toggle-button {
+                @apply cursor-pointer secondary rotate-180 dark:rotate-0 transition-all duration-100;
+            }
         }
     }
 
@@ -299,7 +359,7 @@ nav {
         @apply flex flex-row justify-between text-lg md:mr-0;
 
         li {
-            @apply flex justify-center mx-2 md:last-of-type:mr-0;
+            @apply flex justify-center mx-2 first-of-type:ml-0 last-of-type:mr-0;
 
             &.photos {
                 @apply max-sm:hidden;
@@ -328,6 +388,11 @@ nav {
     }
 }
 
+time {
+    @apply italic font-thin;
+    /*@apply text-sm mt-[.125rem] leading-6 italic font-thin;*/
+}
+
 /* Components*/
 
 .tags-list {
@@ -338,12 +403,25 @@ nav {
     }
 
     & .tag {
-        @apply secondary no-underline;
+        /*@apply secondary no-underline;*/
+        @apply italic font-thin no-underline;
+    }
+}
+
+.header {
+    @apply w-full mt-8 mb-8 px-4 md:my-16 mx-auto items-center;
+
+    h1 {
+        @apply md:mb-4 text-4xl md:text-5xl text-center;
+    }
+
+    time {
+        @apply not-italic font-normal;
     }
 }
 
 .pagination {
-    @apply w-full flex-row justify-center pt-16 pb-8;
+    @apply w-full flex-row items-center pt-16 pb-8;
 
     .left,
     .right {
@@ -377,60 +455,6 @@ nav {
     }
 }
 
-.blog-post-list {
-    .blog-post-list-item {
-        @apply py-8 border-border border-b-1 last-of-type:border-b-0;
-
-        .title-and-date {
-            @apply md:flex-row md:justify-between md:items-baseline;
-
-            a {
-                @apply no-underline;
-            }
-        }
-
-        .title {
-            @apply mt-0 text-xl md:text-2xl font-bold tracking-tight md:tracking-normal;
-        }
-
-        .date {
-            @apply secondary text-sm leading-6 italic;
-        }
-
-        .description {
-            @apply mt-3;
-        }
-
-        .tags-list {
-            @apply mt-3;
-        }
-    }
-}
-
-/*.blog-post-list {
-    @apply sm:grid sm:grid-cols-3 sm:gap-12 sm:wide md:grid-cols-4;
-
-    .blog-post-list-item {
-        @apply border-border border-b-[1px] py-6 md:border-0 md:my-0;
-
-        .title-and-date {
-            @apply sm:h-20;
-        }
-
-        .title {
-            @apply mt-0 text-xl font-bold;
-        }
-
-        .date {
-            @apply secondary text-sm leading-6 italic;
-        }
-
-        .description {
-            @apply my-3;
-        }
-    }
-}*/
-
 .bento {
     @apply grid grid-cols-1 gap-2 md:grid-cols-3;
 
@@ -451,10 +475,10 @@ nav {
     @apply grid-cols-9;
 
     .blog {
-        @apply border-blue-300   row-start-1 col-span-6 row-span-2;
+        @apply border-blue-300 row-start-1 col-span-6 row-span-2;
     }
     .photos {
-        @apply border-pink-400   row-start-1 col-span-3 row-span-1;
+        @apply border-pink-400 row-start-1 col-span-3 row-span-1;
     }
     .exercise-activity {
         @apply border-orange-300 row-start-3 col-span-4;
@@ -465,4 +489,126 @@ nav {
     .exercise-yearly {
         @apply border-purple-300 row-start-3 col-span-2;
     }
+}
+
+.home {
+    section {
+        @apply w-full py-8 md:py-16;
+
+        h2 {
+            @apply mt-0 mb-8 md:mb-16 text-4xl md:text-5xl full-stop;
+        }
+
+        .more-link {
+            @apply mt-8 ml-auto italic no-underline;
+        }
+
+        &.header {
+            @apply items-center md:pt-16;
+
+            .name-and-cursor {
+                @apply w-full flex-row justify-center items-baseline h-[6rem];
+
+                h1 {
+                    @apply text-[3rem] md:text-[5rem] m-0 text-center w-auto;
+
+                    &::after {
+                        content: '';
+                    }
+                }
+
+                .typing-cursor {
+                    @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] mt-4 md:mt-6 border-r-2 border-text min-w-[1px];
+
+                    animation: blink 800ms linear infinite;
+                }
+            }
+
+            .about {
+                @apply prose width-narrow pt-8 pb-0 text-lg;
+            }
+        }
+
+        &.blog {
+            .blog-post-list {
+                @apply grid grid-cols-1 gap-y-8 md:grid-cols-4 md:gap-x-4;
+
+                .blog-post-list-item {
+                    .title-and-date {
+                        @apply md:flex-col-reverse;
+
+                        a {
+                            @apply no-underline;
+                        }
+                    }
+
+                    .title {
+                        @apply mt-0 text-2xl md:text-2xl font-bold tracking-tight md:tracking-normal md:h-16 md:overflow-hidden;
+                    }
+
+                    .description {
+                        @apply mt-2;
+                    }
+                }
+            }
+        }
+
+        &.photos {
+            ul.photos-list {
+                @apply grid grid-cols-2 gap-2 md:grid-cols-4;
+
+                li {
+                    a {
+                        @apply no-underline;
+                    }
+
+                    img {
+                        @apply aspect-square object-cover rounded-sm;
+                    }
+                }
+            }
+
+            .more-link {
+                @apply mt-4 md:mt-8;
+            }
+        }
+
+        &.sport {
+            /*@apply bg-sport-bg text-sport-text-primary;*/
+        }
+
+        &.toots {
+            /*@apply bg-toots-bg text-toots-text-primary;*/
+        }
+    }
+}
+
+.blog-list-page {
+    @apply width-narrow;
+
+    .blog-post-list {
+        .blog-post-list-item {
+            @apply mb-8 md:mb-12;
+
+            .title-and-date {
+                @apply md:flex-row justify-between items-baseline;
+
+                a {
+                    @apply no-underline;
+                }
+            }
+
+            .title {
+                @apply mt-0 text-2xl md:text-2xl font-bold tracking-tight md:tracking-normal;
+            }
+
+            .description {
+                @apply mt-2 md:mt-2;
+            }
+        }
+    }
+}
+
+.blog-post-page {
+    @apply width-narrow;
 }

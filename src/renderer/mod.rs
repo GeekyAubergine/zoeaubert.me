@@ -10,8 +10,8 @@ use tokio::try_join;
 
 use crate::domain::models::data::Data;
 use crate::prelude::*;
+use crate::renderer::pages::blog_pages_renderer::render_blog_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
-use crate::renderer::pages::render_blog_page;
 use crate::services::page_renderer::PageRenderer;
 use tracing::debug;
 
@@ -21,8 +21,8 @@ use crate::error::{FileSystemError, TemplateError};
 // pub mod basic_pages;
 pub mod formatters;
 
-pub mod partials;
 pub mod pages;
+pub mod partials;
 
 pub struct RendererContext {
     pub data: Data,
@@ -37,15 +37,8 @@ pub async fn new_rendering_context_from_data(data: Data) -> Result<RendererConte
 }
 
 pub async fn render_pages(context: &RendererContext) -> Result<()> {
-    // try_join!(
-    //     render_basic_pages(context),
-    //     render_interest_pages(context),
-    //     render_non_basic_pages(context),
-    //     render_post_pages(context),
-    // )?;
-
     render_home_page(context).await?;
-    render_blog_page(context).await?;
+    render_blog_pages(context)?;
 
     Ok(())
 }

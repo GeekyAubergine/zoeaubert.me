@@ -115,6 +115,7 @@ async fn extract_images_from_html(
                 cdn_file,
                 alt,
                 Some(parent_slug),
+                Some(date.clone()),
             )
             .await?,
         );
