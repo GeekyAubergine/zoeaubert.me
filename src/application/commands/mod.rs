@@ -5,7 +5,6 @@ pub mod blog_posts_commands;
 pub mod micro_posts_commands;
 pub mod mastodon_posts_commands;
 pub mod lego_commands;
-pub mod steam_commands;
 pub mod update_derived_data_command;
 pub mod album_commands;
 pub mod referrals_commands;

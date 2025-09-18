@@ -1,6 +1,7 @@
 use std::{collections::VecDeque, ops::Deref};
 
 use serde::{Deserialize, Serialize};
+use url::Url;
 
 use super::site_config::SITE_CONFIG;
 
@@ -24,14 +25,14 @@ impl Slug {
         Self(slug.replace("//", "/"))
     }
 
-    pub fn permalink(&self) -> String {
+    pub fn permalink_string(&self) -> String {
         if self.0.starts_with("http") {
             return self.0.clone();
         }
         format!("{}{}", SITE_CONFIG.url, self.0)
     }
 
-    pub fn relative_link(&self) -> String {
+    pub fn relative_string(&self) -> String {
         self.0.clone()
     }
 
@@ -43,10 +44,19 @@ impl Slug {
         let slug = format!("{}{}", self.0, suffix).replace("//", "/");
         Self::new(&slug)
     }
+
+    pub fn as_link(&self) -> Link {
+        Link::Internal(&self.0)
+    }
 }
 
 impl std::fmt::Display for Slug {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
+}
+
+pub enum Link<'l> {
+    External(&'l Url),
+    Internal(&'l str),
 }

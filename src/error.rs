@@ -1,6 +1,9 @@
 use std::path::PathBuf;
 
-use crate::domain::models::{content::Content, slug::Slug};
+use crate::{
+    domain::models::{slug::Slug, source_post::SourcePost},
+    services::file_service::ContentFile,
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -60,6 +63,9 @@ pub enum Error {
 
     #[error("Inquire Error: {0}")]
     InquireError(#[from] inquire::error::InquireError),
+
+    #[error("Unknown")]
+    Unknown(),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -87,6 +93,12 @@ pub enum FileSystemError {
 
     #[error("Unable to delete file: {0}")]
     DeleteFileError(std::io::Error),
+
+    #[error("Path is not representable as URL: {0}")]
+    PathIsNotUrl(url::ParseError),
+
+    #[error("Invalid path: [{0}]")]
+    InvalidPath(PathBuf),
 }
 
 impl FileSystemError {
@@ -120,6 +132,14 @@ impl FileSystemError {
 
     pub fn delete_file_error(error: std::io::Error) -> Error {
         Error::FileSystemError(Self::DeleteFileError(error))
+    }
+
+    pub fn path_is_not_url(error: url::ParseError) -> Error {
+        Error::FileSystemError(Self::PathIsNotUrl(error))
+    }
+
+    pub fn invalid_path(path: PathBuf) -> Error {
+        Error::FileSystemError(Self::InvalidPath(path))
     }
 }
 
@@ -260,16 +280,16 @@ pub enum MicroPostError {
     UnparsableFrontMatter(serde_yaml::Error),
 
     #[error("Post has no content {0}")]
-    PostHasNoContent(PathBuf),
+    PostHasNoContent(ContentFile),
 
     #[error("Post has not front matter {0}")]
-    PostHasNoFrontMatter(PathBuf),
+    PostHasNoFrontMatter(ContentFile),
 
     #[error("Post has invalid file path {0}")]
-    InvalidFilePath(PathBuf),
+    InvalidFilePath(ContentFile),
 
     #[error("Post has invalid file name {0}")]
-    InvalidFileName(PathBuf),
+    InvalidFileName(ContentFile),
 }
 
 impl MicroPostError {
@@ -277,19 +297,19 @@ impl MicroPostError {
         Error::MicroPostError(Self::UnparsableFrontMatter(error))
     }
 
-    pub fn no_content(post: PathBuf) -> Error {
+    pub fn no_content(post: ContentFile) -> Error {
         Error::MicroPostError(Self::PostHasNoContent(post))
     }
 
-    pub fn no_front_matter(post: PathBuf) -> Error {
+    pub fn no_front_matter(post: ContentFile) -> Error {
         Error::MicroPostError(Self::PostHasNoFrontMatter(post))
     }
 
-    pub fn invalid_file_path(post: PathBuf) -> Error {
+    pub fn invalid_file_path(post: ContentFile) -> Error {
         Error::MicroPostError(Self::InvalidFilePath(post))
     }
 
-    pub fn invalid_file_name(post: PathBuf) -> Error {
+    pub fn invalid_file_name(post: ContentFile) -> Error {
         Error::MicroPostError(Self::InvalidFileName(post))
     }
 }
@@ -410,7 +430,7 @@ impl MovieError {
         Error::MovieError(Self::MovieNotFound(error))
     }
 
-    pub fn unsupported_content_type(content: &Content) -> Error {
+    pub fn unsupported_content_type(content: &SourcePost) -> Error {
         Error::MovieError(Self::UnsupportedContenttType(content.slug()))
     }
 
@@ -471,7 +491,7 @@ impl TvShowsError {
         Error::TvShowsError(Self::TvShowNotFound(error))
     }
 
-    pub fn unsupported_content_type(content: &Content) -> Error {
+    pub fn unsupported_content_type(content: &SourcePost) -> Error {
         Error::TvShowsError(Self::UnsupportedContentType(content.slug()))
     }
 
@@ -483,11 +503,11 @@ impl TvShowsError {
 #[derive(Debug, thiserror::Error)]
 pub enum AlbumError {
     #[error("Invalid file name {0}")]
-    InvalidFileName(PathBuf),
+    InvalidFileName(ContentFile),
 }
 
 impl AlbumError {
-    pub fn invalid_file_name(file_name: PathBuf) -> Error {
+    pub fn invalid_file_name(file_name: ContentFile) -> Error {
         Error::AlbumError(Self::InvalidFileName(file_name))
     }
 }

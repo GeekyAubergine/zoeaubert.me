@@ -2,7 +2,7 @@
 
 {%- block content %}
     <article>
-        <img src="{{ game.header_image.cdn_url() }}" alt="{{ game.name }} steam header image">
+        <img src="{{ game.header_image.small().url }}" alt="{{ game.name }} steam header image">
 
         <div class="game-page-data">
             <a href="{{ game.link_url }}" rel="noopener noreferrer">Store Page</a>
@@ -26,7 +26,7 @@
             {% for achievement in unlocked_achievements %}
                 <div class="game-achievement">
                     <div class="image-container">
-                        {% let image = achievement.image.clone() %}
+                        {% let image = achievement.image.small() %}
                         {% include "partials/media/image.html" %}
                     </div>
                     <div class="left">
@@ -47,7 +47,7 @@
             {% for achievement in locked_achievements %}
                 <div class="game-achievement">
                     <div class="image-container">
-                        {% let image = achievement.image.clone() %}
+                        {% let image = achievement.image.small() %}
                         {% include "partials/media/image.html" %}
                     </div>
                     <div class="left">

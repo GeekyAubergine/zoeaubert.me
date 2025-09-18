@@ -1310,6 +1310,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "hypertext"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1f3f4a9487411806fa3067d1db3be8deea969f5119c876eba5f9b49704bc66c"
+dependencies = [
+ "html-escape",
+ "hypertext-macros",
+ "itoa",
+ "ryu",
+]
+
+[[package]]
+name = "hypertext-macros"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a898dddce65e098c327cd37fa5f78d704923f22fdd734ee84f747fa9b5d29dc"
+dependencies = [
+ "html-escape",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.72",
+]
+
+[[package]]
 name = "iana-time-zone"
 version = "0.1.60"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1592,6 +1616,28 @@ name = "matchit"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e7465ac9959cc2b1404e8e2367b43684a6d13790fe23056cc8c6c5a6b7bcb94"
+
+[[package]]
+name = "maud"
+version = "0.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8156733e27020ea5c684db5beac5d1d611e1272ab17901a49466294b84fc217e"
+dependencies = [
+ "itoa",
+ "maud_macros",
+]
+
+[[package]]
+name = "maud_macros"
+version = "0.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7261b00f3952f617899bc012e3dbd56e4f0110a038175929fa5d18e5a19913ca"
+dependencies = [
+ "proc-macro2",
+ "proc-macro2-diagnostics",
+ "quote",
+ "syn 2.0.72",
+]
 
 [[package]]
 name = "maybe-rayon"
@@ -2036,6 +2082,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "proc-macro2-diagnostics"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af066a9c399a26e020ada66a034357a868728e72cd426f3adcd35f80d88d88c8"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.72",
+ "version_check",
 ]
 
 [[package]]
@@ -3648,11 +3706,13 @@ dependencies = [
  "html-escape",
  "htmlentity",
  "http-range-header",
+ "hypertext",
  "image",
  "imagesize",
  "inquire",
  "lazy_static",
  "markdown",
+ "maud",
  "once_cell",
  "rayon",
  "regex",

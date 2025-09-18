@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use askama::Template;
@@ -8,23 +8,20 @@ use tokio::fs::copy;
 use tokio::try_join;
 
 use crate::build_data::BUILD_DATE;
+use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
-use crate::domain::queries::omni_post_queries::{
-    find_all_omni_posts, find_all_omni_posts_by_tag, OmniPostFilterFlags,
-};
-use crate::domain::queries::tags_queries::find_tag_counts;
-use crate::domain::repositories::Profiler;
-use crate::domain::services::{FileService, PageRenderingService};
-use crate::domain::state::State;
 
-use crate::infrastructure::renderers::basic_pages::render_basic_pages;
-use crate::infrastructure::renderers::formatters::format_date::FormatDate;
+// use crate::renderers::basic_pages::render_basic_pages;
+// use crate::renderers::formatters::format_date::FormatDate;
 
 use crate::error::FileSystemError;
-use crate::infrastructure::renderers::render_pages;
-use crate::infrastructure::utils::paginator::paginate;
 use crate::prelude::*;
+use crate::renderer::{new_rendering_context_from_data, render_pages, RendererContext};
+// use crate::renderers::{new_rendering_context_from_data, render_pages, RendererContext};
+use crate::services::file_service::{FileService, ReadableFile};
+use crate::services::ServiceContext;
+use crate::utils::paginator::paginate;
 
 use tracing::{error, info};
 
@@ -36,59 +33,40 @@ const ASSETS_DIR: &str = "./output/assets";
 const ROBOTS_INPUT_FILE: &str = "./assets/robots.txt";
 const ROBOTS_OUTPUT_FILE: &str = "./output/robots.txt";
 
-async fn prepare_folders(state: &impl State) -> Result<()> {
+async fn prepare_folders() -> Result<()> {
     Command::new("rm")
         .arg("-rf")
         .arg("./output")
         .output()
         .expect("Failed to remove output directory");
 
-    Command::new("mkdir")
-        .arg("-p")
-        .arg("./output/assets/.")
-        .output()
-        .expect("Failed to create assets directory");
+    Ok(())
+}
 
-    state
-        .file_service()
-        .copy_dir(Path::new("assets"), Path::new("output/assets"))
-        .await?;
+async fn copy_assets() -> Result<()> {
+    FileService::copy_dir(
+        Path::new("./assets/fonts"),
+        Path::new("./output/assets/fonts"),
+    );
+    FileService::copy_dir(Path::new("./assets/img"), Path::new("./output/assets/img"));
 
-    copy_dir("_assets", "output/assets");
+    FileService::copy(
+        Path::new("./assets/css/codestyle.css"),
+        Path::new("./output/css/codestyle.css"),
+    )?;
 
-    state.file_service().make_dir(Path::new("./output")).await?;
+    let css_file_name = format!("styles-{}.css", BUILD_DATE);
+
+    FileService::copy(
+        Path::new(&format!("./_assets/css/{}", css_file_name)),
+        Path::new(&format!("./output/assets/css/{}", css_file_name)),
+    )?;
 
     Ok(())
 }
 
-async fn compile_css(state: &impl State) -> Result<()> {
-    state
-        .file_service()
-        .copy_dir(Path::new(COMPILED_ASSETS_DIR), Path::new(ASSETS_DIR))
-        .await?;
-
-    Ok(())
-}
-
-async fn compile_assets(state: &impl State) -> Result<()> {
-    compile_css(state).await?;
-
-    state
-        .file_service()
-        .copy(
-            &Path::new(ROBOTS_INPUT_FILE),
-            &Path::new(ROBOTS_OUTPUT_FILE),
-        )
-        .await?;
-
-    Ok(())
-}
-
-async fn read_disallowed_routes_from_robot_file(state: &impl State) -> Result<Vec<String>> {
-    let robots_txt = state
-        .file_service()
-        .read_text_file(Path::new(ROBOTS_OUTPUT_FILE))
-        .await?;
+async fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
+    let robots_txt = FileService::asset(PathBuf::from("robots.txt")).read_text()?;
 
     let split_before_blanket_disallow = robots_txt
         .split("User-agent: AdsBot-Google")
@@ -105,33 +83,23 @@ async fn read_disallowed_routes_from_robot_file(state: &impl State) -> Result<Ve
     Ok(disallowed_routes)
 }
 
-pub async fn render_site(state: &impl State) -> Result<()> {
-    info!("Building site");
+pub async fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
+    info!("Rendering site");
 
-    prepare_folders(state).await?;
-    compile_assets(state).await?;
+    let start = Utc::now();
 
-    let start = std::time::Instant::now();
+    prepare_folders().await?;
+    copy_assets().await?;
 
-    render_pages(state).await?;
+    let context: RendererContext = new_rendering_context_from_data(data).await?;
 
-    let disallowed_routes = read_disallowed_routes_from_robot_file(state).await?;
+    render_pages(&context).await?;
 
-    state
-        .page_rendering_service()
-        .build_sitemap(state, &disallowed_routes)
-        .await?;
+    let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
 
-    let duration = start.elapsed();
+    context.renderer.build_sitemap(&disallowed_routes)?;
 
-    state
-        .profiler()
-        .set_page_generation_duration(duration)
-        .await?;
-
-    state.page_rendering_service().render_pages(state).await?;
-
-    state.profiler().print_results().await?;
+    info!("Rendering site - done [{}ms]", (Utc::now() - start).num_milliseconds());
 
     Ok(())
 }

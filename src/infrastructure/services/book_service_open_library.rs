@@ -11,8 +11,8 @@ use url::Url;
 use serde::{Deserialize, Serialize};
 
 use crate::domain::models::book::{Book, BookID, BookReview};
-use crate::domain::models::content::Content;
-use crate::domain::models::omni_post::OmniPost;
+use crate::domain::models::raw_content::SourcePost;
+use crate::domain::models::omni_post::Post;
 use crate::domain::models::tag::Tag;
 use crate::domain::models::tv_show::{TvShow, TvShowId, TvShowReview};
 use crate::domain::services::{
@@ -215,7 +215,7 @@ impl BookService for BookServiceOpenLibrary {
     async fn book_review_from_content(
         &self,
         state: &impl State,
-        post: &Content,
+        post: &SourcePost,
     ) -> Result<BookReview> {
         let review = parse_content_into_book_review(post)?;
 

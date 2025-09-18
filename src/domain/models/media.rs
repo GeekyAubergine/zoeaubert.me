@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::image::Image;
+use crate::domain::models::image::Image;
 
 // Had a few images where they're just a few pixels off square, so we want to catch them too or they look weird
 const SQUARE_MEDIA_MARGIN_OF_ERROR: f32 = 0.1;

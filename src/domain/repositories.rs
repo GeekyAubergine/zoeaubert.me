@@ -2,14 +2,29 @@ use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::time::Duration;
 
-use crate::prelude::*;
+use crate::{
+    domain::models::{albums::{album::Album, album_photo::AlbumPhoto}, projects::Project},
+    prelude::*,
+};
 
 use super::{
     models::{
-        album::{Album, AlbumPhoto}, blog_post::BlogPost, content::Content, league::LeagueChampNote, lego::{LegoMinifig, LegoSet}, mastodon_post::MastodonPost, micro_post::MicroPost, movie::{MovieId, MovieReview}, omni_post::OmniPost, project::Project, referral::Referral, slug::Slug, steam::{
+        blog_post::BlogPost,
+        league::LeagueChampNote,
+        lego::{LegoMinifig, LegoSet},
+        mastodon_post::MastodonPost,
+        micro_post::MicroPost,
+        movie::{MovieId, MovieReview},
+        omni_post::Post,
+        raw_content::SourcePost,
+        referral::Referral,
+        slug::Slug,
+        steam::{
             SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
             SteamGameAchievementUnlocked,
-        }, tag::Tag, tv_show::{TvShowId, TvShowReview}
+        },
+        tag::Tag,
+        tv_show::{TvShowId, TvShowReview},
     },
     services::FileService,
     state::State,
@@ -186,11 +201,11 @@ pub trait LeagueRepo {
 
 #[async_trait::async_trait]
 pub trait OmniPostRepo {
-    async fn find_all_by_date(&self) -> Result<Vec<OmniPost>>;
+    async fn find_all_by_date(&self) -> Result<Vec<Post>>;
 
-    async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<OmniPost>>;
+    async fn find_all_by_tag(&self, tag: &Tag) -> Result<Vec<Post>>;
 
-    async fn commit(&self, state: &impl State, posts: Vec<OmniPost>) -> Result<()>;
+    async fn commit(&self, state: &impl State, posts: Vec<Post>) -> Result<()>;
 }
 
 #[async_trait::async_trait]

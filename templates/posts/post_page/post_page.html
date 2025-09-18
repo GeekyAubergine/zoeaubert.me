@@ -1,0 +1,19 @@
+{% match post %}
+{% when Post::BlogPost with (blog_post) %}
+{% include "posts/post_page/post_page_blog_post.html" %}
+{% when Post::MicroPost with (micro_post) %}
+{% include "posts/post_page/post_page_micro_post.html" %}
+{% when Post::MastodonPost with (mastodon_post) %}
+{% include "posts/post_page/post_page_mastodon_post.html" %}
+{% when Post::AlbumPhoto with { album, photo } %}
+{% include "posts/post_page/post_page_album_photo.html" %}
+{% when Post::Album with (album) %}
+{% include "posts/post_page/post_page_album.html" %}
+{% when Post::SteamAcheivementUnlocked with { achievement, game } %}
+{% when Post::MovieReview with (review) %}
+{% include "posts/post_page/post_page_book_movie_tv_show_review.html" %}
+{% when Post::TvShowReview with (review) %}
+{% include "posts/post_page/post_page_book_movie_tv_show_review.html" %}
+{% when Post::BookReview with (review) %}
+{% include "posts/post_page/post_page_book_movie_tv_show_review.html" %}
+{% endmatch %}

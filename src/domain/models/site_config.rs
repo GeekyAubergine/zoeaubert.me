@@ -5,7 +5,7 @@ use serde::Deserialize;
 use url::Url;
 use dotenvy_macro::dotenv;
 
-use super::image::Image;
+use crate::domain::models::image::Image;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct HeaderLink {
@@ -65,13 +65,25 @@ impl PageImage {
 impl From<Image> for PageImage {
     fn from(image: Image) -> Self {
         Self {
-            url: image.cdn_url().as_str().to_string(),
-            alt: image.alt,
-            width: image.dimensions.width,
-            height: image.dimensions.height,
+            url: image.large.file.as_cdn_url().to_string(),
+            alt: image.description,
+            width: image.large.dimensions.width,
+            height: image.large.dimensions.height,
         }
     }
 }
+
+impl From<&Image> for PageImage {
+    fn from(image: &Image) -> Self {
+        Self {
+            url: image.large.file.as_cdn_url().to_string(),
+            alt: image.description.clone(),
+            width: image.large.dimensions.width,
+            height: image.large.dimensions.height,
+        }
+    }
+}
+
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct PageConfig {

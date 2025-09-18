@@ -5,7 +5,7 @@
             href="{{ interest.slug.relative_link() }}"
             rel="noopener noreferrer"
         >
-            {% let image = interest.image.clone() %} {% include
+            {% let image = interest.image.small() %} {% include
             "partials/media/image.html" %}
         </a>
     </div>
