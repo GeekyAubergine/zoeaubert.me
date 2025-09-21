@@ -22,11 +22,11 @@ use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::bento::BentoBoxComponent;
 use crate::renderer::partials::bento::BentoBoxOptions;
-use crate::renderer::partials::date::date;
+use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::md;
 use crate::renderer::partials::page::render_page;
 use crate::renderer::partials::page::PageOptions;
-use crate::renderer::partials::tag::tags;
+use crate::renderer::partials::tag::render_tags;
 use crate::renderer::partials::utils::link;
 use crate::renderer::RendererContext;
 use crate::services::file_service::ContentFile;
@@ -42,7 +42,7 @@ fn blog_post<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
         li class="blog-post-list-item" {
             div class="title-and-date" {
                 (link(&post.slug.as_link(), &title))
-                (date(&post.date))
+                (render_date(&post.date))
             }
             p class="prose description" { (post.description )}
         }

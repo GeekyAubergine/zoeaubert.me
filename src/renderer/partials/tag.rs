@@ -1,7 +1,7 @@
 use crate::{domain::models::tag::Tag, prelude::*};
 use hypertext::prelude::*;
 
-pub fn tags<'l>(tags: &'l Vec<Tag>, limit: Option<usize>) -> impl Renderable + 'l {
+pub fn render_tags<'l>(tags: &'l Vec<Tag>, limit: Option<usize>) -> impl Renderable + 'l {
     let limit = limit.unwrap_or(tags.len());
 
     maud! {

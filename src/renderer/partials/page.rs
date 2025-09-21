@@ -2,22 +2,20 @@ use std::option;
 
 use crate::{
     build_data::BUILD_DATE,
-    domain::models::{page::PagePaginationData, site_config::SITE_CONFIG},
+    domain::models::{page::PagePaginationData, site_config::SITE_CONFIG, tag::Tag},
     prelude::*,
     renderer::{
         formatters::format_date::FormatDate,
-        partials::{date::date, tag::tags},
+        partials::{date::render_date, tag::render_tags},
     },
 };
+use chrono::{DateTime, Utc};
 use hypertext::{html_elements::main, prelude::*, Raw};
 use maud::DOCTYPE;
 
 use crate::domain::models::page::Page;
 
-#[component]
-pub fn nav_bar_component<'l>(page: &'l Page) -> impl Renderable + 'l {
-    println!("Slug [{:?}]", page.slug.as_str());
-
+pub fn nav_bar<'l>(page: &'l Page) -> impl Renderable + 'l {
     maud! {
         nav
             data-pagefind-ignore
@@ -97,7 +95,36 @@ pub fn nav_bar_component<'l>(page: &'l Page) -> impl Renderable + 'l {
     }
 }
 
-pub fn page_pagination<'l>(pagination: &'l PagePaginationData) -> impl Renderable + 'l {
+#[component]
+pub fn render_footer<'l>(page: &'l Page) -> impl Renderable + 'l {
+    maud! {
+        footer
+            data-pagefind-ignore
+            aria-label="Secondary Navigation"
+        {
+            ul class="groups" {
+                @for group in &page.page_links {
+                    li {
+                        h3 { (group.name) }
+                        ul {
+                            @for link in &group.links {
+                                li {
+                                    a
+                                        href=(link.url)
+                                        rel=(link.rel) {
+                                        (link.name)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Renderable + 'l {
     let show_first = pagination.current_index > 2;
     let show_previous = pagination.current_index > 1;
 
@@ -107,7 +134,10 @@ pub fn page_pagination<'l>(pagination: &'l PagePaginationData) -> impl Renderabl
     let show_last = pagination.current_index < last_index - 1;
 
     maud! {
-        div class="pagination" {
+        div
+            class="pagination"
+            data-pagefind-ignore
+        {
             div class="left" {
                 @if show_previous {
                     a
@@ -184,8 +214,7 @@ pub fn page_pagination<'l>(pagination: &'l PagePaginationData) -> impl Renderabl
     }
 }
 
-#[component]
-fn page_base_component<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl Renderable + 'l {
+fn render_page_base<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl Renderable + 'l {
     let title = match &page.title {
         Some(t) => format!("{} | {}", t, SITE_CONFIG.title),
         None => SITE_CONFIG.title.clone(),
@@ -262,6 +291,7 @@ impl PageWidth {
 pub struct PageOptions<'l> {
     width: PageWidth,
     main_class: Option<&'l str>,
+    use_date_as_title: bool,
 }
 
 impl<'l> PageOptions<'l> {
@@ -269,6 +299,7 @@ impl<'l> PageOptions<'l> {
         Self {
             width: PageWidth::Narrow,
             main_class: None,
+            use_date_as_title: false,
         }
     }
 
@@ -280,6 +311,70 @@ impl<'l> PageOptions<'l> {
     pub fn with_main_class(mut self, main_class: &'l str) -> Self {
         self.main_class = Some(main_class);
         self
+    }
+
+    pub fn use_date_as_title(mut self) -> Self {
+        self.use_date_as_title = true;
+        self
+    }
+}
+
+enum HeaderData<'l> {
+    Title {
+        title: String,
+        date: Option<&'l DateTime<Utc>>,
+        tags: &'l Vec<Tag>,
+    },
+    Date {
+        date: &'l DateTime<Utc>,
+        tags: &'l Vec<Tag>,
+    },
+    None,
+}
+
+impl<'l> HeaderData<'l> {
+    pub fn from_page_and_options(page: &'l Page, options: &'l PageOptions<'l>) -> Self {
+        if options.use_date_as_title {
+            return match page.date() {
+                Some(date) => HeaderData::Date {
+                    date: date,
+                    tags: &page.tags,
+                },
+                None => HeaderData::None,
+            };
+        }
+
+        match &page.title {
+            Some(title) => HeaderData::Title {
+                title: title.clone(),
+                date: page.date(),
+                tags: &page.tags,
+            },
+            None => HeaderData::None,
+        }
+    }
+}
+
+fn render_header<'l>(data: &'l HeaderData<'l>) -> impl Renderable + 'l {
+    maud! {
+        @match &data {
+            HeaderData::Title { title, date, tags } => {
+                div class="page-header" {
+                    h1 { (title) }
+                    @if let Some(date) = &date {
+                        (render_date(date))
+                    }
+                    (render_tags(tags, None))
+                }
+            }
+            HeaderData::Date { date, tags } => {
+                div class="page-header" {
+                    h1 { (render_date(date)) }
+                    (render_tags(tags, None))
+                }
+            }
+            HeaderData::None => {}
+        }
     }
 }
 
@@ -294,22 +389,17 @@ pub fn render_page<'l>(
         None => "",
     };
 
+    let header_data = HeaderData::from_page_and_options(page, options);
+
     let body = maud! {
-        NavBarComponent page=(&page);
+        (nav_bar(&page))
         main class=(main_class) {
-            div class="header" {
-                @if let Some(title) = &page.title {
-                    h1 { (title) }
-                }
-                @if let Some(d) = &page.date {
-                    (date(d))
-                }
-                (tags(&page.tags, None))
-            }
+            (render_header(&header_data))
             (content)
             @if let Some(pagination) = &page.page_pagination {
-                (page_pagination(pagination))
+                (render_pagination(pagination))
             }
+            (render_footer(&page))
         }
         @if let Some(scripts) = scripts {
             (scripts)
@@ -317,6 +407,6 @@ pub fn render_page<'l>(
     };
 
     maud! {
-        PageBaseComponent page=(&page) body=(&body);
+        (render_page_base(&page, &body))
     }
 }
