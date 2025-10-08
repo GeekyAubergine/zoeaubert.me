@@ -1,6 +1,6 @@
-use std::{collections::HashMap, path::Path};
+use std::{collections::HashMap, os::macos::raw::stat, path::Path, thread::sleep, time::Duration};
 
-use chrono::{DateTime, Duration, Utc};
+use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -128,6 +128,8 @@ async fn fetch_all(ctx: &ServiceContext) -> Result<Vec<MastodonStatus>> {
         if statuses.len() < MASTODON_PAGINATION_LIMIT as usize {
             break;
         }
+
+        sleep(Duration::from_secs(5));
     }
 
     Ok(statuses)
@@ -159,6 +161,8 @@ async fn mastodon_status_to_post(
     if status.content.contains(SELF_URL) {
         return Ok(None);
     }
+
+    info!("Processing Mastodon post {:?}", &status.created_at);
 
     let tags = extract_tags(&status.content)
         .iter()
@@ -228,13 +232,13 @@ pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
 
     let mut posts: MastodonPosts = file.read_json_or_default()?;
 
-    if !ctx
-        .query_limiter
-        .can_query_within_fifteen_minutes(QUERY)
-        .await?
-    {
-        return Ok(posts);
-    }
+    // if !ctx
+    //     .query_limiter
+    //     .can_query_within_fifteen_minutes(QUERY)
+    //     .await?
+    // {
+    //     return Ok(posts);
+    // }
 
     info!("Fetching mastodon posts data");
 

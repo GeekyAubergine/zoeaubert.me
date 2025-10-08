@@ -12,6 +12,7 @@ use crate::domain::models::data::Data;
 use crate::prelude::*;
 use crate::renderer::pages::blog_pages_renderer::render_blog_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
+use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
 use crate::services::page_renderer::PageRenderer;
 use tracing::debug;
 
@@ -39,6 +40,7 @@ pub async fn new_rendering_context_from_data(data: Data) -> Result<RendererConte
 pub async fn render_pages(context: &RendererContext) -> Result<()> {
     render_home_page(context).await?;
     render_blog_pages(context)?;
+    render_photo_pages(context)?;
 
     Ok(())
 }

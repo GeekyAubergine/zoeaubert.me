@@ -133,6 +133,7 @@ pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Rendera
     let show_next = pagination.current_index < last_index;
     let show_last = pagination.current_index < last_index - 1;
 
+
     maud! {
         div
             class="pagination"
@@ -143,75 +144,101 @@ pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Rendera
                     a
                         href=(pagination.previous.slug.relative_string())
                         class="previous" {
-                            ("〈")
-                        }
-                } @else {
-                    div
-                        class="spacer previous disabled"
-                        aria_disabled {
-                            p { ("〈") }
+                            ("Previous")
                         }
                 }
-                @if show_first {
-                    a
-                        href=(pagination.first.slug.relative_string())
-                        class="first" {
-                            (pagination.first.index)
-                        }
-                } @else {
-                    div class="spacer first" aria_hidden {}
-                }
-                @if show_previous {
-                    a
-                        href=(pagination.previous.slug.relative_string())
-                        class="previous" {
-                            (pagination.previous.index)
-                        }
-                } @else {
-                    div class="spacer previous" aria_hidden {}
-                }
-            }
-            a
-                href="#"
-                class="active"
-                aria_current="page" {
-                (pagination.current_index)
             }
             div class="right" {
                 @if show_next {
                     a
                         href=(pagination.next.slug.relative_string())
                         class="next" {
-                            (pagination.next.index)
-                    }
-                } @else {
-                    div class="spacer next" aria_hidden {}
-                }
-                @if show_last {
-                    a
-                        href=(pagination.last.slug.relative_string())
-                        class="last" {
-                            (pagination.last.index)
-                        }
-                } @else {
-                    div class="spacer last" aria_hidden {}
-                }
-                @if show_next {
-                    a
-                        href=(pagination.next.slug.relative_string())
-                        class="next" {
-                            ("〉")
-                    }
-                } @else {
-                    div
-                        class="spacer next disabled"
-                        aria_disabled {
-                            p { ("〉") }
+                            ("Next")
                         }
                 }
             }
         }
     }
+
+    // maud! {
+    //     div
+    //         class="pagination"
+    //         data-pagefind-ignore
+    //     {
+    //         div class="left" {
+    //             @if show_previous {
+    //                 a
+    //                     href=(pagination.previous.slug.relative_string())
+    //                     class="previous" {
+    //                         ("〈")
+    //                     }
+    //             } @else {
+    //                 div
+    //                     class="spacer previous disabled"
+    //                     aria_disabled {
+    //                         p { ("〈") }
+    //                     }
+    //             }
+    //             @if show_first {
+    //                 a
+    //                     href=(pagination.first.slug.relative_string())
+    //                     class="first" {
+    //                         (pagination.first.index)
+    //                     }
+    //             } @else {
+    //                 div class="spacer first" aria_hidden {}
+    //             }
+    //             @if show_previous {
+    //                 a
+    //                     href=(pagination.previous.slug.relative_string())
+    //                     class="previous" {
+    //                         (pagination.previous.index)
+    //                     }
+    //             } @else {
+    //                 div class="spacer previous" aria_hidden {}
+    //             }
+    //         }
+    //         a
+    //             href="#"
+    //             class="active"
+    //             aria_current="page" {
+    //             (pagination.current_index)
+    //         }
+    //         div class="right" {
+    //             @if show_next {
+    //                 a
+    //                     href=(pagination.next.slug.relative_string())
+    //                     class="next" {
+    //                         (pagination.next.index)
+    //                 }
+    //             } @else {
+    //                 div class="spacer next" aria_hidden {}
+    //             }
+    //             @if show_last {
+    //                 a
+    //                     href=(pagination.last.slug.relative_string())
+    //                     class="last" {
+    //                         (pagination.last.index)
+    //                     }
+    //             } @else {
+    //                 div class="spacer last" aria_hidden {}
+    //             }
+    //             @if show_next {
+    //                 a
+    //                     href=(pagination.next.slug.relative_string())
+    //                     class="next" {
+    //                         ("〉")
+    //                 }
+    //             } @else {
+    //                 div
+    //                     class="spacer next disabled"
+    //                     aria_disabled {
+    //                         p { ("〉") }
+    //                     }
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 fn render_page_base<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl Renderable + 'l {
@@ -399,8 +426,8 @@ pub fn render_page<'l>(
             @if let Some(pagination) = &page.page_pagination {
                 (render_pagination(pagination))
             }
-            (render_footer(&page))
         }
+        (render_footer(&page))
         @if let Some(scripts) = scripts {
             (scripts)
         }

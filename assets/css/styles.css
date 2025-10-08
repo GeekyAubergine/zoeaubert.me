@@ -48,6 +48,10 @@
     }
 }
 
+:root {
+    --article-vertical-margin: 0.75rem;
+}
+
 /* ---- Fonts ---- */
 @font-face {
     font-family: 'Atkinson Hyperlegible';
@@ -141,7 +145,7 @@
 }
 
 @utility centered-to-width {
-    @apply w-full mx-auto px-4 md:px-4;
+    @apply w-full mx-auto px-3 md:px-4;
 }
 
 @utility width-wide {
@@ -157,7 +161,7 @@
 }
 
 @utility article-spacing {
-    @apply my-4;
+    @apply my-[var(--article-vertical-margin)];
 }
 
 @utility prose {
@@ -183,7 +187,7 @@
     img,
     blockquote,
     table {
-        @apply article-spacing;
+        @apply my-[var(--article-vertical-margin)];
     }
 
     h2,
@@ -191,13 +195,13 @@
     h4,
     h5,
     h6 {
-        @apply mt-8 mb-0 max-w-[80%] overflow-clip;
+        @apply my-[calc(var(--article-vertical-margin)*4)] mb-0 max-w-[80%] overflow-clip;
     }
 
     h2 + h3,
     h3 + h4,
     h4 + h5 {
-        @apply mt-2;
+        @apply mt-[var(--article-vertical-margin)];
     }
 
     h2 + p,
@@ -206,15 +210,6 @@
     h5 + p {
         @apply mt-4;
     }
-
-    /*h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p {
-        @apply leading-6;
-    }*/
 
     h2 {
         @apply text-2xl md:text-3xl;
@@ -449,7 +444,7 @@ time {
 }
 
 .pagination {
-    @apply w-full flex-row items-center pt-16 pb-8;
+    @apply w-full flex-row justify-between pt-16 pb-8;
 
     .left,
     .right {
@@ -532,13 +527,13 @@ time {
         }
 
         &.header {
-            @apply items-center;
+            @apply items-center md:pt-24;
 
             .name-and-cursor {
-                @apply w-full flex-row justify-center items-baseline h-[6rem];
+                @apply w-full flex-row justify-center items-baseline h-[7.5rem];
 
                 h1 {
-                    @apply text-[3rem] md:text-[5rem] m-0 text-center w-auto;
+                    @apply text-[3rem] md:text-[6rem] m-0 text-center w-auto;
 
                     &::after {
                         content: '';
@@ -546,14 +541,14 @@ time {
                 }
 
                 .typing-cursor {
-                    @apply ml-[.01rem] h-[2.2rem] md:h-[3.5rem] mt-4 md:mt-6 border-r-2 border-text min-w-[1px];
+                    @apply ml-[.01rem] h-[2.2rem] md:h-[4rem] mt-4 md:mt-10 border-r-2 border-text min-w-[1px];
 
                     animation: blink 800ms linear infinite;
                 }
             }
 
             .about {
-                @apply prose width-narrow pt-8 pb-0 text-lg;
+                @apply prose width-narrow pt-8 pb-0 text-lg text-center;
             }
         }
 
@@ -591,7 +586,7 @@ time {
                     }
 
                     img {
-                        @apply aspect-square object-cover rounded-sm;
+                        @apply min-w-full aspect-square object-cover rounded-sm;
                     }
                 }
             }
@@ -643,4 +638,26 @@ time {
 
 .blog-post-page {
     @apply width-narrow;
+}
+
+.photos-page {
+    @apply width-wide;
+
+    h1 {
+        @apply full-stop;
+    }
+
+    ul.photos-list {
+        @apply grid grid-cols-2 gap-3 md:gap-2 md:grid-cols-5;
+
+        li {
+            a {
+                @apply no-underline;
+            }
+
+            img {
+                @apply min-w-full aspect-square object-cover rounded-sm;
+            }
+        }
+    }
 }

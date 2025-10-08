@@ -68,14 +68,7 @@ impl CdnFile {
             None => "".to_string(),
         };
 
-        let path = format!(
-            "{}/{}/{}{}.{}",
-            dotenv!("CACHE_DIR"),
-            date_str,
-            name,
-            suffix_str,
-            ext
-        );
+        let path = format!("{}/{}{}.{}", date_str, name, suffix_str, ext);
 
         Self::from_str(&path)
     }

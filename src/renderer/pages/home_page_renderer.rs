@@ -81,7 +81,7 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
             }
         } @else {
             li {
-                (photo.render_tiny())
+                (photo.render_small())
             }
         }
     }

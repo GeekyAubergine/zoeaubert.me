@@ -132,6 +132,8 @@ impl MediaService {
         let small_file = small_cdn_file.as_cache_file();
         let tiny_file = tiny_cdn_file.as_cache_file();
 
+        // dbg!(&cdn_file, &original_file);
+
         // If all exist, then don't process
         if original_file.exists()?
             && large_file.exists()?

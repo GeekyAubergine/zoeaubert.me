@@ -38,6 +38,8 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
 
     let start = Utc::now();
 
+    let mastodon = process_mastodon(ctx).await?;
+
     let games = process_games(ctx).await?;
 
     let now_text = process_now_text(ctx)?;
@@ -51,7 +53,6 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let micro_blog_archive = process_micro_blog_archive(ctx).await?;
     let lego = proces_lego(ctx).await?;
     let albums = process_albums(ctx).await?;
-    let mastodon = process_mastodon(ctx).await?;
     // let (
     //     games,
     //     now_text,
