@@ -232,13 +232,13 @@ pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
 
     let mut posts: MastodonPosts = file.read_json_or_default()?;
 
-    // if !ctx
-    //     .query_limiter
-    //     .can_query_within_fifteen_minutes(QUERY)
-    //     .await?
-    // {
-    //     return Ok(posts);
-    // }
+    if !ctx
+        .query_limiter
+        .can_query_within_fifteen_minutes(QUERY)
+        .await?
+    {
+        return Ok(posts);
+    }
 
     info!("Fetching mastodon posts data");
 

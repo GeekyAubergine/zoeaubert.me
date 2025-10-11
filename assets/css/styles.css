@@ -554,7 +554,7 @@ time {
 
         &.blog {
             .blog-post-list {
-                @apply grid grid-cols-1 gap-y-8 md:grid-cols-4 md:gap-x-4;
+                @apply grid grid-cols-1 gap-y-8 md:grid-cols-4 md:gap-x-6 lg:gap-x-4;
 
                 .blog-post-list-item {
                     .title-and-date {
