@@ -93,7 +93,7 @@ pub async fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
 
     let context: RendererContext = new_rendering_context_from_data(data).await?;
 
-    render_pages(&context).await?;
+    render_pages(&context)?;
 
     let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
 

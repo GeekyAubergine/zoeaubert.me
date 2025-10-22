@@ -14,6 +14,7 @@ use crate::domain::models::post::Post;
 use crate::domain::models::post::PostFilter;
 use crate::domain::models::slug::Link;
 use crate::domain::models::slug::Slug;
+use crate::domain::models::tag::Tag;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
 use crate::prelude::*;
 
@@ -32,6 +33,7 @@ use crate::renderer::RendererContext;
 use crate::services::file_service::ContentFile;
 
 const RECENT_POSTS_COUNT: usize = 5;
+const NOTES_BLOG_POST_TO_IGNORE: &str = "MonthlyNotes";
 
 fn blog_post<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     let title = maud! {
@@ -54,11 +56,20 @@ fn blog_posts<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
         .data
         .posts
         .find_all_by_filter_iter(PostFilter::BLOG_POST)
-        .take(4)
         .filter_map(|post| match post {
-            Post::BlogPost(post) => Some(post),
+            Post::BlogPost(post) => {
+                if post
+                    .tags
+                    .iter()
+                    .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
+                {
+                    return None;
+                }
+                return Some(post);
+            }
             _ => None,
         })
+        .take(4)
         .collect::<Vec<&BlogPost>>();
 
     maud! {
@@ -244,7 +255,7 @@ fn blog_posts_6<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
     }
 }
 
-pub async fn render_home_page(context: &RendererContext) -> Result<()> {
+pub fn render_home_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("/"), None, None);
     let slug = page.slug.clone();
 

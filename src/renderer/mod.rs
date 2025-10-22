@@ -2,24 +2,21 @@ use std::path::Path;
 use std::sync::Arc;
 
 use askama::Template;
-// use basic_pages::render_basic_pages;
-// use interest_pages::render_interest_pages;
-// use non_basic_pages::render_non_basic_pages;
-// use posts::render_post_pages;
-use tokio::try_join;
 
 use crate::domain::models::data::Data;
 use crate::prelude::*;
 use crate::renderer::pages::blog_pages_renderer::render_blog_pages;
+use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
 use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
+use crate::renderer::pages::post_pages_renderers::render_posts_pages;
+use crate::renderer::pages::timeline_pages_renderers::render_timeline_pages;
 use crate::services::page_renderer::PageRenderer;
 use tracing::debug;
 
 use crate::domain::models::page::Page;
 use crate::error::{FileSystemError, TemplateError};
 
-// pub mod basic_pages;
 pub mod formatters;
 
 pub mod pages;
@@ -37,10 +34,14 @@ pub async fn new_rendering_context_from_data(data: Data) -> Result<RendererConte
     })
 }
 
-pub async fn render_pages(context: &RendererContext) -> Result<()> {
-    render_home_page(context).await?;
+pub fn render_pages(context: &RendererContext) -> Result<()> {
+    render_home_page(context)?;
     render_blog_pages(context)?;
     render_photo_pages(context)?;
+    render_timeline_pages(context)?;
+    render_firehose_pages(context)?;
+
+    render_posts_pages(context)?;
 
     Ok(())
 }

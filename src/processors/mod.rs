@@ -53,35 +53,6 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let micro_blog_archive = process_micro_blog_archive(ctx).await?;
     let lego = proces_lego(ctx).await?;
     let albums = process_albums(ctx).await?;
-    // let (
-    //     games,
-    //     now_text,
-    //     about_text,
-    //     faq,
-    //     projects,
-    //     referrals,
-    //     silly_names,
-    //     blog_posts,
-    //     micro_posts,
-    //     micro_blog_archive,
-    //     lego,
-    //     albums,
-    //     mastodon,
-    // ) = try_join!(
-    //     process_games(ctx),
-    //     process_now_text(ctx),
-    //     process_about_text(ctx),
-    //     process_faq(ctx),
-    //     process_projects(ctx),
-    //     process_referrals(ctx),
-    //     process_silly_names(ctx),
-    //     process_blog_posts(ctx),
-    //     process_micro_posts(ctx),
-    //     process_micro_blog_archive(ctx),
-    //     proces_lego(ctx),
-    //     process_albums(ctx),
-    //     process_mastodon(ctx)
-    // )?;
 
     let mut micro_posts = micro_posts;
     micro_posts.extend(micro_blog_archive);

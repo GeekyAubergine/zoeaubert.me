@@ -30,10 +30,6 @@ pub fn render_blog_pages(context: &RendererContext) -> Result<()> {
 
     render_blog_posts_list_page(context, &posts)?;
 
-    for post in posts {
-        render_blog_post_page(context, &post)?;
-    }
-
     Ok(())
 }
 
@@ -79,29 +75,4 @@ pub fn render_blog_posts_list_page(context: &RendererContext, posts: &[&BlogPost
     }
 
     Ok(())
-}
-
-pub fn render_blog_post_page(context: &RendererContext, post: &BlogPost) -> Result<()> {
-    let content = maud! {
-        article {
-            (md(&post.content.to_html()))
-        }
-    };
-
-    let options = PageOptions::new().with_main_class("blog-post-page");
-
-    let page = Page::new(
-        post.slug.clone(),
-        Some(post.title.clone()),
-        Some(post.description.clone()),
-    )
-    .with_date(post.date)
-    .with_tags(post.tags.clone());
-    // .with_image(post.hero_image);
-
-    let rendered = render_page(&page, &options, &content, None);
-
-    context
-        .renderer
-        .render_page(&post.slug, &rendered, Some(post.date))
 }

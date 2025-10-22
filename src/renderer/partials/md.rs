@@ -1,7 +1,9 @@
 use hypertext::{prelude::*, Raw};
 
-pub fn md<'l>(md: &'l str) -> impl Renderable + 'l {
+use crate::renderer::formatters::format_markdown::FormatMarkdown;
+
+pub fn md<'l>(md: &'l impl FormatMarkdown) -> impl Renderable + 'l {
     maud! {
-        (Raw(&md))
+        (Raw(md.to_html()))
     }
 }
