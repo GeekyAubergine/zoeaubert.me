@@ -105,7 +105,7 @@ pub fn render_footer<'l>(page: &'l Page) -> impl Renderable + 'l {
             ul class="groups" {
                 @for group in &page.page_links {
                     li {
-                        h3 { (group.name) }
+                        p { (group.name) }
                         ul {
                             @for link in &group.links {
                                 li {

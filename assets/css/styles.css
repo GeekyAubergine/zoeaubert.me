@@ -395,7 +395,7 @@ footer {
     ul.groups {
         @apply width-middle my-8 grid grid-cols-2 md:grid-cols-4 gap-y-8;
 
-        h3 {
+        p {
             @apply text mt-0 font-bold text-2xl mb-2;
         }
 
@@ -703,13 +703,33 @@ time {
 }
 
 .tags-page {
-    @apply width-middle;
+    @apply width-narrow;
 
     h1 {
         @apply full-stop;
     }
 
     .tags-grid {
+        @apply grid grid-cols-1 gap-3;
+
+        li {
+            a {
+                @apply flex flex-row items-baseline no-underline text-lg;
+
+                .count {
+                    @apply ml-2 secondary no-underline!;
+                }
+
+                &:hover {
+                    .count {
+                        @apply no-underline!;
+                    }
+                }
+            }
+        }
+    }
+
+    /*.tags-grid {
         @apply grid grid-cols-1 md:grid-cols-3 gap-3;
 
         li {
@@ -731,9 +751,37 @@ time {
                 }
             }
         }
-    }
+    }*/
 }
 
 .tag-posts-page {
     @apply width-narrow;
+}
+
+.projects-page {
+    @apply width-middle;
+
+    h1 {
+        @apply full-stop;
+    }
+
+    ul {
+        @apply grid grid-cols-1 md:grid-cols-4 gap-8;
+
+        li {
+            @apply flex flex-col;
+
+            .name {
+                @apply text-2xl font-bold no-underline;
+            }
+
+            .image {
+                @apply items-center my-4 h-[8rem];
+
+                img {
+                    @apply max-h-[8rem] object-contain;
+                }
+            }
+        }
+    }
 }
