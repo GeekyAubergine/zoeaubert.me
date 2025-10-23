@@ -10,6 +10,7 @@ use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
 use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
 use crate::renderer::pages::post_pages_renderers::render_posts_pages;
+use crate::renderer::pages::tag_pages_renderers::render_tags_pages;
 use crate::renderer::pages::timeline_pages_renderers::render_timeline_pages;
 use crate::services::page_renderer::PageRenderer;
 use tracing::debug;
@@ -39,6 +40,7 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_blog_pages(context)?;
     render_photo_pages(context)?;
     render_timeline_pages(context)?;
+    render_tags_pages(context)?;
     render_firehose_pages(context)?;
 
     render_posts_pages(context)?;

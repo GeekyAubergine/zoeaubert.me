@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use url::Url;
 
 use crate::domain::models::image::Image;
 
@@ -81,6 +82,12 @@ impl Media {
     pub fn orientation(&self) -> MediaOrientation {
         match self {
             Media::Image(image) => image.orientation(),
+        }
+    }
+
+    pub fn original_cdn_url(&self) -> Url {
+        match self {
+            Media::Image(image) => image.original.file.as_cdn_url(),
         }
     }
 }

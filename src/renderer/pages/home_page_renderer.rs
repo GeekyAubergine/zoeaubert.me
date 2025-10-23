@@ -25,6 +25,7 @@ use crate::renderer::partials::bento::BentoBoxComponent;
 use crate::renderer::partials::bento::BentoBoxOptions;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::md;
+use crate::renderer::partials::md::MarkdownMediaOption;
 use crate::renderer::partials::page::render_page;
 use crate::renderer::partials::page::PageOptions;
 use crate::renderer::partials::tag::render_tags;
@@ -271,7 +272,7 @@ pub fn render_home_page(context: &RendererContext) -> Result<()> {
             }
             p { ("zo-e o-bear") }
             div class="about" {
-                (md(&context.data.about_text.short.to_html()))
+                (md(&context.data.about_text.short.to_html(), MarkdownMediaOption::NoMedia))
             }
         }
         section class="blog" {

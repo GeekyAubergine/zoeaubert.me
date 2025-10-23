@@ -8,7 +8,8 @@ use crate::domain::models::tag::Tag;
 use crate::prelude::*;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
-use crate::renderer::partials::md::md;
+use crate::renderer::partials::md::{md, MarkdownMediaOption};
+use crate::renderer::partials::media::{render_media_grid, MediaGripOptions};
 use crate::renderer::partials::tag::render_tags;
 use crate::renderer::partials::utils::link;
 use chrono::{DateTime, Utc};
@@ -58,23 +59,7 @@ fn render_post<'l>(
                 (content)
             }
             @if let Some(media) = &media {
-                @match media.len() {
-                    0 => {}
-                    1 => {
-                        div class="media" {
-                            (media.first().map(|e| e.render_small()))
-                        }
-                    }
-                    _ => {
-                        div class="media" {
-                            div class="media-grid" {
-                                @for element in media.iter().take(4) {
-                                    (element.render_small())
-                                }
-                            }
-                        }
-                    }
-                }
+                (render_media_grid(media, &MediaGripOptions::for_list()))
             }
             (render_tags(&tags, Some(5)))
         }
@@ -97,7 +82,7 @@ pub fn render_blog_post<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
 pub fn render_micro_post<'l>(post: &'l MicroPost) -> impl Renderable + 'l {
     let content = maud! {
         div class="prose" {
-            (md(&post.content()))
+            (md(&post.content(), MarkdownMediaOption::NoMedia))
         }
     };
 
@@ -113,7 +98,7 @@ pub fn render_micro_post<'l>(post: &'l MicroPost) -> impl Renderable + 'l {
 pub fn render_mastodon_post<'l>(post: &'l MastodonPost) -> impl Renderable + 'l {
     let content = maud! {
         div class="prose" {
-            (md(&post.content()))
+            (md(&post.content(), MarkdownMediaOption::NoMedia))
         }
     };
 

@@ -353,6 +353,18 @@ impl Posts {
             .unwrap_or_default()
     }
 
+    pub fn find_all_grouped_by_tag(&self, filter: PostFilter) -> HashMap<Tag, Vec<&Post>> {
+        let mut grouped = HashMap::new();
+
+        for post in self.find_all_by_filter_iter(filter) {
+            for tag in post.tags() {
+                grouped.entry(tag).or_insert_with(Vec::new).push(post);
+            }
+        }
+
+        grouped
+    }
+
     pub fn find_all_by_filter(&self, filter_flags: PostFilter) -> Vec<&Post> {
         self.find_all_by_date()
             .into_iter()
