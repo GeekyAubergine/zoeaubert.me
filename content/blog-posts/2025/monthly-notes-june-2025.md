@@ -63,3 +63,33 @@ Cycling clicked almost instantly with me. I bought the bike on the 12th and mana
 This has been unlike anything else I've tried so far. I _want_ to be on the bike. The sense of freedom and fun it provided was amazing. Just being able to go places and go for a long time without seeing the same old running routes has been amazing, especially since I don't drive.
 
 I already have big ideas and plans for me and cycling, I'm glad I decided to try this. I do worry about balancing cycling and running, but it'll be fun to see where this goes.
+
+## Hobbies
+
+### Gaming
+
+This month saw me try a bunch of games, and I've found a new favourite.
+
+#### 9 Kings
+
+https://zoeaubert.me/interests/games/2784470/
+
+This game has really tickled me. It's a rogue-like deck builder/city builder? I'm not sure how to explain it, but it's got just the right balance of strategy, while not being overly serious; it's good.
+
+#### Crash Bandicoot™️ N. Sane Trilogy
+
+https://zoeaubert.me/interests/games/731490/
+
+Many years back, when this game was released, it became the reason I ended up buying a PlayStation. I never ended up playing it that much, but boi, does this game hold a _lot_ of memories for me. It was by luck that I found it was available on PC, and it's been nice getting re-acquainted, even if I am still really bad at it.
+
+#### Slay the Spire
+
+https://zoeaubert.me/interests/games/646570/
+
+I get why people like this game. I'm not sure it's exactly for me, but it does seem like a lot of fun if it's your sort of thing.
+
+#### Tower Wizard
+
+https://zoeaubert.me/interests/games/3372980/
+
+A nice little idle game, but it feels like many of the others I've played recently, and it's not really working for me.
