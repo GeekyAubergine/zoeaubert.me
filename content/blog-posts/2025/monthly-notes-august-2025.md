@@ -1,5 +1,5 @@
 ---
-date: 2025-10-24T19:45
+date: 2025-09-03T22:07
 title: Monthly Notes - August 2025
 slug: monthly-notes-august-2025
 description: I ran faster, cycled further and went back to Jersey for a bit

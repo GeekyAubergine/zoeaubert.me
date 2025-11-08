@@ -1,5 +1,5 @@
 ---
-date: 2025-10-23T23:05
+date: 2025-07-03T23:05
 title: Monthly Notes - June 2025
 slug: monthly-notes-june-2025
 description: I ran my first race, I broke the 30-minute 5km barrier, and I bought a bike

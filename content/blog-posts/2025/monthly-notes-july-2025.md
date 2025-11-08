@@ -1,5 +1,5 @@
 ---
-date: 2025-10-24T19:42
+date: 2025-08-06T08:54
 title: Monthly Notes - July 2025
 slug: monthly-notes-july-2025
 description: I ran a cross country, cycled a silly amount and tried D&D
