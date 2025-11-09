@@ -136,6 +136,7 @@ impl From<&BunnyCdnFileResponse> for CdnFile {
     }
 }
 
+#[derive(Debug)]
 pub struct CdnService {
     reqwest_client: reqwest::Client,
     existing_folders_cache: Arc<RwLock<HashSet<CdnFile>>>,

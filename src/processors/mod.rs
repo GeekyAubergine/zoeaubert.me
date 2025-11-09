@@ -12,6 +12,7 @@ use crate::{
         mastodon::process_mastodon, micro_blog_archive::process_micro_blog_archive,
         micro_posts::process_micro_posts, now_text::process_now_text, projects::process_projects,
         referrals::process_referrals, silly_names::process_silly_names,
+        source_posts::process_source_posts,
     },
     services::{file_service::FileService, network_service::NetworkService2, ServiceContext},
 };
@@ -32,6 +33,11 @@ pub mod now_text;
 pub mod projects;
 pub mod referrals;
 pub mod silly_names;
+pub mod source_posts;
+
+const MOVIE_REVIEW_POST_TAG: &str = "Movies";
+const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
+const BOOK_REVIEW_POST_TAG: &str = "Books";
 
 pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     info!("Processing data");
@@ -57,7 +63,14 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let mut micro_posts = micro_posts;
     micro_posts.extend(micro_blog_archive);
 
-    let posts = extract_posts(ctx, blog_posts, micro_posts, &mastodon, &albums, &games).await?;
+    let source_posts = process_source_posts(ctx, blog_posts, micro_posts, &mastodon).await?;
+
+    let generated_posts = extract_posts(ctx, &albums, &games).await?;
+
+    let mut posts = vec![];
+
+    posts.extend(source_posts);
+    posts.extend(generated_posts);
 
     let posts = Posts::from_posts(posts);
 

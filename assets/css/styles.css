@@ -455,6 +455,10 @@ time {
             @apply mx-1;
         }
     }
+
+    img {
+        @apply max-h-[24rem] object-contain mt-3 mb-6;
+    }
 }
 
 .pagination {
@@ -495,6 +499,18 @@ time {
 .post-list {
     & > li {
         @apply flex flex-col w-full;
+
+        &.left-right {
+            @apply flex-row;
+
+            .left {
+                @apply flex-1;
+            }
+
+            .right {
+                @apply w-[12rem] ml-4;
+            }
+        }
 
         .date {
             @apply no-underline;
@@ -663,7 +679,8 @@ time {
 
 .blog-post-page,
 .micro-post-page,
-.mastodon-post-page {
+.mastodon-post-page,
+.book-review-post-page {
     @apply width-narrow;
 
     .original-link {

@@ -2,7 +2,7 @@ use std::option;
 
 use crate::{
     build_data::BUILD_DATE,
-    domain::models::{page::PagePaginationData, site_config::SITE_CONFIG, tag::Tag},
+    domain::models::{image::Image, page::PagePaginationData, site_config::SITE_CONFIG, tag::Tag},
     prelude::*,
     renderer::{
         formatters::format_date::FormatDate,
@@ -132,7 +132,6 @@ pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Rendera
 
     let show_next = pagination.current_index < last_index;
     let show_last = pagination.current_index < last_index - 1;
-
 
     maud! {
         div
@@ -319,6 +318,7 @@ pub struct PageOptions<'l> {
     width: PageWidth,
     main_class: Option<&'l str>,
     use_date_as_title: bool,
+    image: Option<&'l Image>
 }
 
 impl<'l> PageOptions<'l> {
@@ -327,6 +327,7 @@ impl<'l> PageOptions<'l> {
             width: PageWidth::Narrow,
             main_class: None,
             use_date_as_title: false,
+            image: None,
         }
     }
 
@@ -344,6 +345,11 @@ impl<'l> PageOptions<'l> {
         self.use_date_as_title = true;
         self
     }
+
+    pub fn with_image(mut self, image: &'l Image) -> Self {
+        self.image = Some(image);
+        self
+    }
 }
 
 enum HeaderData<'l> {
@@ -351,10 +357,12 @@ enum HeaderData<'l> {
         title: String,
         date: Option<&'l DateTime<Utc>>,
         tags: &'l Vec<Tag>,
+        image: Option<&'l Image>,
     },
     Date {
         date: &'l DateTime<Utc>,
         tags: &'l Vec<Tag>,
+        image: Option<&'l Image>,
     },
     None,
 }
@@ -366,6 +374,7 @@ impl<'l> HeaderData<'l> {
                 Some(date) => HeaderData::Date {
                     date: date,
                     tags: &page.tags,
+                    image: options.image,
                 },
                 None => HeaderData::None,
             };
@@ -376,8 +385,28 @@ impl<'l> HeaderData<'l> {
                 title: title.clone(),
                 date: page.date(),
                 tags: &page.tags,
+                image: options.image,
             },
             None => HeaderData::None,
+        }
+    }
+
+    pub fn with_image(self, image: &'l Image) -> Self {
+        match self {
+            HeaderData::Title {
+                title, date, tags, ..
+            } => HeaderData::Title {
+                title: title,
+                date: date,
+                tags: tags,
+                image: Some(image),
+            },
+            HeaderData::Date { date, tags, .. } => HeaderData::Date {
+                date,
+                tags,
+                image: Some(image),
+            },
+            HeaderData::None => HeaderData::None,
         }
     }
 }
@@ -385,18 +414,24 @@ impl<'l> HeaderData<'l> {
 fn render_header<'l>(data: &'l HeaderData<'l>) -> impl Renderable + 'l {
     maud! {
         @match &data {
-            HeaderData::Title { title, date, tags } => {
+            HeaderData::Title { title, date, tags, image } => {
                 div class="page-header" {
                     h1 { (title) }
+                    @if let Some(image) = image {
+                        (image.render_large())
+                    }
                     @if let Some(date) = &date {
                         (render_date(date))
                     }
                     (render_tags(tags, None))
                 }
             }
-            HeaderData::Date { date, tags } => {
+            HeaderData::Date { date, tags, image } => {
                 div class="page-header" {
                     h1 { (render_date(date)) }
+                    @if let Some(image) = image {
+                        (image.render_large())
+                    }
                     (render_tags(tags, None))
                 }
             }

@@ -1,5 +1,5 @@
 use serde::de::DeserializeOwned;
-use tracing::debug;
+use tracing::{debug, instrument};
 use url::Url;
 
 use crate::{
@@ -10,6 +10,7 @@ use crate::{
     prelude::*,
 };
 
+#[derive(Debug)]
 pub struct NetworkService2 {
     client: reqwest::Client,
 }
@@ -21,6 +22,11 @@ impl NetworkService2 {
         }
     }
 
+    #[instrument(
+        skip_all,
+        fields(method = "GET", url = %url),
+        err
+    )]
     pub async fn download_response(&self, url: &Url) -> Result<reqwest::Response> {
         debug!("Making request to: {}", url);
 
@@ -34,6 +40,11 @@ impl NetworkService2 {
         Ok(resp)
     }
 
+    #[instrument(
+        skip_all,
+        fields(method = "GET", url = %url),
+        err
+    )]
     pub async fn download_json<J>(&self, url: &Url) -> Result<J>
     where
         J: DeserializeOwned,
@@ -45,6 +56,11 @@ impl NetworkService2 {
         Ok(json)
     }
 
+    #[instrument(
+        skip_all,
+        fields(method = "GET", url = %url),
+        err
+    )]
     pub async fn download_bytes(&self, url: &Url) -> Result<Vec<u8>> {
         let resp = self.download_response(url).await?;
 

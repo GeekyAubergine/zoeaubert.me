@@ -22,6 +22,7 @@ pub struct QueryLimitingData {
     queries: HashMap<String, DateTime<Utc>>,
 }
 
+#[derive(Debug)]
 pub struct QueryLimitingService2 {
     file: ArchiveFile,
     data: Arc<RwLock<QueryLimitingData>>,

@@ -144,9 +144,9 @@ impl Post {
             Self::AlbumPhoto { photo, .. } => photo.tags.clone(),
             Self::Album(_) => vec![], // Don't want it in search
             Self::SteamAcheivementUnlocked { .. } => vec![], // Doesn't have tags
-            Self::MovieReview(review) => review.source_content.tags(),
-            Self::TvShowReview(review) => review.source_content.tags(),
-            Self::BookReview(review) => review.source_content.tags(),
+            Self::MovieReview(review) => review.source_content.tags().clone(),
+            Self::TvShowReview(review) => review.source_content.tags().clone(),
+            Self::BookReview(review) => review.source_content.tags().clone(),
         }
     }
 

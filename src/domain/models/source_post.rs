@@ -57,11 +57,11 @@ impl SourcePost {
         }
     }
 
-    pub fn tags(&self) -> Vec<Tag> {
+    pub fn tags(&self) -> &Vec<Tag> {
         match self {
-            Self::BlogPost(blog_post) => blog_post.tags.clone(),
-            Self::MicroPost(micro_post) => micro_post.tags.clone(),
-            Self::MastodonPost(mastodon_post) => mastodon_post.tags().clone(),
+            Self::BlogPost(blog_post) => &blog_post.tags,
+            Self::MicroPost(micro_post) => &micro_post.tags,
+            Self::MastodonPost(mastodon_post) => &mastodon_post.tags(),
         }
     }
 

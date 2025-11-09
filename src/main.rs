@@ -26,6 +26,8 @@ use dotenvy_macro::dotenv;
 use error::FileSystemError;
 use tasks::render_site::render_site;
 use tracing::{info, Level};
+use tracing_appender::rolling;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 use crate::{prelude::*, processors::process_data, services::ServiceContext};
 
@@ -50,7 +52,27 @@ enum Commands {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt().with_max_level(Level::INFO).init();
+    let filter = EnvFilter::new("info,zoeaubert_website=info");
+
+    let file = rolling::daily("logs", "logs.json");
+    let (file_writer, _guard) = tracing_appender::non_blocking(file);
+
+    let json = tracing_subscriber::fmt::layer()
+        .json()
+        .with_current_span(true)
+        .with_span_list(true)
+        .with_file(true)
+        .with_line_number(true)
+        .with_target(true)
+        .with_writer(file_writer);
+
+    let console = tracing_subscriber::fmt::layer().pretty().with_target(false);
+
+    tracing_subscriber::registry()
+        .with(filter)
+        .with(json)
+        .with(console)
+        .init();
 
     let args = Args::parse();
 

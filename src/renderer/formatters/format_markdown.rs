@@ -4,7 +4,7 @@ use comrak::{ListStyleType, Options};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use syntect::{easy::HighlightLines, parsing::SyntaxSet};
-use tracing::error;
+use tracing::{error, warn};
 
 static MEDIA_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#"\!\[.*?\]\(.*?\)"#).unwrap());
 static MEDIA_HTML_REGEX: Lazy<Regex> = Lazy::new(|| {
@@ -107,7 +107,7 @@ fn highlight_code_block_capture(caps: &regex::Captures) -> Result<String> {
     let syntax = SYNTAX_SET
         .find_syntax_by_extension(lang)
         .unwrap_or_else(|| {
-            error!("Syntax not found for {}", lang);
+            warn!("Syntax not found for {}", lang);
             SYNTAX_SET.find_syntax_plain_text()
         });
 

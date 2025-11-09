@@ -1,6 +1,7 @@
 use hypertext::prelude::*;
 
 use crate::domain::models::blog_post::{self, BlogPost};
+use crate::domain::models::book::BookReview;
 use crate::domain::models::mastodon_post::MastodonPost;
 use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::page::Page;
@@ -35,6 +36,7 @@ pub fn render_post_page(context: &RendererContext, post: &Post) -> Result<()> {
         Post::BlogPost(post) => render_blog_post_page(context, post),
         Post::MicroPost(post) => render_micro_post_page(context, post),
         Post::MastodonPost(post) => render_mastodon_post_page(context, post),
+        Post::BookReview(review) => render_book_review_page(context, review),
         _ => Ok(()),
     }
 }
@@ -114,4 +116,29 @@ pub fn render_mastodon_post_page(context: &RendererContext, post: &MastodonPost)
     context
         .renderer
         .render_page(&post.slug(), &rendered, Some(post.created_at().clone()))
+}
+
+pub fn render_book_review_page(context: &RendererContext, review: &BookReview) -> Result<()> {
+    let content = maud! {
+        article {
+            (md(&review.source_content.content(), md::MarkdownMediaOption::NoMedia))
+        }
+    };
+
+    let options = PageOptions::new()
+        .with_main_class("book-review-post-page")
+        .use_date_as_title()
+        .with_image(&review.book.cover);
+
+    let page = Page::new(review.source_content.slug().clone(), None, None)
+        .with_date(review.source_content.date().clone())
+        .with_tags(review.source_content.tags().clone());
+
+    let rendered = render_page(&page, &options, &content, None);
+
+    context.renderer.render_page(
+        &review.source_content.slug(),
+        &rendered,
+        Some(review.source_content.date().clone()),
+    )
 }

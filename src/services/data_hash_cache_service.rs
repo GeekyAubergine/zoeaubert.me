@@ -42,6 +42,7 @@ pub struct HashCache {
     hashes: HashMap<String, u64>,
 }
 
+#[derive(Debug)]
 pub struct ContentHashService {
     file: ArchiveFile,
     data: Arc<RwLock<HashCache>>,
