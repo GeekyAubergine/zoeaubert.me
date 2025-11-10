@@ -100,7 +100,7 @@ async fn process_file(ctx: &ServiceContext, file: ContentFile, content: &str) ->
     Ok(micro_post)
 }
 
-pub async fn process_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
+pub async fn load_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
     info!("Processing micro posts");
 
     let files = FileService::content(MICRO_POSTS_DIR.into()).find_files_recursive("md")?;

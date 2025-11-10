@@ -1,8 +1,10 @@
-pub mod blog_pages_renderer;
-pub mod home_page_renderer;
-pub mod photo_pages_renderer;
-pub mod timeline_pages_renderers;
-pub mod post_pages_renderers;
+pub mod blog_pages_renderers;
 pub mod firehose_pages_renderers;
-pub mod tag_pages_renderers;
+pub mod home_page_renderer;
+pub mod micro_post_pages_renderers;
+pub mod photo_pages_renderer;
 pub mod project_pages_renderers;
+pub mod tag_pages_renderers;
+pub mod timeline_pages_renderers;
+pub mod mastodon_post_pages_renderers;
+pub mod book_review_pages_renderers;

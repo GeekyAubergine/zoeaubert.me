@@ -2,7 +2,6 @@ use hypertext::prelude::*;
 
 use crate::domain::models::blog_post::{self, BlogPost};
 use crate::domain::models::page::Page;
-use crate::domain::models::post::{Post, PostFilter};
 use crate::domain::models::slug::Slug;
 use crate::prelude::*;
 use crate::renderer::formatters::format_date::FormatDate;
@@ -10,7 +9,7 @@ use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
-use crate::renderer::partials::post_list::render_posts_list;
+use crate::renderer::partials::timline_events_list::render_timline_events_list;
 use crate::renderer::partials::tag::render_tags;
 use crate::renderer::partials::utils::link;
 use crate::renderer::RendererContext;

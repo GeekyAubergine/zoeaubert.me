@@ -121,10 +121,10 @@ impl MastodonPost {
         }
     }
 
-    pub fn media(&self) -> Vec<Media> {
+    pub fn media(&self) -> &Vec<Media> {
         match self {
-            MastodonPost::NonSpoiler(post) => post.media.clone(),
-            MastodonPost::Spoiler(post) => post.media.clone(),
+            MastodonPost::NonSpoiler(post) => &post.media,
+            MastodonPost::Spoiler(post) => &post.media,
         }
     }
 
@@ -218,6 +218,10 @@ impl MastodonPosts {
         posts.sort_by(|a, b| b.updated_at().cmp(a.updated_at()));
 
         posts
+    }
+
+    pub fn posts_hash(&self) -> &HashMap<String, MastodonPost> {
+        &self.mastodon_posts
     }
 
     pub fn count(&self) -> usize {

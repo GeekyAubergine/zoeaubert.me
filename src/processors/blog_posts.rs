@@ -103,7 +103,7 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) ->
     }
 }
 
-pub async fn process_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
+pub async fn load_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
     info!("Processing Blog Posts");
 
     let blog_posts_files =

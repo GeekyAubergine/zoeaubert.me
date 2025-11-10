@@ -31,7 +31,7 @@ struct ProjectsFile {
     projects: Vec<FileProject>,
 }
 
-pub async fn process_projects(ctx: &ServiceContext) -> Result<Projects> {
+pub async fn load_projects(ctx: &ServiceContext) -> Result<Projects> {
     info!("Processing Projects");
     let mut projects: Projects = Projects::new();
 

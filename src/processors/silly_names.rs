@@ -16,7 +16,7 @@ pub struct SillyNamesFileRecord {
     pub creator: Option<String>,
 }
 
-pub fn process_silly_names(ctx: &ServiceContext) -> Result<SillyNames> {
+pub fn load_silly_names(ctx: &ServiceContext) -> Result<SillyNames> {
     let silly_names: Vec<SillyNamesFileRecord> =
         FileService::content(FILE_NAME.into()).read_csv()?;
 

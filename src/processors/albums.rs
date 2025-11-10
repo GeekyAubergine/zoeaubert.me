@@ -103,7 +103,7 @@ pub async fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Al
     Ok(album)
 }
 
-pub async fn process_albums(ctx: &ServiceContext) -> Result<Albums> {
+pub async fn load_albums(ctx: &ServiceContext) -> Result<Albums> {
     let files = FileService::content(ALBUMS_POSTS_DIR.into()).find_files_recursive("yml")?;
 
     let mut albums = Albums::default();

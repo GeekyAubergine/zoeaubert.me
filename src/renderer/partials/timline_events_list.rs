@@ -1,11 +1,12 @@
 use crate::domain::models::blog_post::BlogPost;
-use crate::domain::models::book::BookReview;
+use crate::domain::models::book::{Book};
 use crate::domain::models::mastodon_post::MastodonPost;
 use crate::domain::models::media::{Media, MediaDimensions};
 use crate::domain::models::micro_post::MicroPost;
-use crate::domain::models::post::Post;
+use crate::domain::models::review::book_review::BookReview;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
+use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
@@ -20,16 +21,17 @@ use hypertext::prelude::*;
 use crate::domain::models::image::{Image, SizedImage};
 use crate::renderer::{render_template, TemplateRenderResult};
 
-pub fn render_posts_list<'l>(posts: &'l [&Post]) -> impl Renderable + 'l {
+pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Renderable + 'l {
     maud! {
-        ul class="post-list" {
-            @for post in posts {
-                @match post {
-                    Post::BlogPost(post) => (render_blog_post(post)),
-                    Post::MicroPost(post) => (render_micro_post(post)),
-                    Post::MastodonPost(post) => (render_mastodon_post(post)),
-                    Post::BookReview(review) => (render_book_review(review)),
-                    _ => {}
+        ul class="timeline-events-list" {
+            @for event in events {
+                @match event {
+                    TimelineEvent::Post(event) => @match event {
+                        TimelineEventPost::BlogPost(post) => (render_blog_post(post)),
+                        TimelineEventPost::MicroPost(post) => (render_micro_post(post))
+                        TimelineEventPost::MastodonPost(post) => (render_mastodon_post(post)),
+                    },
+                    TimelineEvent::BookReview { review, book } => (render_book_review(review, book)),
                 }
                 hr;
             }
@@ -136,25 +138,25 @@ pub fn render_mastodon_post<'l>(post: &'l MastodonPost) -> impl Renderable + 'l 
         post.slug(),
         post.created_at(),
         content,
-        Some(post.media()),
+        Some(post.media().clone()),
         post.tags(),
         None,
     )
 }
 
-pub fn render_book_review<'l>(review: &'l BookReview) -> impl Renderable + 'l {
+pub fn render_book_review<'l>(review: &'l BookReview, book: &'l Book) -> impl Renderable + 'l {
     let content = maud! {
         div class="prose" {
-            (md(&review.source_content.content(), MarkdownMediaOption::NoMedia))
+            (md(&review.source.content(), MarkdownMediaOption::NoMedia))
         }
     };
 
     render_post(
-        review.source_content.slug(),
-        review.source_content.date(),
+        review.source.slug(),
+        review.source.date(),
         content,
         None,
-        review.source_content.tags(),
-        Some(&review.book.cover),
+        review.source.tags(),
+        Some(&book.cover),
     )
 }

@@ -227,7 +227,7 @@ async fn mastodon_status_to_post(
     Ok(Some(post))
 }
 
-pub async fn process_mastodon(ctx: &ServiceContext) -> Result<MastodonPosts> {
+pub async fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> {
     let file = FileService::archive(FILE_NAME.into());
 
     let mut posts: MastodonPosts = file.read_json_or_default()?;

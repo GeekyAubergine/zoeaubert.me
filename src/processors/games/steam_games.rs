@@ -380,7 +380,7 @@ async fn process_game(
     Ok(game)
 }
 
-pub async fn process_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
+pub async fn load_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
     let file = FileService::archive(FILE_NAME.into());
 
     let mut data: SteamGames = file.read_json_or_default()?;

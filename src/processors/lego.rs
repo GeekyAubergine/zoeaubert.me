@@ -113,7 +113,7 @@ fn make_get_minifig_url(hash: &str) -> Url {
     .unwrap()
 }
 
-pub async fn proces_lego(ctx: &ServiceContext) -> Result<Lego> {
+pub async fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
     if !ctx.query_limiter.can_query_within_day(QUERY_KEY).await? {
         let existing: Lego = FileService::archive(STORE.into()).read_json_or_default()?;
         return Ok(existing);

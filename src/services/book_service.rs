@@ -7,16 +7,13 @@ use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, instrument, warn};
 use url::Url;
 
-use crate::domain::models::book::{Book, BookID, BookReview};
-use crate::domain::models::post::Post;
-use crate::domain::models::source_post::SourcePost;
+use crate::domain::models::book::{Book, BookID};
 use crate::error::BookError;
 use crate::prelude::*;
 
 use crate::services::cdn_service::CdnFile;
 use crate::services::file_service::{ArchiveFile, FileService, ReadableFile, WritableFile};
 use crate::services::media_service::MediaService;
-use crate::utils::parse_content_into_book_review::parse_content_into_book_review;
 use crate::{domain::models::tag::Tag, services::ServiceContext};
 
 const FILE_NAME: &str = "book_cache.json";

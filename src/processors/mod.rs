@@ -2,17 +2,16 @@ use std::process::exit;
 
 use chrono::Utc;
 use tokio::try_join;
-use tracing::info;
+use tracing::{info, instrument};
 
 use crate::{
-    domain::models::{data::Data, post::Posts},
+    domain::models::data::Data,
     processors::{
-        about_text::process_about_text, albums::process_albums, blog_posts::process_blog_posts,
-        extract_posts::extract_posts, faq::process_faq, games::process_games, lego::proces_lego,
-        mastodon::process_mastodon, micro_blog_archive::process_micro_blog_archive,
-        micro_posts::process_micro_posts, now_text::process_now_text, projects::process_projects,
-        referrals::process_referrals, silly_names::process_silly_names,
-        source_posts::process_source_posts,
+        about_text::load_about_text, albums::load_albums, blog_posts::load_blog_posts,
+        faq::load_faq, games::load_games, lego::load_lego, mastodon::load_mastodon_posts,
+        micro_blog_archive::load_micro_blog_archive, micro_posts::load_micro_posts,
+        now_text::load_now_text, projects::load_projects, referrals::load_referrals,
+        silly_names::load_silly_names, timeline_events::process_timeline_events,
     },
     services::{file_service::FileService, network_service::NetworkService2, ServiceContext},
 };
@@ -22,7 +21,6 @@ use crate::prelude::*;
 pub mod about_text;
 pub mod albums;
 pub mod blog_posts;
-pub mod extract_posts;
 pub mod faq;
 pub mod games;
 pub mod lego;
@@ -33,50 +31,51 @@ pub mod now_text;
 pub mod projects;
 pub mod referrals;
 pub mod silly_names;
-pub mod source_posts;
+pub mod timeline_events;
 
 const MOVIE_REVIEW_POST_TAG: &str = "Movies";
 const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
 const BOOK_REVIEW_POST_TAG: &str = "Books";
 
+#[instrument(skip_all)]
 pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
-    info!("Processing data");
+    info!("Processing data | Start");
 
     let start = Utc::now();
 
-    let mastodon = process_mastodon(ctx).await?;
+    let mastodon = load_mastodon_posts(ctx).await?;
 
-    let games = process_games(ctx).await?;
+    let games = load_games(ctx).await?;
 
-    let now_text = process_now_text(ctx)?;
-    let about_text = process_about_text(ctx)?;
-    let faq = process_faq(ctx)?;
-    let projects = process_projects(ctx).await?;
-    let referrals = process_referrals(ctx)?;
-    let silly_names = process_silly_names(ctx)?;
-    let blog_posts = process_blog_posts(ctx).await?;
-    let micro_posts = process_micro_posts(ctx).await?;
-    let micro_blog_archive = process_micro_blog_archive(ctx).await?;
-    let lego = proces_lego(ctx).await?;
-    let albums = process_albums(ctx).await?;
+    let now_text = load_now_text(ctx)?;
+    let about_text = load_about_text(ctx)?;
+    let faq = load_faq(ctx)?;
+    let projects = load_projects(ctx).await?;
+    let referrals = load_referrals(ctx)?;
+    let silly_names = load_silly_names(ctx)?;
+    let blog_posts = load_blog_posts(ctx).await?;
+    let micro_posts = load_micro_posts(ctx).await?;
+    let micro_blog_archive = load_micro_blog_archive(ctx).await?;
+    let lego = load_lego(ctx).await?;
+    let albums = load_albums(ctx).await?;
 
     let mut micro_posts = micro_posts;
     micro_posts.extend(micro_blog_archive);
 
-    let source_posts = process_source_posts(ctx, blog_posts, micro_posts, &mastodon).await?;
+    info!(
+        "Processing data | Load | Done [{}ms]",
+        (Utc::now() - start).num_milliseconds()
+    );
 
-    let generated_posts = extract_posts(ctx, &albums, &games).await?;
+    let start = Utc::now();
 
-    let mut posts = vec![];
-
-    posts.extend(source_posts);
-    posts.extend(generated_posts);
-
-    let posts = Posts::from_posts(posts);
+    // TODO extract albums and games
+    let timeline_events = process_timeline_events(ctx, blog_posts, micro_posts, mastodon).await;
 
     info!(
-        "Processing data - done [{}ms]",
-        (Utc::now() - start).num_milliseconds()
+        "Processing data | Process Timeline | [{}ms] - Events: {}",
+        (Utc::now() - start).num_milliseconds(),
+        timeline_events.all_by_date().len(),
     );
 
     Ok(Data {
@@ -87,8 +86,8 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
         now_text,
         lego,
         games,
-        posts,
         albums,
         projects,
+        timeline_events,
     })
 }

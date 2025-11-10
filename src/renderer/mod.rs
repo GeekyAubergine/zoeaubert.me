@@ -5,11 +5,13 @@ use askama::Template;
 
 use crate::domain::models::data::Data;
 use crate::prelude::*;
-use crate::renderer::pages::blog_pages_renderer::render_blog_pages;
+use crate::renderer::pages::blog_pages_renderers::render_blog_pages;
+use crate::renderer::pages::book_review_pages_renderers::render_book_review_pages;
 use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
+use crate::renderer::pages::mastodon_post_pages_renderers::render_mastodon_pages;
+use crate::renderer::pages::micro_post_pages_renderers::render_micro_post_pages;
 use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
-use crate::renderer::pages::post_pages_renderers::render_posts_pages;
 use crate::renderer::pages::project_pages_renderers::render_project_pages;
 use crate::renderer::pages::tag_pages_renderers::render_tags_pages;
 use crate::renderer::pages::timeline_pages_renderers::render_timeline_pages;
@@ -39,13 +41,14 @@ pub async fn new_rendering_context_from_data(data: Data) -> Result<RendererConte
 pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_home_page(context)?;
     render_blog_pages(context)?;
+    render_micro_post_pages(context)?;
+    render_mastodon_pages(context)?;
     render_photo_pages(context)?;
     render_timeline_pages(context)?;
     render_tags_pages(context)?;
     render_firehose_pages(context)?;
     render_project_pages(context)?;
-
-    render_posts_pages(context)?;
+    render_book_review_pages(context)?;
 
     Ok(())
 }

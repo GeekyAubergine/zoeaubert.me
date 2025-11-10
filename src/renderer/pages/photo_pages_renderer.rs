@@ -4,8 +4,8 @@ use crate::domain::models::blog_post::{self, BlogPost};
 use crate::domain::models::image::Image;
 use crate::domain::models::media::Media;
 use crate::domain::models::page::Page;
-use crate::domain::models::post::{Post, PostFilter};
 use crate::domain::models::slug::Slug;
+use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
@@ -22,14 +22,23 @@ const PAGINATION_SIZE: usize = 40;
 pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
     let photos = context
         .data
-        .posts
-        .find_all_by_filter_iter(PostFilter::filter_photos_page())
-        .flat_map(|post| post.media())
+        .timeline_events
+        .all_by_date()
+        .iter()
+        .filter_map(|event| match event {
+            TimelineEvent::Post(post) => match post {
+                TimelineEventPost::BlogPost(_) => None,
+                TimelineEventPost::MicroPost(post) => Some(post.media()),
+                TimelineEventPost::MastodonPost(post) => Some(post.media()),
+            },
+            TimelineEvent::BookReview { .. } => None,
+        })
+        .flatten()
         .filter_map(|media| match media {
             Media::Image(image) => Some(image),
             _ => None,
         })
-        .collect::<Vec<Image>>();
+        .collect::<Vec<&Image>>();
 
     render_photos_list_page(context, &photos)?;
 
@@ -50,7 +59,7 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
     }
 }
 
-pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> Result<()> {
+pub fn render_photos_list_page(context: &RendererContext, photos: &[&Image]) -> Result<()> {
     let paginated = paginate(&photos, PAGINATION_SIZE);
 
     let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);

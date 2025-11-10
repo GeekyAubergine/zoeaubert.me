@@ -2,8 +2,8 @@ use hypertext::prelude::*;
 
 use crate::domain::models::blog_post::{self, BlogPost};
 use crate::domain::models::page::Page;
-use crate::domain::models::post::{Post, PostFilter};
 use crate::domain::models::slug::Slug;
+use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
@@ -20,15 +20,23 @@ const PAGINATION_SIZE: usize = 25;
 pub fn render_blog_pages(context: &RendererContext) -> Result<()> {
     let posts = context
         .data
-        .posts
-        .find_all_by_filter_iter(PostFilter::BLOG_POST)
-        .filter_map(|post| match post {
-            Post::BlogPost(post) => Some(post),
+        .timeline_events
+        .all_by_date()
+        .iter()
+        .filter_map(|event| match event {
+            TimelineEvent::Post(post) => match post {
+                TimelineEventPost::BlogPost(post) => Some(post),
+                _ => None,
+            },
             _ => None,
         })
         .collect::<Vec<&BlogPost>>();
 
     render_blog_posts_list_page(context, &posts)?;
+
+    for post in posts {
+        render_blog_post_page(context, post)?;
+    }
 
     Ok(())
 }
@@ -75,4 +83,29 @@ pub fn render_blog_posts_list_page(context: &RendererContext, posts: &[&BlogPost
     }
 
     Ok(())
+}
+
+pub fn render_blog_post_page(context: &RendererContext, post: &BlogPost) -> Result<()> {
+    let content = maud! {
+        article {
+            (md(&post.content, md::MarkdownMediaOption::WithMedia))
+        }
+    };
+
+    let options = PageOptions::new().with_main_class("blog-post-page");
+
+    let page = Page::new(
+        post.slug.clone(),
+        Some(post.title.clone()),
+        Some(post.description.clone()),
+    )
+    .with_date(post.date)
+    .with_tags(post.tags.clone());
+    // .with_image(post.hero_image); TODO
+
+    let rendered = render_page(&page, &options, &content, None);
+
+    context
+        .renderer
+        .render_page(&post.slug, &rendered, Some(post.date))
 }

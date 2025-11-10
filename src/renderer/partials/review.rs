@@ -1,15 +1,15 @@
-use crate::{domain::models::slug::Link, prelude::*, renderer::partials::utils::link};
+use crate::{domain::models::{slug::Link, timeline_event::TimelineEvent}, prelude::*, renderer::partials::utils::link};
 use hypertext::prelude::*;
 use url::Url;
 
-use crate::domain::models::{image::Image, post::Post};
+use crate::domain::models::image::Image;
 
 pub struct RenderableReviewPageHeader<'l> {
     title: &'l str,
     external_link: Option<&'l Url>,
     image: &'l Image,
     average_score: f32,
-    reveiws: &'l [&'l Post],
+    reveiws: &'l [&'l TimelineEvent],
 }
 
 impl<'l> RenderableReviewPageHeader<'l> {
@@ -18,7 +18,7 @@ impl<'l> RenderableReviewPageHeader<'l> {
         external_link: Option<&'l Url>,
         image: &'l Image,
         average_score: f32,
-        reveiws: &'l [&'l Post],
+        reveiws: &'l [&'l TimelineEvent],
     ) -> Self {
         Self {
             title,

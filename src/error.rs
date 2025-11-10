@@ -2,10 +2,7 @@ use std::path::PathBuf;
 
 use tracing::Value;
 
-use crate::{
-    domain::models::{slug::Slug, source_post::SourcePost},
-    services::file_service::ContentFile,
-};
+use crate::{domain::models::slug::Slug, services::file_service::ContentFile};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -400,9 +397,6 @@ pub enum MovieError {
     #[error("Movie not found")]
     MovieNotFound(String),
 
-    #[error("Unsupported OmniPost type: {0}")]
-    UnsupportedContenttType(Slug),
-
     #[error("Movie has no poster {0}")]
     MovieHasNoPoster(u32),
 }
@@ -432,10 +426,6 @@ impl MovieError {
         Error::MovieError(Self::MovieNotFound(error))
     }
 
-    pub fn unsupported_content_type(content: &SourcePost) -> Error {
-        Error::MovieError(Self::UnsupportedContenttType(content.slug()))
-    }
-
     pub fn movie_has_no_poster(id: u32) -> Error {
         Error::MovieError(Self::MovieHasNoPoster(id))
     }
@@ -460,9 +450,6 @@ pub enum TvShowsError {
 
     #[error("Tv show not found")]
     TvShowNotFound(String),
-
-    #[error("Unsupported OmniPost type: {0}")]
-    UnsupportedContentType(Slug),
 
     #[error("Tv show has no poster {0}")]
     TvShowHasNoPoster(u32),
@@ -491,10 +478,6 @@ impl TvShowsError {
 
     pub fn tv_show_not_found(error: String) -> Error {
         Error::TvShowsError(Self::TvShowNotFound(error))
-    }
-
-    pub fn unsupported_content_type(content: &SourcePost) -> Error {
-        Error::TvShowsError(Self::UnsupportedContentType(content.slug()))
     }
 
     pub fn tv_show_has_no_poster(id: u32) -> Error {

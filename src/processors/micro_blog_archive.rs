@@ -186,7 +186,7 @@ async fn archive_item_to_post(
     )))
 }
 
-pub async fn process_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
+pub async fn load_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
     info!("Processing micro blog archive");
 
     let archive_file: ArchiveFile = FileService::content(MICRO_POSTS_DIR.into()).read_json()?;

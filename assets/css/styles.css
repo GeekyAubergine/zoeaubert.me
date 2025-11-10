@@ -496,7 +496,7 @@ time {
     }
 }
 
-.post-list {
+.timeline-events-list {
     & > li {
         @apply flex flex-col w-full;
 
