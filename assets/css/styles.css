@@ -7,7 +7,7 @@
 
 @theme {
     --color-background: #ffffff;
-    --color-background-secondary: #f8f8f8;
+    --color-background-secondary: #F0EEEC;
     /*--color-background: #ffffff;*/
     --color-text: #000000;
     --color-text-disabled: #919397;
@@ -57,27 +57,27 @@
 /* ---- Fonts ---- */
 @font-face {
     font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Regular.otf')
+    src: url('/assets/fonts/Atkinson-Hyperlegible-Regular-102a.woff2')
         format('opentype');
     font-display: swap;
 }
 @font-face {
     font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Bold.otf')
+    src: url('/assets/fonts/Atkinson-Hyperlegible-Bold-102a.woff')
         format('opentype');
     font-weight: 700;
     font-display: swap;
 }
 @font-face {
     font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-Italic.otf')
+    src: url('/assets/fonts/Atkinson-Hyperlegible-Italic-102a.woff')
         format('opentype');
     font-style: italic;
     font-display: swap;
 }
 @font-face {
     font-family: 'Atkinson Hyperlegible';
-    src: url('/assets/fonts/Atkinson-HyperlegibleNext-BoldItalic.otf')
+    src: url('/assets/fonts/Atkinson-Hyperlegible-BoldItalic-102a.woff')
         format('opentype');
     font-weight: 700;
     font-style: italic;
@@ -139,7 +139,7 @@
 }
 
 @utility width-control {
-    @apply w-[80ch] max-w-full px-4 md:px-0;
+    @apply w-[80ch] max-w-full px-4;
 }
 
 @utility centered-width-control {
@@ -437,7 +437,7 @@ time {
     @apply w-full mt-8 mb-8 px-4 md:my-16 mx-auto items-center;
 
     h1 {
-        @apply md:mb-4 text-4xl md:text-5xl text-center;
+        @apply md:mb-4 text-5xl md:text-6xl text-center;
 
         & > time {
             @apply font-bold text-text;
@@ -550,6 +550,42 @@ time {
 
         img {
             @apply my-auto object-cover;
+        }
+    }
+}
+
+.four-grid-section {
+    @apply w-full py-8 md:py-8;
+
+    .heading {
+        @apply mt-0 mb-4 text-4xl md:text-5xl full-stop;
+    }
+
+    .more-link {
+        @apply mt-2 ml-auto italic no-underline;
+    }
+
+    ul {
+        @apply grid grid-cols-2 gap-y-12 gap-x-3 md:grid-cols-4;
+
+        li {
+            @apply flex flex-col justify-between;
+
+            a {
+                @apply no-underline;
+            }
+
+            .title {
+                @apply mt-0 font-bold tracking-tight md:tracking-normal md:overflow-hidden;
+            }
+
+            .content {
+                @apply bg-background-secondary w-full aspect-square rounded-sm p-4;
+
+                img {
+                    @apply w-full h-full object-contain;
+                }
+            }
         }
     }
 }
@@ -797,6 +833,50 @@ time {
 
                 img {
                     @apply max-h-[8rem] object-contain;
+                }
+            }
+        }
+    }
+}
+
+.interests-page {
+    @apply width-middle;
+
+    h1 {
+        @apply full-stop;
+    }
+
+    section {
+        @apply w-full py-8 md:py-8;
+
+        h2 {
+            @apply mt-0 mb-4 text-4xl md:text-5xl full-stop;
+        }
+
+        .more-link {
+            @apply mt-2 ml-auto italic no-underline;
+        }
+
+        ul {
+            @apply grid grid-cols-2 gap-y-12 gap-x-3 md:grid-cols-4;
+
+            li {
+                @apply flex flex-col justify-between;
+
+                a {
+                    @apply no-underline;
+                }
+
+                .title {
+                    @apply mt-0 font-bold tracking-tight md:tracking-normal md:overflow-hidden;
+                }
+
+                .content {
+                    @apply bg-background-secondary w-full aspect-square rounded-sm p-4;
+
+                    img {
+                        @apply w-full h-full object-contain;
+                    }
                 }
             }
         }

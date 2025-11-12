@@ -23,7 +23,7 @@ use crate::services::file_service::{FileService, ReadableFile};
 use crate::services::ServiceContext;
 use crate::utils::paginator::paginate;
 
-use tracing::{error, info};
+use tracing::{error, info, instrument};
 
 use crate::{error::SiteBuildError, prelude::*};
 
@@ -83,6 +83,7 @@ async fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
     Ok(disallowed_routes)
 }
 
+#[instrument(skip_all)]
 pub async fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
     info!("Rendering site");
 
@@ -97,9 +98,9 @@ pub async fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
 
     let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
 
-    context.renderer.build_sitemap(&disallowed_routes)?;
+    let page_count = context.renderer.build_sitemap(&disallowed_routes)?;
 
-    info!("Rendering site - done [{}ms]", (Utc::now() - start).num_milliseconds());
+    info!("Rendering site | Pages {} [{}ms]", page_count, (Utc::now() - start).num_milliseconds());
 
     Ok(())
 }

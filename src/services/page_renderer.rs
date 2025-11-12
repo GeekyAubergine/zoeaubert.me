@@ -76,7 +76,7 @@ impl PageRenderer {
         Ok(())
     }
 
-    pub fn build_sitemap(&self, disallowed_routes: &[String]) -> Result<()> {
+    pub fn build_sitemap(&self, disallowed_routes: &[String]) -> Result<usize> {
         let pages = self
             .site_map_pages
             .read()
@@ -99,7 +99,9 @@ impl PageRenderer {
 
         let rendered = template.render().map_err(TemplateError::render_error)?;
 
-        self.save_file("sitemap.xml", &rendered)
+        self.save_file("sitemap.xml", &rendered)?;
+
+        Ok(pages.len())
     }
 
     fn save_file(&self, path: &str, rendered: &str) -> Result<()> {

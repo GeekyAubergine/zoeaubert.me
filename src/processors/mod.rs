@@ -73,9 +73,9 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let timeline_events = process_timeline_events(ctx, blog_posts, micro_posts, mastodon).await;
 
     info!(
-        "Processing data | Process Timeline | [{}ms] - Events: {}",
-        (Utc::now() - start).num_milliseconds(),
+        "Processing data | Process Timeline | Events: {} [{}ms]",
         timeline_events.all_by_date().len(),
+        (Utc::now() - start).num_milliseconds(),
     );
 
     Ok(Data {

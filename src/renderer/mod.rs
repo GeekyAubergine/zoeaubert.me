@@ -9,6 +9,7 @@ use crate::renderer::pages::blog_pages_renderers::render_blog_pages;
 use crate::renderer::pages::book_review_pages_renderers::render_book_review_pages;
 use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
+use crate::renderer::pages::interests_page_renderer::render_interests_page;
 use crate::renderer::pages::mastodon_post_pages_renderers::render_mastodon_pages;
 use crate::renderer::pages::micro_post_pages_renderers::render_micro_post_pages;
 use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
@@ -48,6 +49,7 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_tags_pages(context)?;
     render_firehose_pages(context)?;
     render_project_pages(context)?;
+    render_interests_page(context)?;
     render_book_review_pages(context)?;
 
     Ok(())

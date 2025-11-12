@@ -16,6 +16,7 @@ use crate::renderer::RendererContext;
 use crate::utils::paginator::paginate;
 
 const PAGINATION_SIZE: usize = 25;
+const NOTES_BLOG_POST_TO_IGNORE: &str = "MonthlyNotes";
 
 pub fn render_blog_pages(context: &RendererContext) -> Result<()> {
     let posts = context
@@ -58,7 +59,16 @@ pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     }
 }
 
-pub fn render_blog_posts_list_page(context: &RendererContext, posts: &[&BlogPost]) -> Result<()> {
+pub fn render_blog_posts_list_page(context: &RendererContext, posts: &Vec<&BlogPost>) -> Result<()> {
+    let posts = posts
+        .iter()
+        .filter(|post| {
+            !post.tags
+                .iter()
+                .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
+        })
+        .collect::<Vec<&&BlogPost>>();
+
     let paginated = paginate(&posts, PAGINATION_SIZE);
 
     let page = Page::new(Slug::new("/blog"), Some("Blog".to_string()), None);
