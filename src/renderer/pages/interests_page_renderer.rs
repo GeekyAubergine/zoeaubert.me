@@ -15,7 +15,7 @@ struct InterestElement<'l> {
     title: &'l str,
     sub_text: Option<String>,
     image: &'l Image,
-    link: String,
+    link: Slug,
 }
 
 pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
@@ -31,19 +31,37 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::BookReview { review, book } => Some(InterestElement {
+            TimelineEvent::BookReview { review, book, .. } => Some(InterestElement {
                 title: &book.title,
                 sub_text: Some(format!("{}/5", review.score)),
                 image: &book.cover,
-                link: format!("/interests/books/{}/", book.id.as_string()),
+                link: book.slug()
             }),
             _ => None,
         })
         .take(4)
         .collect::<Vec<InterestElement<'l>>>();
+
+    let movies = context
+        .data
+        .timeline_events
+        .all_by_date()
+        .iter()
+        .filter_map(|event| match event {
+            TimelineEvent::MovieReview { review, movie, .. } => Some(InterestElement {
+                title: &movie.title,
+                sub_text: Some(format!("{}/5", review.score)),
+                image: &movie.poster,
+                link: movie.slug()
+            }),
+            _ => None,
+        })
+        .take(4)
+        .collect::<Vec<InterestElement<'l>>>();
+
     let content = maud! {
         (render_interest_strip("Books", "More book reviews →", "/interests/books/",  &books, "books"))
-        (render_interest_strip("Movies", "More movie reviews →", "/interests/movies/",  &books, "books"))
+        (render_interest_strip("Movies", "More movie reviews →", "/interests/movies/",  &movies, "books"))
         (render_interest_strip("TV", "More tv reviews →", "/interests/tv/",  &books, "books"))
     };
 
@@ -67,10 +85,10 @@ fn render_interest_strip<'l>(
             ul {
                 @for item in items {
                     li {
-                        a href=(item.link) {
+                        a href=(item.link.relative_string()) {
                             p class="title" { (item.title) }
                         }
-                        a href=(item.link) {
+                        a href=(item.link.relative_string()) {
                             div class="content" {
                                 (item.image.render_small())
                             }

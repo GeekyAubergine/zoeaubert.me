@@ -82,7 +82,7 @@ pub async fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Al
             &url,
             &cdn_file,
             &photo.alt,
-            Some(&album.slug),
+            Some(&album.slug.permalink_string()),
             Some(album.date),
         )
         .await?;

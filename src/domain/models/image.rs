@@ -29,6 +29,11 @@ pub struct RenderableImage<'l> {
     pub date: Option<&'l DateTime<Utc>>,
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum ImageLinkOnClick {
+    InternalSlug
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Image {
     pub original: SizedImage,
@@ -36,7 +41,7 @@ pub struct Image {
     pub small: SizedImage,
     pub tiny: SizedImage,
     pub description: String,
-    pub link_on_click: Option<Slug>,
+    pub link_on_click: Option<String>,
     pub date: Option<DateTime<Utc>>,
 }
 

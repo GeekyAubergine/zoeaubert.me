@@ -84,7 +84,7 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) ->
                     &url,
                     &cdn_file,
                     &alt,
-                    Some(&slug),
+                    Some(&slug.permalink_string()),
                     Some(date),
                 )
                 .await?;
@@ -93,7 +93,7 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) ->
             }
 
             post = post.with_images(
-                MediaService::find_images_in_markdown(ctx, content, Some(date), Some(&slug))
+                MediaService::find_images_in_markdown(ctx, content, Some(date), Some(&slug.permalink_string()))
                     .await?,
             );
 

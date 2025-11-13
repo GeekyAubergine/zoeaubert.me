@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use image::{DynamicImage, GenericImageView, ImageFormat, ImageReader};
 use once_cell::sync::Lazy;
 use regex::Regex;
-use tracing::{debug, info};
+use tracing::{debug, info, instrument};
 use url::Url;
 
 use crate::{
@@ -112,12 +112,13 @@ impl MediaService {
         })
     }
 
+    #[instrument(err, skip_all, fields(url=&url.to_string()))]
     pub async fn image_from_url(
         ctx: &ServiceContext,
         url: &Url,
         cdn_file: &CdnFile,
         alt: &str,
-        link_on_click: Option<&Slug>,
+        link_on_click: Option<&String>,
         date: Option<DateTime<Utc>>,
     ) -> Result<Image> {
         let large_cdn_file =
@@ -212,7 +213,7 @@ impl MediaService {
         ctx: &ServiceContext,
         markdown: &str,
         date: Option<DateTime<Utc>>,
-        link_on_click: Option<&Slug>,
+        link_on_click: Option<&String>,
     ) -> Result<Vec<Image>> {
         let mut media = vec![];
 

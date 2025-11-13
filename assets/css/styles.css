@@ -554,42 +554,6 @@ time {
     }
 }
 
-.four-grid-section {
-    @apply w-full py-8 md:py-8;
-
-    .heading {
-        @apply mt-0 mb-4 text-4xl md:text-5xl full-stop;
-    }
-
-    .more-link {
-        @apply mt-2 ml-auto italic no-underline;
-    }
-
-    ul {
-        @apply grid grid-cols-2 gap-y-12 gap-x-3 md:grid-cols-4;
-
-        li {
-            @apply flex flex-col justify-between;
-
-            a {
-                @apply no-underline;
-            }
-
-            .title {
-                @apply mt-0 font-bold tracking-tight md:tracking-normal md:overflow-hidden;
-            }
-
-            .content {
-                @apply bg-background-secondary w-full aspect-square rounded-sm p-4;
-
-                img {
-                    @apply w-full h-full object-contain;
-                }
-            }
-        }
-    }
-}
-
 /* -------- Page Specific -------- */
 .home {
     section {
@@ -850,7 +814,7 @@ time {
         @apply w-full py-8 md:py-8;
 
         h2 {
-            @apply mt-0 mb-4 text-4xl md:text-5xl full-stop;
+            @apply mt-0 mb-4 text-3xl md:text-4xl full-stop;
         }
 
         .more-link {
@@ -868,7 +832,7 @@ time {
                 }
 
                 .title {
-                    @apply mt-0 font-bold tracking-tight md:tracking-normal md:overflow-hidden;
+                    @apply mt-0 mb-1 font-bold tracking-tight md:tracking-normal md:overflow-hidden;
                 }
 
                 .content {

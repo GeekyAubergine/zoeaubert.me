@@ -13,7 +13,6 @@ use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::partials::utils::link;
 use crate::renderer::RendererContext;
 use crate::utils::paginator::paginate;
 
@@ -32,6 +31,7 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
                 TimelineEventPost::MastodonPost(post) => Some(post.media()),
             },
             TimelineEvent::BookReview { .. } => None,
+            TimelineEvent::MovieReview { .. } => None,
         })
         .flatten()
         .filter_map(|media| match media {
@@ -49,7 +49,9 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
     maud! {
         @if let Some(l) = &photo.link_on_click {
             li {
-                (link(&l.as_link(), &(photo.render_small())))
+                a href=(l) {
+                    (photo.render_small())
+                }
             }
         } @else {
             li {

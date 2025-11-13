@@ -213,7 +213,7 @@ async fn mastodon_status_to_post(
                         &url,
                         &cdn_file,
                         &description,
-                        Some(&post.slug()),
+                        Some(&post.slug().permalink_string()),
                         Some(status.created_at),
                     )
                     .await?;

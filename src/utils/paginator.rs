@@ -27,7 +27,7 @@ impl<'d, D> PaginatorPage<'d, D> {
     }
 }
 
-pub fn paginate<D>(data: &[D], per_page: usize) -> Vec<PaginatorPage<D>> {
+pub fn paginate<'d, D>(data: &'d[D], per_page: usize) -> Vec<PaginatorPage<'d, D>> {
     let mut pages = Vec::new();
 
     let chunks = data.chunks(per_page);

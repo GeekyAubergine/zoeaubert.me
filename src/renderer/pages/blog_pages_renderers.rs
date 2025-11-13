@@ -11,7 +11,6 @@ use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::partials::utils::link;
 use crate::renderer::RendererContext;
 use crate::utils::paginator::paginate;
 
@@ -50,7 +49,9 @@ pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     maud! {
         li class="blog-post-list-item" {
             div class="title-and-date" {
-                (link(&post.slug.as_link(), &title))
+                a href=(&post.slug.permalink_string()) {
+                    h2 class="title" { (&post.title) }
+                }
                 (render_date(&post.date))
             }
             p class="description prose" { (post.description )}

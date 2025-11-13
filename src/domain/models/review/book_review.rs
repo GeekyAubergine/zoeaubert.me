@@ -21,75 +21,21 @@ const REGEX_MICRO: Lazy<Regex> =
 const REGEX_LEGACY_STYLE_AUTHOR_TITLE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\[(.*)\].*by (.*) 📚").unwrap());
 
-struct ExtractedReview {
-    pub title: String,
-    pub author: String,
-    pub score: u8,
-    pub review: String,
-}
-
 #[derive(Debug, Clone)]
 pub struct BookReview {
     pub title: String,
     pub author: String,
     pub score: u8,
     pub review: String,
-    pub source: ReviewSource,
 }
 
 impl BookReview {
-    pub fn from_micropost(post: MicroPost) -> Result<BookReview> {
-        let review = parse_markdown_into_book_review(&post.content)?;
-
-        Ok(BookReview {
-            title: review.title,
-            author: review.author,
-            score: review.score,
-            review: review.review,
-            source: ReviewSource::MicroPost(post),
-        })
-    }
-
-    pub fn from_mastodon_post(post: MastodonPost) -> Result<BookReview> {
-        let review = parse_markdown_into_book_review(&post.content())?;
-
-        Ok(BookReview {
-            title: review.title,
-            author: review.author,
-            score: review.score,
-            review: review.review,
-            source: ReviewSource::MastodonPost(post),
-        })
-    }
-
-    pub fn from_review_source(source: ReviewSource) -> Result<BookReview> {
-        let review = parse_markdown_into_book_review(&source.content())?;
-
-        Ok(BookReview {
-            title: review.title,
-            author: review.author,
-            score: review.score,
-            review: review.review,
-            source,
-        })
+    pub fn from_content(content: &str) -> Result<BookReview> {
+        parse_markdown_into_book_review(&content)
     }
 }
 
-pub struct BookReviews {
-    book_reviews: HashMap<Slug, BookReview>,
-}
-
-impl BookReviews {
-    pub fn insert(&mut self, review: BookReview) {
-        self.book_reviews.insert(review.source.slug(), review);
-    }
-
-    pub fn all(&self) -> &HashMap<Slug, BookReview> {
-        &self.book_reviews
-    }
-}
-
-fn parse_markdown_into_book_review(content: &str) -> Result<ExtractedReview> {
+fn parse_markdown_into_book_review(content: &str) -> Result<BookReview> {
     if (content.starts_with("Finished") || content.starts_with("I finished")) {
         return parse_legacy_post(content);
     }
@@ -101,7 +47,7 @@ fn parse_markdown_into_book_review(content: &str) -> Result<ExtractedReview> {
     parse_new_style(content)
 }
 
-fn parse_legacy_post(content: &str) -> Result<ExtractedReview> {
+fn parse_legacy_post(content: &str) -> Result<BookReview> {
     let content = content.replace("\\n", "\n");
 
     let lines = content.lines().collect::<Vec<&str>>();
@@ -126,7 +72,7 @@ fn parse_legacy_post(content: &str) -> Result<ExtractedReview> {
             second_line_split.get(1),
         ) {
             let score = score.trim().parse().unwrap();
-            return Ok(ExtractedReview {
+            return Ok(BookReview {
                 title: title.as_str().to_string(),
                 author: author.as_str().to_string(),
                 score,
@@ -138,7 +84,7 @@ fn parse_legacy_post(content: &str) -> Result<ExtractedReview> {
     Err(BookError::unable_to_parse_book(content.to_string()))
 }
 
-fn parse_mastodon_modern_post(content: &str) -> Result<ExtractedReview> {
+fn parse_mastodon_modern_post(content: &str) -> Result<BookReview> {
     let content = content
         .replace("</p><p>", "\n")
         .replace("<p>", "")
@@ -147,7 +93,7 @@ fn parse_mastodon_modern_post(content: &str) -> Result<ExtractedReview> {
     parse_new_style(&content)
 }
 
-fn parse_new_style(content: &str) -> Result<ExtractedReview> {
+fn parse_new_style(content: &str) -> Result<BookReview> {
     let content = content.replace("\\n", "\n");
 
     let lines = content.lines().collect::<Vec<&str>>();
@@ -177,7 +123,7 @@ fn parse_new_style(content: &str) -> Result<ExtractedReview> {
             second_line_split.get(1),
         ) {
             let score = score.trim().parse().unwrap();
-            return Ok(ExtractedReview {
+            return Ok(BookReview {
                 title: title.trim().to_string(),
                 author: author.trim().to_string(),
                 score,

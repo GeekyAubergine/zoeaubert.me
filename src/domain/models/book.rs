@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::domain::models::image::Image;
+use crate::domain::models::{image::Image, slug::Slug};
 
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Serialize, Eq, Hash)]
 #[serde(tag = "type")]
@@ -21,4 +21,10 @@ pub struct Book {
     pub title: String,
     pub cover: Image,
     pub id: BookID,
+}
+
+impl Book {
+    pub fn slug(&self) -> Slug {
+        Slug::new(&format!("/interests/books/{}/", self.id.as_string()))
+    }
 }

@@ -1,9 +1,12 @@
 use crate::domain::models::blog_post::BlogPost;
-use crate::domain::models::book::{Book};
+use crate::domain::models::book::Book;
 use crate::domain::models::mastodon_post::MastodonPost;
 use crate::domain::models::media::{Media, MediaDimensions};
 use crate::domain::models::micro_post::MicroPost;
+use crate::domain::models::movie::Movie;
 use crate::domain::models::review::book_review::BookReview;
+use crate::domain::models::review::movie_review::MovieReview;
+use crate::domain::models::review::review_source::ReviewSource;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
@@ -11,15 +14,14 @@ use crate::prelude::*;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
-use crate::renderer::partials::md::{md, MarkdownMediaOption};
-use crate::renderer::partials::media::{render_media_grid, MediaGripOptions};
+use crate::renderer::partials::md::{MarkdownMediaOption, md};
+use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::partials::utils::link;
 use chrono::{DateTime, Utc};
 use hypertext::prelude::*;
 
 use crate::domain::models::image::{Image, SizedImage};
-use crate::renderer::{render_template, TemplateRenderResult};
+use crate::renderer::{TemplateRenderResult, render_template};
 
 pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Renderable + 'l {
     maud! {
@@ -31,7 +33,8 @@ pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Rend
                         TimelineEventPost::MicroPost(post) => (render_micro_post(post))
                         TimelineEventPost::MastodonPost(post) => (render_mastodon_post(post)),
                     },
-                    TimelineEvent::BookReview { review, book } => (render_book_review(review, book)),
+                    TimelineEvent::BookReview { review, book, source } => (render_book_review(review, book, source)),
+                    TimelineEvent::MovieReview { review, movie, source } => (render_movie_review(review, movie, source)),
                 }
                 hr;
             }
@@ -144,19 +147,44 @@ pub fn render_mastodon_post<'l>(post: &'l MastodonPost) -> impl Renderable + 'l 
     )
 }
 
-pub fn render_book_review<'l>(review: &'l BookReview, book: &'l Book) -> impl Renderable + 'l {
+pub fn render_book_review<'l>(
+    review: &'l BookReview,
+    book: &'l Book,
+    source: &'l ReviewSource,
+) -> impl Renderable + 'l {
     let content = maud! {
         div class="prose" {
-            (md(&review.source.content(), MarkdownMediaOption::NoMedia))
+            (md(&source.content(), MarkdownMediaOption::NoMedia))
         }
     };
 
     render_post(
-        review.source.slug(),
-        review.source.date(),
+        source.slug(),
+        source.date(),
         content,
         None,
-        review.source.tags(),
+        source.tags(),
         Some(&book.cover),
+    )
+}
+
+pub fn render_movie_review<'l>(
+    review: &'l MovieReview,
+    movie: &'l Movie,
+    source: &'l ReviewSource,
+) -> impl Renderable + 'l {
+    let content = maud! {
+        div class="prose" {
+            (md(&source.content(), MarkdownMediaOption::NoMedia))
+        }
+    };
+
+    render_post(
+        source.slug(),
+        source.date(),
+        content,
+        None,
+        source.tags(),
+        Some(&movie.poster),
     )
 }

@@ -5,15 +5,14 @@ use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::TimelineEvent;
 use crate::prelude::*;
+use crate::renderer::RendererContext;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
-use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
+use crate::renderer::partials::page::{PageOptions, PageWidth, render_page};
 use crate::renderer::partials::tag::render_tags;
 use crate::renderer::partials::timline_events_list::render_timline_events_list;
-use crate::renderer::partials::utils::link;
-use crate::renderer::RendererContext;
 use crate::utils::paginator::paginate;
 
 const PAGINATION_SIZE: usize = 25;
@@ -27,6 +26,7 @@ pub fn render_firehose_pages(context: &RendererContext) -> Result<()> {
         .filter(|event| match event {
             TimelineEvent::Post(post) => true,
             TimelineEvent::BookReview { .. } => true,
+            TimelineEvent::MovieReview { .. } => true,
         })
         .collect::<Vec<&TimelineEvent>>();
 

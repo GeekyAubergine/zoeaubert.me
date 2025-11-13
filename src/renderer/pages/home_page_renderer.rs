@@ -29,7 +29,6 @@ use crate::renderer::partials::md::MarkdownMediaOption;
 use crate::renderer::partials::page::render_page;
 use crate::renderer::partials::page::PageOptions;
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::partials::utils::link;
 use crate::renderer::RendererContext;
 use crate::services::file_service::ContentFile;
 
@@ -37,14 +36,12 @@ const RECENT_POSTS_COUNT: usize = 5;
 const NOTES_BLOG_POST_TO_IGNORE: &str = "MonthlyNotes";
 
 fn blog_post<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
-    let title = maud! {
-        h3 class="title" { (&post.title) }
-    };
-
     maud! {
         li class="blog-post-list-item" {
             div class="title-and-date" {
-                (link(&post.slug.as_link(), &title))
+                a href=(&post.slug.permalink_string()) {
+                    h3 class="title" { (&post.title) }
+                }
                 (render_date(&post.date))
             }
             p class="prose description" { (post.description )}
@@ -93,7 +90,9 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
     maud! {
         @if let Some(l) = &photo.link_on_click {
             li {
-                (link(&l.as_link(), &(photo.render_small())))
+                a href=(l) {
+                    (photo.render_small())
+                }
             }
         } @else {
             li {
@@ -116,6 +115,7 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
                 TimelineEventPost::MastodonPost(post) => Some(post.media()),
             },
             TimelineEvent::BookReview { .. } => None,
+            TimelineEvent::MovieReview { .. } => None,
         })
         .flatten()
         .filter_map(|media| match media {

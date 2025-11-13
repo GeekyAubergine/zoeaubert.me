@@ -1,12 +1,7 @@
 use std::collections::HashMap;
 
 use crate::domain::models::{
-    blog_post::BlogPost,
-    book::Book,
-    mastodon_post::MastodonPost,
-    micro_post::MicroPost,
-    review::{book_review::BookReview, review_source::ReviewSource},
-    tag::Tag,
+    blog_post::BlogPost, book::Book, mastodon_post::MastodonPost, micro_post::MicroPost, movie::Movie, review::{book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource}, tag::Tag
 };
 
 use bitflags::bitflags;
@@ -22,7 +17,16 @@ pub enum TimelineEventPost {
 #[derive(Debug, Clone)]
 pub enum TimelineEvent {
     Post(TimelineEventPost),
-    BookReview { review: BookReview, book: Book },
+    BookReview {
+        review: BookReview,
+        book: Book,
+        source: ReviewSource,
+    },
+    MovieReview {
+        review: MovieReview,
+        movie: Movie,
+        source: ReviewSource,
+    }
 }
 
 impl TimelineEvent {
@@ -33,7 +37,8 @@ impl TimelineEvent {
                 TimelineEventPost::MicroPost(post) => post.slug.to_string(),
                 TimelineEventPost::MastodonPost(post) => post.slug().to_string(),
             },
-            TimelineEvent::BookReview { review, book } => review.source.slug().to_string(),
+            TimelineEvent::BookReview { source, .. } => source.slug().to_string(),
+            TimelineEvent::MovieReview { source, .. } => source.slug().to_string(),
         }
     }
 
@@ -44,7 +49,8 @@ impl TimelineEvent {
                 TimelineEventPost::MicroPost(post) => &post.date,
                 TimelineEventPost::MastodonPost(post) => &post.created_at(),
             },
-            TimelineEvent::BookReview { review, book } => review.source.date(),
+            TimelineEvent::BookReview { source, .. } => source.date(),
+            TimelineEvent::MovieReview { source, .. } => source.date(),
         }
     }
 
@@ -55,7 +61,8 @@ impl TimelineEvent {
                 TimelineEventPost::MicroPost(post) => &post.tags,
                 TimelineEventPost::MastodonPost(post) => post.tags(),
             },
-            TimelineEvent::BookReview { review, book } => review.source.tags(),
+            TimelineEvent::BookReview { source, .. } => source.tags(),
+            TimelineEvent::MovieReview { source, .. } => source.tags(),
         }
     }
 }
