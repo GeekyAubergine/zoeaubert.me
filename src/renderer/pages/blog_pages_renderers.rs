@@ -88,7 +88,7 @@ pub fn render_blog_posts_list_page(context: &RendererContext, posts: &Vec<&BlogP
 
         let options = PageOptions::new().with_main_class("blog-list-page");
 
-        let renderer = render_page(&page, &options, &content, None);
+        let renderer = render_page(&page, &options, &content, maud! {});
 
         context.renderer.render_page(&slug, &renderer, None)?;
     }
@@ -114,7 +114,7 @@ pub fn render_blog_post_page(context: &RendererContext, post: &BlogPost) -> Resu
     .with_tags(post.tags.clone());
     // .with_image(post.hero_image); TODO
 
-    let rendered = render_page(&page, &options, &content, None);
+    let rendered = render_page(&page, &options, &content, maud! {});
 
     context
         .renderer

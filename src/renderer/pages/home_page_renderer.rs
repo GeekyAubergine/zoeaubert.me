@@ -21,8 +21,6 @@ use crate::prelude::*;
 use crate::domain::models::media::Media;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
-use crate::renderer::partials::bento::BentoBoxComponent;
-use crate::renderer::partials::bento::BentoBoxOptions;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::md;
 use crate::renderer::partials::md::MarkdownMediaOption;
@@ -375,7 +373,7 @@ pub fn render_home_page(context: &RendererContext) -> Result<()> {
     );
 
     let scripts = maud! {
-        (Raw(&name_script))
+        (Raw::dangerously_create(&name_script))
     };
 
     let options = PageOptions::new().with_main_class("home");

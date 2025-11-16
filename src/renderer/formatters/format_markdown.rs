@@ -1,6 +1,6 @@
 use crate::{error::MarkdownError, prelude::*};
 
-use comrak::{ListStyleType, Options};
+use comrak::{Options, options::ListStyleType};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use syntect::{easy::HighlightLines, parsing::SyntaxSet};
@@ -39,7 +39,7 @@ static OPTIONS: Lazy<Options> = Lazy::new(|| {
     options.render.github_pre_lang = true;
     options.render.full_info_string = true;
     options.render.width = 0;
-    options.render.unsafe_ = true;
+    options.render.r#unsafe = true;
     options.render.list_style = ListStyleType::Dash;
     options.render.sourcepos = false;
 

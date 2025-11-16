@@ -55,7 +55,7 @@ impl PageRenderer {
 
         let rendered = rendered.render();
 
-        self.save_file(&path, &rendered.as_str())?;
+        self.save_file(&path, &rendered.as_inner())?;
 
         self.site_map_pages
             .write()
@@ -71,7 +71,7 @@ impl PageRenderer {
     pub fn render_file<'t, T>(&self, path: PathBuf, rendered: Rendered<String>) -> Result<()> {
         let path = path.to_string_lossy().to_string();
 
-        self.save_file(&path, &rendered.as_str())?;
+        self.save_file(&path, &rendered.as_inner())?;
 
         Ok(())
     }

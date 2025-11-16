@@ -10,7 +10,7 @@ use crate::{
     },
 };
 use chrono::{DateTime, Utc};
-use hypertext::{html_elements::main, prelude::*, Raw};
+use hypertext::{prelude::*, Raw};
 use maud::DOCTYPE;
 
 use crate::domain::models::page::Page;
@@ -27,7 +27,7 @@ pub fn nav_bar<'l>(page: &'l Page) -> impl Renderable + 'l {
                     ("Zoe Aubert")
                 }
                 div id="theme-toggle" {
-                    (Raw(
+                    (Raw::dangerously_create(
                     r#"
                         <svg
                             id="toggle-button"
@@ -61,7 +61,7 @@ pub fn nav_bar<'l>(page: &'l Page) -> impl Renderable + 'l {
                 }
             }
         }
-        (Raw(r##"
+        (Raw::dangerously_create(r##"
             <script type="text/javascript">
                 const bodyClassList = document.body.classList;
                 const htmlClassList = document
@@ -240,7 +240,7 @@ pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Rendera
     // }
 }
 
-fn render_page_base<'l>(page: &'l Page, body: &'l dyn Renderable) -> impl Renderable + 'l {
+fn render_page_base<'l>(page: &'l Page, body: &'l impl Renderable) -> impl Renderable + 'l {
     let title = match &page.title {
         Some(t) => format!("{} | {}", t, SITE_CONFIG.title),
         None => SITE_CONFIG.title.clone(),
@@ -443,8 +443,8 @@ fn render_header<'l>(data: &'l HeaderData<'l>) -> impl Renderable + 'l {
 pub fn render_page<'l>(
     page: &'l Page,
     options: &'l PageOptions<'l>,
-    content: &'l dyn Renderable,
-    scripts: Option<&'l dyn Renderable>,
+    content: impl Renderable + 'l,
+    scripts: impl Renderable + 'l,
 ) -> impl Renderable + 'l {
     let main_class = match options.main_class {
         Some(class) => class,
@@ -463,9 +463,7 @@ pub fn render_page<'l>(
             }
         }
         (render_footer(&page))
-        @if let Some(scripts) = scripts {
-            (scripts)
-        }
+        (scripts)
     };
 
     maud! {

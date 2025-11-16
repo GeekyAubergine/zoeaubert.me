@@ -61,7 +61,7 @@ pub fn render_book_review_page(
         .with_date(source.date().clone())
         .with_tags(source.tags().clone());
 
-    let rendered = render_page(&page, &options, &content, None);
+    let rendered = render_page(&page, &options, &content, maud! {});
 
     context.renderer.render_page(
         &source.slug(),

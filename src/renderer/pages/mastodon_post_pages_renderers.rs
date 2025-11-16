@@ -61,7 +61,7 @@ pub fn render_mastodon_post_page(context: &RendererContext, post: &MastodonPost)
         .with_date(post.created_at().clone())
         .with_tags(post.tags().clone());
 
-    let rendered = render_page(&page, &options, &content, None);
+    let rendered = render_page(&page, &options, &content, maud! {});
 
     context
         .renderer

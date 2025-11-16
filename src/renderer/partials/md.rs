@@ -14,6 +14,6 @@ pub fn md<'l>(md: &'l impl FormatMarkdown, media_option: MarkdownMediaOption) ->
     };
 
     maud! {
-        (Raw(&md))
+        (Raw::dangerously_create(&md))
     }
 }

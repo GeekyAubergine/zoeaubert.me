@@ -54,7 +54,7 @@ pub fn render_micro_post_page(context: &RendererContext, post: &MicroPost) -> Re
         .with_date(post.date)
         .with_tags(post.tags.clone());
 
-    let rendered = render_page(&page, &options, &content, None);
+    let rendered = render_page(&page, &options, &content, maud! {});
 
     context
         .renderer

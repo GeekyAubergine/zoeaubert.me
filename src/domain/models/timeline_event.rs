@@ -4,7 +4,6 @@ use crate::domain::models::{
     blog_post::BlogPost, book::Book, mastodon_post::MastodonPost, micro_post::MicroPost, movie::Movie, review::{book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource}, tag::Tag
 };
 
-use bitflags::bitflags;
 use chrono::{DateTime, Utc};
 
 #[derive(Debug, Clone)]

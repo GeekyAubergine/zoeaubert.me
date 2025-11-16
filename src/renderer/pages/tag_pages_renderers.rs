@@ -60,7 +60,7 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
 
             let options = PageOptions::new().with_main_class("tag-posts-page");
 
-            let renderer = render_page(&page, &options, &content, None);
+            let renderer = render_page(&page, &options, &content, maud! {});
 
             context.renderer.render_page(&slug, &renderer, None)?;
         }
@@ -84,7 +84,7 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
 
     let options = PageOptions::new().with_main_class("tags-page");
 
-    let renderer = render_page(&page, &options, &content, None);
+    let renderer = render_page(&page, &options, &content, maud! {});
 
     context.renderer.render_page(&slug, &renderer, None)?;
 

@@ -80,7 +80,7 @@ pub fn render_photos_list_page(context: &RendererContext, photos: &[&Image]) -> 
 
         let options = PageOptions::new().with_main_class("photos-page");
 
-        let renderer = render_page(&page, &options, &content, None);
+        let renderer = render_page(&page, &options, &content, maud! {});
 
         context.renderer.render_page(&slug, &renderer, None)?;
     }

@@ -1,4 +1,3 @@
-pub mod bento;
 pub mod date;
 pub mod md;
 pub mod media;

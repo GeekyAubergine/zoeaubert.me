@@ -41,7 +41,7 @@ pub fn render_project_pages(context: &RendererContext) -> Result<()> {
 
     let options = PageOptions::new().with_main_class("projects-page");
 
-    let renderer = render_page(&page, &options, &content, None);
+    let renderer = render_page(&page, &options, &content, maud! {});
 
     context.renderer.render_page(&slug, &renderer, None)
 }

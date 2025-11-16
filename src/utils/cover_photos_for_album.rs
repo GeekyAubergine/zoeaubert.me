@@ -1,5 +1,3 @@
-use bitflags::iter;
-
 use crate::domain::models::albums::{album::Album, album_photo::AlbumPhoto};
 
 pub fn cover_photos_for_album(album: &Album) -> Vec<&AlbumPhoto> {
