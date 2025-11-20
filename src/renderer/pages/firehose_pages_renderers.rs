@@ -24,9 +24,8 @@ pub fn render_firehose_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter(|event| match event {
-            TimelineEvent::Post(post) => true,
-            TimelineEvent::BookReview { .. } => true,
-            TimelineEvent::MovieReview { .. } => true,
+            TimelineEvent::Post(_) => true,
+            TimelineEvent::Review(_) => true,
         })
         .collect::<Vec<&TimelineEvent>>();
 

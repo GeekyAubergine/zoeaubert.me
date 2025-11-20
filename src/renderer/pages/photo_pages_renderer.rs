@@ -30,8 +30,7 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
                 TimelineEventPost::MicroPost(post) => Some(post.media()),
                 TimelineEventPost::MastodonPost(post) => Some(post.media()),
             },
-            TimelineEvent::BookReview { .. } => None,
-            TimelineEvent::MovieReview { .. } => None,
+            TimelineEvent::Review(_) => None,
         })
         .flatten()
         .filter_map(|media| match media {

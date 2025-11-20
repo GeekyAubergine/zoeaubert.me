@@ -112,8 +112,7 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
                 TimelineEventPost::MicroPost(post) => Some(post.media()),
                 TimelineEventPost::MastodonPost(post) => Some(post.media()),
             },
-            TimelineEvent::BookReview { .. } => None,
-            TimelineEvent::MovieReview { .. } => None,
+            TimelineEvent::Review(_) => None,
         })
         .flatten()
         .filter_map(|media| match media {

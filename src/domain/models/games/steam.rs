@@ -78,8 +78,6 @@ pub struct SteamGameAchievementLocked {
     pub id: String,
     pub game_id: u32,
     pub display_name: String,
-    pub description: String,
-    pub image: Image,
 }
 
 impl SteamGameAchievementLocked {
@@ -87,15 +85,11 @@ impl SteamGameAchievementLocked {
         id: String,
         game_id: u32,
         display_name: String,
-        description: String,
-        image: Image,
     ) -> Self {
         Self {
             id,
             game_id,
             display_name,
-            description,
-            image,
         }
     }
 }
@@ -104,40 +98,6 @@ impl SteamGameAchievementLocked {
 pub enum SteamGameAchievement {
     Unlocked(SteamGameAchievementUnlocked),
     Locked(SteamGameAchievementLocked),
-}
-
-impl SteamGameAchievement {
-    pub fn id(&self) -> &str {
-        match self {
-            Self::Unlocked(achievement) => &achievement.id,
-            Self::Locked(achievement) => &achievement.id,
-        }
-    }
-
-    pub fn game_id(&self) -> u32 {
-        match self {
-            Self::Unlocked(achievement) => achievement.game_id,
-            Self::Locked(achievement) => achievement.game_id,
-        }
-    }
-
-    pub fn display_name(&self) -> &str {
-        match self {
-            Self::Unlocked(achievement) => &achievement.display_name,
-            Self::Locked(achievement) => &achievement.display_name,
-        }
-    }
-
-    pub fn description(&self) -> &str {
-        match self {
-            Self::Unlocked(achievement) => &achievement.description,
-            Self::Locked(achievement) => &achievement.description,
-        }
-    }
-
-    pub fn is_unlocked(&self) -> bool {
-        matches!(self, Self::Unlocked(_))
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

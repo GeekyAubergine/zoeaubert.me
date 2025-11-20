@@ -7,16 +7,18 @@ use crate::domain::models::page::Page;
 use crate::domain::models::review::book_review::BookReview;
 use crate::domain::models::review::review_source::ReviewSource;
 use crate::domain::models::slug::Slug;
-use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
+use crate::domain::models::timeline_event::{
+    TimelineEvent, TimelineEventPost, TimelineEventReview,
+};
 use crate::prelude::*;
+use crate::renderer::RendererContext;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
-use crate::renderer::partials::media::{render_media_grid, MediaGripOptions};
-use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
+use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
+use crate::renderer::partials::page::{PageOptions, PageWidth, render_page};
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::RendererContext;
 use crate::utils::paginator::paginate;
 
 // TODO Clicking on cover image should link you to open library page
@@ -28,7 +30,14 @@ pub fn render_book_review_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::BookReview { review, book, source } => Some((review, book, source)),
+            TimelineEvent::Review(review) => match review {
+                TimelineEventReview::BookReview {
+                    review,
+                    book,
+                    source,
+                } => Some((review, book, source)),
+                _ => None,
+            },
             _ => None,
         })
         .collect::<Vec<(&BookReview, &Book, &ReviewSource)>>();
@@ -63,9 +72,7 @@ pub fn render_book_review_page(
 
     let rendered = render_page(&page, &options, &content, maud! {});
 
-    context.renderer.render_page(
-        &source.slug(),
-        &rendered,
-        Some(source.date().clone()),
-    )
+    context
+        .renderer
+        .render_page(&source.slug(), &rendered, Some(source.date().clone()))
 }

@@ -1,4 +1,4 @@
-use crate::domain::models::timeline_event::TimelineEvent;
+use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
 use crate::domain::models::{image::Image, review::book_review::BookReview};
 use crate::prelude::*;
 use hypertext::prelude::*;
@@ -6,13 +6,13 @@ use hypertext::prelude::*;
 use crate::{
     domain::models::{page::Page, slug::Slug},
     renderer::{
-        partials::page::{render_page, PageOptions},
         RendererContext,
+        partials::page::{PageOptions, render_page},
     },
 };
 
 struct InterestElement<'l> {
-    title: &'l str,
+    title: String,
     sub_text: Option<String>,
     image: &'l Image,
     link: Slug,
@@ -31,12 +31,15 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::BookReview { review, book, .. } => Some(InterestElement {
-                title: &book.title,
-                sub_text: Some(format!("{}/5", review.score)),
-                image: &book.cover,
-                link: book.slug()
-            }),
+            TimelineEvent::Review(review) => match review {
+                TimelineEventReview::BookReview { review, book, .. } => Some(InterestElement {
+                    title: book.title.clone(),
+                    sub_text: Some(format!("{}/5", review.score)),
+                    image: &book.cover,
+                    link: book.slug(),
+                }),
+                _ => None,
+            },
             _ => None,
         })
         .take(4)
@@ -48,12 +51,35 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::MovieReview { review, movie, .. } => Some(InterestElement {
-                title: &movie.title,
-                sub_text: Some(format!("{}/5", review.score)),
-                image: &movie.poster,
-                link: movie.slug()
-            }),
+            TimelineEvent::Review(review) => match review {
+                TimelineEventReview::MovieReview { review, movie, .. } => Some(InterestElement {
+                    title: movie.title.clone(),
+                    sub_text: Some(format!("{}/5", review.score)),
+                    image: &movie.poster,
+                    link: movie.slug(),
+                }),
+                _ => None,
+            },
+            _ => None,
+        })
+        .take(4)
+        .collect::<Vec<InterestElement<'l>>>();
+
+    let tv_shows = context
+        .data
+        .timeline_events
+        .all_by_date()
+        .iter()
+        .filter_map(|event| match event {
+            TimelineEvent::Review(review) => match review {
+                TimelineEventReview::TvShowReview { review, tv_show, .. } => Some(InterestElement {
+                    title: format!("{} - {}", tv_show.title, review.season_text()),
+                    sub_text: Some(format!("{}/5", review.score_text())),
+                    image: &tv_show.poster,
+                    link: tv_show.slug(),
+                }),
+                _ => None,
+            },
             _ => None,
         })
         .take(4)
@@ -61,8 +87,8 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
 
     let content = maud! {
         (render_interest_strip("Books", "More book reviews →", "/interests/books/",  &books, "books"))
-        (render_interest_strip("Movies", "More movie reviews →", "/interests/movies/",  &movies, "books"))
-        (render_interest_strip("TV", "More tv reviews →", "/interests/tv/",  &books, "books"))
+        (render_interest_strip("Movies", "More movie reviews →", "/interests/movies/",  &movies, "movies"))
+        (render_interest_strip("TV", "More tv reviews →", "/interests/tv/",  &tv_shows, "tv_shows"))
     };
 
     let options = PageOptions::new().with_main_class("interests-page");

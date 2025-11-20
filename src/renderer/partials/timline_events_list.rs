@@ -7,9 +7,13 @@ use crate::domain::models::movie::Movie;
 use crate::domain::models::review::book_review::BookReview;
 use crate::domain::models::review::movie_review::MovieReview;
 use crate::domain::models::review::review_source::ReviewSource;
+use crate::domain::models::review::tv_show_review::TvShowReview;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
-use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
+use crate::domain::models::timeline_event::{
+    TimelineEvent, TimelineEventPost, TimelineEventReview,
+};
+use crate::domain::models::tv_show::TvShow;
 use crate::prelude::*;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
@@ -28,13 +32,16 @@ pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Rend
         ul class="timeline-events-list" {
             @for event in events {
                 @match event {
-                    TimelineEvent::Post(event) => @match event {
+                    TimelineEvent::Post(post) => @match post {
                         TimelineEventPost::BlogPost(post) => (render_blog_post(post)),
                         TimelineEventPost::MicroPost(post) => (render_micro_post(post))
                         TimelineEventPost::MastodonPost(post) => (render_mastodon_post(post)),
                     },
-                    TimelineEvent::BookReview { review, book, source } => (render_book_review(review, book, source)),
-                    TimelineEvent::MovieReview { review, movie, source } => (render_movie_review(review, movie, source)),
+                    TimelineEvent::Review(review) => @match review {
+                        TimelineEventReview::BookReview { review, book, source } => (render_book_review(review, book, source)),
+                        TimelineEventReview::MovieReview { review, movie, source } => (render_movie_review(review, movie, source)),
+                        TimelineEventReview::TvShowReview { review, tv_show, source } => (render_tv_show_review(review, tv_show, source)),
+                    }
                 }
                 hr;
             }
@@ -186,5 +193,26 @@ pub fn render_movie_review<'l>(
         None,
         source.tags(),
         Some(&movie.poster),
+    )
+}
+
+pub fn render_tv_show_review<'l>(
+    review: &'l TvShowReview,
+    tv_show: &'l TvShow,
+    source: &'l ReviewSource,
+) -> impl Renderable + 'l {
+    let content = maud! {
+        div class="prose" {
+            (md(&source.content(), MarkdownMediaOption::NoMedia))
+        }
+    };
+
+    render_post(
+        source.slug(),
+        source.date(),
+        content,
+        None,
+        source.tags(),
+        Some(&tv_show.poster),
     )
 }

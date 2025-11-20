@@ -23,3 +23,4 @@ pub mod tag;
 pub mod book;
 pub mod timeline_event;
 pub mod movie;
+pub mod tv_show;

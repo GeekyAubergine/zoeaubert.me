@@ -179,8 +179,7 @@ pub async fn process_steam_game_achievements(
 
     for achievement in game_data {
         // Sometimes the icon urls are just a directory
-        if achievement.icon.as_str().ends_with("/") || achievement.icon_gray.as_str().ends_with("/")
-        {
+        if achievement.icon.as_str().ends_with("/") {
             continue;
         }
 
@@ -229,33 +228,10 @@ pub async fn process_steam_game_achievements(
                 game.add_unlocked_achievement(achievement);
             }
             None => {
-                let cdn_file = CdnFile::from_str(&format!(
-                    "/games/{}-{}-locked.jpg",
-                    game.game.id,
-                    achievement.name.replace(' ', "").replace('%', "")
-                ));
-
-                let icon = match &achievement.icon_gray.as_str().ends_with("/") {
-                    true => achievement.icon,
-                    false => achievement.icon_gray,
-                };
-
-                let image = MediaService::image_from_url(
-                    ctx,
-                    &icon,
-                    &cdn_file,
-                    &format!("{} achievement icon", achievement.display_name),
-                    None,
-                    None,
-                )
-                .await?;
-
                 let achievement = SteamGameAchievementLocked::new(
                     achievement.name,
                     game.game.id,
                     achievement.display_name,
-                    achievement.description.unwrap_or("".to_string()),
-                    image,
                 );
 
                 game.add_locked_achievement(achievement);

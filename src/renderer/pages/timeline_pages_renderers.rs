@@ -25,8 +25,7 @@ pub fn render_timeline_pages(context: &RendererContext) -> Result<()> {
         .iter()
         .filter(|event| match event {
             TimelineEvent::Post(_) => true,
-            TimelineEvent::BookReview { .. } => true,
-            TimelineEvent::MovieReview { .. } => true,
+            TimelineEvent::Review(_) => true,
         })
         .collect::<Vec<&TimelineEvent>>();
 

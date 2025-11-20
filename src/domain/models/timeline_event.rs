@@ -1,7 +1,17 @@
 use std::collections::HashMap;
 
 use crate::domain::models::{
-    blog_post::BlogPost, book::Book, mastodon_post::MastodonPost, micro_post::MicroPost, movie::Movie, review::{book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource}, tag::Tag
+    blog_post::BlogPost,
+    book::Book,
+    mastodon_post::MastodonPost,
+    micro_post::MicroPost,
+    movie::Movie,
+    review::{
+        book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource,
+        tv_show_review::TvShowReview,
+    },
+    tag::Tag,
+    tv_show::TvShow,
 };
 
 use chrono::{DateTime, Utc};
@@ -14,8 +24,7 @@ pub enum TimelineEventPost {
 }
 
 #[derive(Debug, Clone)]
-pub enum TimelineEvent {
-    Post(TimelineEventPost),
+pub enum TimelineEventReview {
     BookReview {
         review: BookReview,
         book: Book,
@@ -25,7 +34,18 @@ pub enum TimelineEvent {
         review: MovieReview,
         movie: Movie,
         source: ReviewSource,
-    }
+    },
+    TvShowReview {
+        review: TvShowReview,
+        tv_show: TvShow,
+        source: ReviewSource,
+    },
+}
+
+#[derive(Debug, Clone)]
+pub enum TimelineEvent {
+    Post(TimelineEventPost),
+    Review(TimelineEventReview),
 }
 
 impl TimelineEvent {
@@ -36,8 +56,11 @@ impl TimelineEvent {
                 TimelineEventPost::MicroPost(post) => post.slug.to_string(),
                 TimelineEventPost::MastodonPost(post) => post.slug().to_string(),
             },
-            TimelineEvent::BookReview { source, .. } => source.slug().to_string(),
-            TimelineEvent::MovieReview { source, .. } => source.slug().to_string(),
+            TimelineEvent::Review(review) => match review {
+                TimelineEventReview::BookReview { source, .. } => source.slug().to_string(),
+                TimelineEventReview::MovieReview { source, .. } => source.slug().to_string(),
+                TimelineEventReview::TvShowReview { source, .. } => source.slug().to_string(),
+            },
         }
     }
 
@@ -48,8 +71,11 @@ impl TimelineEvent {
                 TimelineEventPost::MicroPost(post) => &post.date,
                 TimelineEventPost::MastodonPost(post) => &post.created_at(),
             },
-            TimelineEvent::BookReview { source, .. } => source.date(),
-            TimelineEvent::MovieReview { source, .. } => source.date(),
+            TimelineEvent::Review(review) => match review {
+                TimelineEventReview::BookReview { source, .. } => source.date(),
+                TimelineEventReview::MovieReview { source, .. } => source.date(),
+                TimelineEventReview::TvShowReview { source, .. } => source.date(),
+            },
         }
     }
 
@@ -60,8 +86,11 @@ impl TimelineEvent {
                 TimelineEventPost::MicroPost(post) => &post.tags,
                 TimelineEventPost::MastodonPost(post) => post.tags(),
             },
-            TimelineEvent::BookReview { source, .. } => source.tags(),
-            TimelineEvent::MovieReview { source, .. } => source.tags(),
+            TimelineEvent::Review(review) => match review {
+                TimelineEventReview::BookReview { source, .. } => source.tags(),
+                TimelineEventReview::MovieReview { source, .. } => source.tags(),
+                TimelineEventReview::TvShowReview { source, .. } => source.tags(),
+            },
         }
     }
 }

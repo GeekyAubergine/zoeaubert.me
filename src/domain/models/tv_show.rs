@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use super::{source_post::SourcePost, image::Image, post::Post, slug::Slug};
+use crate::domain::models::{image::Image, slug::Slug};
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash)]
 #[serde(tag = "type")]
@@ -42,30 +42,3 @@ impl PartialEq for TvShow {
 }
 
 impl Eq for TvShow {}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct TvShowReview {
-    pub tv_show: TvShow,
-    pub seasons: Vec<u8>,
-    pub scores: Vec<u8>,
-    pub review: String,
-    pub source_content: SourcePost,
-}
-
-impl TvShowReview {
-    pub fn season_text(&self) -> String {
-        if self.seasons.len() == 1 {
-            format!("S{}", self.seasons[0])
-        } else {
-            format!(
-                "S{}-S{}",
-                self.seasons[0],
-                self.seasons[self.seasons.len() - 1]
-            )
-        }
-    }
-
-    pub fn score_text(&self) -> String {
-        self.scores[0].to_string()
-    }
-}

@@ -5,9 +5,9 @@ use crate::{
         blog_post::BlogPost,
         mastodon_post::{MastodonPost, MastodonPosts},
         micro_post::MicroPost,
-        review::{book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource},
+        review::{book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource, tv_show_review::TvShowReview},
         tag::Tag,
-        timeline_event::{TimelineEvent, TimelineEventPost, TimelineEvents},
+        timeline_event::{TimelineEvent, TimelineEventPost, TimelineEventReview, TimelineEvents},
     },
     services::ServiceContext,
 };
@@ -29,11 +29,11 @@ async fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Ti
                 .await;
 
             return match book {
-                Ok(Some(book)) => TimelineEvent::BookReview {
+                Ok(Some(book)) => TimelineEvent::Review(TimelineEventReview::BookReview {
                     review,
                     book,
                     source,
-                },
+                }),
                 Ok(None) => source.into(),
                 Err(e) => {
                     let slug = source.slug();
@@ -50,23 +50,44 @@ async fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Ti
         .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG)))
     {
         if let Ok(review) = MovieReview::from_content(&source.content()) {
-            let movie = ctx
-                .movies
-                .find_movie(ctx, &review.title, review.year)
-                .await;
+            let movie = ctx.movies.find_movie(ctx, &review.title, review.year).await;
 
             return match movie {
-                Ok(Some(movie)) => TimelineEvent::MovieReview {
+                Ok(Some(movie)) => TimelineEvent::Review(TimelineEventReview::MovieReview {
                     review,
                     movie,
                     source,
-                },
+                }),
                 Ok(None) => source.into(),
                 Err(e) => {
                     let slug = source.slug();
                     let title = review.title;
                     let year = review.year;
                     error!("Unable to process movie post [{slug}] [{title} - {year}]");
+                    source.into()
+                }
+            };
+        }
+    }
+
+    if (source
+        .tags()
+        .contains(&Tag::from_string(TV_SHOW_REVIEW_POST_TAG)))
+    {
+        if let Ok(review) = TvShowReview::from_content(&source.content()) {
+            let tv_show = ctx.tv_shows.find_tv_show(ctx, &review.title).await;
+
+            return match tv_show {
+                Ok(Some(tv_show)) => TimelineEvent::Review(TimelineEventReview::TvShowReview {
+                    review,
+                    tv_show,
+                    source,
+                }),
+                Ok(None) => source.into(),
+                Err(e) => {
+                    let slug = source.slug();
+                    let title = review.title;
+                    error!("Unable to process movie post [{slug}] [{title}]");
                     source.into()
                 }
             };

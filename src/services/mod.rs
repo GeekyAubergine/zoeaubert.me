@@ -1,7 +1,7 @@
 use crate::{
     prelude::*,
     services::{
-        book_service::BookService, cdn_service::CdnService, data_hash_cache_service::ContentHashService, file_service::FileService, movie_service::MovieService, network_service::NetworkService2, query_limiter_service::QueryLimitingService2
+        book_service::BookService, cdn_service::CdnService, data_hash_cache_service::ContentHashService, file_service::FileService, movie_service::MovieService, network_service::NetworkService2, query_limiter_service::QueryLimitingService2, ts_show_service::TvShowService
     },
 };
 
@@ -14,6 +14,7 @@ pub mod page_renderer;
 pub mod query_limiter_service;
 pub mod book_service;
 pub mod movie_service;
+pub mod ts_show_service;
 
 #[derive(Debug)]
 pub struct ServiceContext {
@@ -23,6 +24,7 @@ pub struct ServiceContext {
     pub content_hash_service: ContentHashService,
     pub books: BookService,
     pub movies: MovieService,
+    pub tv_shows: TvShowService,
 }
 
 impl ServiceContext {
@@ -34,6 +36,7 @@ impl ServiceContext {
             content_hash_service: ContentHashService::new()?,
             books: BookService::new()?,
             movies: MovieService::new()?,
+            tv_shows: TvShowService::new()?,
         })
     }
 }

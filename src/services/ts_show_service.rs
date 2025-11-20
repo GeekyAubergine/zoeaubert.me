@@ -3,7 +3,7 @@ use std::path::Path;
 use std::sync::{Arc, RwLock};
 
 use chrono::Datelike;
-use htmlentity::entity::{decode, ICodedDataTrait};
+use htmlentity::entity::{ICodedDataTrait, decode};
 use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, instrument, warn};
 use url::Url;
@@ -13,7 +13,8 @@ use dotenvy_macro::dotenv;
 use crate::domain::models::book::{Book, BookID};
 use crate::domain::models::movie::{Movie, MovieId};
 use crate::domain::models::slug::Slug;
-use crate::error::{BookError, MovieError};
+use crate::domain::models::tv_show::{TvShow, TvShowId};
+use crate::error::{BookError, MovieError, TvShowsError};
 use crate::prelude::*;
 
 use crate::services::cdn_service::CdnFile;
@@ -22,25 +23,19 @@ use crate::services::media_service::MediaService;
 use crate::utils::date::parse_date;
 use crate::{domain::models::tag::Tag, services::ServiceContext};
 
-const FILE_NAME: &str = "movie_cache.json";
-
-const TMDB_LINK_URL: &str = "https://www.themoviedb.org/movie/";
+const FILE_NAME: &str = "tv_shows_cache.json";
+const TMDB_LINK_URL: &str = "https://www.themoviedb.org/tv/";
 const TMDB_IMAGE_URL: &str = "https://image.tmdb.org/t/p/w200";
 
-fn name_and_year_to_key(name: &str, year: u16) -> String {
-    format!("{} ({})", name, year)
-}
-
-fn make_search_url(title: &str, year: u16) -> Url {
+fn make_search_url(title: &str) -> Url {
     let title = decode(title.as_bytes()).to_string().unwrap();
 
     let title = title.replace('&', "").replace(' ', "+");
 
     format!(
-        "https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}",
+        "https://api.themoviedb.org/3/search/tv?api_key={}&query={}",
         dotenv!("TMDB_KEY"),
         title,
-        year
     )
     .parse()
     .unwrap()
@@ -49,9 +44,8 @@ fn make_search_url(title: &str, year: u16) -> Url {
 #[derive(Debug, Clone, Deserialize)]
 struct TmdbSearchResponseSingle {
     id: u32,
-    title: String,
+    name: String,
     poster_path: Option<String>,
-    release_date: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -63,12 +57,12 @@ struct TmdbSearchResponse {
 }
 
 #[derive(Debug)]
-pub struct MovieService {
+pub struct TvShowService {
     file: ArchiveFile,
-    movies: Arc<RwLock<HashMap<String, Option<Movie>>>>,
+    tv_shows: Arc<RwLock<HashMap<String, Option<TvShow>>>>,
 }
 
-impl MovieService {
+impl TvShowService {
     pub fn new() -> Result<Self> {
         let file = FileService::archive(FILE_NAME.into());
 
@@ -76,26 +70,19 @@ impl MovieService {
 
         Ok(Self {
             file,
-            movies: Arc::new(RwLock::new(data)),
+            tv_shows: Arc::new(RwLock::new(data)),
         })
     }
 
-    #[instrument(err, skip_all, fields(movie.title=%title, movie.year=&year))]
-    pub async fn find_movie(
-        &self,
-        ctx: &ServiceContext,
-        title: &str,
-        year: u16,
-    ) -> Result<Option<Movie>> {
-        let key = name_and_year_to_key(title, year);
+    #[instrument(err, skip_all, fields(tv_show.title=%title))]
+    pub async fn find_tv_show(&self, ctx: &ServiceContext, title: &str) -> Result<Option<TvShow>> {
+        let mut tv_shows = self.tv_shows.write().unwrap();
 
-        let mut movies = self.movies.write().unwrap();
-
-        if let Some(movie) = movies.get(&key) {
+        if let Some(movie) = tv_shows.get(title) {
             match movie {
                 Some(movie) => return Ok(Some(movie.clone())),
                 None => {
-                    warn!("Did not find cover for movie [{title} - {year}]");
+                    warn!("Did not find cover for tv show [{title}]");
                     return Ok(None);
                 }
             }
@@ -103,7 +90,7 @@ impl MovieService {
 
         let results = ctx
             .network
-            .download_json::<TmdbSearchResponse>(&make_search_url(title, year))
+            .download_json::<TmdbSearchResponse>(&make_search_url(title))
             .await?;
 
         let results = results
@@ -113,49 +100,47 @@ impl MovieService {
             .collect::<Vec<_>>();
 
         match results.first() {
-            Some(movie) => {
-                let poster = movie
+            Some(tv_show) => {
+                let poster = tv_show
                     .poster_path
                     .as_ref()
-                    .ok_or(MovieError::movie_has_no_poster(movie.id))?;
+                    .ok_or(TvShowsError::tv_show_has_no_poster(tv_show.id))?;
 
                 let image_url = &format!("{}{}", TMDB_IMAGE_URL, poster).parse().unwrap();
 
-                let cdn_file = CdnFile::from_str(&format!("movies/{}-poster-200.jpg", movie.id));
+                let cdn_file = CdnFile::from_str(&format!("tv/{}-poster-400.jpg", tv_show.id));
 
                 let image = MediaService::image_from_url(
                     ctx,
                     image_url,
                     &cdn_file,
-                    &format!("{} movie poster", movie.title),
-                    Some(&format!("https://www.themoviedb.org/movie/{}", movie.id)),
+                    &format!("{} movie poster", tv_show.name),
+                    Some(&format!("https://www.themoviedb.org/tv/{}", tv_show.id)),
                     None,
                 )
                 .await?;
 
-                let date = parse_date(&movie.release_date)?;
-
-                let movie = Movie {
-                    title: movie.title.clone(),
-                    year: date.year() as u16,
+                let tv_show = TvShow {
+                    title: tv_show.name.clone(),
                     poster: image,
-                    id: MovieId::tmdb(movie.id),
-                    link: format!("{}{}", TMDB_LINK_URL, movie.id).parse().unwrap(),
+                    id: TvShowId::tmdb(tv_show.id),
+                    link: format!("{}{}", TMDB_LINK_URL, tv_show.id).parse().unwrap(),
                 };
 
-                movies.insert(key, Some(movie.clone()));
+                tv_shows.insert(tv_show.title.clone(), Some(tv_show.clone()));
 
-                self.file.write_json(&movies.clone())?;
+                self.file.write_json(&tv_shows.clone())?;
 
-                Ok(Some(movie))
+                Ok(Some(tv_show))
             }
             None => {
-                warn!("Did not find cover for movie [{title}]");
-                movies.insert(title.to_string(), None);
+                warn!("Did not find cover for tv show [{title}]");
+                tv_shows.insert(title.to_string(), None);
 
-                self.file.write_json(&movies.clone())?;
+                self.file.write_json(&tv_shows.clone())?;
 
                 Ok(None)
-            }        }
+            }
+        }
     }
 }
