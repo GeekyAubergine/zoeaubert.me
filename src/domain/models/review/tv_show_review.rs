@@ -34,7 +34,11 @@ impl TvShowReview {
     }
 
     pub fn score_text(&self) -> String {
-        self.scores[0].to_string()
+        format!("{}/5", self.scores[0].to_string())
+    }
+
+    pub fn average_score_u8(&self) -> u8 {
+        (self.scores.iter().sum::<u8>() as f32 / self.scores.len() as f32).floor() as u8
     }
 
     pub fn from_content(content: &str) -> Result<TvShowReview> {

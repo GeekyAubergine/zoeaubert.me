@@ -84,7 +84,7 @@ pub async fn process_blog_post(ctx: &ServiceContext, file_path: &ContentFile) ->
                     &url,
                     &cdn_file,
                     &alt,
-                    Some(&slug.permalink_string()),
+                    Some(&&slug.relative_string()),
                     Some(date),
                 )
                 .await?;

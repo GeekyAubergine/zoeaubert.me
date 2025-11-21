@@ -11,8 +11,9 @@ use crate::{
     },
 };
 
+const ITEM_COUNT: usize = 6;
+
 struct InterestElement<'l> {
-    title: String,
     sub_text: Option<String>,
     image: &'l Image,
     link: Slug,
@@ -25,6 +26,32 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
 
     let slug = page.slug.clone();
 
+    let games = context
+        .data
+        .games
+        .find_by_most_recently_played()
+        .iter()
+        .map(|game| InterestElement {
+            sub_text: None,
+            image: game.image(),
+            link: game.slug(),
+        })
+        .take(6)
+        .collect::<Vec<InterestElement<'l>>>();
+
+    let lego = context
+        .data
+        .lego
+        .find_all_sets()
+        .iter()
+        .map(|set| InterestElement {
+            sub_text: None,
+            image: &set.image,
+            link: Slug::new("/interests/lego/"),
+        })
+        .take(ITEM_COUNT)
+        .collect::<Vec<InterestElement<'l>>>();
+
     let books = context
         .data
         .timeline_events
@@ -32,17 +59,20 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .iter()
         .filter_map(|event| match event {
             TimelineEvent::Review(review) => match review {
-                TimelineEventReview::BookReview { review, book, .. } => Some(InterestElement {
-                    title: book.title.clone(),
+                TimelineEventReview::BookReview {
+                    review,
+                    book,
+                    source,
+                } => Some(InterestElement {
                     sub_text: Some(format!("{}/5", review.score)),
                     image: &book.cover,
-                    link: book.slug(),
+                    link: source.slug(),
                 }),
                 _ => None,
             },
             _ => None,
         })
-        .take(4)
+        .take(ITEM_COUNT)
         .collect::<Vec<InterestElement<'l>>>();
 
     let movies = context
@@ -52,17 +82,20 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .iter()
         .filter_map(|event| match event {
             TimelineEvent::Review(review) => match review {
-                TimelineEventReview::MovieReview { review, movie, .. } => Some(InterestElement {
-                    title: movie.title.clone(),
+                TimelineEventReview::MovieReview {
+                    review,
+                    movie,
+                    source,
+                } => Some(InterestElement {
                     sub_text: Some(format!("{}/5", review.score)),
                     image: &movie.poster,
-                    link: movie.slug(),
+                    link: source.slug(),
                 }),
                 _ => None,
             },
             _ => None,
         })
-        .take(4)
+        .take(ITEM_COUNT)
         .collect::<Vec<InterestElement<'l>>>();
 
     let tv_shows = context
@@ -72,23 +105,53 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .iter()
         .filter_map(|event| match event {
             TimelineEvent::Review(review) => match review {
-                TimelineEventReview::TvShowReview { review, tv_show, .. } => Some(InterestElement {
-                    title: format!("{} - {}", tv_show.title, review.season_text()),
-                    sub_text: Some(format!("{}/5", review.score_text())),
+                TimelineEventReview::TvShowReview {
+                    review,
+                    tv_show,
+                    source,
+                } => Some(InterestElement {
+                    sub_text: Some(review.score_text()),
                     image: &tv_show.poster,
-                    link: tv_show.slug(),
+                    link: source.slug(),
                 }),
                 _ => None,
             },
             _ => None,
         })
-        .take(4)
+        .take(ITEM_COUNT)
         .collect::<Vec<InterestElement<'l>>>();
 
+    // let tv_shows_2 = context
+    //     .data
+    //     .timeline_events
+    //     .all_by_date()
+    //     .iter()
+    //     .filter_map(|event| match event {
+    //         TimelineEvent::Review(review) => match review {
+    //             TimelineEventReview::TvShowReview { review, tv_show, source } => Some(SectionGridItem {
+    //                 header: SectionGridItemHeader::Title(format!("{} - {}", tv_show.title, review.season_text())),
+    //                 content: SectionGridItemContent::ImageAndText {
+    //                     text: format!("{} - {}", tv_show.title, review.season_text()),
+    //                     image: &tv_show.poster
+    //                 },
+    //                 // sub_text: Some(format!("{}/5", review.score_text())),
+    //                 // image: &tv_show.poster
+    //                 link: source.slug().relative_string(),
+    //             }),
+    //             _ => None,
+    //         },
+    //         _ => None,
+    //     })
+    //     .take(4)
+    //     .collect::<Vec<SectionGridItem<'l>>>();
+
     let content = maud! {
-        (render_interest_strip("Books", "More book reviews →", "/interests/books/",  &books, "books"))
-        (render_interest_strip("Movies", "More movie reviews →", "/interests/movies/",  &movies, "movies"))
-        (render_interest_strip("TV", "More tv reviews →", "/interests/tv/",  &tv_shows, "tv_shows"))
+        (render_interest_strip("Games", "Games →", "/interests/games/",  &games, "games"))
+        (render_interest_strip("Lego", "Lego Sets →", "/interests/lego/",  &lego, "lego"))
+        (render_interest_strip("Books", "Book Reviews →", "/tags/books/",  &books, "books"))
+        (render_interest_strip("Movies", "Movie Reviews →", "/tags/movies/",  &movies, "movies"))
+        (render_interest_strip("TV", "TV Reviews →", "/tags/tv/",  &tv_shows, "tv_shows"))
+        // (render_section_grid("TV",  &tv_shows_2, "More tv reviews →", "/interests/tv/"))
     };
 
     let options = PageOptions::new().with_main_class("interests-page");
@@ -106,17 +169,15 @@ fn render_interest_strip<'l>(
     section_class: &'l str,
 ) -> impl Renderable + 'l {
     maud! {
-        section {
+        section class=(section_class) {
             h2 { (title) }
             ul {
                 @for item in items {
                     li {
                         a href=(item.link.relative_string()) {
-                            p class="title" { (item.title) }
-                        }
-                        a href=(item.link.relative_string()) {
-                            div class="content" {
-                                (item.image.render_small())
+                            (item.image.render_small())
+                            @if let Some(sub_text) = &item.sub_text {
+                                p class="sub-text" { (sub_text) }
                             }
                         }
                     }

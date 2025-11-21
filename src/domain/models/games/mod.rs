@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use steam::SteamGameWithAchievements;
 
-use crate::prelude::Result;
+use crate::{domain::models::slug::Slug, prelude::Result};
 
 use super::image::Image;
 
@@ -25,6 +25,12 @@ impl Game {
     pub fn id(&self) -> GameId {
         match self {
             Game::Steam(game) => GameId::Steam(game.game.id),
+        }
+    }
+
+    pub fn name(&self) -> &str {
+        match self {
+            Game::Steam(game) => &game.game.name,
         }
     }
 
@@ -53,6 +59,12 @@ impl Game {
     pub fn image(&self) -> &Image {
         match self {
             Game::Steam(game) => &game.game.header_image,
+        }
+    }
+
+    pub fn slug(&self) -> Slug {
+        match self {
+            Game::Steam(game) => game.game.slug(),
         }
     }
 }

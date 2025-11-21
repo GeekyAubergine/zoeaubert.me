@@ -9,3 +9,5 @@ pub mod timeline_pages_renderers;
 pub mod mastodon_post_pages_renderers;
 pub mod book_review_pages_renderers;
 pub mod interests_page_renderer;
+pub mod movie_review_pages_renderers;
+pub mod tv_review_pages_renderers;

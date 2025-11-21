@@ -7,7 +7,7 @@
 
 @theme {
     --color-background: #ffffff;
-    --color-background-secondary: #F0EEEC;
+    --color-background-secondary: #f0eeec;
     /*--color-background: #ffffff;*/
     --color-text: #000000;
     --color-text-disabled: #919397;
@@ -295,7 +295,7 @@
 
 @utility full-stop {
     &::after {
-        content: '.';
+        /*content: '.';*/
     }
 }
 
@@ -571,7 +571,7 @@ time {
             @apply items-center md:pt-24;
 
             .name-and-cursor {
-                @apply w-full flex-row justify-center items-baseline h-[7.5rem];
+                @apply w-full flex-row justify-center items-baseline h-[8rem];
 
                 h1 {
                     @apply text-[3rem] md:text-[6rem] m-0 text-center w-auto;
@@ -680,7 +680,9 @@ time {
 .blog-post-page,
 .micro-post-page,
 .mastodon-post-page,
-.book-review-post-page {
+.book-review-post-page,
+.movie-review-post-page,
+.tv-show-review-post-page {
     @apply width-narrow;
 
     .original-link {
@@ -822,24 +824,50 @@ time {
         }
 
         ul {
-            @apply grid grid-cols-2 gap-y-12 gap-x-3 md:grid-cols-4;
+            @apply grid grid-cols-3 gap-y-12 gap-x-4 md:grid-cols-6;
 
             li {
                 @apply flex flex-col justify-between;
 
                 a {
-                    @apply no-underline;
-                }
-
-                .title {
-                    @apply mt-0 mb-1 font-bold tracking-tight md:tracking-normal md:overflow-hidden;
-                }
-
-                .content {
-                    @apply bg-background-secondary w-full aspect-square rounded-sm p-4;
+                    @apply flex flex-col no-underline relative w-full h-full rounded-sm;
 
                     img {
-                        @apply w-full h-full object-contain;
+                        @apply w-full h-full object-cover rounded-sm;
+                    }
+
+                    .sub-text {
+                        @apply m-2 text-center;
+                    }
+                }
+            }
+        }
+
+        &.games {
+            ul {
+                @apply grid grid-cols-2 gap-4 md:grid-cols-3;
+
+                li {
+                    a {
+                        img {
+                            @apply object-contain max-h-[18rem];
+                        }
+                    }
+                }
+            }
+        }
+
+        &.lego {
+            ul {
+                @apply grid grid-cols-3 gap-4 md:grid-cols-6;
+
+                li {
+                    a {
+                        @apply bg-white;
+
+                        img {
+                            @apply px-2 py-4 object-contain max-h-[18rem];
+                        }
                     }
                 }
             }

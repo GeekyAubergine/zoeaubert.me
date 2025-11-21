@@ -7,10 +7,7 @@ use crate::{
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
     services::{
-        cdn_service::CdnFile,
-        file_service::{FileService, ReadableFile},
-        media_service::MediaService,
-        ServiceContext,
+        ServiceContext, cdn_service::CdnFile, file_service::{FileService, ReadableFile, WritableFile}, media_service::MediaService
     },
 };
 
@@ -114,12 +111,13 @@ fn make_get_minifig_url(hash: &str) -> Url {
 }
 
 pub async fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
-    if !ctx.query_limiter.can_query_within_day(QUERY_KEY).await? {
-        let existing: Lego = FileService::archive(STORE.into()).read_json_or_default()?;
-        return Ok(existing);
-    }
+    let file = FileService::archive(STORE.into());
 
-    let mut lego = Lego::new();
+    let mut lego = file.read_json_or_default()?;
+
+    if !ctx.query_limiter.can_query_within_day(QUERY_KEY).await? {
+        return Ok(lego);
+    }
 
     info!("Processing lego sets and minifigs");
 
@@ -195,6 +193,8 @@ pub async fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
             lego.add_minifig(&minifig);
         }
     }
+
+    file.write_json(&lego.clone())?;
 
     Ok(lego)
 }

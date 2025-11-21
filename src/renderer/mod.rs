@@ -12,10 +12,12 @@ use crate::renderer::pages::home_page_renderer::render_home_page;
 use crate::renderer::pages::interests_page_renderer::render_interests_page;
 use crate::renderer::pages::mastodon_post_pages_renderers::render_mastodon_pages;
 use crate::renderer::pages::micro_post_pages_renderers::render_micro_post_pages;
+use crate::renderer::pages::movie_review_pages_renderers::render_move_review_pages;
 use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
 use crate::renderer::pages::project_pages_renderers::render_project_pages;
 use crate::renderer::pages::tag_pages_renderers::render_tags_pages;
 use crate::renderer::pages::timeline_pages_renderers::render_timeline_pages;
+use crate::renderer::pages::tv_review_pages_renderers::render_tv_review_pages;
 use crate::services::page_renderer::PageRenderer;
 use tracing::debug;
 
@@ -51,6 +53,8 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_project_pages(context)?;
     render_interests_page(context)?;
     render_book_review_pages(context)?;
+    render_move_review_pages(context)?;
+    render_tv_review_pages(context)?;
 
     Ok(())
 }

@@ -114,7 +114,7 @@ async fn extract_images_from_html(
                 &path.parse().unwrap(),
                 cdn_file,
                 alt,
-                Some(&parent_slug.permalink_string()),
+                Some(&&parent_slug.relative_string()),
                 Some(date.clone()),
             )
             .await?,
