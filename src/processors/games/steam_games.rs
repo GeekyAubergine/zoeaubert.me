@@ -3,7 +3,7 @@ use std::{collections::HashMap, path::Path, time::Duration};
 use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, info};
+use tracing::{debug, info, instrument, warn};
 use url::Url;
 
 use crate::{
@@ -325,9 +325,10 @@ async fn get_game_header_image(
     .await
 }
 
+#[instrument(err, skip_all, fields(game.id=game.appid,game.name=game.name))]
 async fn process_game(
     ctx: &ServiceContext,
-    game: SteamOwnedGame,
+    game: &SteamOwnedGame,
     stored_game: Option<&SteamGameWithAchievements>,
 ) -> Result<SteamGameWithAchievements> {
     if let Some(stored_game) = stored_game {
@@ -344,9 +345,9 @@ async fn process_game(
 
     let game = SteamGame::new(
         game.appid,
-        game.name,
+        game.name.clone(),
         image,
-        Duration::from_secs(game.playtime_forever as u64),
+        Duration::from_mins(game.playtime_forever as u64),
         steam_last_played_to_datetime(game.rtime_last_played),
         format!("https://store.steampowered.com/app/{}", game.appid),
     );
@@ -379,7 +380,8 @@ pub async fn load_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
 
         let stored = data.find_game_by_id(game.appid);
 
-        if let Ok(game) = process_game(ctx, game, stored).await {
+        match process_game(ctx, &game, stored).await {
+            Ok(game) => {
             let should_save = match stored {
                 Some(stored) => !stored.eq(&game),
                 None => true,
@@ -389,6 +391,12 @@ pub async fn load_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
 
             if should_save {
                 file.write_json(&data)?;
+            }
+            },
+            Err(e) => {
+                let appid = &game.appid;
+                let name = &game.name;
+                warn!("Unable to process game [{appid}] [{name}]");
             }
         }
     }

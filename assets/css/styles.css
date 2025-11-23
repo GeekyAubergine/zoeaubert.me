@@ -554,6 +554,22 @@ time {
     }
 }
 
+.stat {
+    @apply justify-center items-center;
+
+    .value {
+        @apply text-6xl;
+
+        .unit {
+            @apply text-4xl;
+        }
+    }
+
+    .desc {
+        @apply secondary;
+    }
+}
+
 /* -------- Page Specific -------- */
 .home {
     section {
@@ -872,5 +888,99 @@ time {
                 }
             }
         }
+    }
+}
+
+.games-list-page {
+    @apply width-middle;
+
+    h1 {
+        @apply full-stop;
+    }
+
+    section {
+        @apply w-full pt-8 pb-16;
+
+        h2 {
+            @apply mt-0 mb-4 text-3xl md:text-4xl full-stop;
+        }
+
+        ul {
+            @apply grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3;
+
+            li {
+                a {
+                    @apply flex flex-col no-underline relative w-full h-full rounded-sm;
+
+                    img {
+                        @apply object-contain max-h-[18rem];
+                    }
+
+                    p {
+                        @apply text-center secondary first-of-type:mt-1 !font-normal;
+
+                        time {
+                            @apply !font-normal;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .stats {
+        @apply grid grid-cols-1 md:grid-cols-3 gap-y-12;
+    }
+}
+
+.game-page {
+    @apply width-narrow;
+
+    h1 {
+        @apply full-stop;
+    }
+
+    .page-header {
+        @apply mb-4;
+    }
+
+    .cover {
+        @apply w-full mb-4 items-center;
+
+        img {
+            @apply max-h-[22rem];
+        }
+
+        a {
+            @apply mt-2;
+        }
+    }
+
+    section {
+        @apply w-full pt-8 pb-16;
+
+        h2 {
+            @apply mt-0 mb-4 text-3xl md:text-4xl full-stop;
+        }
+
+        ul {
+            @apply grid grid-cols-1 gap-6;
+
+            li {
+                @apply flex flex-row w-full;
+
+                img {
+                    @apply w-[6rem] h-[6rem] object-contain object-top;
+                }
+
+                .name-and-description {
+                    @apply flex-1 mx-2;
+                }
+            }
+        }
+    }
+
+    .stats {
+        @apply grid grid-cols-1 md:grid-cols-2 gap-y-12;
     }
 }

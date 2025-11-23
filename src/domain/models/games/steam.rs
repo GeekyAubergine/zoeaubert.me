@@ -37,10 +37,6 @@ impl SteamGame {
     pub fn slug(&self) -> Slug {
         Slug::new(&format!("/interests/games/{}/", self.id))
     }
-
-    pub fn playtime_hours(&self) -> f32 {
-        self.playtime.as_secs() as f32 / (60.0 * 60.0)
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -132,10 +128,6 @@ impl SteamGameWithAchievements {
 
     pub fn unlocked_achievement_count(&self) -> u32 {
         self.unlocked_achievements.len() as u32
-    }
-
-    pub fn achievement_unlocked_percentage(&self) -> f32 {
-        self.unlocked_achievement_count() as f32 / (self.total_achievements() as f32).max(1.0)
     }
 
     pub fn find_all_unlocked_by_unlocked_date(&self) -> Vec<&SteamGameAchievementUnlocked> {

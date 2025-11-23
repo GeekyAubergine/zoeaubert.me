@@ -51,8 +51,18 @@ impl Game {
     }
 
     pub fn achievement_unlocked_percentage(&self) -> f32 {
+        self.unlocked_achievement_count() as f32 / (self.achievments_count() as f32).max(1.0)
+    }
+
+    pub fn achievments_count(&self) -> u32 {
         match self {
-            Game::Steam(game) => game.achievement_unlocked_percentage(),
+            Game::Steam(game) => game.total_achievements(),
+        }
+    }
+
+    pub fn unlocked_achievement_count(&self) -> u32 {
+        match self {
+            Game::Steam(game) => game.unlocked_achievement_count(),
         }
     }
 
