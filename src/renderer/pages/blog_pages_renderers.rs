@@ -49,7 +49,7 @@ pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     maud! {
         li class="blog-post-list-item" {
             div class="title-and-date" {
-                a href=(&post.slug.permalink_string()) {
+                a href=(&post.slug.relative_string()) {
                     h2 class="title" { (&post.title) }
                 }
                 (render_date(&post.date))

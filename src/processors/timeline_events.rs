@@ -3,11 +3,18 @@ use tracing::{error, instrument};
 use crate::{
     domain::models::{
         blog_post::BlogPost,
+        games::{Game, Games},
         mastodon_post::{MastodonPost, MastodonPosts},
         micro_post::MicroPost,
-        review::{book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource, tv_show_review::TvShowReview},
+        review::{
+            book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource,
+            tv_show_review::TvShowReview,
+        },
         tag::Tag,
-        timeline_event::{TimelineEvent, TimelineEventPost, TimelineEventReview, TimelineEvents},
+        timeline_event::{
+            TimelineEvent, TimelineEventGameAchievementUnlock, TimelineEventPost,
+            TimelineEventReview, TimelineEvents,
+        },
     },
     services::ServiceContext,
 };
@@ -132,17 +139,40 @@ async fn extract_events_from_mastodon(
     events
 }
 
+fn extract_events_from_games<'l>(ctx: &ServiceContext, games: &Games) -> Vec<TimelineEvent> {
+    let mut events = vec![];
+
+    for game in games.find_all() {
+        match game {
+            Game::Steam(game) => {
+                for (_, achievement) in game.unlocked_achievements.iter() {
+                    events.push(TimelineEvent::GameAchievementUnlock(
+                        TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
+                            game: game.game.clone(),
+                            achievement: achievement.clone(),
+                        },
+                    ));
+                }
+            }
+        }
+    }
+
+    events
+}
+
 pub async fn process_timeline_events(
     ctx: &ServiceContext,
     blog_posts: Vec<BlogPost>,
     micro_posts: Vec<MicroPost>,
     mastodon_posts: MastodonPosts,
+    games: &Games,
 ) -> TimelineEvents {
     let mut events: Vec<TimelineEvent> = vec![];
 
     events.extend(extract_events_from_blog_posts(ctx, blog_posts));
     events.extend(extract_events_from_micro_posts(ctx, micro_posts).await);
     events.extend(extract_events_from_mastodon(ctx, mastodon_posts).await);
+    events.extend(extract_events_from_games(ctx, games));
 
     TimelineEvents::from_events(events)
 }

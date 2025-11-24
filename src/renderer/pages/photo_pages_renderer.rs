@@ -31,6 +31,7 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
                 TimelineEventPost::MastodonPost(post) => Some(post.media()),
             },
             TimelineEvent::Review(_) => None,
+            TimelineEvent::GameAchievementUnlock(_) => None,
         })
         .flatten()
         .filter_map(|media| match media {

@@ -70,7 +70,7 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let start = Utc::now();
 
     // TODO extract albums and games
-    let timeline_events = process_timeline_events(ctx, blog_posts, micro_posts, mastodon).await;
+    let timeline_events = process_timeline_events(ctx, blog_posts, micro_posts, mastodon, &games).await;
 
     info!(
         "Processing data | Process Timeline | Events: {} [{}ms]",
@@ -88,6 +88,6 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
         games,
         albums,
         projects,
-        timeline_events,
+        timeline_events
     })
 }

@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use crate::domain::models::{
     blog_post::BlogPost,
     book::Book,
+    games::steam::{SteamGame, SteamGameAchievementUnlocked},
     mastodon_post::MastodonPost,
     micro_post::MicroPost,
     movie::Movie,
@@ -43,9 +44,18 @@ pub enum TimelineEventReview {
 }
 
 #[derive(Debug, Clone)]
+pub enum TimelineEventGameAchievementUnlock {
+    SteamAchievementUnlocked {
+        game: SteamGame,
+        achievement: SteamGameAchievementUnlocked,
+    },
+}
+
+#[derive(Debug, Clone)]
 pub enum TimelineEvent {
     Post(TimelineEventPost),
     Review(TimelineEventReview),
+    GameAchievementUnlock(TimelineEventGameAchievementUnlock),
 }
 
 impl TimelineEvent {
@@ -60,6 +70,12 @@ impl TimelineEvent {
                 TimelineEventReview::BookReview { source, .. } => source.slug().to_string(),
                 TimelineEventReview::MovieReview { source, .. } => source.slug().to_string(),
                 TimelineEventReview::TvShowReview { source, .. } => source.slug().to_string(),
+            },
+            TimelineEvent::GameAchievementUnlock(achievement) => match achievement {
+                TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
+                    game,
+                    achievement,
+                } => game.slug().to_string(),
             },
         }
     }
@@ -76,21 +92,28 @@ impl TimelineEvent {
                 TimelineEventReview::MovieReview { source, .. } => source.date(),
                 TimelineEventReview::TvShowReview { source, .. } => source.date(),
             },
+            TimelineEvent::GameAchievementUnlock(achievement) => match achievement {
+                TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
+                    game,
+                    achievement,
+                } => &achievement.unlocked_date,
+            },
         }
     }
 
-    pub fn tags(&self) -> &Vec<Tag> {
+    pub fn tags(&self) -> Option<&Vec<Tag>> {
         match self {
             TimelineEvent::Post(post) => match post {
-                TimelineEventPost::BlogPost(post) => &post.tags,
-                TimelineEventPost::MicroPost(post) => &post.tags,
-                TimelineEventPost::MastodonPost(post) => post.tags(),
+                TimelineEventPost::BlogPost(post) => Some(&post.tags),
+                TimelineEventPost::MicroPost(post) => Some(&post.tags),
+                TimelineEventPost::MastodonPost(post) => Some(post.tags()),
             },
             TimelineEvent::Review(review) => match review {
-                TimelineEventReview::BookReview { source, .. } => source.tags(),
-                TimelineEventReview::MovieReview { source, .. } => source.tags(),
-                TimelineEventReview::TvShowReview { source, .. } => source.tags(),
+                TimelineEventReview::BookReview { source, .. } => Some(source.tags()),
+                TimelineEventReview::MovieReview { source, .. } => Some(source.tags()),
+                TimelineEventReview::TvShowReview { source, .. } => Some(source.tags()),
             },
+            TimelineEvent::GameAchievementUnlock(_) => None,
         }
     }
 }
@@ -101,14 +124,14 @@ pub struct TimelineEvents {
 }
 
 impl TimelineEvents {
-    pub fn from_events(events: Vec<TimelineEvent>) -> Self {
+    pub fn from_events(mut events: Vec<TimelineEvent>) -> Self {
         // Seems redundant, but prevents weird duplicates
-        let mut events_map = events
-            .into_iter()
-            .map(|event| (event.key(), event))
-            .collect::<HashMap<String, TimelineEvent>>();
+        // let mut events_map = events
+        //     .into_iter()
+        //     .map(|event| (event.key(), event))
+        //     .collect::<HashMap<String, TimelineEvent>>();
 
-        let mut events = events_map.into_values().collect::<Vec<TimelineEvent>>();
+        // let mut events = events_map.into_values().collect::<Vec<TimelineEvent>>();
 
         events.sort_by(|a, b| b.date().cmp(&a.date()));
 

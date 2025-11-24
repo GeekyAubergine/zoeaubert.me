@@ -37,7 +37,7 @@ fn blog_post<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     maud! {
         li class="blog-post-list-item" {
             div class="title-and-date" {
-                a href=(&post.slug.permalink_string()) {
+                a href=(&post.slug.relative_string()) {
                     h3 class="title" { (&post.title) }
                 }
                 (render_date(&post.date))
@@ -112,7 +112,7 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
                 TimelineEventPost::MicroPost(post) => Some(post.media()),
                 TimelineEventPost::MastodonPost(post) => Some(post.media()),
             },
-            TimelineEvent::Review(_) => None,
+            _ => None,
         })
         .flatten()
         .filter_map(|media| match media {

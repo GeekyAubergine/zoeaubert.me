@@ -1,5 +1,6 @@
 use crate::domain::models::blog_post::BlogPost;
 use crate::domain::models::book::Book;
+use crate::domain::models::games::steam::{SteamGame, SteamGameAchievementUnlocked};
 use crate::domain::models::mastodon_post::MastodonPost;
 use crate::domain::models::media::{Media, MediaDimensions};
 use crate::domain::models::micro_post::MicroPost;
@@ -11,7 +12,7 @@ use crate::domain::models::review::tv_show_review::TvShowReview;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
 use crate::domain::models::timeline_event::{
-    TimelineEvent, TimelineEventPost, TimelineEventReview,
+    TimelineEvent, TimelineEventGameAchievementUnlock, TimelineEventPost, TimelineEventReview,
 };
 use crate::domain::models::tv_show::TvShow;
 use crate::prelude::*;
@@ -41,7 +42,15 @@ pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Rend
                         TimelineEventReview::BookReview { review, book, source } => (render_book_review(review, book, source)),
                         TimelineEventReview::MovieReview { review, movie, source } => (render_movie_review(review, movie, source)),
                         TimelineEventReview::TvShowReview { review, tv_show, source } => (render_tv_show_review(review, tv_show, source)),
-                    }
+                    },
+                    TimelineEvent::GameAchievementUnlock(achievement) => @match achievement {
+                        TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
+                            game,
+                            achievement,
+                        } => {
+                            (render_game_achievement_review(game, achievement))
+                        },
+                    },
                 }
                 hr;
             }
@@ -54,7 +63,7 @@ fn render_post<'l>(
     date: &'l DateTime<Utc>,
     content: impl Renderable + 'l,
     media: Option<Vec<Media>>,
-    tags: &'l Vec<Tag>,
+    tags: Option<&'l Vec<Tag>>,
     side_image: Option<&'l Image>,
 ) -> impl Renderable + 'l {
     maud! {
@@ -72,27 +81,33 @@ fn render_post<'l>(
                     @if let Some(media) = &media {
                         (render_media_grid(media, &MediaGripOptions::for_list()))
                     }
-                    (render_tags(&tags, Some(5)))
+                    @if let Some(tags) = &tags {
+                        (render_tags(&tags, Some(5)))
+                    }
                 }
             },
             Some(side_image) => {
-                li class="left-right" {
-                    div class="left" {
-                        a class="date" href=(slug.relative_string()) {
-                            time class="date" datetime=(date.datetime()) {
-                                (format!("{} →", date.month_as_word()))
+                li {
+                    a class="date" href=(slug.relative_string()) {
+                        time class="date" datetime=(date.datetime()) {
+                            (format!("{} →", date.month_as_word()))
+                        }
+                    }
+                    div class="left-right" {
+                        div class="left" {
+                            div class="content" {
+                                (content)
+                            }
+                            @if let Some(media) = &media {
+                                (render_media_grid(media, &MediaGripOptions::for_list()))
+                            }
+                            @if let Some(tags) = &tags {
+                                (render_tags(&tags, Some(5)))
                             }
                         }
-                        div class="content" {
-                            (content)
+                        div class="right" {
+                            (side_image.render_large())
                         }
-                        @if let Some(media) = &media {
-                            (render_media_grid(media, &MediaGripOptions::for_list()))
-                        }
-                        (render_tags(&tags, Some(5)))
-                    }
-                    div class="right" {
-                        (side_image.render_large())
                     }
                 }
             }
@@ -115,7 +130,7 @@ pub fn render_blog_post<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
         &post.date,
         content,
         None,
-        &post.tags,
+        Some(&post.tags),
         None,
     )
 }
@@ -132,7 +147,7 @@ pub fn render_micro_post<'l>(post: &'l MicroPost) -> impl Renderable + 'l {
         &post.date,
         content,
         Some(post.media().clone()),
-        &post.tags,
+        Some(&post.tags),
         None,
     )
 }
@@ -149,7 +164,7 @@ pub fn render_mastodon_post<'l>(post: &'l MastodonPost) -> impl Renderable + 'l 
         post.created_at(),
         content,
         Some(post.media().clone()),
-        post.tags(),
+        Some(post.tags()),
         None,
     )
 }
@@ -170,7 +185,7 @@ pub fn render_book_review<'l>(
         source.date(),
         content,
         None,
-        source.tags(),
+        Some(source.tags()),
         Some(&book.cover),
     )
 }
@@ -191,7 +206,7 @@ pub fn render_movie_review<'l>(
         source.date(),
         content,
         None,
-        source.tags(),
+        Some(source.tags()),
         Some(&movie.poster),
     )
 }
@@ -212,7 +227,29 @@ pub fn render_tv_show_review<'l>(
         source.date(),
         content,
         None,
-        source.tags(),
+        Some(source.tags()),
         Some(&tv_show.poster),
+    )
+}
+
+pub fn render_game_achievement_review<'l>(
+    game: &'l SteamGame,
+    achievement: &'l SteamGameAchievementUnlocked,
+) -> impl Renderable + 'l {
+    let content = maud! {
+        a class="game-title" href=(game.slug().relative_string()) {
+            (&game.name)
+        }
+        p { (format!("Unlocked {}", achievement.display_name)) }
+        p { (achievement.description )}
+    };
+
+    render_post(
+        game.slug(),
+        &achievement.unlocked_date,
+        content,
+        None,
+        None,
+        Some(&achievement.image),
     )
 }

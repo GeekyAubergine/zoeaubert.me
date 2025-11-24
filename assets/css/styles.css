@@ -159,7 +159,7 @@
 }
 
 @utility width-narrow {
-    @apply centered-to-width max-w-[68ch];
+    @apply centered-to-width max-w-[78ch];
 }
 
 @utility article-spacing {
@@ -500,7 +500,7 @@ time {
     & > li {
         @apply flex flex-col w-full;
 
-        &.left-right {
+        .left-right {
             @apply flex-row;
 
             .left {
@@ -508,7 +508,11 @@ time {
             }
 
             .right {
-                @apply w-[12rem] ml-4;
+                @apply w-[10rem] ml-4;
+
+                img {
+                    @apply w-full object-cover;
+                }
             }
         }
 
@@ -529,6 +533,10 @@ time {
         }
 
         .blog-title {
+            @apply text-3xl font-bold no-underline my-[var(--article-vertical-margin)];
+        }
+
+        .game-title {
             @apply text-3xl font-bold no-underline my-[var(--article-vertical-margin)];
         }
     }
@@ -729,7 +737,8 @@ time {
 }
 
 .timeline-page,
-.firehose-page {
+.firehose-page,
+.gaming-activity-page {
     @apply width-narrow;
 
     h1 {

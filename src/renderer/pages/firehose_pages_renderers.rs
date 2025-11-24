@@ -26,6 +26,7 @@ pub fn render_firehose_pages(context: &RendererContext) -> Result<()> {
         .filter(|event| match event {
             TimelineEvent::Post(_) => true,
             TimelineEvent::Review(_) => true,
+            TimelineEvent::GameAchievementUnlock(_) => true,
         })
         .collect::<Vec<&TimelineEvent>>();
 

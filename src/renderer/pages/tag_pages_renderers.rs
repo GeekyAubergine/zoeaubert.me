@@ -8,14 +8,14 @@ use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
 use crate::domain::models::timeline_event::TimelineEvent;
 use crate::prelude::*;
+use crate::renderer::RendererContext;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
-use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
+use crate::renderer::partials::page::{PageOptions, PageWidth, render_page};
 use crate::renderer::partials::tag::{self, render_tags};
 use crate::renderer::partials::timline_events_list::render_timline_events_list;
-use crate::renderer::RendererContext;
 use crate::utils::paginator::paginate;
 
 const PAGINATION_SIZE: usize = 25;
@@ -26,11 +26,13 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
     let mut events_by_tags: HashMap<&Tag, Vec<&TimelineEvent>> = HashMap::new();
 
     for event in events {
-        for tag in event.tags() {
-            events_by_tags
-                .entry(tag)
-                .or_insert_with(Vec::new)
-                .push(event);
+        if let Some(tags) = event.tags() {
+            for tag in tags {
+                events_by_tags
+                    .entry(tag)
+                    .or_insert_with(Vec::new)
+                    .push(event);
+            }
         }
     }
 
