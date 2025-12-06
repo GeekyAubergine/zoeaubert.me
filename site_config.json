@@ -86,14 +86,14 @@
                     "name": "Photography",
                     "url": "/albums/"
                 },
-                { "name": "Books", "url": "/interests/books/" },
+                { "name": "Books", "url": "/tags/books/" },
                 {
                     "name": "Movies",
-                    "url": "/interests/movies/"
+                    "url": "/tags/movies/"
                 },
                 {
                     "name": "TV",
-                    "url": "/interests/tv/"
+                    "url": "/tags/tv/"
                 }
             ]
         },

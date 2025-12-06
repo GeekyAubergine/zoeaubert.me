@@ -11,6 +11,7 @@ use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
 use crate::renderer::pages::games_pages_renderers::render_games_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
 use crate::renderer::pages::interests_page_renderer::render_interests_page;
+use crate::renderer::pages::lego_pages_renderers::render_lego_pages;
 use crate::renderer::pages::mastodon_post_pages_renderers::render_mastodon_pages;
 use crate::renderer::pages::micro_post_pages_renderers::render_micro_post_pages;
 use crate::renderer::pages::movie_review_pages_renderers::render_move_review_pages;
@@ -57,6 +58,7 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_move_review_pages(context)?;
     render_tv_review_pages(context)?;
     render_games_pages(context)?;
+    render_lego_pages(context)?;
 
     Ok(())
 }

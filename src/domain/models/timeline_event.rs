@@ -118,6 +118,12 @@ impl TimelineEvent {
     }
 }
 
+#[derive(Debug, Hash, PartialEq, Eq)]
+struct EventKey {
+    key: String,
+    date: DateTime<Utc>,
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct TimelineEvents {
     events_by_date: Vec<TimelineEvent>,
@@ -126,12 +132,15 @@ pub struct TimelineEvents {
 impl TimelineEvents {
     pub fn from_events(mut events: Vec<TimelineEvent>) -> Self {
         // Seems redundant, but prevents weird duplicates
-        // let mut events_map = events
-        //     .into_iter()
-        //     .map(|event| (event.key(), event))
-        //     .collect::<HashMap<String, TimelineEvent>>();
+        let mut events_map = events
+            .into_iter()
+            .map(|event| (EventKey {
+                key: event.key(),
+                date: *event.date()
+            }, event))
+            .collect::<HashMap<EventKey, TimelineEvent>>();
 
-        // let mut events = events_map.into_values().collect::<Vec<TimelineEvent>>();
+        let mut events = events_map.into_values().collect::<Vec<TimelineEvent>>();
 
         events.sort_by(|a, b| b.date().cmp(&a.date()));
 

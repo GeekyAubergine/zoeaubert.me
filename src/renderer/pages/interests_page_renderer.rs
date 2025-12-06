@@ -121,37 +121,12 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .take(ITEM_COUNT)
         .collect::<Vec<InterestElement<'l>>>();
 
-    // let tv_shows_2 = context
-    //     .data
-    //     .timeline_events
-    //     .all_by_date()
-    //     .iter()
-    //     .filter_map(|event| match event {
-    //         TimelineEvent::Review(review) => match review {
-    //             TimelineEventReview::TvShowReview { review, tv_show, source } => Some(SectionGridItem {
-    //                 header: SectionGridItemHeader::Title(format!("{} - {}", tv_show.title, review.season_text())),
-    //                 content: SectionGridItemContent::ImageAndText {
-    //                     text: format!("{} - {}", tv_show.title, review.season_text()),
-    //                     image: &tv_show.poster
-    //                 },
-    //                 // sub_text: Some(format!("{}/5", review.score_text())),
-    //                 // image: &tv_show.poster
-    //                 link: source.slug().relative_string(),
-    //             }),
-    //             _ => None,
-    //         },
-    //         _ => None,
-    //     })
-    //     .take(4)
-    //     .collect::<Vec<SectionGridItem<'l>>>();
-
     let content = maud! {
         (render_interest_strip("Games", "Games →", "/interests/games/",  &games, "games"))
         (render_interest_strip("Lego", "Lego Sets →", "/interests/lego/",  &lego, "lego"))
         (render_interest_strip("Books", "Book Reviews →", "/tags/books/",  &books, "books"))
         (render_interest_strip("Movies", "Movie Reviews →", "/tags/movies/",  &movies, "movies"))
         (render_interest_strip("TV", "TV Reviews →", "/tags/tv/",  &tv_shows, "tv_shows"))
-        // (render_section_grid("TV",  &tv_shows_2, "More tv reviews →", "/interests/tv/"))
     };
 
     let options = PageOptions::new().with_main_class("interests-page");

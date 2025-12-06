@@ -919,10 +919,10 @@ time {
 
             li {
                 a {
-                    @apply flex flex-col no-underline relative w-full h-full rounded-sm;
+                    @apply flex flex-col no-underline relative w-full h-full;
 
                     img {
-                        @apply object-contain max-h-[18rem];
+                        @apply object-contain max-h-[18rem]  rounded-sm ;
                     }
 
                     p {
@@ -991,5 +991,47 @@ time {
 
     .stats {
         @apply grid grid-cols-1 md:grid-cols-2 gap-y-12;
+    }
+}
+
+.lego-list-page {
+    @apply width-middle;
+
+    h1 {
+        @apply full-stop;
+    }
+
+    section {
+        @apply w-full pt-8 pb-16;
+
+        h2 {
+            @apply mt-0 mb-4 text-3xl md:text-4xl full-stop;
+        }
+
+        ul {
+            @apply grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4;
+
+            li {
+                a {
+                    @apply flex flex-col no-underline relative w-full h-full;
+
+                    img {
+                        @apply w-full aspect-square object-contain bg-white object-center p-2  rounded-sm ;
+                    }
+
+                    p {
+                        @apply text-center secondary first-of-type:mt-1 !font-normal;
+
+                        time {
+                            @apply !font-normal;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .stats {
+        @apply grid grid-cols-1 md:grid-cols-3 gap-y-12;
     }
 }

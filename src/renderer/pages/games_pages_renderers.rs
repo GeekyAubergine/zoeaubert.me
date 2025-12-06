@@ -5,6 +5,7 @@ use crate::domain::models::timeline_event::TimelineEvent;
 use crate::renderer::RendererContext;
 
 use crate::prelude::*;
+use crate::renderer::formatters::format_number::FormatNumber;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::renderer::partials::timline_events_list::render_timline_events_list;
@@ -52,18 +53,18 @@ fn render_games_list_page(context: &RendererContext) -> Result<()> {
         section class="stats" {
             div class="stat" {
                 p class="value" {
-                    (format!("{:.1}", total_play))
+                    (total_play.format(1, true))
                     span class="unit" { ("h") }
                 }
                 p class="desc" { ("Playtime") }
             }
             div class="stat" {
-                p class="value" { (most_played.len()) }
+                p class="value" { (most_played.len().format(0, true)) }
                 p class="desc" { ("Games") }
             }
             div class="stat" {
                 p class="value" {
-                    (format!("{:.1}", achievement_rate * 100.0))
+                    ((achievement_rate * 100.0).format(1, true))
                     span class="unit" { ("%") }
                 }
                 p class="desc" { ("Completion") }
