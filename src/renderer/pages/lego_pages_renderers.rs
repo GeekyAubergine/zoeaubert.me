@@ -46,10 +46,10 @@ fn render_lego_list_page(context: &RendererContext) -> Result<()> {
                             p { (set.name) }
                             p { (set.id) }
                             @if set.quantity > 1 {
-                                p { (format!("{} x {}", set.pieces.format(0, true), set.quantity))}
+                                p { (format!("{} pieces x {}", set.pieces.format(0, true), set.quantity))}
                             }
                             @else {
-                                p { (set.pieces.format(0, true)) }
+                                p { (format!("{} pieces", set.pieces.format(0, true)))}
                             }
                         }
                     }

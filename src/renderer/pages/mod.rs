@@ -13,3 +13,8 @@ pub mod movie_review_pages_renderers;
 pub mod tv_review_pages_renderers;
 pub mod games_pages_renderers;
 pub mod lego_pages_renderers;
+pub mod now_page_renderer;
+pub mod faq_page_renderer;
+pub mod support_page_renderer;
+pub mod feeds_page_renderer;
+pub mod referrals_page_renderer;

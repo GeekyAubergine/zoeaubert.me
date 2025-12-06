@@ -7,6 +7,8 @@ use crate::domain::models::data::Data;
 use crate::prelude::*;
 use crate::renderer::pages::blog_pages_renderers::render_blog_pages;
 use crate::renderer::pages::book_review_pages_renderers::render_book_review_pages;
+use crate::renderer::pages::faq_page_renderer::render_faq_page;
+use crate::renderer::pages::feeds_page_renderer::render_feeds_page;
 use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
 use crate::renderer::pages::games_pages_renderers::render_games_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
@@ -15,8 +17,11 @@ use crate::renderer::pages::lego_pages_renderers::render_lego_pages;
 use crate::renderer::pages::mastodon_post_pages_renderers::render_mastodon_pages;
 use crate::renderer::pages::micro_post_pages_renderers::render_micro_post_pages;
 use crate::renderer::pages::movie_review_pages_renderers::render_move_review_pages;
+use crate::renderer::pages::now_page_renderer::render_now_page;
 use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
 use crate::renderer::pages::project_pages_renderers::render_project_pages;
+use crate::renderer::pages::referrals_page_renderer::render_referrals_page;
+use crate::renderer::pages::support_page_renderer::render_support_page;
 use crate::renderer::pages::tag_pages_renderers::render_tags_pages;
 use crate::renderer::pages::timeline_pages_renderers::render_timeline_pages;
 use crate::renderer::pages::tv_review_pages_renderers::render_tv_review_pages;
@@ -59,6 +64,11 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_tv_review_pages(context)?;
     render_games_pages(context)?;
     render_lego_pages(context)?;
+    render_now_page(context)?;
+    render_faq_page(context)?;
+    render_support_page(context)?;
+    render_referrals_page(context)?;
+    render_feeds_page(context)?;
 
     Ok(())
 }

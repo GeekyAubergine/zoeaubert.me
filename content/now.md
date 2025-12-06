@@ -1,3 +1,5 @@
+This is <a href="https://nownownow.com/about" target="_blank" rel="noopener">a now page</a>, and if you have your own site, you should make one, too.
+
 ## Headlines
 
 - Living in Portsmouth

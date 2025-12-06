@@ -922,7 +922,7 @@ time {
                     @apply flex flex-col no-underline relative w-full h-full;
 
                     img {
-                        @apply object-contain max-h-[18rem]  rounded-sm ;
+                        @apply object-contain max-h-[18rem]  rounded-sm;
                     }
 
                     p {
@@ -1016,7 +1016,7 @@ time {
                     @apply flex flex-col no-underline relative w-full h-full;
 
                     img {
-                        @apply w-full aspect-square object-contain bg-white object-center p-2  rounded-sm ;
+                        @apply w-full aspect-square object-contain bg-white object-center p-2  rounded-sm;
                     }
 
                     p {
@@ -1033,5 +1033,17 @@ time {
 
     .stats {
         @apply grid grid-cols-1 md:grid-cols-3 gap-y-12;
+    }
+}
+
+.now-page,
+.faq-page,
+.support-page,
+.referrals-page,
+.feeds-page {
+    @apply width-narrow;
+
+    h1 {
+        @apply full-stop;
     }
 }
