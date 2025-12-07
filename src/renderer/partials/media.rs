@@ -1,9 +1,9 @@
 use crate::domain::models::media::{Media, MediaDimensions};
 use crate::prelude::*;
-use hypertext::{prelude::*};
+use hypertext::prelude::*;
 
 use crate::domain::models::image::{Image, SizedImage};
-use crate::renderer::{render_template, TemplateRenderResult};
+use crate::renderer::{TemplateRenderResult, render_template};
 
 pub struct RenderableImage<'l> {
     image: &'l SizedImage,
@@ -32,9 +32,6 @@ impl Image {
     pub fn render_small<'l>(&'l self) -> impl Renderable + 'l {
         render_image(&self.small, &self.description)
     }
-    pub fn render_tiny<'l>(&'l self) -> impl Renderable + 'l {
-        render_image(&self.tiny, &self.description)
-    }
 }
 
 impl Media {
@@ -53,11 +50,6 @@ impl Media {
     pub fn render_small<'l>(&'l self) -> impl Renderable + 'l {
         match self {
             Media::Image(image) => image.render_small(),
-        }
-    }
-    pub fn render_tiny<'l>(&'l self) -> impl Renderable + 'l {
-        match self {
-            Media::Image(image) => image.render_tiny(),
         }
     }
 }
@@ -84,7 +76,6 @@ impl MediaGripOptions {
 }
 
 enum MediaRenderableSize {
-    Tiny,
     Small,
     Large,
     Original,
@@ -96,7 +87,6 @@ fn render_media_at_size<'l>(
 ) -> impl Renderable + 'l {
     maud! {
         @match size {
-            MediaRenderableSize::Tiny => (media.render_tiny()),
             MediaRenderableSize::Small => (media.render_small()),
             MediaRenderableSize::Large => (media.render_large()),
             MediaRenderableSize::Original => (media.render_original()),

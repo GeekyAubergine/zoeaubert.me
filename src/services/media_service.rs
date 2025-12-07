@@ -145,7 +145,6 @@ impl MediaService {
             let original_size = Self::read_image_size(ctx, &original_file)?;
             let large_size = Self::read_image_size(ctx, &large_file)?;
             let small_size = Self::read_image_size(ctx, &small_file)?;
-            let tiny_size = Self::read_image_size(ctx, &tiny_file)?;
 
             return Ok(Image {
                 original: SizedImage {
@@ -159,10 +158,6 @@ impl MediaService {
                 small: SizedImage {
                     file: small_cdn_file,
                     dimensions: small_size,
-                },
-                tiny: SizedImage {
-                    file: tiny_cdn_file,
-                    dimensions: tiny_size,
                 },
                 description: alt.to_string(),
                 link_on_click: link_on_click.cloned(),
@@ -192,9 +187,6 @@ impl MediaService {
         )
         .await?;
 
-        let tiny_image =
-            Self::resize_image(ctx, url, &tiny_cdn_file, &original_image, &ImageSize::Tiny).await?;
-
         Ok(Image {
             original: SizedImage {
                 file: cdn_file.clone(),
@@ -202,7 +194,6 @@ impl MediaService {
             },
             large: large_image,
             small: small_image,
-            tiny: tiny_image,
             description: alt.to_string(),
             link_on_click: link_on_click.cloned(),
             date,

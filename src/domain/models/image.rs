@@ -39,7 +39,7 @@ pub struct Image {
     pub original: SizedImage,
     pub large: SizedImage,
     pub small: SizedImage,
-    pub tiny: SizedImage,
+    // pub tiny: SizedImage,
     pub description: String,
     pub link_on_click: Option<String>,
     pub date: Option<DateTime<Utc>>,

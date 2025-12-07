@@ -21,7 +21,6 @@ use crate::{
     },
     utils::{
         date::parse_date,
-        resize_image::{self, resize_image, ResizingConstraint},
     },
 };
 
@@ -108,11 +107,11 @@ pub async fn load_albums(ctx: &ServiceContext) -> Result<Albums> {
 
     let mut albums = Albums::default();
 
-    // for file in files {
-    //     let file = FileService::content(file.into());
+    for file in files {
+        let file = FileService::content(file.into());
 
-    //     albums.commit(&process_album(ctx, file).await?);
-    // }
+        albums.commit(&process_album(ctx, file).await?);
+    }
 
     Ok(albums)
 }
