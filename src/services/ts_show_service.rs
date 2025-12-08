@@ -3,6 +3,7 @@ use std::path::Path;
 use std::sync::{Arc, RwLock};
 
 use chrono::Datelike;
+use dashmap::DashMap;
 use htmlentity::entity::{ICodedDataTrait, decode};
 use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, instrument, warn};
@@ -56,30 +57,30 @@ struct TmdbSearchResponse {
     total_results: u32,
 }
 
+#[derive(Debug, Serialize, Deserialize, Default)]
+pub struct Data {
+    tv_shows: DashMap<String, Option<TvShow>>,
+}
+
 #[derive(Debug)]
 pub struct TvShowService {
     file: ArchiveFile,
-    tv_shows: Arc<RwLock<HashMap<String, Option<TvShow>>>>,
+    data: Data,
 }
 
 impl TvShowService {
     pub fn new() -> Result<Self> {
         let file = FileService::archive(FILE_NAME.into());
 
-        let data = file.read_json_or_default()?;
+        let data: Data = file.read_json_or_default()?;
 
-        Ok(Self {
-            file,
-            tv_shows: Arc::new(RwLock::new(data)),
-        })
+        Ok(Self { file, data })
     }
 
     #[instrument(err, skip_all, fields(tv_show.title=%title))]
-    pub async fn find_tv_show(&self, ctx: &ServiceContext, title: &str) -> Result<Option<TvShow>> {
-        let mut tv_shows = self.tv_shows.write().unwrap();
-
-        if let Some(movie) = tv_shows.get(title) {
-            match movie {
+    pub fn find_tv_show(&self, ctx: &ServiceContext, title: &str) -> Result<Option<TvShow>> {
+        if let Some(movie) = self.data.tv_shows.get(title) {
+            match movie.value() {
                 Some(movie) => return Ok(Some(movie.clone())),
                 None => {
                     warn!("Did not find cover for tv show [{title}]");
@@ -90,8 +91,7 @@ impl TvShowService {
 
         let results = ctx
             .network
-            .download_json::<TmdbSearchResponse>(&make_search_url(title))
-            .await?;
+            .download_json::<TmdbSearchResponse>(&make_search_url(title))?;
 
         let results = results
             .results
@@ -117,8 +117,7 @@ impl TvShowService {
                     &format!("{} movie poster", tv_show.name),
                     Some(&format!("https://www.themoviedb.org/tv/{}", tv_show.id)),
                     None,
-                )
-                .await?;
+                )?;
 
                 let tv_show = TvShow {
                     title: tv_show.name.clone(),
@@ -127,17 +126,17 @@ impl TvShowService {
                     link: format!("{}{}", TMDB_LINK_URL, tv_show.id).parse().unwrap(),
                 };
 
-                tv_shows.insert(tv_show.title.clone(), Some(tv_show.clone()));
+                self.data.tv_shows.insert(tv_show.title.clone(), Some(tv_show.clone()));
 
-                self.file.write_json(&tv_shows.clone())?;
+                self.file.write_json(&self.data.tv_shows.clone())?;
 
                 Ok(Some(tv_show))
             }
             None => {
                 warn!("Did not find cover for tv show [{title}]");
-                tv_shows.insert(title.to_string(), None);
+                self.data.tv_shows.insert(title.to_string(), None);
 
-                self.file.write_json(&tv_shows.clone())?;
+                self.file.write_json(&self.data.tv_shows.clone())?;
 
                 Ok(None)
             }

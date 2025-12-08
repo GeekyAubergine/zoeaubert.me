@@ -5,7 +5,7 @@ use url::Url;
 
 use crate::{
     domain::models::{
-        albums::{album::Album, album_photo::AlbumPhoto, Albums},
+        albums::{Albums, album::Album, album_photo::AlbumPhoto},
         image::Image,
         media::{MediaDimensions, MediaOrientation},
         slug::Slug,
@@ -13,15 +13,14 @@ use crate::{
     },
     error::AlbumError,
     prelude::*,
+    processors::tasks::{Task, run_tasks},
     services::{
+        ServiceContext,
         cdn_service::CdnFile,
         file_service::{ContentFile, FileService, ReadableFile},
         media_service::MediaService,
-        ServiceContext,
     },
-    utils::{
-        date::parse_date,
-    },
+    utils::date::parse_date,
 };
 
 const ALBUMS_POSTS_DIR: &str = "albums";
@@ -43,9 +42,59 @@ pub struct FileAlbum {
     pub photos: Vec<FileAlbumPhoto>,
 }
 
-pub async fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Album> {
-    info!("Processing album: [{}]", file);
+struct ProcessAlbumPhoto<'l> {
+    photo: FileAlbumPhoto,
+    album: &'l Album,
+}
 
+impl<'l> Task for ProcessAlbumPhoto<'l> {
+    type Output = AlbumPhoto;
+
+    fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
+        let url: Url = format!("{}{}", dotenv!("CDN_URL"), self.photo.url)
+            .parse()
+            .unwrap();
+
+        let tags = self
+            .photo
+            .tags
+            .iter()
+            .map(|t| Tag::from_string(t))
+            .collect::<Vec<Tag>>();
+
+        let cdn_file = CdnFile::from_date_and_file_name(&self.album.date, url.as_str(), None);
+
+        let image = MediaService::image_from_url(
+            ctx,
+            &url,
+            &cdn_file,
+            &self.photo.alt,
+            Some(&self.album.slug.permalink_string()),
+            Some(self.album.date),
+        )?;
+
+        let file_name = url.path_segments().unwrap().last().unwrap();
+        let file_name_without_extension = file_name.split('.').next().unwrap();
+
+        let photo_slug = self
+            .album
+            .slug
+            .append(&format!("{}", file_name_without_extension));
+
+        let photo = AlbumPhoto::new(
+            photo_slug,
+            self.photo.description,
+            self.album.date,
+            tags,
+            image,
+        )
+        .set_featured(self.photo.featured.unwrap_or(false));
+
+        Ok(photo)
+    }
+}
+
+pub fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Album> {
     let yaml: FileAlbum = file.read_yaml()?;
 
     let file_name = file
@@ -63,46 +112,27 @@ pub async fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Al
 
     let mut album = Album::new(album_slug.clone(), yaml.title, yaml.description, date);
 
-    for photo in yaml.photos {
-        let url: Url = format!("{}{}", dotenv!("CDN_URL"), photo.url)
-            .parse()
-            .unwrap();
+    let tasks = yaml
+        .photos
+        .into_iter()
+        .map(|photo| ProcessAlbumPhoto {
+            album: &album,
+            photo,
+        })
+        .collect();
 
-        let tags = photo
-            .tags
-            .iter()
-            .map(|t| Tag::from_string(t))
-            .collect::<Vec<Tag>>();
+    let photos = run_tasks(tasks, ctx)?;
 
-        let cdn_file = CdnFile::from_date_and_file_name(&date, url.as_str(), None);
-
-        let image = MediaService::image_from_url(
-            ctx,
-            &url,
-            &cdn_file,
-            &photo.alt,
-            Some(&album.slug.permalink_string()),
-            Some(album.date),
-        )
-        .await?;
-
-        let file_name = url.path_segments().unwrap().last().unwrap();
-        let file_name_without_extension = file_name.split('.').next().unwrap();
-
-        let photo_slug = album
-            .slug
-            .append(&format!("{}", file_name_without_extension));
-
-        let photo = AlbumPhoto::new(photo_slug, photo.description, album.date, tags, image)
-            .set_featured(photo.featured.unwrap_or(false));
-
+    for photo in photos {
         album.photos.push(photo);
     }
 
     Ok(album)
 }
 
-pub async fn load_albums(ctx: &ServiceContext) -> Result<Albums> {
+pub fn load_albums(ctx: &ServiceContext) -> Result<Albums> {
+    info!("Processing Albums");
+
     let files = FileService::content(ALBUMS_POSTS_DIR.into()).find_files_recursive("yml")?;
 
     let mut albums = Albums::default();
@@ -110,7 +140,7 @@ pub async fn load_albums(ctx: &ServiceContext) -> Result<Albums> {
     for file in files {
         let file = FileService::content(file.into());
 
-        albums.commit(&process_album(ctx, file).await?);
+        albums.commit(&process_album(ctx, file)?);
     }
 
     Ok(albums)

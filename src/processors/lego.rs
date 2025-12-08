@@ -6,8 +6,12 @@ use url::Url;
 use crate::{
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
+    processors::tasks::{Task, run_tasks},
     services::{
-        ServiceContext, cdn_service::CdnFile, file_service::{FileService, ReadableFile, WritableFile}, media_service::MediaService
+        ServiceContext,
+        cdn_service::CdnFile,
+        file_service::{FileService, ReadableFile, WritableFile},
+        media_service::MediaService,
     },
 };
 
@@ -110,12 +114,12 @@ fn make_get_minifig_url(hash: &str) -> Url {
     .unwrap()
 }
 
-pub async fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
+pub fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
     let file = FileService::archive(STORE.into());
 
     let mut lego = file.read_json_or_default()?;
 
-    if !ctx.query_limiter.can_query_within_day(QUERY_KEY).await? {
+    if !ctx.query_limiter.can_query_within_day(QUERY_KEY)? {
         return Ok(lego);
     }
 
@@ -123,78 +127,111 @@ pub async fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
 
     let login_reponse = ctx
         .network
-        .download_json::<BricksetLoginResponse>(&make_login_url())
-        .await?;
+        .download_json::<BricksetLoginResponse>(&make_login_url())?;
 
     let sets_response = ctx
         .network
-        .download_json::<GetSetResponse>(&make_get_set_url(&login_reponse.hash))
-        .await?;
+        .download_json::<GetSetResponse>(&make_get_set_url(&login_reponse.hash))?;
 
     let minifigs_response = ctx
         .network
-        .download_json::<GetMinifigsResponse>(&make_get_minifig_url(&login_reponse.hash))
-        .await?;
+        .download_json::<GetMinifigsResponse>(&make_get_minifig_url(&login_reponse.hash))?;
 
     if sets_response.status == "success" {
-        for set in sets_response.sets {
-            let cdn_file = CdnFile::from_str(&format!("lego/{}.png", set.set_id));
+        let set_tasks = sets_response.sets.into_iter().map(|set| ProcessSet { set }).collect();
 
-            let image = MediaService::image_from_url(
-                ctx,
-                &set.image.image_url,
-                &cdn_file,
-                &set.name,
-                None,
-                None,
-            )
-            .await?;
+        let sets = run_tasks(set_tasks, ctx)?;
 
-            let set = LegoSet::new(
-                set.set_id,
-                set.name,
-                set.number,
-                set.category,
-                set.pieces.unwrap_or(1),
-                image,
-                set.brickset_url,
-                set.collection.qty_owned,
-            );
-
-            lego.add_set(&set);
+        for set in sets {
+            lego.add_set(set);
         }
     }
 
     if minifigs_response.status == "success" {
-        for minifig in minifigs_response.minifigs {
-            let image_url: Url = format!(
-                "https://img.bricklink.com/ItemImage/MN/0/{}.png",
-                minifig.minifig_number
-            )
-            .parse()
-            .unwrap();
+        let minifig_tasks = minifigs_response
+            .minifigs
+            .into_iter()
+            .map(|minifig| ProcessMinifig { minifig })
+            .collect();
 
-            let cdn_file = CdnFile::from_str(&format!("lego/{}.png", minifig.minifig_number));
+        let minifigs = run_tasks(minifig_tasks, ctx)?;
 
-            let image =
-                MediaService::image_from_url(ctx, &image_url, &cdn_file, &minifig.name, None, None)
-                    .await?;
-
-            let minifig = LegoMinifig::new(
-                minifig.minifig_number,
-                minifig.name,
-                minifig.category,
-                minifig.owned_in_sets,
-                minifig.owned_loose,
-                minifig.owned_in_sets + minifig.owned_loose,
-                image,
-            );
-
-            lego.add_minifig(&minifig);
+        for minifig in minifigs {
+            lego.add_minifig(minifig);
         }
     }
 
     file.write_json(&lego.clone())?;
 
     Ok(lego)
+}
+
+struct ProcessSet {
+    set: BricksetSet
+}
+
+impl Task for ProcessSet {
+    type Output = LegoSet;
+
+    fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
+        let cdn_file = CdnFile::from_str(&format!("lego/{}.png", self.set.set_id));
+
+        let image = MediaService::image_from_url(
+            ctx,
+            &self.set.image.image_url,
+            &cdn_file,
+            &self.set.name,
+            None,
+            None,
+        )?;
+
+        Ok(LegoSet::new(
+            self.set.set_id,
+            self.set.name,
+            self.set.number,
+            self.set.category,
+            self.set.pieces.unwrap_or(1),
+            image,
+            self.set.brickset_url,
+            self.set.collection.qty_owned,
+        ))
+    }
+}
+
+struct ProcessMinifig {
+    minifig: BricksetMinifig,
+}
+
+impl Task for ProcessMinifig {
+    type Output = LegoMinifig;
+
+    fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
+        let image_url: Url = format!(
+            "https://img.bricklink.com/ItemImage/MN/0/{}.png",
+            self.minifig.minifig_number
+        )
+        .parse()
+        .unwrap();
+
+        let cdn_file = CdnFile::from_str(&format!("lego/{}.png", self.minifig.minifig_number));
+
+        let image = MediaService::image_from_url(
+            ctx,
+            &image_url,
+            &cdn_file,
+            &self.minifig.name,
+            None,
+            None,
+        )?;
+
+        Ok(LegoMinifig::new(
+            self.minifig.minifig_number,
+            self.minifig.name,
+            self.minifig.category,
+            self.minifig.owned_in_sets,
+            self.minifig.owned_loose,
+            self.minifig.owned_in_sets + self.minifig.owned_loose,
+            image,
+        ))
+    }
 }

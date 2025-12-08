@@ -81,7 +81,7 @@ impl MovieService {
     }
 
     #[instrument(err, skip_all, fields(movie.title=%title, movie.year=&year))]
-    pub async fn find_movie(
+    pub fn find_movie(
         &self,
         ctx: &ServiceContext,
         title: &str,
@@ -103,8 +103,7 @@ impl MovieService {
 
         let results = ctx
             .network
-            .download_json::<TmdbSearchResponse>(&make_search_url(title, year))
-            .await?;
+            .download_json::<TmdbSearchResponse>(&make_search_url(title, year))?;
 
         let results = results
             .results
@@ -130,8 +129,7 @@ impl MovieService {
                     &format!("{} movie poster", movie.title),
                     Some(&format!("https://www.themoviedb.org/movie/{}", movie.id)),
                     None,
-                )
-                .await?;
+                )?;
 
                 let date = parse_date(&movie.release_date)?;
 

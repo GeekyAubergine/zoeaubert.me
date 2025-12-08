@@ -42,7 +42,7 @@ pub struct RendererContext {
     pub renderer: PageRenderer,
 }
 
-pub async fn new_rendering_context_from_data(data: Data) -> Result<RendererContext> {
+pub fn new_rendering_context_from_data(data: Data) -> Result<RendererContext> {
     Ok(RendererContext {
         data,
         renderer: PageRenderer::new(),

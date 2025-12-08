@@ -15,6 +15,7 @@ use crate::{
         tag::Tag,
     },
     prelude::*,
+    processors::tasks::{Task, run_tasks},
     services::{
         ServiceContext,
         cdn_service::CdnFile,
@@ -97,27 +98,27 @@ static API_BASE_URL: Lazy<String> = Lazy::new(|| {
     )
 });
 
-async fn fetch_page(ctx: &ServiceContext, oldest: Option<&String>) -> Result<Vec<MastodonStatus>> {
+fn fetch_page(ctx: &ServiceContext, oldest: Option<&String>) -> Result<Vec<MastodonStatus>> {
     let mut url: Url = API_BASE_URL.parse().unwrap();
 
     if let Some(since) = oldest {
         url.query_pairs_mut().append_pair("max_id", since);
     }
 
-    ctx.network.download_json(&url).await
+    ctx.network.download_json(&url)
 }
 
-async fn fetch_most_recent(ctx: &ServiceContext) -> Result<Vec<MastodonStatus>> {
-    fetch_page(ctx, None).await
+fn fetch_most_recent(ctx: &ServiceContext) -> Result<Vec<MastodonStatus>> {
+    fetch_page(ctx, None)
 }
 
-async fn fetch_all(ctx: &ServiceContext) -> Result<Vec<MastodonStatus>> {
+fn fetch_all(ctx: &ServiceContext) -> Result<Vec<MastodonStatus>> {
     let mut statuses: Vec<MastodonStatus> = Vec::new();
 
     loop {
         let oldest = statuses.last().map(|s| &s.id);
 
-        let page = fetch_page(ctx, oldest).await?;
+        let page = fetch_page(ctx, oldest)?;
 
         if page.is_empty() {
             break;
@@ -148,94 +149,100 @@ fn strip_tags(content: &str) -> String {
     EMPTY_P_TAGS.replace_all(&content, "").to_string()
 }
 
-async fn mastodon_status_to_post(
-    ctx: &ServiceContext,
+struct ProcessStatus {
     status: MastodonStatus,
-) -> Result<Option<MastodonPost>> {
-    if let Some(application) = &status.application {
-        if APPLICATIONS_TO_IGNORE.contains(&application.name.as_str()) {
+}
+
+impl Task for ProcessStatus {
+    type Output = Option<MastodonPost>;
+
+    fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
+        if let Some(application) = &self.status.application {
+            if APPLICATIONS_TO_IGNORE.contains(&application.name.as_str()) {
+                return Ok(None);
+            }
+        }
+
+        if self.status.content.contains(SELF_URL) {
             return Ok(None);
         }
-    }
 
-    if status.content.contains(SELF_URL) {
-        return Ok(None);
-    }
+        info!("Processing Mastodon post {:?}", &self.status.created_at);
 
-    info!("Processing Mastodon post {:?}", &status.created_at);
+        let tags = extract_tags(&self.status.content)
+            .iter()
+            .map(|t| Tag::from_string(t))
+            .collect();
 
-    let tags = extract_tags(&status.content)
-        .iter()
-        .map(|t| Tag::from_string(t))
-        .collect();
+        let mut content = strip_tags(&self.status.content);
 
-    let mut content = strip_tags(&status.content);
+        let mut post = match self.status.spoiler_text {
+            None => MastodonPost::NonSpoiler(MastodonPostNonSpoiler::new(
+                self.status.id,
+                self.status.uri,
+                self.status.created_at,
+                content,
+                tags,
+                self.status.edited_at.unwrap_or(self.status.created_at),
+            )),
+            Some(spoiler_text) => MastodonPost::Spoiler(MastodonPostSpoiler::new(
+                self.status.id,
+                self.status.uri,
+                self.status.created_at,
+                content,
+                spoiler_text,
+                tags,
+                self.status.edited_at.unwrap_or(self.status.created_at),
+            )),
+        };
 
-    let mut post = match status.spoiler_text {
-        None => MastodonPost::NonSpoiler(MastodonPostNonSpoiler::new(
-            status.id,
-            status.uri,
-            status.created_at,
-            content,
-            tags,
-            status.edited_at.unwrap_or(status.created_at),
-        )),
-        Some(spoiler_text) => MastodonPost::Spoiler(MastodonPostSpoiler::new(
-            status.id,
-            status.uri,
-            status.created_at,
-            content,
-            spoiler_text,
-            tags,
-            status.edited_at.unwrap_or(status.created_at),
-        )),
-    };
+        for attachment in self.status.media_attachments.iter() {
+            match attachment {
+                MastodonStatusMedia::Image {
+                    url,
+                    preview_url,
+                    description,
+                    meta,
+                    blurhash,
+                } => {
+                    if let Some(description) = description {
+                        let url_path = Path::new(url.path());
 
-    for attachment in status.media_attachments.iter() {
-        match attachment {
-            MastodonStatusMedia::Image {
-                url,
-                preview_url,
-                description,
-                meta,
-                blurhash,
-            } => {
-                if let Some(description) = description {
-                    let url_path = Path::new(url.path());
+                        let file_name = url_path.file_name().unwrap().to_str().unwrap();
 
-                    let file_name = url_path.file_name().unwrap().to_str().unwrap();
+                        let cdn_file = CdnFile::from_date_and_file_name(
+                            &self.status.created_at,
+                            &file_name,
+                            None,
+                        );
 
-                    let cdn_file =
-                        CdnFile::from_date_and_file_name(&status.created_at, &file_name, None);
+                        let image = MediaService::image_from_url(
+                            ctx,
+                            &url,
+                            &cdn_file,
+                            &description,
+                            Some(&&post.slug().relative_string()),
+                            Some(self.status.created_at),
+                        )?;
 
-                    let image = MediaService::image_from_url(
-                        ctx,
-                        &url,
-                        &cdn_file,
-                        &description,
-                        Some(&&post.slug().relative_string()),
-                        Some(status.created_at),
-                    )
-                    .await?;
-
-                    post.add_media(image.into());
+                        post.add_media(image.into());
+                    }
                 }
             }
         }
-    }
 
-    Ok(Some(post))
+        Ok(Some(post))
+    }
 }
 
-pub async fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> {
+pub fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> {
     let file = FileService::archive(FILE_NAME.into());
 
     let mut posts: MastodonPosts = file.read_json_or_default()?;
 
     if !ctx
         .query_limiter
-        .can_query_within_fifteen_minutes(QUERY)
-        .await?
+        .can_query_within_fifteen_minutes(QUERY)?
     {
         return Ok(posts);
     }
@@ -243,14 +250,19 @@ pub async fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> 
     info!("Fetching mastodon posts data");
 
     let statuses = match posts.count() {
-        0 => fetch_all(ctx).await?,
-        _ => fetch_most_recent(ctx).await?,
+        0 => fetch_all(ctx)?,
+        _ => fetch_most_recent(ctx)?,
     };
 
-    for status in statuses.into_iter() {
-        let post = mastodon_status_to_post(ctx, status).await?;
+    let tasks = statuses
+        .into_iter()
+        .map(|status| ProcessStatus { status })
+        .collect();
 
-        if let Some(post) = post {
+    let results = run_tasks(tasks, ctx)?;
+
+    for result in results {
+        if let Some(post) = result {
             posts.add(post);
         }
     }

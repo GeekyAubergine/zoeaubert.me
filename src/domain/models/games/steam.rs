@@ -77,11 +77,7 @@ pub struct SteamGameAchievementLocked {
 }
 
 impl SteamGameAchievementLocked {
-    pub fn new(
-        id: String,
-        game_id: u32,
-        display_name: String,
-    ) -> Self {
+    pub fn new(id: String, game_id: u32, display_name: String) -> Self {
         Self {
             id,
             game_id,
@@ -120,6 +116,15 @@ impl SteamGameWithAchievements {
     pub fn add_unlocked_achievement(&mut self, achievement: SteamGameAchievementUnlocked) {
         self.unlocked_achievements
             .insert(achievement.id.clone(), achievement);
+    }
+
+    pub fn add_achievment(&mut self, achievement: SteamGameAchievement) {
+        match achievement {
+            SteamGameAchievement::Locked(achievement) => self.add_locked_achievement(achievement),
+            SteamGameAchievement::Unlocked(achievement) => {
+                self.add_unlocked_achievement(achievement)
+            }
+        }
     }
 
     pub fn total_achievements(&self) -> u32 {

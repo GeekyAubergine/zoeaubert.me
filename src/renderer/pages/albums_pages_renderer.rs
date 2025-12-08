@@ -20,8 +20,6 @@ pub fn render_alubms_pages<'l>(context: &'l RendererContext) -> Result<()> {
 
     let years = context.data.albums.find_grouped_by_year();
 
-    dbg!(&years);
-
     let content = maud! {
         @for (year, albums) in &years {
             section {

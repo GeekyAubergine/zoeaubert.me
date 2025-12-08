@@ -16,11 +16,11 @@ use crate::{
     error::ImageError,
     prelude::*,
     services::{
+        ServiceContext,
         cdn_service::CdnFile,
         file_service::{CacheFile, ReadableFile, WritableFile},
-        ServiceContext,
     },
-    utils::resize_image::{resize_image, ImageSize},
+    utils::resize_image::{ImageSize, resize_image},
 };
 pub const MARKDOWN_IMAGE_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"(?i)!\[([^\]]+)\]\(([^)]+)\)"#).unwrap());
@@ -28,7 +28,7 @@ pub const MARKDOWN_IMAGE_REGEX: Lazy<Regex> =
 pub struct MediaService;
 
 impl MediaService {
-    async fn read_or_download_file(
+    fn read_or_download_file(
         ctx: &ServiceContext,
         url: &Url,
         cdn_path: &CdnFile,
@@ -39,19 +39,19 @@ impl MediaService {
             return file.read();
         }
 
-        let data = ctx.network.download_bytes(url).await?;
+        let data = ctx.network.download_bytes(url)?;
 
         file.write(&data)?;
 
         Ok(data)
     }
 
-    async fn read_or_download_image(
+    fn read_or_download_image(
         ctx: &ServiceContext,
         url: &Url,
         cdn_file: &CdnFile,
     ) -> Result<DynamicImage> {
-        let original_bytes = Self::read_or_download_file(ctx, url, &cdn_file).await?;
+        let original_bytes = Self::read_or_download_file(ctx, url, &cdn_file)?;
 
         let original_image = ImageReader::new(Cursor::new(&original_bytes))
             .with_guessed_format()
@@ -74,7 +74,7 @@ impl MediaService {
         }
     }
 
-    async fn resize_image(
+    fn resize_image(
         ctx: &ServiceContext,
         url: &Url,
         cdn_file: &CdnFile,
@@ -104,7 +104,7 @@ impl MediaService {
 
         file.write(&resized_image_data)?;
 
-        ctx.cdn.upload_file(ctx, &file, &cdn_file).await?;
+        ctx.cdn.upload_file(ctx, &file, &cdn_file)?;
 
         Ok(SizedImage {
             file: cdn_file.clone(),
@@ -113,7 +113,7 @@ impl MediaService {
     }
 
     #[instrument(err, skip_all, fields(url=&url.to_string()))]
-    pub async fn image_from_url(
+    pub fn image_from_url(
         ctx: &ServiceContext,
         url: &Url,
         cdn_file: &CdnFile,
@@ -125,22 +125,15 @@ impl MediaService {
             cdn_file.add_suffix_to_file_name(&format!("-{}", ImageSize::Large.as_str()));
         let small_cdn_file =
             cdn_file.add_suffix_to_file_name(&format!("-{}", ImageSize::Small.as_str()));
-        let tiny_cdn_file =
-            cdn_file.add_suffix_to_file_name(&format!("-{}", ImageSize::Tiny.as_str()));
 
         let original_file = cdn_file.as_cache_file();
         let large_file = large_cdn_file.as_cache_file();
         let small_file = small_cdn_file.as_cache_file();
-        let tiny_file = tiny_cdn_file.as_cache_file();
 
         // dbg!(&cdn_file, &original_file);
 
         // If all exist, then don't process
-        if original_file.exists()?
-            && large_file.exists()?
-            && small_file.exists()?
-            && tiny_file.exists()?
-        {
+        if original_file.exists()? && large_file.exists()? && small_file.exists()? {
             debug!("Image already processed [{:?}]", &url.to_string());
             let original_size = Self::read_image_size(ctx, &original_file)?;
             let large_size = Self::read_image_size(ctx, &large_file)?;
@@ -167,7 +160,7 @@ impl MediaService {
 
         info!("Processing image from URL [{:?}]", &url.to_string());
 
-        let original_image = Self::read_or_download_image(ctx, url, cdn_file).await?;
+        let original_image = Self::read_or_download_image(ctx, url, cdn_file)?;
 
         let large_image = Self::resize_image(
             ctx,
@@ -175,8 +168,7 @@ impl MediaService {
             &large_cdn_file,
             &original_image,
             &ImageSize::Large,
-        )
-        .await?;
+        )?;
 
         let small_image = Self::resize_image(
             ctx,
@@ -184,8 +176,7 @@ impl MediaService {
             &small_cdn_file,
             &original_image,
             &ImageSize::Small,
-        )
-        .await?;
+        )?;
 
         Ok(Image {
             original: SizedImage {
@@ -200,7 +191,7 @@ impl MediaService {
         })
     }
 
-    pub async fn find_images_in_markdown(
+    pub fn find_images_in_markdown(
         ctx: &ServiceContext,
         markdown: &str,
         date: Option<DateTime<Utc>>,
@@ -215,7 +206,7 @@ impl MediaService {
             let url: Url = url.parse().unwrap();
             let cdn_file = CdnFile::from_str(url.path());
 
-            let image = Self::image_from_url(ctx, &url, &cdn_file, alt, link_on_click, date).await?;
+            let image = Self::image_from_url(ctx, &url, &cdn_file, alt, link_on_click, date)?;
 
             media.push(image);
         }

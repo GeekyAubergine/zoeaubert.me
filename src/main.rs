@@ -7,7 +7,7 @@ pub mod infrastructure;
 pub mod prelude;
 pub mod processors;
 pub mod renderer;
-pub mod tasks;
+pub mod commands;
 pub mod utils;
 
 pub mod services;
@@ -24,7 +24,7 @@ use clap::{Parser, Subcommand};
 use dircpy::copy_dir;
 use dotenvy_macro::dotenv;
 use error::FileSystemError;
-use tasks::render_site::render_site;
+use commands::render_site::render_site;
 use tracing::{info, Level};
 use tracing_appender::rolling;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
@@ -50,8 +50,7 @@ enum Commands {
     Build,
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     let filter = EnvFilter::new("info,zoeaubert_website=info");
 
     let file = rolling::daily("logs", "logs.json");
@@ -84,8 +83,8 @@ async fn main() -> Result<()> {
         }
         Commands::Build => {
             info!("Build date: {}", BUILD_DATE);
-            let data = process_data(&ctx).await?;
-            render_site(&ctx, data).await?;
+            let data = process_data(&ctx)?;
+            render_site(&ctx, data)?;
         }
     }
 

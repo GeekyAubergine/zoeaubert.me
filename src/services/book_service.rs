@@ -59,7 +59,7 @@ fn make_search_url(title: &str) -> Url {
 }
 
 #[instrument(err, skip_all, fields(book.title=%title, book.author=&author))]
-async fn query_book_api(
+fn query_book_api(
     ctx: &ServiceContext,
     title: &str,
     author: &str,
@@ -71,8 +71,7 @@ async fn query_book_api(
 
     let response = ctx
         .network
-        .download_json::<OpenLibrarySearchResponse>(url)
-        .await?;
+        .download_json::<OpenLibrarySearchResponse>(url)?;
 
     let docs = &response.docs;
 
@@ -127,7 +126,7 @@ impl BookService {
     }
 
     #[instrument(err, skip_all, fields(book.title=%title, book.author=&author))]
-    pub async fn find_book(
+    pub fn find_book(
         &self,
         ctx: &ServiceContext,
         title: &str,
@@ -146,7 +145,7 @@ impl BookService {
             }
         }
 
-        let book = query_book_api(ctx, title, author, tags).await?;
+        let book = query_book_api(ctx, title, author, tags)?;
 
         if let Some(book) = book {
             if let Some(cover_id) = book.cover_i && let Some(key) = book.key {
@@ -164,8 +163,7 @@ impl BookService {
                     &format!("Cover for book {}", title),
                     Some(&format!("https://openlibrary.org/{}", key)),
                     None,
-                )
-                .await?;
+                )?;
 
                 let book = Book {
                     title: title.to_string(),

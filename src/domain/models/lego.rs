@@ -132,11 +132,11 @@ impl Lego {
         self.minifigs.len() as u32
     }
 
-    pub fn add_set(&mut self, set: &LegoSet) {
-        self.sets.insert(set.id, set.clone());
+    pub fn add_set(&mut self, set: LegoSet) {
+        self.sets.insert(set.id, set);
     }
 
-    pub fn add_minifig(&mut self, minifig: &LegoMinifig) {
-        self.minifigs.insert(minifig.id.clone(), minifig.clone());
+    pub fn add_minifig(&mut self, minifig: LegoMinifig) {
+        self.minifigs.insert(minifig.id.clone(), minifig);
     }
 }

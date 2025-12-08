@@ -33,7 +33,7 @@ const ASSETS_DIR: &str = "./output/assets";
 const ROBOTS_INPUT_FILE: &str = "./assets/robots.txt";
 const ROBOTS_OUTPUT_FILE: &str = "./output/robots.txt";
 
-async fn prepare_folders() -> Result<()> {
+fn prepare_folders() -> Result<()> {
     Command::new("rm")
         .arg("-rf")
         .arg("./output")
@@ -43,7 +43,7 @@ async fn prepare_folders() -> Result<()> {
     Ok(())
 }
 
-async fn copy_assets() -> Result<()> {
+fn copy_assets() -> Result<()> {
     FileService::copy_dir(
         Path::new("./assets/fonts"),
         Path::new("./output/assets/fonts"),
@@ -65,7 +65,7 @@ async fn copy_assets() -> Result<()> {
     Ok(())
 }
 
-async fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
+fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
     let robots_txt = FileService::asset(PathBuf::from("robots.txt")).read_text()?;
 
     let split_before_blanket_disallow = robots_txt
@@ -84,19 +84,19 @@ async fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
 }
 
 #[instrument(skip_all)]
-pub async fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
+pub fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
     info!("Rendering site");
 
     let start = Utc::now();
 
-    prepare_folders().await?;
-    copy_assets().await?;
+    prepare_folders()?;
+    copy_assets()?;
 
-    let context: RendererContext = new_rendering_context_from_data(data).await?;
+    let context: RendererContext = new_rendering_context_from_data(data)?;
 
     render_pages(&context)?;
 
-    let disallowed_routes = read_disallowed_routes_from_robot_file().await?;
+    let disallowed_routes = read_disallowed_routes_from_robot_file()?;
 
     let page_count = context.renderer.build_sitemap(&disallowed_routes)?;
 

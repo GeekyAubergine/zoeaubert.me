@@ -13,7 +13,7 @@ use crate::{
         now_text::load_now_text, projects::load_projects, referrals::load_referrals,
         silly_names::load_silly_names, timeline_events::process_timeline_events,
     },
-    services::{file_service::FileService, network_service::NetworkService2, ServiceContext},
+    services::{file_service::FileService, network_service::NetworkService, ServiceContext},
 };
 
 use crate::prelude::*;
@@ -33,31 +33,33 @@ pub mod referrals;
 pub mod silly_names;
 pub mod timeline_events;
 
+pub mod tasks;
+
 const MOVIE_REVIEW_POST_TAG: &str = "Movies";
 const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
 const BOOK_REVIEW_POST_TAG: &str = "Books";
 
 #[instrument(skip_all)]
-pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
+pub fn process_data(ctx: &ServiceContext) -> Result<Data> {
     info!("Processing data | Start");
 
     let start = Utc::now();
 
-    let mastodon = load_mastodon_posts(ctx).await?;
+    let mastodon = load_mastodon_posts(ctx)?;
 
-    let games = load_games(ctx).await?;
+    let games = load_games(ctx)?;
 
     let now_text = load_now_text(ctx)?;
     let about_text = load_about_text(ctx)?;
     let faq = load_faq(ctx)?;
-    let projects = load_projects(ctx).await?;
+    let projects = load_projects(ctx)?;
     let referrals = load_referrals(ctx)?;
     let silly_names = load_silly_names(ctx)?;
-    let blog_posts = load_blog_posts(ctx).await?;
-    let micro_posts = load_micro_posts(ctx).await?;
-    let micro_blog_archive = load_micro_blog_archive(ctx).await?;
-    let lego = load_lego(ctx).await?;
-    let albums = load_albums(ctx).await?;
+    let blog_posts = load_blog_posts(ctx)?;
+    let micro_posts = load_micro_posts(ctx)?;
+    let micro_blog_archive = load_micro_blog_archive(ctx)?;
+    let lego = load_lego(ctx)?;
+    let albums = load_albums(ctx)?;
 
     let mut micro_posts = micro_posts;
     micro_posts.extend(micro_blog_archive);
@@ -70,7 +72,7 @@ pub async fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let start = Utc::now();
 
     // TODO extract albums and games
-    let timeline_events = process_timeline_events(ctx, blog_posts, micro_posts, mastodon, &games).await;
+    let timeline_events = process_timeline_events(ctx, blog_posts, micro_posts, mastodon, &games);
 
     info!(
         "Processing data | Process Timeline | Events: {} [{}ms]",

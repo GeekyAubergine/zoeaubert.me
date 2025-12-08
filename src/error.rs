@@ -265,11 +265,18 @@ impl TemplateError {
 pub enum NetworkError {
     #[error("Unable to fetch url: {0}")]
     FetchError(reqwest::Error),
+
+    #[error("Unable to send to url: {0}")]
+    SendError(reqwest::Error),
 }
 
 impl NetworkError {
     pub fn fetch_error(error: reqwest::Error) -> Error {
         Error::NetworkError(Self::FetchError(error))
+    }
+
+    pub fn send_error(error: reqwest::Error) -> Error {
+        Error::NetworkError(Self::SendError(error))
     }
 }
 

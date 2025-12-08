@@ -17,11 +17,12 @@ use crate::{
         tag::Tag,
     },
     prelude::*,
+    processors::tasks::{Task, run_tasks},
     services::{
+        ServiceContext,
         cdn_service::CdnFile,
         file_service::{FileService, ReadableFile},
         media_service::MediaService,
-        ServiceContext,
     },
 };
 
@@ -85,7 +86,7 @@ fn extract_description(markup: &str) -> Option<String> {
     return Some(first_sentence.to_string());
 }
 
-async fn extract_images_from_html(
+fn extract_images_from_html(
     ctx: &ServiceContext,
     markup: &str,
     date: &DateTime<Utc>,
@@ -108,17 +109,14 @@ async fn extract_images_from_html(
 
         let cdn_file = &CdnFile::from_str(url.path());
 
-        images.push(
-            MediaService::image_from_url(
-                ctx,
-                &path.parse().unwrap(),
-                cdn_file,
-                alt,
-                Some(&&parent_slug.relative_string()),
-                Some(date.clone()),
-            )
-            .await?,
-        );
+        images.push(MediaService::image_from_url(
+            ctx,
+            &path.parse().unwrap(),
+            cdn_file,
+            alt,
+            Some(&&parent_slug.relative_string()),
+            Some(date.clone()),
+        )?);
     }
 
     Ok(images)
@@ -140,66 +138,71 @@ fn slug_for_item(item: &ArchiveFileItem) -> Slug {
     Slug::new(&slug)
 }
 
-async fn archive_item_to_post(
-    ctx: &ServiceContext,
+struct ProcessItem {
     item: ArchiveFileItem,
-) -> Result<Option<MicroPost>> {
-    let slug = slug_for_item(&item);
-
-    let tags: Vec<String> = match item.tags {
-        Some(tags) => tags,
-        None => vec![],
-    };
-
-    if tags
-        .iter()
-        .any(|tag| TAGS_TO_IGNORE.contains(&tag.to_lowercase().as_str()))
-    {
-        return Ok(None);
-    }
-
-    let tags = tags.iter().map(|t| Tag::from_string(t)).collect();
-
-    let content = item
-        .content_text
-        .replace("uploads/", "https://cdn.geekyaubergine.com/");
-
-    if content.contains(SELF_URL) {
-        return Ok(None);
-    }
-
-    let description = extract_description(&content);
-
-    let media = extract_images_from_html(ctx, &content, &item.date_published, &slug)
-        .await?
-        .iter()
-        .map(|i| Media::from(i))
-        .collect();
-
-    Ok(Some(MicroPost::new(
-        slug.clone(),
-        item.date_published,
-        content,
-        description,
-        media,
-        tags,
-    )))
 }
 
-pub async fn load_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
-    info!("Processing micro blog archive");
+impl Task for ProcessItem {
+    type Output = Option<MicroPost>;
+
+    fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
+        let slug = slug_for_item(&self.item);
+
+        let tags: Vec<String> = match self.item.tags {
+            Some(tags) => tags,
+            None => vec![],
+        };
+
+        if tags
+            .iter()
+            .any(|tag| TAGS_TO_IGNORE.contains(&tag.to_lowercase().as_str()))
+        {
+            return Ok(None);
+        }
+
+        let tags = tags.iter().map(|t| Tag::from_string(t)).collect();
+
+        let content = self
+            .item
+            .content_text
+            .replace("uploads/", "https://cdn.geekyaubergine.com/");
+
+        if content.contains(SELF_URL) {
+            return Ok(None);
+        }
+
+        let description = extract_description(&content);
+
+        let media = extract_images_from_html(ctx, &content, &self.item.date_published, &slug)?
+            .iter()
+            .map(|i| Media::from(i))
+            .collect();
+
+        Ok(Some(MicroPost::new(
+            slug.clone(),
+            self.item.date_published,
+            content,
+            description,
+            media,
+            tags,
+        )))
+    }
+}
+
+pub fn load_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
+    info!("Processing Micro Blog Archive");
 
     let archive_file: ArchiveFile = FileService::content(MICRO_POSTS_DIR.into()).read_json()?;
 
-    let mut posts = vec![];
+    let tasks = archive_file
+        .items
+        .into_iter()
+        .map(|item| ProcessItem { item })
+        .collect();
 
-    for item in archive_file.items {
-        if let Some(post) = archive_item_to_post(ctx, item).await? {
-            posts.push(post);
-        }
-    }
+    let results = run_tasks(tasks, ctx)?;
 
-    Ok(posts)
+    Ok(results.into_iter().filter_map(|p| p).collect())
 }
 
 // #[cfg(test)]

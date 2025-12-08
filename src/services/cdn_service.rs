@@ -2,24 +2,23 @@ use std::{
     collections::HashSet,
     path::{Path, PathBuf},
     process::exit,
-    sync::Arc,
+    sync::{Arc, RwLock},
 };
 
 use chrono::{DateTime, Utc};
 use dotenvy_macro::dotenv;
-use reqwest::{header::ACCEPT, Body, ClientBuilder};
+use reqwest::{blocking::Body, blocking::ClientBuilder, header::ACCEPT};
 use serde::{Deserialize, Serialize};
-use tokio::{fs, sync::RwLock};
 use tokio_util::codec::{BytesCodec, FramedRead};
 use tracing::{debug, info};
 use url::Url;
 
 use crate::{
-    error::{CdnError, FileSystemError, NetworkError},
+    error::{CdnError, Error, FileSystemError, NetworkError},
     prelude::*,
     services::{
-        file_service::{CacheFile, FileService},
         ServiceContext,
+        file_service::{CacheFile, FileService, ReadableFile},
     },
 };
 
@@ -138,7 +137,7 @@ impl From<&BunnyCdnFileResponse> for CdnFile {
 
 #[derive(Debug)]
 pub struct CdnService {
-    reqwest_client: reqwest::Client,
+    reqwest_client: reqwest::blocking::Client,
     existing_folders_cache: Arc<RwLock<HashSet<CdnFile>>>,
 }
 
@@ -160,7 +159,7 @@ impl CdnService {
         }
     }
 
-    async fn query_file_directory(
+    fn query_file_directory(
         &self,
         file: &CdnFile,
     ) -> Result<Option<Vec<BunnyCdnFileResponse>>> {
@@ -170,28 +169,27 @@ impl CdnService {
             .reqwest_client
             .get(make_cdn_api_url(&file.directory).as_str())
             .send()
-            .await
             .map_err(NetworkError::fetch_error)?;
 
         if response.status().as_u16() == 404 {
             return Ok(None);
         }
 
-        match response.json::<Vec<BunnyCdnFileResponse>>().await {
+        match response.json::<Vec<BunnyCdnFileResponse>>() {
             Ok(response) => Ok(Some(response)),
             Err(e) => Err(NetworkError::fetch_error(e)),
         }
     }
 
-    async fn files_names_in_folder(&self, path: &CdnFile) -> Result<Vec<String>> {
+    fn files_names_in_folder(&self, path: &CdnFile) -> Result<Vec<String>> {
         debug!(
             "CdnService | Querying files in folder: [{}]",
             path.as_string(),
         );
 
-        match self.query_file_directory(&path).await {
+        match self.query_file_directory(&path) {
             Ok(Some(files)) => {
-                let mut cache = self.existing_folders_cache.write().await;
+                let mut cache = self.existing_folders_cache.write().unwrap();
 
                 for file in files.iter() {
                     cache.insert(file.into());
@@ -206,10 +204,10 @@ impl CdnService {
         }
     }
 
-    async fn file_exists(&self, file: &CdnFile) -> Result<bool> {
+    fn file_exists(&self, file: &CdnFile) -> Result<bool> {
         debug!("CdnService | Does file exist");
 
-        if let Some(file) = self.existing_folders_cache.read().await.get(&file) {
+        if let Some(file) = self.existing_folders_cache.read().unwrap().get(&file) {
             debug!("CdnService | File exists in cache: {:?}", file);
             return Ok(true);
         }
@@ -219,9 +217,9 @@ impl CdnService {
             file.as_string(),
         );
 
-        match self.query_file_directory(&file).await {
+        match self.query_file_directory(&file) {
             Ok(Some(files)) => {
-                let mut cache = self.existing_folders_cache.write().await;
+                let mut cache = self.existing_folders_cache.write().unwrap();
 
                 for file in files.iter() {
                     cache.insert(file.into());
@@ -238,18 +236,18 @@ impl CdnService {
         Ok(self
             .existing_folders_cache
             .read()
-            .await
+            .unwrap()
             .get(&file)
             .is_some())
     }
 
-    pub async fn upload_file(
+    pub fn upload_file(
         &self,
         ctx: &ServiceContext,
         file: &CacheFile,
         cdn_file: &CdnFile,
     ) -> Result<()> {
-        if self.file_exists(cdn_file).await? {
+        if self.file_exists(cdn_file)? {
             return Ok(());
         }
 
@@ -258,26 +256,21 @@ impl CdnService {
             file.as_path_buff().to_string_lossy(),
         );
 
-        let file = fs::File::open(file.as_path_buff())
-            .await
-            .map_err(FileSystemError::read_error)?;
-
-        let stream = FramedRead::new(file, BytesCodec::new());
-        let file_body = Body::wrap_stream(stream);
+        let data = file.read()?;
 
         let request = self
             .reqwest_client
             .put(cdn_file.as_cdn_api_url())
             .header("Content-Type", "application/octet-stream")
-            .body(file_body);
+            .body(data);
 
-        let response = request.send().await.map_err(CdnError::upload_error)?;
+        let response = request.send().map_err(CdnError::upload_error)?;
 
         if response.status().as_u16() != 201 {
             return Err(CdnError::base_status(response.status().as_u16()));
         }
 
-        let mut cache = self.existing_folders_cache.write().await;
+        let mut cache = self.existing_folders_cache.write().unwrap();
 
         cache.insert(cdn_file.clone());
 
