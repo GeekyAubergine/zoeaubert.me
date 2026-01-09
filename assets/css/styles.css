@@ -337,7 +337,7 @@ article {
 }
 
 nav {
-    @apply width-middle py-1 md:flex-row md:justify-between md:items-baseline;
+    @apply width-middle py-1 mb-3 md:flex-row md:justify-between md:items-baseline;
 
     .name-and-toggle {
         @apply flex flex-row justify-between items-baseline;
@@ -575,6 +575,41 @@ time {
 
     .desc {
         @apply secondary;
+    }
+}
+
+.photo-grid-variable-orientation {
+    @apply w-full grid gap-2 mx-auto px-0 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6  overflow-hidden;
+
+    grid-auto-rows: 1fr;
+
+    li {
+        @apply flex flex-col justify-center items-center bg-red-500;
+
+        &.landscape {
+            @apply col-span-2 row-span-1;
+        }
+
+        &.portrait {
+            @apply col-span-1 row-span-1;
+        }
+
+        &.square {
+            @apply col-span-2 row-span-1;
+        }
+
+        img,
+        a {
+            @apply m-0 p-0 max-h-full;
+        }
+
+        img {
+            @apply object-cover w-full h-full;
+        }
+
+        a {
+            @apply flex justify-center items-center;
+        }
     }
 }
 
@@ -1033,6 +1068,87 @@ time {
 
     .stats {
         @apply grid grid-cols-1 md:grid-cols-3 gap-y-12;
+    }
+}
+
+.albums-list-page {
+    @apply width-middle;
+
+    h1 {
+        @apply full-stop;
+    }
+
+    section {
+        @apply mb-8 last-of-type:mb-0;
+
+        h2 {
+            @apply text-2xl font-bold;
+        }
+
+        ol {
+            @apply grid gap-x-6 gap-y-12 grid-cols-1 sm:grid-cols-2 mb-8;
+
+            li {
+                a {
+                    @apply no-underline flex flex-col h-full justify-between cursor-pointer my-2;
+
+                    .preview-multi {
+                        @apply h-full grid gap-x-1 grid-cols-2 overflow-hidden;
+                    }
+
+                    .preview-single {
+                        @apply h-full flex flex-col justify-between my-auto;
+                    }
+
+                    .title-and-date {
+                        @apply flex flex-col justify-center items-center mt-2;
+
+                        h3 {
+                            @apply text-xl font-bold mt-0 text-center;
+                        }
+
+                        date {
+                            @apply secondary text-sm !no-underline;
+                        }
+                    }
+
+                    :hover {
+                        @apply no-underline;
+
+                        h3 {
+                            @apply under;
+                        }
+                    }
+
+                    img {
+                        @apply flex justify-center items-center h-full object-cover;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.album-page {
+    @apply width-middle;
+
+    .description {
+        @apply mb-8;
+    }
+}
+
+.all-albums-photos-page {
+    @apply width-middle;
+
+    section {
+        @apply mb-12 last-of-type:mb-0;
+
+        h2 {
+            @apply text-2xl font-bold my-4 no-underline;
+        }
+
+        ul {
+        }
     }
 }
 

@@ -127,6 +127,10 @@ pub fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Album> {
         album.photos.push(photo);
     }
 
+    album
+        .photos
+        .sort_by(|a, b| a.slug.as_str().cmp(b.slug.as_str()));
+
     Ok(album)
 }
 
