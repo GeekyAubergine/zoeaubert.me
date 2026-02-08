@@ -2,6 +2,7 @@ use askama::Template;
 
 use crate::domain::models::omni_post::OmniPost;
 use crate::domain::models::slug::Slug;
+use crate::domain::models::tag::Tag;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
 use crate::domain::queries::omni_post_queries::{find_all_omni_posts, OmniPostFilterFlags};
 use crate::domain::repositories::{AboutTextRepo, BlogPostsRepo, SillyNamesRepo};
@@ -38,6 +39,10 @@ pub async fn render_home_page(state: &impl State) -> Result<()> {
         .find_all_by_date()
         .await?
         .iter()
+        .filter(|p| {
+            !p.tags
+                .contains(&Tag::from_string("MonthlyNotes"))
+        })
         .take(RECENT_POSTS_COUNT)
         .cloned()
         .collect::<Vec<_>>();
