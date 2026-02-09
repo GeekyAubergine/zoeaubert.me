@@ -46,7 +46,7 @@ I still don’t know where I got that from, but I did it; I managed my goal with
 
 ![A gold style medal showing a stylised map of the City of Portsmouth with 2025 in the middle of it, at the bottom it says ‘Celebrating 35 years of the Great South Run’. The medal is attached to a red ribbon with a tag reading ‘Zoe Aubert, 01:42:06’. It is placed on a light wood desk](https://cdngeekyaubergine.b-cdn.net/2025/10/5101a604-e51a-4404-bfa1-cb6af10df41e.jpg)
 
-## Stat Zone
+## Stats Zone
 
 - I ran 62.0 km
 - I cycled 326.4 km

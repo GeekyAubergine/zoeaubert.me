@@ -42,7 +42,7 @@ It’s been funny looking back and comparing it to how I learnt to play my instr
 
 ## Warhammer
 
-Having done almost no Warhammer [last year](/blog/2025-watch-me-thrive), I wanted to do more of it this year.
+Having done almost no Warhammer [last year](/blog/2025-the-year-i-thrive), I wanted to do more of it this year.
 
 As though the Gods themselves heard, my friend asked if I played [Age of Sigmar](https://www.warhammer.com/en-GB/explore/age-of-sigmar) and if I wanted to enter a doubles tournament in March. After some back and forth, we agreed to play Death armies, I’d play [Nighthaunt](/tags/nighthaunt), and he’d play [Soulblight Gravelords](https://www.warhammer.com/en-GB/shop/age-of-sigmar/grand-alliance-death/soulblight-gravelords).
 
@@ -50,7 +50,7 @@ This challenge has been overwhelming. Although I’ve collected Nighthaunt for m
 
 I managed to paint 21 models in January, which means I _only_ need to paint another ~35 in February. Though my pace has increased considerably since getting my technique down, so I’m only a _bit_ worried.
 
-## Stat Zone
+## Stats Zone
 
 - I ran 35.2 km
 - I cycled 297.6 km

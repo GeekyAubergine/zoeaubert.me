@@ -44,7 +44,7 @@ The second was a long run. My Mum needed to run an errand near [Gorey](https://e
 
 I think I really need to ‘conquer’ Jersey; there’s a lot of emotion I have suppressed there, and running – and hopefully cycling – around it might help me process it. Almost all locations there hold memories, and the zen state that exercise grants might be perfect for processing this. Also, running around these places and actually enjoying being out in the weather and environment is a new experience for me, and is reframing almost everything I thought I knew about those places.
 
-## Stat Zone
+## Stats Zone
 
 - I ran 42.6 km
 - I cycled 95.6 km

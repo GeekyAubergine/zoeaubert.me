@@ -24,11 +24,11 @@ After much discussion and doubt, I decided to build a dedicated development mach
 
 I did initially consider going with Apple again, but I cannot support that company based on their recent actions. Windows is a non-starter, so Linux it was.
 
-This has been an excellent move. The hardware is hilariously more capable for ¼ the cost, and runs nearly silently unless I really stress it. [Fedora](https://fedoraproject.org/](https://fedoraproject.org/) is great, it just worked, isn’t full of bloatware – or spyware – and makes great use of resources. Despite my best efforts, I rarely get my resource utilisation up to where the MacBook sat idling, which says it all.
+This has been an excellent move. The hardware is hilariously more capable for ¼ the cost, and runs nearly silently unless I really stress it. [Fedora](https://fedoraproject.org/) is great, it just worked, isn’t full of bloatware – or spyware – and makes great use of resources. Despite my best efforts, I rarely get my resource utilisation up to where the MacBook sat idling, which says it all.
 
 I am still a little nervous about the setup. I know my mistrust is somewhat unfounded, but I am worried about Linux’s stability, particularly around updates. So far, I’ve been proven wrong, and I hope it will continue, because this has been great.
 
-## Stat Zone
+## Stats Zone
 
 - I ran 29.0 km
 - I cycled 189.3 km
