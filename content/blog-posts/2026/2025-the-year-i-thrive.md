@@ -3,7 +3,7 @@ date: 2026-02-08T23:45
 title: 2025 – The Year I Thrive
 slug: 2025-the-year-i-thrive
 description: This year has been life-changing, and I am finally starting to thrive
-tags: ["Life", "MonthlyNotes"]
+tags: ["Life", "YearInReview"]
 ---
 
 
