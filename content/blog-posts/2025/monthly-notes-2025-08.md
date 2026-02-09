@@ -10,7 +10,7 @@ tags: ["Life", "MonthlyNotes"]
 
 - I ran 35.5 km (22.0 miles)
 - I cycled 459.7 km (285.7 miles)
-- I spent 24 h 36 m being active
+- I spent 24 hours, 36 minutes being active
 
 ### Running
 

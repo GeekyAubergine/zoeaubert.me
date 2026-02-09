@@ -50,4 +50,4 @@ I still don’t know where I got that from, but I did it; I managed my goal with
 
 - I ran 62.0 km
 - I cycled 326.4 km
-- I spent 20 h 44 m being active
+- I spent 20 hours, 44 minutes being active

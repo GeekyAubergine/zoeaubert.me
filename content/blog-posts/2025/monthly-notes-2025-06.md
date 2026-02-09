@@ -12,7 +12,7 @@ Cycling has been much more fun than I expected (more on this later), so my runni
 
 - I ran 90.4 km (56.1 miles)
 - I cycled 189.4 km (117.7 miles)
-- I spent 19 h 8 m being active
+- I spent 19 hours, 8 minutes being active
 
 ### Walking 
 

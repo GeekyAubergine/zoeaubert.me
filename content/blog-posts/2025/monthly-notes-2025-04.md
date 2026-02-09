@@ -16,9 +16,9 @@ CW: transphobia and government stupidity
 
 This month has been great for my health. My weight loss has continued steadily, and I’ve been more active than ever.
 
-- I walked 184.4km (114.9 miles)
-- I ran 91.3km (56.7 miles)
-- Collectively, I spent 43h 16m being active
+- I walked 184.4 km (114.9 miles)
+- I ran 91.3 km (56.7 miles)
+- Collectively, I spent 43 hours, 16 minutes being active
 
 I am continually staggered by my progress. I started running in March, and here we are two months later, setting and achieving goals I thought were previously improbable, if not impossible. I am careful not to go too far too fast (ha), but it is hard to hold back when you are motivated to do more.
 

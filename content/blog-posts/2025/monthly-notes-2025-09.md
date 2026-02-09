@@ -27,4 +27,4 @@ I played a lot of [9Kings](/interests/games/2784470/) this month. It’s really 
 
 - I ran 56.4 km
 - I cycled 341.5 km
-- I spent 17 h 57 m being active
+- I spent 17 hours, 57 minute being active

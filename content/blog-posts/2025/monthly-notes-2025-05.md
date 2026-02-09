@@ -28,7 +28,7 @@ I smashed it this month.
 
 - I walked 101.5 km (63.1 miles)
 - I ran 138.8 km (86.3 miles)
-- I spend 33 h 33 m being active
+- I spend 33 hours, 33 minutes being active
 
 ### Walking
 

@@ -32,4 +32,4 @@ I am still a little nervous about the setup. I know my mistrust is somewhat unfo
 
 - I ran 29.0 km
 - I cycled 189.3 km
-- I spent 11 h 52 m being active
+- I spent 11 hours, 52 minutes being active

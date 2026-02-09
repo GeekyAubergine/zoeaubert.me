@@ -12,7 +12,7 @@ Cycling really took hold of me this month, and I loved every minute of it.
 
 - I ran 61.2 km (38.0 miles)
 - I cycled 584.3 km (363.1 miles)
-- I spent 33 h 26 m being active
+- I spent 33 hours, 26 minutes being active
 
 ### Running
 

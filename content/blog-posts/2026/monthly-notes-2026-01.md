@@ -54,4 +54,4 @@ I managed to paint 21 models in January, which means I _only_ need to paint anot
 
 - I ran 35.2 km
 - I cycled 297.6 km
-- I spent 18 h 07 m being active
+- I spent 18 hours, 7 minutes being active

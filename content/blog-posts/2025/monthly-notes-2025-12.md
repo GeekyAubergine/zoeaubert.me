@@ -48,4 +48,4 @@ I think I really need to ‘conquer’ Jersey; there’s a lot of emotion I have
 
 - I ran 42.6 km
 - I cycled 95.6 km
-- I spent 8 h 54 m being active
+- I spent 8 hours, 54 minutes being active
