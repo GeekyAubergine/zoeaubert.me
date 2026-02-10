@@ -136,112 +136,9 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
     }
 }
 
-// fn exercise_activity<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
-//     let options = BentoBoxOptions {
-//         title: "Recent Activity",
-//         width: 3,
-//         height: None,
-//         row: 2,
-//         class_name: "exercise-activity",
-//     };
-
-//     let posts = context
-//         .data
-//         .posts
-//         .find_all_by_filter_iter(PostFilter::BLOG_POST)
-//         .filter_map(|post| match post {
-//             Post::BlogPost(post) => Some(post),
-//             _ => None,
-//         })
-//         .take(5)
-//         .collect::<Vec<&BlogPost>>();
-
-//     let content = maud! {
-//         @for post in &posts {
-//             div class="post" {
-//                 p { (&post.title) }
-//             }
-//         }
-//     };
-
-//     maud! {
-//         BentoBoxComponent options=(&options) content=(&content);
-//     }
-// }
-
-// fn exercise_stats_monthly<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
-//     let options = BentoBoxOptions {
-//         title: "This Month",
-//         width: 3,
-//         height: None,
-//         row: 3,
-//         class_name: "exercise-monthly",
-//     };
-
-//     let posts = context
-//         .data
-//         .posts
-//         .find_all_by_filter_iter(PostFilter::BLOG_POST)
-//         .take(5)
-//         .filter_map(|post| match post {
-//             Post::BlogPost(post) => Some(post),
-//             _ => None,
-//         })
-//         .collect::<Vec<&BlogPost>>();
-
-//     let content = maud! {
-//         @for post in &posts {
-//             div class="post" {
-//                 p { (&post.title) }
-//             }
-//         }
-//     };
-
-//     maud! {
-//         BentoBoxComponent options=(&options) content=(&content);
-//     }
-// }
-
-// fn exercise_stats_yearly<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
-//     let options = BentoBoxOptions {
-//         title: "This Year",
-//         width: 3,
-//         height: None,
-//         row: 3,
-//         class_name: "exercise-yearly",
-//     };
-
-//     let posts = context
-//         .data
-//         .posts
-//         .find_all_by_filter_iter(PostFilter::BLOG_POST)
-//         .take(5)
-//         .filter_map(|post| match post {
-//             Post::BlogPost(post) => Some(post),
-//             _ => None,
-//         })
-//         .collect::<Vec<&BlogPost>>();
-
-//     let content = maud! {
-//         @for post in &posts {
-//             div class="post" {
-//                 p { (&post.title) }
-//             }
-//         }
-//     };
-
-//     maud! {
-//         BentoBoxComponent options=(&options) content=(&content);
-//     }
-// }
-
 pub fn render_home_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("/"), None, None);
     let slug = page.slug.clone();
-
-    // BLOG -
-
-    // Sport Recent - Month - Yeah
 
     let content = maud! {
         section class="header" {
@@ -260,25 +157,12 @@ pub fn render_home_page(context: &RendererContext) -> Result<()> {
                 (blog_posts(context))
             }
         }
-        // section class="toots" {
-        //     div class="width-narrow" {
-        //         h2 { ("Toots.") }
-        //         (blog_posts(context))
-        //     }
-        // }
         section class="photos" {
             div class="width-middle" {
                 h2 { ("Photos") }
                 (photos(context))
             }
         }
-        // div class="bento home-bento" {
-        //     (blog_posts(&context))
-        //     (photos(&context))
-        //     (exercise_activity(&context))
-        //     (exercise_stats_monthly(&context))
-        //     (exercise_stats_yearly(&context))
-        // }
     };
 
     let options = PageOptions::new().with_main_class("home");
