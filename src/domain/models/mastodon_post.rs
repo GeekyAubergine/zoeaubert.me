@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::Url;
@@ -13,7 +15,6 @@ pub struct MastodonPostNonSpoiler {
     created_at: DateTime<Utc>,
     content: String,
     media: Vec<Media>,
-    media_previews: Vec<Media>,
     tags: Vec<Tag>,
     updated_at: DateTime<Utc>,
 }
@@ -33,17 +34,13 @@ impl MastodonPostNonSpoiler {
             created_at,
             content,
             media: vec![],
-            media_previews: vec![],
             tags,
             updated_at,
         }
     }
 
-    pub fn add_media(&mut self, media: Media, preview: Option<Media>) {
+    pub fn add_media(&mut self, media: Media) {
         self.media.push(media);
-        if let Some(preview) = preview {
-            self.media_previews.push(preview);
-        }
     }
 }
 
@@ -83,11 +80,8 @@ impl MastodonPostSpoiler {
         }
     }
 
-    pub fn add_media(&mut self, media: Media, preview: Option<Media>) {
+    pub fn add_media(&mut self, media: Media) {
         self.media.push(media);
-        if let Some(preview) = preview {
-            self.media_previews.push(preview);
-        }
     }
 }
 
@@ -127,10 +121,10 @@ impl MastodonPost {
         }
     }
 
-    pub fn media(&self) -> Vec<Media> {
+    pub fn media(&self) -> &Vec<Media> {
         match self {
-            MastodonPost::NonSpoiler(post) => post.media.clone(),
-            MastodonPost::Spoiler(post) => post.media.clone(),
+            MastodonPost::NonSpoiler(post) => &post.media,
+            MastodonPost::Spoiler(post) => &post.media,
         }
     }
 
@@ -145,29 +139,10 @@ impl MastodonPost {
         Slug::new(&format!("micros/{}", self.id()))
     }
 
-    pub fn add_media(&mut self, media: Media, preview: Option<Media>) {
+    pub fn add_media(&mut self, media: Media) {
         match self {
-            MastodonPost::NonSpoiler(post) => post.add_media(media, preview),
-            MastodonPost::Spoiler(post) => post.add_media(media, preview),
-        }
-    }
-
-    pub fn optimised_media(&self) -> Vec<Media> {
-        match self {
-            MastodonPost::NonSpoiler(post) => {
-                if post.media_previews.is_empty() {
-                    post.media.clone()
-                } else {
-                    post.media_previews.clone()
-                }
-            }
-            MastodonPost::Spoiler(post) => {
-                if post.media_previews.is_empty() {
-                    post.media.clone()
-                } else {
-                    post.media_previews.clone()
-                }
-            }
+            MastodonPost::NonSpoiler(post) => post.add_media(media),
+            MastodonPost::Spoiler(post) => post.add_media(media),
         }
     }
 
@@ -224,5 +199,32 @@ impl MastodonPost {
         }
 
         page
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Default)]
+pub struct MastodonPosts {
+    mastodon_posts: HashMap<String, MastodonPost>,
+}
+
+impl MastodonPosts {
+    pub fn add(&mut self, post: MastodonPost) {
+        self.mastodon_posts.insert(post.id().to_string(), post);
+    }
+
+    pub fn posts(&self) -> Vec<&MastodonPost> {
+        let mut posts = self.mastodon_posts.values().collect::<Vec<&MastodonPost>>();
+
+        posts.sort_by(|a, b| b.updated_at().cmp(a.updated_at()));
+
+        posts
+    }
+
+    pub fn posts_hash(&self) -> &HashMap<String, MastodonPost> {
+        &self.mastodon_posts
+    }
+
+    pub fn count(&self) -> usize {
+        self.posts().len()
     }
 }

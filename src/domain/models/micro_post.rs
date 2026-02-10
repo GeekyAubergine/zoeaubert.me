@@ -1,6 +1,5 @@
 use std::fmt;
 
-use super::image::Image;
 use super::page::Page;
 use super::tag::Tag;
 use chrono::{DateTime, Utc};
@@ -18,8 +17,6 @@ pub struct MicroPost {
     pub description: Option<String>,
     pub media: Vec<Media>,
     pub tags: Vec<Tag>,
-    pub updated_at: Option<DateTime<Utc>>,
-    pub original_data_hash: u64,
 }
 
 impl MicroPost {
@@ -30,8 +27,6 @@ impl MicroPost {
         description: Option<String>,
         media: Vec<Media>,
         tags: Vec<Tag>,
-        updated_at: Option<DateTime<Utc>>,
-        original_data_hash: u64,
     ) -> Self {
         Self {
             slug,
@@ -40,13 +35,11 @@ impl MicroPost {
             description,
             media,
             tags,
-            updated_at,
-            original_data_hash,
         }
     }
 
     pub fn permalink(&self) -> String {
-        self.slug.permalink()
+        self.slug.permalink_string()
     }
 
     pub fn media(&self) -> &Vec<Media> {

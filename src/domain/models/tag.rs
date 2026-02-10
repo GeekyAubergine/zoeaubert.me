@@ -28,6 +28,11 @@ impl TagSlug {
             return Tag::from_string("TV");
         }
 
+
+        if tag == "Warhammer40" {
+            return Tag::from_string("Warhammer40k");
+        }
+
         // UpperCase followed by LowerCase, separate with hyphen
         let re = regex::Regex::new(r"([a-z])-([a-z])").unwrap();
         let tag = re.replace_all(tag, |caps: &regex::Captures| {

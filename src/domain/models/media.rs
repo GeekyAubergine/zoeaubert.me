@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
+use url::Url;
 
-use super::image::Image;
+use crate::domain::models::image::Image;
 
 // Had a few images where they're just a few pixels off square, so we want to catch them too or they look weird
 const SQUARE_MEDIA_MARGIN_OF_ERROR: f32 = 0.1;
@@ -81,6 +82,12 @@ impl Media {
     pub fn orientation(&self) -> MediaOrientation {
         match self {
             Media::Image(image) => image.orientation(),
+        }
+    }
+
+    pub fn original_cdn_url(&self) -> Url {
+        match self {
+            Media::Image(image) => image.original.file.as_cdn_url(),
         }
     }
 }

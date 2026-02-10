@@ -24,7 +24,7 @@ The code is available on [Github](https://github.com/GeekyAubergine/blahbarian/t
 
 - [Char](https://github.com/bl-kt) - Blahbarian and weapon pixel art
 - [Charlie](https://social.lol/@tldrqwerty) - Programming
-- [Emily](https://emilymedhurst.me/) - Programming
+- [Emily](https://emilymedhurst.gay/) - Programming
 - [Finn](https://github.com/PeacefulAndTranquil) - Enemy pixel art
 - [Luke](https://github.com/LukeAustin8) - Programming
 - [Robb](https://robbknight.me) (Remote) - Sound
