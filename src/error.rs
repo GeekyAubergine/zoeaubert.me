@@ -65,6 +65,9 @@ pub enum Error {
 
     #[error("Unknown")]
     Unknown(),
+
+    #[error("Invalid review score")]
+    InvalidReviewScore(),
 }
 
 #[derive(Debug, thiserror::Error)]

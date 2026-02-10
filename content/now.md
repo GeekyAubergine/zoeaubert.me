@@ -12,7 +12,7 @@ This is <a href="https://nownownow.com/about" target="_blank" rel="noopener">a n
 
 ## Enjoying
 
-- [CommitMono font](https://commitmono.com/): I use this for my code editor and it's the best I've used so far
+- [CommitMono font](https://commitmono.com/): I use this for my code editor and it’s the best I’ve used so far
 
 ## Watching
 
@@ -20,7 +20,7 @@ This is <a href="https://nownownow.com/about" target="_blank" rel="noopener">a n
 
 ## Reading
 
-- [The Horus Heresy](https://www.blacklibrary.com/the-horus-heresy). I'm currently on my 19th book (I'm reading them out of publication order)
+- [The Horus Heresy](https://www.blacklibrary.com/the-horus-heresy). I’m currently on my 19th book (I'm reading them out of publication order)
 
 ## Travel
 

@@ -11,7 +11,7 @@ use crate::{
     },
 };
 
-const ITEM_COUNT: usize = 6;
+const ITEM_COUNT: usize = 5;
 
 struct InterestElement<'l> {
     sub_text: Option<String>,

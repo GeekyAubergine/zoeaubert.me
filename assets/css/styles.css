@@ -584,7 +584,7 @@ time {
     grid-auto-rows: 1fr;
 
     li {
-        @apply flex flex-col justify-center items-center bg-red-500;
+        @apply flex flex-col justify-center items-center;
 
         &.landscape {
             @apply col-span-2 row-span-1;
@@ -608,7 +608,7 @@ time {
         }
 
         a {
-            @apply flex justify-center items-center;
+            @apply flex w-full h-full justify-center items-center;
         }
     }
 }
@@ -654,7 +654,7 @@ time {
 
         &.blog {
             .blog-post-list {
-                @apply grid grid-cols-1 gap-y-8 md:grid-cols-4 md:gap-x-6;
+                @apply grid grid-cols-1 gap-y-8 md:grid-cols-3 md:gap-x-9;
 
                 .blog-post-list-item {
                     .title-and-date {
@@ -678,7 +678,7 @@ time {
 
         &.photos {
             ul.photos-list {
-                @apply grid grid-cols-2 gap-3 md:grid-cols-4;
+                @apply grid grid-cols-2 gap-3 md:grid-cols-5;
 
                 li {
                     a {
@@ -845,7 +845,7 @@ time {
     }
 
     ul {
-        @apply grid grid-cols-1 md:grid-cols-4 gap-8;
+        @apply grid grid-cols-1 md:grid-cols-3 gap-8;
 
         li {
             @apply flex flex-col;
@@ -855,10 +855,10 @@ time {
             }
 
             .image {
-                @apply items-center my-4 h-[8rem];
+                @apply items-center my-4 h-[11rem];
 
                 img {
-                    @apply max-h-[8rem] object-contain;
+                    @apply max-h-[12rem] object-contain;
                 }
             }
         }
@@ -884,7 +884,7 @@ time {
         }
 
         ul {
-            @apply grid grid-cols-3 gap-y-12 gap-x-4 md:grid-cols-6;
+            @apply grid grid-cols-3 gap-y-12 gap-x-4 md:grid-cols-5;
 
             li {
                 @apply flex flex-col justify-between;
@@ -919,7 +919,7 @@ time {
 
         &.lego {
             ul {
-                @apply grid grid-cols-3 gap-4 md:grid-cols-6;
+                @apply grid grid-cols-3 gap-4 md:grid-cols-5;
 
                 li {
                     a {
@@ -1161,5 +1161,49 @@ time {
 
     h1 {
         @apply full-stop;
+    }
+}
+
+.album-photo-page {
+    @apply flex flex-col p-0 m-0 w-screen h-screen overflow-hidden;
+
+    .album-photo-main {
+        @apply flex flex-1 flex-col justify-between items-center overflow-hidden;
+
+        h1 {
+            @apply my-4;
+        }
+
+        .image-container {
+            @apply flex-1 w-full justify-center items-center mx-4 my-4 overflow-hidden;
+
+            img {
+                @apply w-full max-h-full object-contain;
+            }
+        }
+
+        .buttons-and-description {
+            @apply flex-col width-control h-[6rem] justify-end items-center mx-auto my-4;
+
+            .description {
+                @apply w-full text-center mt-4 mb-0;
+            }
+
+            .nav {
+                @apply flex-row w-full justify-evenly items-center my-0;
+
+                .arrow {
+                    @apply link no-underline h-8 w-8 justify-center items-center text-lg m-0;
+                }
+            }
+
+            .links {
+                @apply flex-row w-full justify-center items-baseline;
+
+                a {
+                    @apply mx-0 my-0;
+                }
+            }
+        }
     }
 }

@@ -187,7 +187,7 @@ fn render_game_page(context: &RendererContext, game: &Game) -> Result<()> {
                 section {
                     h2 { ("Achievements") }
                     ul {
-                        @for achievement in game.unlocked_achievements.values() {
+                        @for achievement in game.find_all_unlocked_by_unlocked_date() {
                             li {
                                 (achievement.image.render_small())
                                 div class="name-and-description" {

@@ -287,9 +287,7 @@ fn render_page_base<'l>(page: &'l Page, body: &'l impl Renderable) -> impl Rende
 
                 script src="https://cdn.usefathom.com/script.js" data-site="XPKVFMEO" defer {}
             }
-            body {
                 (body)
-            }
         }
     }
 }
@@ -316,23 +314,34 @@ impl PageWidth {
 
 pub struct PageOptions<'l> {
     width: PageWidth,
+    body_class: Option<&'l str>,
     main_class: Option<&'l str>,
     use_date_as_title: bool,
-    image: Option<&'l Image>
+    image: Option<&'l Image>,
+    hide_header: bool,
+    hide_footer: bool,
 }
 
 impl<'l> PageOptions<'l> {
     pub fn new() -> Self {
         Self {
             width: PageWidth::Narrow,
+            body_class: None,
             main_class: None,
             use_date_as_title: false,
             image: None,
+            hide_header: false,
+            hide_footer: false,
         }
     }
 
     pub fn with_width(mut self, width: PageWidth) -> Self {
         self.width = width;
+        self
+    }
+
+    pub fn with_body_class(mut self, body_class: &'l str) -> Self {
+        self.body_class = Some(body_class);
         self
     }
 
@@ -348,6 +357,16 @@ impl<'l> PageOptions<'l> {
 
     pub fn with_image(mut self, image: &'l Image) -> Self {
         self.image = Some(image);
+        self
+    }
+
+    pub fn hide_header(mut self) -> Self {
+        self.hide_header = true;
+        self
+    }
+
+    pub fn hide_footer(mut self) -> Self {
+        self.hide_footer = true;
         self
     }
 }
@@ -446,6 +465,12 @@ pub fn render_page<'l>(
     content: impl Renderable + 'l,
     scripts: impl Renderable + 'l,
 ) -> impl Renderable + 'l {
+    let body_class = match options.body_class {
+        Some(class) => class,
+        None => "",
+    };
+
+
     let main_class = match options.main_class {
         Some(class) => class,
         None => "",
@@ -454,16 +479,22 @@ pub fn render_page<'l>(
     let header_data = HeaderData::from_page_and_options(page, options);
 
     let body = maud! {
-        (nav_bar(&page))
-        main class=(main_class) {
-            (render_header(&header_data))
-            (content)
-            @if let Some(pagination) = &page.page_pagination {
-                (render_pagination(pagination))
+        body class=(&body_class) {
+            (nav_bar(&page))
+            main class=(main_class) {
+                @if !options.hide_header {
+                    (render_header(&header_data))
+                }
+                (content)
+                @if let Some(pagination) = &page.page_pagination {
+                    (render_pagination(pagination))
+                }
             }
+            @if !options.hide_footer {
+                (render_footer(&page))
+            }
+            (scripts)
         }
-        (render_footer(&page))
-        (scripts)
     };
 
     maud! {

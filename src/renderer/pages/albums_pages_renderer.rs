@@ -4,7 +4,9 @@ use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
 use crate::domain::models::{image::Image, review::book_review::BookReview};
 use crate::prelude::*;
 use crate::renderer::partials::date::render_date;
-use hypertext::prelude::*;
+use crate::renderer::partials::javascript::album_photo_controls_scripts;
+use crate::renderer::partials::tag::render_tags;
+use hypertext::{Raw, prelude::*};
 
 use crate::{
     domain::models::{page::Page, slug::Slug},
@@ -85,7 +87,90 @@ pub fn render_album_page<'l>(context: &'l RendererContext, album: &Album) -> Res
 
     let renderer = render_page(&page, &options, &content, maud! {});
 
-    context.renderer.render_page(&slug, &renderer, None)
+    context.renderer.render_page(&slug, &renderer, None)?;
+
+    for photo in &album.photos {
+        render_album_photo(context, &album, &photo)?;
+    }
+
+    Ok(())
+}
+
+pub fn render_album_photo<'l>(
+    context: &'l RendererContext,
+    album: &Album,
+    photo: &AlbumPhoto,
+) -> Result<()> {
+    let page = photo.page();
+
+    let slug = page.slug.clone();
+
+    let previous = album.previous_photo(photo);
+    let next = album.next_photo(photo);
+    let index = album.index_of_photo(photo);
+
+    let content = maud! {
+        h1 {
+            (photo.description)
+        }
+        div class="image-container" {
+            (photo.image.render_large())
+        }
+        div class="buttons-and-description" {
+            (render_tags(&photo.tags, None))
+            div class="nav" {
+                @if let Some(previous) = previous {
+                    a
+                        href=(previous.slug.relative_string())
+                        class="arrow" {
+                            "←"
+                    }
+                } @else {
+                    div class="arrow" {
+                    }
+                }
+                @if let Some(index) = index {
+                    p { (format!("{} / {}", index + 1, album.total_photos()))}
+                }
+                @if let Some(next) = next {
+                    a
+                        href=(next.slug.relative_string())
+                        class="arrow" {
+                            "→"
+                    }
+                } @else {
+                    div class="arrow" {
+                    }
+                }
+            }
+            div class="links" {
+                a href=(album.slug.relative_string()) {
+                    "Album"
+                }
+                p class="mx-2" { "–" }
+                a href=(photo.image.original.file.as_cdn_url().as_str()) target="_blank" rel="noopener" {
+                    "Original"
+                }
+            }
+        }
+    };
+
+    let options = PageOptions::new()
+        .with_body_class("album-photo-page")
+        .with_main_class("album-photo-main")
+        .hide_header()
+        .hide_footer();
+
+    let renderer = render_page(
+        &page,
+        &options,
+        &content,
+        album_photo_controls_scripts(photo, previous, next),
+    );
+
+    context
+        .renderer
+        .render_page(&slug, &renderer, Some(photo.date))
 }
 
 pub fn render_all_albums_page<'l>(context: &'l RendererContext) -> Result<()> {
@@ -124,7 +209,9 @@ fn render_photo_grid<'l>(photos: &'l [AlbumPhoto]) -> impl Renderable + 'l {
         ul class="photo-grid-variable-orientation" {
             @for photo in photos {
                 li class=(photo.image.orientation().to_string()) {
-                    (photo.image.render_small())
+                    a href=(photo.slug.relative_string()) {
+                        (photo.image.render_small())
+                    }
                 }
             }
         }

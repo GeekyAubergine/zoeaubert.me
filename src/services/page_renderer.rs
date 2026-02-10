@@ -76,6 +76,14 @@ impl PageRenderer {
         Ok(())
     }
 
+    pub fn render_string(&self, path: PathBuf, rendered: &str) -> Result<()> {
+        let path = path.to_string_lossy().to_string();
+
+        self.save_file(&path, &rendered)?;
+
+        Ok(())
+    }
+
     pub fn build_sitemap(&self, disallowed_routes: &[String]) -> Result<usize> {
         let pages = self
             .site_map_pages
