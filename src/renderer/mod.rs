@@ -12,6 +12,7 @@ use crate::renderer::pages::book_review_pages_renderers::render_book_review_page
 use crate::renderer::pages::faq_page_renderer::render_faq_page;
 use crate::renderer::pages::feeds_page_renderer::render_feeds_page;
 use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
+use crate::renderer::pages::four_o_four_renderer::render_404_page;
 use crate::renderer::pages::games_pages_renderers::render_games_pages;
 use crate::renderer::pages::home_page_renderer::render_home_page;
 use crate::renderer::pages::interests_page_renderer::render_interests_page;
@@ -74,6 +75,7 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_feeds_page(context)?;
     render_alubms_pages(context)?;
     render_feeds(context)?;
+    render_404_page(context)?;
 
     Ok(())
 }

@@ -19,3 +19,4 @@ pub mod support_page_renderer;
 pub mod feeds_page_renderer;
 pub mod referrals_page_renderer;
 pub mod albums_pages_renderer;
+pub mod four_o_four_renderer;
