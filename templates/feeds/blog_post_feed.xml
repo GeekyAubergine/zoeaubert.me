@@ -9,11 +9,11 @@
     {%- for post in blog_posts %}
       <item>
         <title>{{ post.title }}</title>
-        <link>{{ post.slug.permalink() }}</link>
+        <link>{{ post.slug.permalink_string() }}</link>
         <description>{{ post.content.to_html().format_relative_to_absolute_urls()}}</description>
         <pubDate>{{ post.date.to_rfc2822() }}</pubDate>
         <dc:creator>Zoe Aubert | GeekyAubergine</dc:creator>
-        <guid>{{ post.slug.permalink() }}</guid>
+        <guid>{{ post.slug.permalink_string() }}</guid>
       </item>
     {%- endfor %}
   </channel>

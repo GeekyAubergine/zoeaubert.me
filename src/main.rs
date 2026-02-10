@@ -1,11 +1,14 @@
 #![allow(unused)]
 
-pub mod application;
 pub mod domain;
 pub mod error;
-pub mod infrastructure;
 pub mod prelude;
-pub mod tasks;
+pub mod processors;
+pub mod renderer;
+pub mod commands;
+pub mod utils;
+
+pub mod services;
 
 use std::{
     hash::{DefaultHasher, Hash, Hasher},
@@ -14,18 +17,17 @@ use std::{
     time::Duration,
 };
 
-use application::commands::update_all_data_command::update_all_data_command;
 use build_data::BUILD_DATE;
 use clap::{Parser, Subcommand};
 use dircpy::copy_dir;
-use domain::{repositories::Profiler, state::State};
 use dotenvy_macro::dotenv;
 use error::FileSystemError;
-use infrastructure::app_state::AppState;
-use tasks::{create_content::create_content, render_site::render_site};
+use commands::render_site::render_site;
 use tracing::{info, Level};
+use tracing_appender::rolling;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
-use crate::prelude::*;
+use crate::{prelude::*, processors::process_data, services::ServiceContext};
 
 pub mod build_data {
     include!(concat!(env!("OUT_DIR"), "/build_data.rs"));
@@ -46,37 +48,43 @@ enum Commands {
     Build,
 }
 
-async fn prepare_state() -> Result<AppState> {
-    let state = AppState::new().await?;
+fn main() -> Result<()> {
+    let filter = EnvFilter::new("info,zoeaubert_website=info");
 
-    update_all_data_command(&state).await?;
+    let file = rolling::daily("logs", "logs.json");
+    let (file_writer, _guard) = tracing_appender::non_blocking(file);
 
-    Ok(state)
-}
+    let json = tracing_subscriber::fmt::layer()
+        .json()
+        .with_current_span(true)
+        .with_span_list(true)
+        .with_file(true)
+        .with_line_number(true)
+        .with_target(true)
+        .with_writer(file_writer);
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    tracing_subscriber::fmt().with_max_level(Level::INFO).init();
+    let console = tracing_subscriber::fmt::layer().pretty().with_target(false);
+
+    tracing_subscriber::registry()
+        .with(filter)
+        .with(json)
+        .with(console)
+        .init();
 
     let args = Args::parse();
 
-    let state = prepare_state().await?;
+    let ctx = ServiceContext::new()?;
 
     match args.command {
         Commands::Create => {
-            create_content(&state).await?;
+            // create_content(&state).await?;
         }
         Commands::Build => {
             info!("Build date: {}", BUILD_DATE);
-            render_site(&state).await?;
+            let data = process_data(&ctx)?;
+            render_site(&ctx, data)?;
         }
     }
 
     Ok(())
-}
-
-pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
-    let mut s = DefaultHasher::new();
-    t.hash(&mut s);
-    s.finish()
 }

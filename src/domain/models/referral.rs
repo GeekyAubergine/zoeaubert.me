@@ -1,3 +1,4 @@
+use crate::prelude::*;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
@@ -16,4 +17,8 @@ impl Referral {
             url,
         }
     }
+}
+
+pub struct Referrals {
+    pub referrals: Vec<Referral>,
 }
