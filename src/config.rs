@@ -37,7 +37,6 @@ pub struct Config {
     pub tmdb: ConfigTMDB,
 
     pub cdn_url: &'static str,
-    pub site_config_path: &'static str,
 }
 
 #[cfg(feature = "env-variables")]
@@ -64,8 +63,7 @@ const fn load() -> Config {
             token: env!("TMDB_TOKEN"),
         },
 
-        cdn_url: env!("CDN_URL"),
-        site_config_path: env!("SITE_CONFIG"),
+        cdn_url: "https://cdn.geekyaubergine.com",
     }
 }
 
@@ -95,8 +93,7 @@ const fn load() -> Config {
             token: dotenv!("TMDB_TOKEN"),
         },
 
-        cdn_url: dotenv!("CDN_URL"),
-        site_config_path: dotenv!("SITE_CONFIG"),
+        cdn_url: "https://cdn.geekyaubergine.com",
     }
 }
 

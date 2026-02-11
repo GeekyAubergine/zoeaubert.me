@@ -99,7 +99,7 @@ pub struct PageConfig {
 }
 
 pub static SITE_CONFIG: Lazy<PageConfig> = Lazy::new(|| {
-    let contents = fs::read_to_string(CONFIG.site_config_path).unwrap();
+    let contents = fs::read_to_string(".site_config.json").unwrap();
 
     serde_json::from_str(&contents).unwrap()
 });

@@ -51,8 +51,31 @@ jobs:
 
             - name: Check
               run: cargo check --features env-variables
+              env:
+                  MASTODON_ACCOUNT_ID: 'not-a-real-id'
+                  BUNNY_CDN_URL: ''
+                  BUNNY_CDN_ACCESS_KEY: ''
+                  BRICKSET_API_KEY: ''
+                  BRICKSET_USERNAME: ''
+                  BRICKSET_PASSWORD: ''
+                  STEAM_API_KEY: ''
+                  STEAM_ID: ''
+                  TMDB_KEY: ''
+
             - name: Run tests
               run: cargo test --features env-variables
+              env:
+                  MASTODON_ACCOUNT_ID: 'not-a-real-id'
+                  BUNNY_CDN_URL: ''
+                  BUNNY_CDN_ACCESS_KEY: ''
+                  BRICKSET_API_KEY: ''
+                  BRICKSET_USERNAME: ''
+                  BRICKSET_PASSWORD: ''
+                  STEAM_API_KEY: ''
+                  STEAM_ID: ''
+                  TMDB_KEY: ''
+
+
 
     build_and_deploy:
         runs-on: ubuntu-latest
