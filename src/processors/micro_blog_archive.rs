@@ -9,6 +9,7 @@ use tracing::{debug, info};
 use url::Url;
 
 use crate::{
+    config::CONFIG,
     domain::models::{
         image::Image,
         media::{Media, MediaDimensions},
@@ -103,7 +104,7 @@ fn extract_images_from_html(
         let width = width.parse::<u32>().unwrap_or(0);
         let height = height.parse::<u32>().unwrap_or(0);
 
-        let path = src.replace("uploads/", dotenv!("CDN_URL"));
+        let path = src.replace("uploads/", &format!("{}/", CONFIG.cdn_url));
 
         let url: Url = path.parse().unwrap();
 
@@ -165,7 +166,7 @@ impl Task for ProcessItem {
         let content = self
             .item
             .content_text
-            .replace("uploads/", "https://cdn.geekyaubergine.com/");
+            .replace("uploads/", &format!("{}/", CONFIG.cdn_url));
 
         if content.contains(SELF_URL) {
             return Ok(None);

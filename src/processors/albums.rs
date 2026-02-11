@@ -4,23 +4,18 @@ use tracing::{field::debug, info};
 use url::Url;
 
 use crate::{
-    domain::models::{
+    config::CONFIG, domain::models::{
         albums::{Albums, album::Album, album_photo::AlbumPhoto},
         image::Image,
         media::{MediaDimensions, MediaOrientation},
         slug::Slug,
         tag::Tag,
-    },
-    error::AlbumError,
-    prelude::*,
-    processors::tasks::{Task, run_tasks},
-    services::{
+    }, error::AlbumError, prelude::*, processors::tasks::{Task, run_tasks}, services::{
         ServiceContext,
         cdn_service::CdnFile,
         file_service::{ContentFile, FileService, ReadableFile},
         media_service::MediaService,
-    },
-    utils::date::parse_date,
+    }, utils::date::parse_date
 };
 
 const ALBUMS_POSTS_DIR: &str = "albums";
@@ -51,7 +46,7 @@ impl<'l> Task for ProcessAlbumPhoto<'l> {
     type Output = AlbumPhoto;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
-        let url: Url = format!("{}{}", dotenv!("CDN_URL"), self.photo.url)
+        let url: Url = format!("{}{}", CONFIG.cdn_url, self.photo.url)
             .parse()
             .unwrap();
 

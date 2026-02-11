@@ -14,6 +14,7 @@ use tracing::{debug, info};
 use url::Url;
 
 use crate::{
+    config::{CONFIG, Config},
     error::{CdnError, Error, FileSystemError, NetworkError},
     prelude::*,
     services::{
@@ -23,9 +24,7 @@ use crate::{
 };
 
 fn make_cdn_api_url(path: &str) -> Url {
-    format!("{}{}", dotenv!("BUNNY_CDN_URL"), path)
-        .parse()
-        .unwrap()
+    format!("{}{}", CONFIG.bunny_cdn.url, path).parse().unwrap()
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
@@ -99,7 +98,7 @@ impl CdnFile {
     }
 
     pub fn as_cdn_url(&self) -> Url {
-        let path = format!("{}/{}", dotenv!("CDN_URL"), self.as_string());
+        let path = format!("{}/{}", CONFIG.cdn_url, self.as_string());
 
         path.parse().unwrap()
     }
@@ -146,7 +145,7 @@ impl CdnService {
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
             "AccessKey",
-            dotenv!("BUNNY_CDN_ACCESS_KEY").parse().unwrap(),
+            CONFIG.bunny_cdn.access_key.parse().unwrap(),
         );
         headers.insert(ACCEPT, "application/json".parse().unwrap());
 
@@ -159,10 +158,7 @@ impl CdnService {
         }
     }
 
-    fn query_file_directory(
-        &self,
-        file: &CdnFile,
-    ) -> Result<Option<Vec<BunnyCdnFileResponse>>> {
+    fn query_file_directory(&self, file: &CdnFile) -> Result<Option<Vec<BunnyCdnFileResponse>>> {
         debug!("CdnService | Querying path in cdn: {:?}", &file.directory);
 
         let response = self

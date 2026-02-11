@@ -11,6 +11,7 @@ use url::Url;
 
 use dotenvy_macro::dotenv;
 
+use crate::config::CONFIG;
 use crate::domain::models::book::{Book, BookID};
 use crate::domain::models::movie::{Movie, MovieId};
 use crate::domain::models::slug::Slug;
@@ -35,7 +36,7 @@ fn make_search_url(title: &str) -> Url {
 
     format!(
         "https://api.themoviedb.org/3/search/tv?api_key={}&query={}",
-        dotenv!("TMDB_KEY"),
+        CONFIG.tmdb.key,
         title,
     )
     .parse()

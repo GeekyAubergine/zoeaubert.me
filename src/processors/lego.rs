@@ -4,6 +4,7 @@ use tracing::info;
 use url::Url;
 
 use crate::{
+    config::{CONFIG, Config},
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
     processors::tasks::{Task, run_tasks},
@@ -83,10 +84,7 @@ pub struct GetMinifigsResponse {
 fn make_login_url() -> Url {
     format!(
         "{}?apiKey={}&username={}&password={}",
-        LOGIN_URL,
-        dotenv!("BRICKSET_API_KEY"),
-        dotenv!("BRICKSET_USERNAME"),
-        dotenv!("BRICKSET_PASSWORD")
+        LOGIN_URL, CONFIG.brickset.api_key, CONFIG.brickset.username, CONFIG.brickset.password
     )
     .parse()
     .unwrap()
@@ -95,9 +93,7 @@ fn make_login_url() -> Url {
 fn make_get_set_url(hash: &str) -> Url {
     format!(
         "{}?apiKey={}&userHash={}&params={{\"owned\":1, \"pageSize\": 500}}",
-        GET_SET_URL,
-        dotenv!("BRICKSET_API_KEY"),
-        hash,
+        GET_SET_URL, CONFIG.brickset.api_key, hash,
     )
     .parse()
     .unwrap()
@@ -106,9 +102,7 @@ fn make_get_set_url(hash: &str) -> Url {
 fn make_get_minifig_url(hash: &str) -> Url {
     format!(
         "{}?apiKey={}&userHash={}&params={{\"owned\":1, \"pageSize\": 500}}",
-        GET_MINIFIG_URL,
-        dotenv!("BRICKSET_API_KEY"),
-        hash,
+        GET_MINIFIG_URL, CONFIG.brickset.api_key, hash,
     )
     .parse()
     .unwrap()
@@ -138,7 +132,11 @@ pub fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
         .download_json::<GetMinifigsResponse>(&make_get_minifig_url(&login_reponse.hash))?;
 
     if sets_response.status == "success" {
-        let set_tasks = sets_response.sets.into_iter().map(|set| ProcessSet { set }).collect();
+        let set_tasks = sets_response
+            .sets
+            .into_iter()
+            .map(|set| ProcessSet { set })
+            .collect();
 
         let sets = run_tasks(set_tasks, ctx)?;
 
@@ -167,7 +165,7 @@ pub fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
 }
 
 struct ProcessSet {
-    set: BricksetSet
+    set: BricksetSet,
 }
 
 impl Task for ProcessSet {
