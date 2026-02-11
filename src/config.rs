@@ -25,7 +25,6 @@ pub struct ConfigBunnyCdn {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConfigTMDB {
     pub key: &'static str,
-    pub token: &'static str,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -60,7 +59,6 @@ const fn load() -> Config {
         },
         tmdb: ConfigTMDB {
             key: env!("TMDB_KEY"),
-            token: env!("TMDB_TOKEN"),
         },
 
         cdn_url: "https://cdn.geekyaubergine.com",
@@ -90,7 +88,6 @@ const fn load() -> Config {
         },
         tmdb: ConfigTMDB {
             key: dotenv!("TMDB_KEY"),
-            token: dotenv!("TMDB_TOKEN"),
         },
 
         cdn_url: "https://cdn.geekyaubergine.com",
