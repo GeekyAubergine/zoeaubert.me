@@ -8,8 +8,7 @@ use std::{
 
 use chrono::{DateTime, Utc};
 use dircpy::copy_dir;
-use dotenvy_macro::dotenv;
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use tokio::task::JoinSet;
 use tracing::debug;
 use url::Url;
@@ -20,12 +19,17 @@ use crate::{
     services::ServiceContext,
 };
 
+const CACHE_DIR: &str = ".cache";
+const CONTENT_DIR: &str = "content";
+const ARCHIVE_DIR: &str = ".archive";
+const OUTPUT_DIR: &str = "output";
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CacheFile(PathBuf);
 
 impl CacheFile {
     pub fn as_path_buff(&self) -> PathBuf {
-        Path::new(dotenv!("CACHE_DIR")).join(&self.0)
+        Path::new(CACHE_DIR).join(&self.0)
     }
 }
 
@@ -40,7 +44,7 @@ pub struct ArchiveFile(PathBuf);
 
 impl ArchiveFile {
     pub fn as_path_buff(&self) -> PathBuf {
-        Path::new(dotenv!("ARCHIVE_DIR")).join(&self.0)
+        Path::new(ARCHIVE_DIR).join(&self.0)
     }
 }
 
@@ -55,7 +59,7 @@ pub struct ContentFile(PathBuf);
 
 impl ContentFile {
     pub fn as_path_buff(&self) -> PathBuf {
-        Path::new(dotenv!("CONTENT_DIR")).join(&self.0)
+        Path::new(CONTENT_DIR).join(&self.0)
     }
 }
 
@@ -70,7 +74,7 @@ pub struct OutputFile(PathBuf);
 
 impl OutputFile {
     pub fn as_path_buff(&self) -> PathBuf {
-        Path::new(dotenv!("OUTPUT_DIR")).join(&self.0)
+        Path::new(OUTPUT_DIR).join(&self.0)
     }
 }
 
@@ -493,11 +497,8 @@ pub struct FileService;
 
 impl FileService {
     pub fn cache(path: PathBuf) -> CacheFile {
-        let path = match path.starts_with(dotenv!("CACHE_DIR")) {
-            true => path
-                .strip_prefix(dotenv!("CACHE_DIR"))
-                .unwrap()
-                .to_path_buf(),
+        let path = match path.starts_with(CACHE_DIR) {
+            true => path.strip_prefix(CACHE_DIR).unwrap().to_path_buf(),
             false => path,
         };
 
@@ -505,11 +506,8 @@ impl FileService {
     }
 
     pub fn archive(path: PathBuf) -> ArchiveFile {
-        let path = match path.starts_with(dotenv!("ARCHIVE_DIR")) {
-            true => path
-                .strip_prefix(dotenv!("ARCHIVE_DIR"))
-                .unwrap()
-                .to_path_buf(),
+        let path = match path.starts_with(ARCHIVE_DIR) {
+            true => path.strip_prefix(ARCHIVE_DIR).unwrap().to_path_buf(),
             false => path,
         };
 
@@ -517,11 +515,8 @@ impl FileService {
     }
 
     pub fn content(path: PathBuf) -> ContentFile {
-        let path = match path.starts_with(dotenv!("CONTENT_DIR")) {
-            true => path
-                .strip_prefix(dotenv!("CONTENT_DIR"))
-                .unwrap()
-                .to_path_buf(),
+        let path = match path.starts_with(CONTENT_DIR) {
+            true => path.strip_prefix(CONTENT_DIR).unwrap().to_path_buf(),
             false => path,
         };
 
@@ -529,11 +524,8 @@ impl FileService {
     }
 
     pub fn output(path: PathBuf) -> OutputFile {
-        let path = match path.starts_with(dotenv!("OUTPUT_DIR")) {
-            true => path
-                .strip_prefix(dotenv!("OUTPUT_DIR"))
-                .unwrap()
-                .to_path_buf(),
+        let path = match path.starts_with(OUTPUT_DIR) {
+            true => path.strip_prefix(OUTPUT_DIR).unwrap().to_path_buf(),
             false => path,
         };
 

@@ -9,19 +9,16 @@ use tracing::info;
 use url::Url;
 
 use crate::{
-    domain::models::{
+    config::CONFIG, domain::models::{
         mastodon_post::{MastodonPost, MastodonPostNonSpoiler, MastodonPostSpoiler, MastodonPosts},
         media::Media,
         tag::Tag,
-    },
-    prelude::*,
-    processors::tasks::{Task, run_tasks},
-    services::{
+    }, prelude::*, processors::tasks::{Task, run_tasks}, services::{
         ServiceContext,
         cdn_service::CdnFile,
         file_service::{FileService, ReadableFile, WritableFile},
         media_service::MediaService,
-    },
+    }
 };
 
 const FILE_NAME: &str = "mastodon_posts.json";
@@ -93,7 +90,7 @@ const MASTODON_PAGINATION_LIMIT: u32 = 40;
 static API_BASE_URL: Lazy<String> = Lazy::new(|| {
     format!(
         "https://social.lol/api/v1/accounts/{}/statuses?exclude_reblogs=true&exclude_replies=true&limit={}",
-        dotenv!("MASTODON_ACCOUNT_ID"),
+        CONFIG.mastodon.account_id,
         MASTODON_PAGINATION_LIMIT,
     )
 });

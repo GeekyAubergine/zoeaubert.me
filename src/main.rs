@@ -7,6 +7,7 @@ pub mod processors;
 pub mod renderer;
 pub mod commands;
 pub mod utils;
+pub mod config;
 
 pub mod services;
 

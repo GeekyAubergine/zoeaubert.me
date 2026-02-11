@@ -9,7 +9,7 @@ pub struct CachePath {
     extension: String,
 }
 
-const CACHE_DIR: &str = dotenv!("CACHE_DIR");
+const CACHE_DIR: &str = ".cache";
 
 impl CachePath {
     pub fn from_str(path: &str) -> Self {

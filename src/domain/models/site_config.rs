@@ -5,7 +5,7 @@ use serde::Deserialize;
 use url::Url;
 use dotenvy_macro::dotenv;
 
-use crate::domain::models::image::Image;
+use crate::{config::CONFIG, domain::models::image::Image};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct HeaderLink {
@@ -99,7 +99,7 @@ pub struct PageConfig {
 }
 
 pub static SITE_CONFIG: Lazy<PageConfig> = Lazy::new(|| {
-    let contents = fs::read_to_string(dotenv!("SITE_CONFIG")).unwrap();
+    let contents = fs::read_to_string(CONFIG.site_config_path).unwrap();
 
     serde_json::from_str(&contents).unwrap()
 });

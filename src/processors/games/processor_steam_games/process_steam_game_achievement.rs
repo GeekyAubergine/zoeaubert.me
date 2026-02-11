@@ -7,6 +7,7 @@ use tracing::{debug, info, instrument, warn};
 use url::Url;
 
 use crate::{
+    config::{CONFIG, Config},
     domain::models::{
         games::steam::{
             SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
@@ -34,9 +35,7 @@ const STEAM_GAME_DATA_URL: &str =
 fn make_steam_game_data_url(appid: u32) -> Url {
     format!(
         "{}&key={}&appid={}",
-        STEAM_GAME_DATA_URL,
-        dotenv!("STEAM_API_KEY"),
-        appid
+        STEAM_GAME_DATA_URL, CONFIG.steam.api_key, appid
     )
     .parse()
     .unwrap()
@@ -75,10 +74,7 @@ pub struct SteamAvailableGameStatsResponse {
     game: SteamAvailableGameSchemaResponseWrapper,
 }
 
-fn get_steam_game_data(
-    ctx: &ServiceContext,
-    appid: u32,
-) -> Result<Vec<SteamGameDataAchievement>> {
+fn get_steam_game_data(ctx: &ServiceContext, appid: u32) -> Result<Vec<SteamGameDataAchievement>> {
     let response = ctx
         .network
         .download_json::<SteamAvailableGameStatsResponse>(&make_steam_game_data_url(appid))?;
@@ -95,10 +91,7 @@ fn get_steam_game_data(
 fn make_get_player_achievements_url(appid: u32) -> Url {
     format!(
         "{}&key={}&appid={}&steamid={}",
-        STEAM_PLAYER_ACHEIVEMENTS_URL,
-        dotenv!("STEAM_API_KEY"),
-        appid,
-        dotenv!("STEAM_ID")
+        STEAM_PLAYER_ACHEIVEMENTS_URL, CONFIG.steam.api_key, appid, CONFIG.steam.user_id,
     )
     .parse()
     .unwrap()
@@ -161,17 +154,20 @@ pub fn process_steam_game_achievements(
 
     let mut game = SteamGameWithAchievements::from_game(game);
 
-    let achievement_jobs = game_data.into_iter().filter_map(|achievement| {
-        if achievement.icon.as_str().ends_with("/") {
-            return None;
-        }
+    let achievement_jobs = game_data
+        .into_iter()
+        .filter_map(|achievement| {
+            if achievement.icon.as_str().ends_with("/") {
+                return None;
+            }
 
-        Some(TaskProcessSteamGameAchievement {
-            game: &game.game,
-            player_achievements: &player_achievements,
-            achievement,
+            Some(TaskProcessSteamGameAchievement {
+                game: &game.game,
+                player_achievements: &player_achievements,
+                achievement,
+            })
         })
-    }).collect();
+        .collect();
 
     let achievments = run_tasks(achievement_jobs, ctx)?;
 

@@ -19,14 +19,12 @@ use tracing::{debug, instrument};
 use url::Url;
 
 use crate::{
-    domain::models::network_response::{
+    config::CONFIG, domain::models::network_response::{
         NetworkResponse, NetworkResponseBody, NetworkResponseBodyJson, NetworkResponseBytes,
-    },
-    error::NetworkError,
-    prelude::*,
+    }, error::NetworkError, prelude::*
 };
 
-const ALLOW_LIST: [&str; 1] = ["cdn.geekyaubergine.com"];
+const ALLOW_LIST: [&str; 1] = [CONFIG.cdn_url];
 
 fn is_on_allow_list(domain: &str) -> bool {
     ALLOW_LIST

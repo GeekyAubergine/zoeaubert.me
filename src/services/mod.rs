@@ -1,13 +1,12 @@
 use std::sync::Arc;
 
 use crate::{
-    prelude::*,
-    services::{
+    config::Config, prelude::*, services::{
         book_service::BookService, cdn_service::CdnService,
         data_hash_cache_service::ContentHashService, file_service::FileService,
         movie_service::MovieService, network_service::NetworkService,
         query_limiter_service::QueryLimitingService, ts_show_service::TvShowService,
-    },
+    }
 };
 
 pub mod book_service;

@@ -7,6 +7,7 @@ use tracing::{debug, info, instrument, warn};
 use url::Url;
 
 use crate::{
+    config::{CONFIG, Config},
     domain::models::{
         games::steam::{
             SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
@@ -41,9 +42,7 @@ const STEAM_OWNED_GAMES_URL: &str = "https://api.steampowered.com/IPlayerService
 fn make_get_games_url() -> Url {
     format!(
         "{}&key={}&steamid={}",
-        STEAM_OWNED_GAMES_URL,
-        dotenv!("STEAM_API_KEY"),
-        dotenv!("STEAM_ID")
+        STEAM_OWNED_GAMES_URL, CONFIG.steam.api_key, CONFIG.steam.user_id
     )
     .parse()
     .unwrap()
