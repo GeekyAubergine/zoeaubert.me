@@ -1156,11 +1156,19 @@ time {
 .faq-page,
 .support-page,
 .referrals-page,
+.credits-page,
 .feeds-page {
     @apply width-narrow;
 
     h1 {
         @apply full-stop;
+    }
+}
+
+.referrals-page,
+.credits-page {
+    li {
+        @apply list-none;
     }
 }
 

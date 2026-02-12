@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use chrono::Datelike;
 
 use crate::domain::models::albums::Albums;
+use crate::domain::models::credits::Credits;
 use crate::domain::models::mastodon_post::MastodonPosts;
 use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::projects::Projects;
@@ -30,4 +31,5 @@ pub struct Data {
     pub albums: Albums,
     pub projects: Projects,
     pub timeline_events: TimelineEvents,
+    pub credits: Credits,
 }

@@ -109,6 +109,10 @@
                     "url": "/faq/"
                 },
                 {
+                  "name": "Credits & Attributions",
+                  "url": "/credits/"
+                },
+                {
                     "name": "Support",
                     "url": "/support/"
                 },

@@ -152,7 +152,7 @@ pub fn load_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
 
     let mut data: SteamGames = file.read_json_or_default()?;
 
-    if !ctx.query_limiter.can_query_within_hour(QUERY_KEY)? {
+    if !ctx.query_limiter.can_query_within_day(QUERY_KEY)? {
         return Ok(data);
     }
 

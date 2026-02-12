@@ -14,7 +14,6 @@ use crate::services::file_service::{ArchiveFile, FileService, ReadableFile, Writ
 const FILE_NAME: &str = "query_limiting_service.json";
 
 // All are 1 minute less than the actual period to account for time drift
-pub const FIFTEEN_MINUTES_PERIOD: Duration = Duration::new(15 * 60 - 60, 0);
 pub const ONE_HOUR_PERIOD: Duration = Duration::new(60 * 60 - 60, 0);
 pub const ONE_DAY_PERIOD: Duration = Duration::new(60 * 60 * 24 - 60, 0);
 
@@ -59,10 +58,6 @@ impl QueryLimitingService {
         }
 
         Ok(can_query)
-    }
-
-    pub fn can_query_within_fifteen_minutes(&self, query: &str) -> Result<bool> {
-        self.can_query(query, &FIFTEEN_MINUTES_PERIOD)
     }
 
     pub fn can_query_within_hour(&self, query: &str) -> Result<bool> {

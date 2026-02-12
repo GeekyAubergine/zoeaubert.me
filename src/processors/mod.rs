@@ -8,12 +8,13 @@ use crate::{
     domain::models::data::Data,
     processors::{
         about_text::load_about_text, albums::load_albums, blog_posts::load_blog_posts,
-        faq::load_faq, games::load_games, lego::load_lego, mastodon::load_mastodon_posts,
-        micro_blog_archive::load_micro_blog_archive, micro_posts::load_micro_posts,
-        now_text::load_now_text, projects::load_projects, referrals::load_referrals,
-        silly_names::load_silly_names, timeline_events::process_timeline_events,
+        credits::load_credits, faq::load_faq, games::load_games, lego::load_lego,
+        mastodon::load_mastodon_posts, micro_blog_archive::load_micro_blog_archive,
+        micro_posts::load_micro_posts, now_text::load_now_text, projects::load_projects,
+        referrals::load_referrals, silly_names::load_silly_names,
+        timeline_events::process_timeline_events,
     },
-    services::{file_service::FileService, network_service::NetworkService, ServiceContext},
+    services::{ServiceContext, file_service::FileService, network_service::NetworkService},
 };
 
 use crate::prelude::*;
@@ -21,6 +22,7 @@ use crate::prelude::*;
 pub mod about_text;
 pub mod albums;
 pub mod blog_posts;
+pub mod credits;
 pub mod faq;
 pub mod games;
 pub mod lego;
@@ -60,6 +62,7 @@ pub fn process_data(ctx: &ServiceContext) -> Result<Data> {
     let micro_blog_archive = load_micro_blog_archive(ctx)?;
     let lego = load_lego(ctx)?;
     let albums = load_albums(ctx)?;
+    let credits = load_credits(ctx)?;
 
     let mut micro_posts = micro_posts;
     micro_posts.extend(micro_blog_archive);
@@ -90,6 +93,7 @@ pub fn process_data(ctx: &ServiceContext) -> Result<Data> {
         games,
         albums,
         projects,
-        timeline_events
+        timeline_events,
+        credits,
     })
 }

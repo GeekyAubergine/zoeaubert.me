@@ -1,0 +1,23 @@
+- name: TMDB
+  url: https://www.themoviedb.org/
+  text: Movie and TV data and posters are sourced from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.
+
+- name: Steam
+  url: https://store.steampowered.com/
+  text: Game data and images are sourced from the Steam Web API. Steam and Valve are trademarks of Valve Corporation. This site is not affiliated with or endorsed by Valve.
+
+- name: Open Library
+  url: https://openlibrary.org/
+  text: Book data and cover images are provided via the Open Library Covers API. Cover images remain the copyright of their respective publishers and rights holders.
+
+- name: Brickset
+  url: https://brickset.com/
+  text: LEGO set and minifig data is sourced via the Brickset API. LEGO and related trademarks are owned by The LEGO Group. This site is not affiliated with or endorsed by The LEGO Group.
+
+- name: Strava
+  url: https://www.strava.com/
+  text: Activity data is sourced from the Strava API. Strava is a trademark of Strava, Inc. This site is not affiliated with or endorsed by Strava.
+
+- name: Mapbox
+  url: https://www.mapbox.com/
+  text: Activity maps are rendered using Mapbox. © Mapbox © OpenStreetMap contributors. This site is not affiliated with or endorsed by Mapbox.
