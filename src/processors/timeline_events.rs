@@ -3,19 +3,13 @@ use tracing::{error, instrument};
 
 use crate::{
     domain::models::{
-        blog_post::BlogPost,
-        games::{Game, Games},
-        mastodon_post::{MastodonPost, MastodonPosts},
-        micro_post::MicroPost,
-        review::{
+        albums::Albums, blog_post::BlogPost, games::{Game, Games}, mastodon_post::{MastodonPost, MastodonPosts}, micro_post::MicroPost, review::{
             book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource,
             tv_show_review::TvShowReview,
-        },
-        tag::Tag,
-        timeline_event::{
+        }, tag::Tag, timeline_event::{
             TimelineEvent, TimelineEventGameAchievementUnlock, TimelineEventPost,
             TimelineEventReview, TimelineEvents,
-        },
+        }
     },
     services::ServiceContext,
 };
@@ -158,12 +152,27 @@ fn extract_events_from_games<'l>(ctx: &ServiceContext, games: &Games) -> Vec<Tim
     events
 }
 
+fn extract_events_from_albums<'l>(ctx: &ServiceContext, albums: &Albums) -> Vec<TimelineEvent> {
+    let mut events = vec![];
+
+    for album in albums.find_all_by_date() {
+        events.push(TimelineEvent::Album(album.clone()));
+
+        for photo in &album.photos {
+            events.push(TimelineEvent::AlbumPhoto { album: album.clone(), photo: photo.clone() });
+        }
+    }
+
+    events
+}
+
 pub fn process_timeline_events(
     ctx: &ServiceContext,
     blog_posts: Vec<BlogPost>,
     micro_posts: Vec<MicroPost>,
     mastodon_posts: MastodonPosts,
     games: &Games,
+    albums: &Albums,
 ) -> TimelineEvents {
     let mut events: Vec<TimelineEvent> = vec![];
 
@@ -171,6 +180,7 @@ pub fn process_timeline_events(
     events.extend(extract_events_from_micro_posts(ctx, micro_posts));
     events.extend(extract_events_from_mastodon(ctx, mastodon_posts));
     events.extend(extract_events_from_games(ctx, games));
+    events.extend(extract_events_from_albums(ctx, albums));
 
     TimelineEvents::from_events(events)
 }

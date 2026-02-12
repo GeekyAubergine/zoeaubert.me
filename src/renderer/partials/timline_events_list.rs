@@ -1,3 +1,5 @@
+use crate::domain::models::albums::album::Album;
+use crate::domain::models::albums::album_photo::AlbumPhoto;
 use crate::domain::models::blog_post::BlogPost;
 use crate::domain::models::book::Book;
 use crate::domain::models::games::steam::{SteamGame, SteamGameAchievementUnlocked};
@@ -48,9 +50,11 @@ pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Rend
                             game,
                             achievement,
                         } => {
-                            (render_game_achievement_review(game, achievement))
+                            (render_game_achievement(game, achievement))
                         },
                     },
+                    TimelineEvent::Album(album) => (render_album(album)),
+                    TimelineEvent::AlbumPhoto { photo, .. } => (render_album_photo(photo)),
                 }
                 hr;
             }
@@ -79,7 +83,9 @@ fn render_post<'l>(
                         (content)
                     }
                     @if let Some(media) = &media {
-                        (render_media_grid(media, &MediaGripOptions::for_list()))
+                        a href=(slug.relative_string()) {
+                            (render_media_grid(media, &MediaGripOptions::for_list()))
+                        }
                     }
                     @if let Some(tags) = &tags {
                         (render_tags(&tags, Some(5)))
@@ -106,7 +112,9 @@ fn render_post<'l>(
                             }
                         }
                         div class="right" {
-                            (side_image.render_large())
+                            a href=(slug.relative_string()) {
+                                (side_image.render_large())
+                            }
                         }
                     }
                 }
@@ -232,7 +240,7 @@ pub fn render_tv_show_review<'l>(
     )
 }
 
-pub fn render_game_achievement_review<'l>(
+pub fn render_game_achievement<'l>(
     game: &'l SteamGame,
     achievement: &'l SteamGameAchievementUnlocked,
 ) -> impl Renderable + 'l {
@@ -251,5 +259,43 @@ pub fn render_game_achievement_review<'l>(
         None,
         None,
         Some(&achievement.image),
+    )
+}
+
+pub fn render_album<'l>(album: &'l Album) -> impl Renderable + 'l {
+    let content = maud! {
+        div class="prose" {
+            a class="album-title" href=(album.slug.relative_string()) {
+                (&album.title)
+            }
+        }
+    };
+
+    render_post(
+        album.slug.clone(),
+        &album.date,
+        content,
+        Some(album.cover_images().iter().map(|i| i.clone().into()).collect()),
+        None,
+        None,
+    )
+}
+
+pub fn render_album_photo<'l>(photo: &'l AlbumPhoto) -> impl Renderable + 'l {
+    let content = maud! {
+        div class="prose" {
+            a class="album-photo-description" href=(photo.slug.relative_string()) {
+                p { (&photo.description) }
+            }
+        }
+    };
+
+    render_post(
+        photo.slug.clone(),
+        &photo.date,
+        content,
+        Some(vec![photo.image.clone().into()]),
+        None,
+        None,
     )
 }
