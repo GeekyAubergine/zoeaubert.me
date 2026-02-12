@@ -27,18 +27,20 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
         .filter_map(|event| match event {
             TimelineEvent::Post(post) => match post {
                 TimelineEventPost::BlogPost(_) => None,
-                TimelineEventPost::MicroPost(post) => Some(post.media()),
-                TimelineEventPost::MastodonPost(post) => Some(post.media()),
+                TimelineEventPost::MicroPost(post) => Some(post.media().clone()),
+                TimelineEventPost::MastodonPost(post) => Some(post.media().clone()),
             },
             TimelineEvent::Review(_) => None,
             TimelineEvent::GameAchievementUnlock(_) => None,
+            TimelineEvent::Album(_) => None,
+            TimelineEvent::AlbumPhoto { album, photo } => Some(vec![photo.image.clone().into()]),
         })
         .flatten()
         .filter_map(|media| match media {
             Media::Image(image) => Some(image),
             _ => None,
         })
-        .collect::<Vec<&Image>>();
+        .collect::<Vec<Image>>();
 
     render_photos_list_page(context, &photos)?;
 
@@ -61,7 +63,7 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
     }
 }
 
-pub fn render_photos_list_page(context: &RendererContext, photos: &[&Image]) -> Result<()> {
+pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> Result<()> {
     let paginated = paginate(&photos, PAGINATION_SIZE);
 
     let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);

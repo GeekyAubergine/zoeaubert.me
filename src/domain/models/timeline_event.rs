@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::domain::models::{
+    albums::{album::Album, album_photo::AlbumPhoto},
     blog_post::BlogPost,
     book::Book,
     games::steam::{SteamGame, SteamGameAchievementUnlocked},
@@ -56,6 +57,8 @@ pub enum TimelineEvent {
     Post(TimelineEventPost),
     Review(TimelineEventReview),
     GameAchievementUnlock(TimelineEventGameAchievementUnlock),
+    Album(Album),
+    AlbumPhoto { album: Album, photo: AlbumPhoto },
 }
 
 impl TimelineEvent {
@@ -77,6 +80,8 @@ impl TimelineEvent {
                     achievement,
                 } => game.slug().to_string(),
             },
+            TimelineEvent::Album(alumb) => alumb.slug.to_string(),
+            TimelineEvent::AlbumPhoto { album, photo } => photo.slug.to_string(),
         }
     }
 
@@ -98,6 +103,8 @@ impl TimelineEvent {
                     achievement,
                 } => &achievement.unlocked_date,
             },
+            TimelineEvent::Album(album) => &album.date,
+            TimelineEvent::AlbumPhoto { album, photo } => &photo.date,
         }
     }
 
@@ -114,6 +121,8 @@ impl TimelineEvent {
                 TimelineEventReview::TvShowReview { source, .. } => Some(source.tags()),
             },
             TimelineEvent::GameAchievementUnlock(_) => None,
+            TimelineEvent::Album(_) => None,
+            TimelineEvent::AlbumPhoto { album, photo } => Some(&photo.tags),
         }
     }
 }
@@ -134,10 +143,15 @@ impl TimelineEvents {
         // Seems redundant, but prevents weird duplicates
         let mut events_map = events
             .into_iter()
-            .map(|event| (EventKey {
-                key: event.key(),
-                date: *event.date()
-            }, event))
+            .map(|event| {
+                (
+                    EventKey {
+                        key: event.key(),
+                        date: *event.date(),
+                    },
+                    event,
+                )
+            })
             .collect::<HashMap<EventKey, TimelineEvent>>();
 
         let mut events = events_map.into_values().collect::<Vec<TimelineEvent>>();

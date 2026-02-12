@@ -532,12 +532,14 @@ time {
             @apply mt-[var(--article-vertical-margin)];
         }
 
-        .blog-title {
+        .blog-title,
+        .game-title,
+        .album-title {
             @apply text-3xl font-bold no-underline my-[var(--article-vertical-margin)];
         }
 
-        .game-title {
-            @apply text-3xl font-bold no-underline my-[var(--article-vertical-margin)];
+        .album-photo-description {
+            @apply no-underline;
         }
     }
 
