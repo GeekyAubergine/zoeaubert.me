@@ -9,6 +9,7 @@ use crate::renderer::feeds::{render_feeds};
 use crate::renderer::pages::albums_pages_renderer::render_alubms_pages;
 use crate::renderer::pages::blog_pages_renderers::render_blog_pages;
 use crate::renderer::pages::book_review_pages_renderers::render_book_review_pages;
+use crate::renderer::pages::credits_renderer::render_credits_pages;
 use crate::renderer::pages::faq_page_renderer::render_faq_page;
 use crate::renderer::pages::feeds_page_renderer::render_feeds_page;
 use crate::renderer::pages::firehose_pages_renderers::render_firehose_pages;
@@ -76,6 +77,7 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_alubms_pages(context)?;
     render_feeds(context)?;
     render_404_page(context)?;
+    render_credits_pages(context)?;
 
     Ok(())
 }

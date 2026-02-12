@@ -239,7 +239,7 @@ pub fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> {
 
     if !ctx
         .query_limiter
-        .can_query_within_fifteen_minutes(QUERY)?
+        .can_query_within_hour(QUERY)?
     {
         return Ok(posts);
     }

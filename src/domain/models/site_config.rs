@@ -84,7 +84,6 @@ impl From<&Image> for PageImage {
     }
 }
 
-
 #[derive(Debug, Clone, Deserialize)]
 pub struct PageConfig {
     pub url: String,
@@ -99,7 +98,7 @@ pub struct PageConfig {
 }
 
 pub static SITE_CONFIG: Lazy<PageConfig> = Lazy::new(|| {
-    let contents = fs::read_to_string(".site_config.json").unwrap();
+    let contents = fs::read_to_string("site_config.json").unwrap();
 
     serde_json::from_str(&contents).unwrap()
 });

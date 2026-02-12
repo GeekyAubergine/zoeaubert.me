@@ -10,6 +10,7 @@ use url::Url;
 
 use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
+use crate::domain::models::site_config::SITE_CONFIG;
 use crate::domain::models::slug::Link;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
@@ -30,29 +31,26 @@ use crate::renderer::partials::tag::render_tags;
 use crate::renderer::RendererContext;
 use crate::services::file_service::ContentFile;
 
-pub fn render_referrals_page(context: &RendererContext) -> Result<()> {
-    let page = Page::new(Slug::new("/save"), Some("Referrals".to_string()), None);
+pub fn render_credits_pages(context: &RendererContext) -> Result<()> {
+    let page = Page::new(Slug::new("/credits"), Some("Credits & Attributions".to_string()), None);
     let slug = page.slug.clone();
 
     let content = maud! {
         article {
             ul {
-               @for referral in &context.data.referrals.referrals {
-                   li {
-                    h2 {
-                        (referral.name)
-                        a href=(referral.url.as_str()) {
-                            p { (referral.url.as_str()) }
+                @for credit in &context.data.credits {
+                    li {
+                        a href=(credit.url.as_str()) {
+                            h2 { (credit.name ) }
                         }
+                        p { (credit.text) }
                     }
-                    p { (referral.description) }
-                   }
-               }
+                }
             }
         }
     };
 
-    let options = PageOptions::new().with_main_class("referrals-page");
+    let options = PageOptions::new().with_main_class("credits-page");
 
     let render = render_page(&page, &options, &content, maud! {});
 
