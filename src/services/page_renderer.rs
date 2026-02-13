@@ -73,7 +73,7 @@ impl PageRenderer {
         Ok(())
     }
 
-    pub fn render_file<'t, T>(&self, path: PathBuf, rendered: Rendered<String>) -> Result<()> {
+    pub fn render_file(&self, path: PathBuf, rendered: Rendered<String>) -> Result<()> {
         let path = path.to_string_lossy().to_string();
 
         self.save_file(&path, rendered.as_inner())?;

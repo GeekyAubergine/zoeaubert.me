@@ -19,14 +19,11 @@ pub fn render_book_review_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Review(review) => match review {
-                TimelineEventReview::BookReview {
-                    review,
-                    book,
-                    source,
-                } => Some((review, book, source)),
-                _ => None,
-            },
+            TimelineEvent::Review(TimelineEventReview::BookReview {
+                review,
+                book,
+                source,
+            }) => Some((review, book, source)),
             _ => None,
         })
         .collect::<Vec<(&BookReview, &Book, &ReviewSource)>>();

@@ -22,19 +22,17 @@ pub fn render_blog_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::BlogPost(post) => Some(post),
-                _ => None,
-            },
+            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => Some(post),
             _ => None,
         })
+        .map(|p| p.as_ref())
         .collect::<Vec<&BlogPost>>();
 
-    render_blog_posts_list_page(context, &posts)?;
-
-    for post in posts {
+    for post in &posts {
         render_blog_post_page(context, post)?;
     }
+
+    render_blog_posts_list_page(context, posts)?;
 
     Ok(())
 }
@@ -54,19 +52,16 @@ pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     }
 }
 
-pub fn render_blog_posts_list_page(
-    context: &RendererContext,
-    posts: &Vec<&BlogPost>,
-) -> Result<()> {
+pub fn render_blog_posts_list_page(context: &RendererContext, posts: Vec<&BlogPost>) -> Result<()> {
     let posts = posts
-        .iter()
+        .into_iter()
         .filter(|post| {
             !post
                 .tags
                 .iter()
                 .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
         })
-        .collect::<Vec<&&BlogPost>>();
+        .collect::<Vec<&BlogPost>>();
 
     let paginated = paginate(&posts, PAGINATION_SIZE);
 

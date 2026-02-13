@@ -111,7 +111,7 @@ impl MovieService {
 
                 let image_url = &format!("{}{}", TMDB_IMAGE_URL, poster).parse().unwrap();
 
-                let cdn_file = CdnFile::from_str(&format!("movies/{}-poster-200.jpg", movie.id));
+                let cdn_file = CdnFile::from_path(&format!("movies/{}-poster-200.jpg", movie.id));
 
                 let image = MediaService::image_from_url(
                     ctx,

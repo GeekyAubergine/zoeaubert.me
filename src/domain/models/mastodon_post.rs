@@ -164,9 +164,9 @@ impl MastodonPost {
             .filter(|line| !line.is_empty())
             .collect::<Vec<&str>>();
 
-        let first_line = lines.first().map(|first| *first);
+        let first_line = lines.first().copied();
 
-        let second_line = lines.get(1).map(|second| *second);
+        let second_line = lines.get(1).copied();
 
         let description = match (first_line, second_line) {
             (Some(first), Some(second)) => {

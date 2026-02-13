@@ -41,23 +41,20 @@ fn blog_posts<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::BlogPost(post) => {
-                    if post
-                        .tags
-                        .iter()
-                        .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
-                    {
-                        return None;
-                    }
-                    Some(post)
+            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => {
+                if post
+                    .tags
+                    .iter()
+                    .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
+                {
+                    return None;
                 }
-                _ => None,
-            },
+                Some(post)
+            }
             _ => None,
         })
         .take(BLOG_POSTS_COUNT)
-        .collect::<Vec<&BlogPost>>();
+        .collect::<Vec<&Box<BlogPost>>>();
 
     maud! {
         ul class="blog-post-list" {
@@ -102,8 +99,8 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
             _ => None,
         })
         .flatten()
-        .filter_map(|media| match media {
-            Media::Image(image) => Some(image),
+        .map(|media| match media {
+            Media::Image(image) => image,
         })
         .take(PHOTOS_COUNT)
         .collect::<Vec<&Image>>();

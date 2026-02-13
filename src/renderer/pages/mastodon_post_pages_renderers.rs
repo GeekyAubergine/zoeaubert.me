@@ -16,13 +16,10 @@ pub fn render_mastodon_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::MastodonPost(post) => Some(post),
-                _ => None,
-            },
+            TimelineEvent::Post(TimelineEventPost::MastodonPost(post)) => Some(post),
             _ => None,
         })
-        .collect::<Vec<&MastodonPost>>();
+        .collect::<Vec<&Box<MastodonPost>>>();
 
     for post in posts {
         render_mastodon_post_page(context, post)?;

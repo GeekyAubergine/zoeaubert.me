@@ -73,10 +73,7 @@ impl<'l> Task for ProcessAlbumPhoto<'l> {
         let file_name = url.path_segments().unwrap().next_back().unwrap();
         let file_name_without_extension = file_name.split('.').next().unwrap();
 
-        let photo_slug = self
-            .album
-            .slug
-            .append(&file_name_without_extension.to_string());
+        let photo_slug = self.album.slug.append(file_name_without_extension);
 
         let photo = AlbumPhoto::new(
             photo_slug,

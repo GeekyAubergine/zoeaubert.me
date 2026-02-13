@@ -10,9 +10,8 @@ pub struct CachePath {
 const CACHE_DIR: &str = ".cache";
 
 impl CachePath {
-    pub fn from_str(path: &str) -> Self {
+    pub fn from_path_str(path: &str) -> Self {
         let path = path.replace(CACHE_DIR, "");
-        // let path = url.split('/').skip(3).collect::<Vec<&str>>().join("/");
 
         Self::from_path(Path::new(&path))
     }
@@ -31,7 +30,7 @@ impl CachePath {
 
     pub fn from_url(url: &str) -> Self {
         let path = url.split('/').skip(3).collect::<Vec<&str>>().join("/");
-        Self::from_str(&path)
+        Self::from_path_str(&path)
     }
 
     pub fn as_path(&self) -> PathBuf {

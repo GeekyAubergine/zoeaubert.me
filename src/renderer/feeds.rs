@@ -32,12 +32,10 @@ fn render_blog_post_feed_xml(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::BlogPost(post) => Some(post),
-                _ => None,
-            },
+            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => Some(post),
             _ => None,
         })
+        .map(|p| p.as_ref())
         .collect::<Vec<&BlogPost>>();
 
     let template = BlogPostXmlTemplate {

@@ -104,7 +104,7 @@ fn extract_events_from_blog_posts(
 ) -> impl Iterator<Item = TimelineEvent> {
     blog_posts
         .into_iter()
-        .map(|post| TimelineEvent::Post(TimelineEventPost::BlogPost(post)))
+        .map(|post| TimelineEvent::Post(TimelineEventPost::BlogPost(Box::new(post))))
 }
 
 fn extract_events_from_micro_posts(
@@ -128,7 +128,7 @@ fn extract_events_from_mastodon(
         .collect()
 }
 
-fn extract_events_from_games<'l>(games: &Games) -> Vec<TimelineEvent> {
+fn extract_events_from_games(games: &Games) -> Vec<TimelineEvent> {
     let mut events = vec![];
 
     for game in games.find_all() {
@@ -155,7 +155,7 @@ fn extract_events_from_games<'l>(games: &Games) -> Vec<TimelineEvent> {
     events
 }
 
-fn extract_events_from_albums<'l>(albums: &Albums) -> Vec<TimelineEvent> {
+fn extract_events_from_albums(albums: &Albums) -> Vec<TimelineEvent> {
     let mut events = vec![];
 
     for album in albums.find_all_by_date() {

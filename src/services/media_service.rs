@@ -21,7 +21,7 @@ use crate::{
     },
     utils::resize_image::{ImageSize, resize_image},
 };
-pub const MARKDOWN_IMAGE_REGEX: Lazy<Regex> =
+pub static MARKDOWN_IMAGE_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"(?i)!\[([^\]]+)\]\(([^)]+)\)"#).unwrap());
 
 pub struct MediaService;
@@ -187,12 +187,14 @@ impl MediaService {
     ) -> Result<Vec<Image>> {
         let mut media = vec![];
 
-        for cap in MARKDOWN_IMAGE_REGEX.captures_iter(markdown) {
+        let regex = MARKDOWN_IMAGE_REGEX.clone();
+
+        for cap in regex.captures_iter(markdown) {
             let alt = cap.get(1).map_or("", |m| m.as_str());
             let url = cap.get(2).map_or("", |m| m.as_str());
 
             let url: Url = url.parse().unwrap();
-            let cdn_file = CdnFile::from_str(url.path());
+            let cdn_file = CdnFile::from_path(url.path());
 
             let image = Self::image_from_url(ctx, &url, &cdn_file, alt, link_on_click, date)?;
 

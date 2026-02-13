@@ -19,14 +19,11 @@ pub fn render_tv_review_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Review(review) => match review {
-                TimelineEventReview::TvShowReview {
-                    review,
-                    tv_show,
-                    source,
-                } => Some((review, tv_show, source)),
-                _ => None,
-            },
+            TimelineEvent::Review(TimelineEventReview::TvShowReview {
+                review,
+                tv_show,
+                source,
+            }) => Some((review, tv_show, source)),
             _ => None,
         })
         .collect::<Vec<(&TvShowReview, &TvShow, &ReviewSource)>>();

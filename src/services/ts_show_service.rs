@@ -94,7 +94,7 @@ impl TvShowService {
 
                 let image_url = &format!("{}{}", TMDB_IMAGE_URL, poster).parse().unwrap();
 
-                let cdn_file = CdnFile::from_str(&format!("tv/{}-poster-400.jpg", tv_show.id));
+                let cdn_file = CdnFile::from_path(&format!("tv/{}-poster-400.jpg", tv_show.id));
 
                 let image = MediaService::image_from_url(
                     ctx,

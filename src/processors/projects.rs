@@ -39,7 +39,7 @@ pub fn load_projects(ctx: &ServiceContext) -> Result<Projects> {
     for file_project in yaml.projects {
         let path = file_project.image.path();
 
-        let cdn_file = CdnFile::from_str(path);
+        let cdn_file = CdnFile::from_path(path);
 
         let image = MediaService::image_from_url(
             ctx,

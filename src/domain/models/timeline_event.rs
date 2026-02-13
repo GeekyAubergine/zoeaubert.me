@@ -20,9 +20,9 @@ use chrono::{DateTime, Utc};
 
 #[derive(Debug, Clone)]
 pub enum TimelineEventPost {
-    BlogPost(BlogPost),
-    MicroPost(MicroPost),
-    MastodonPost(MastodonPost),
+    BlogPost(Box<BlogPost>),
+    MicroPost(Box<MicroPost>),
+    MastodonPost(Box<MastodonPost>),
 }
 
 #[derive(Debug, Clone)]
@@ -171,10 +171,10 @@ impl From<ReviewSource> for TimelineEvent {
     fn from(value: ReviewSource) -> Self {
         match value {
             ReviewSource::MicroPost(post) => {
-                TimelineEvent::Post(TimelineEventPost::MicroPost(post))
+                TimelineEvent::Post(TimelineEventPost::MicroPost(Box::new(post)))
             }
             ReviewSource::MastodonPost(post) => {
-                TimelineEvent::Post(TimelineEventPost::MastodonPost(post))
+                TimelineEvent::Post(TimelineEventPost::MastodonPost(Box::new(post)))
             }
         }
     }

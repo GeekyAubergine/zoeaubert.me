@@ -20,10 +20,10 @@ use crate::{
 
 const MICRO_POSTS_DIR: &str = "micro-blog-archive/feed.json";
 
-pub const HTML_IMAGE_REGEX: Lazy<Regex> = Lazy::new(|| {
+pub static HTML_IMAGE_REGEX: Lazy<Regex> = Lazy::new(|| {
     Regex::new(r#"(?i)<img(((src="(?<src>([^"]+))")|(alt="(?<alt>([^"]+))")|(width="(?<width>([^"]+))")|(height="(?<height>([^"]+))"))|[^>])*>"#).unwrap()
 });
-pub const MARKDOWN_LINK_REGEX: Lazy<Regex> =
+pub static MARKDOWN_LINK_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"\(https?://[^\s]+\)"#).unwrap());
 
 const TAGS_TO_IGNORE: [&str; 2] = ["status", "photography"];
@@ -88,7 +88,7 @@ fn extract_images_from_html(
 
         let url: Url = path.parse().unwrap();
 
-        let cdn_file = &CdnFile::from_str(url.path());
+        let cdn_file = &CdnFile::from_path(url.path());
 
         images.push(MediaService::image_from_url(
             ctx,

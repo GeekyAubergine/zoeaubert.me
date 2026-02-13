@@ -1,5 +1,5 @@
+use crate::domain::models::image::Image;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
-use crate::domain::models::{image::Image};
 use crate::prelude::*;
 use hypertext::prelude::*;
 
@@ -56,18 +56,15 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Review(review) => match review {
-                TimelineEventReview::BookReview {
-                    review,
-                    book,
-                    source,
-                } => Some(InterestElement {
-                    sub_text: Some(format!("{}/5", review.score)),
-                    image: &book.cover,
-                    link: source.slug(),
-                }),
-                _ => None,
-            },
+            TimelineEvent::Review(TimelineEventReview::BookReview {
+                review,
+                book,
+                source,
+            }) => Some(InterestElement {
+                sub_text: Some(format!("{}/5", review.score)),
+                image: &book.cover,
+                link: source.slug(),
+            }),
             _ => None,
         })
         .take(ITEM_COUNT)
@@ -79,18 +76,15 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Review(review) => match review {
-                TimelineEventReview::MovieReview {
-                    review,
-                    movie,
-                    source,
-                } => Some(InterestElement {
-                    sub_text: Some(format!("{}/5", review.score)),
-                    image: &movie.poster,
-                    link: source.slug(),
-                }),
-                _ => None,
-            },
+            TimelineEvent::Review(TimelineEventReview::MovieReview {
+                review,
+                movie,
+                source,
+            }) => Some(InterestElement {
+                sub_text: Some(format!("{}/5", review.score)),
+                image: &movie.poster,
+                link: source.slug(),
+            }),
             _ => None,
         })
         .take(ITEM_COUNT)
@@ -102,18 +96,15 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Review(review) => match review {
-                TimelineEventReview::TvShowReview {
-                    review,
-                    tv_show,
-                    source,
-                } => Some(InterestElement {
-                    sub_text: Some(review.score_text()),
-                    image: &tv_show.poster,
-                    link: source.slug(),
-                }),
-                _ => None,
-            },
+            TimelineEvent::Review(TimelineEventReview::TvShowReview {
+                review,
+                tv_show,
+                source,
+            }) => Some(InterestElement {
+                sub_text: Some(review.score_text()),
+                image: &tv_show.poster,
+                link: source.slug(),
+            }),
             _ => None,
         })
         .take(ITEM_COUNT)

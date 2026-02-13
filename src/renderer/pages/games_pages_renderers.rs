@@ -224,10 +224,7 @@ pub fn render_activity_pages(context: &RendererContext) -> Result<()> {
         .timeline_events
         .all_by_date()
         .iter()
-        .filter(|event| match event {
-            TimelineEvent::GameAchievementUnlock(_) => true,
-            _ => false,
-        })
+        .filter(|event| matches!(event, TimelineEvent::GameAchievementUnlock(_)))
         .collect::<Vec<&TimelineEvent>>();
 
     let paginated = paginate(&posts, PAGINATION_SIZE);

@@ -16,13 +16,10 @@ pub fn render_micro_post_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::MicroPost(post) => Some(post),
-                _ => None,
-            },
+            TimelineEvent::Post(TimelineEventPost::MicroPost(post)) => Some(post),
             _ => None,
         })
-        .collect::<Vec<&MicroPost>>();
+        .collect::<Vec<&Box<MicroPost>>>();
 
     for post in posts {
         render_micro_post_page(context, post)?;

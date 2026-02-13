@@ -30,8 +30,8 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
             TimelineEvent::AlbumPhoto { photo, .. } => Some(vec![photo.image.clone().into()]),
         })
         .flatten()
-        .filter_map(|media| match media {
-            Media::Image(image) => Some(image),
+        .map(|media| match media {
+            Media::Image(image) => image,
         })
         .collect::<Vec<Image>>();
 

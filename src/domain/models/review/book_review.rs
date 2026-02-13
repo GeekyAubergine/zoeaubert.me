@@ -1,10 +1,10 @@
-use once_cell::unsync::Lazy;
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::error::BookError;
 use crate::prelude::*;
 
-const REGEX_LEGACY_STYLE_AUTHOR_TITLE: Lazy<Regex> =
+static REGEX_LEGACY_STYLE_AUTHOR_TITLE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\[(.*)\].*by (.*) 📚").unwrap());
 
 #[derive(Debug, Clone)]

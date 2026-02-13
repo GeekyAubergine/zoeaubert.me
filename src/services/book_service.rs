@@ -154,7 +154,7 @@ impl BookService {
                         .parse()
                         .unwrap();
 
-                let cdn_file = CdnFile::from_str(&format!("books/{}-cover-400.jpg", cover_id));
+                let cdn_file = CdnFile::from_path(&format!("books/{}-cover-400.jpg", cover_id));
 
                 let image = MediaService::image_from_url(
                     ctx,

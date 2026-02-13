@@ -122,7 +122,7 @@ fn process_game(
 
     info!("Processing game [{}]", game.name);
 
-    let game_header_cdn_file = CdnFile::from_str(&format!("games/{}-header.jpg", game.appid));
+    let game_header_cdn_file = CdnFile::from_path(&format!("games/{}-header.jpg", game.appid));
 
     let image = get_game_header_image(ctx, game, &game_header_cdn_file)?;
 

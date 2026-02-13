@@ -17,7 +17,7 @@ use crate::{
 };
 const MICRO_POSTS_DIR: &str = "micros";
 
-pub const MARKDOWN_LINK_REGEX: Lazy<Regex> =
+pub static MARKDOWN_LINK_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"\(https?://[^\s]+\)"#).unwrap());
 
 #[derive(Debug, Clone, Deserialize)]

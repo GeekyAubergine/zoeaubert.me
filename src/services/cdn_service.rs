@@ -29,8 +29,8 @@ pub struct CdnFile {
 }
 
 impl CdnFile {
-    pub fn from_str(string: &str) -> Self {
-        let path = PathBuf::from(string);
+    pub fn from_path(path: &str) -> Self {
+        let path = PathBuf::from(path);
 
         let file_name = path.file_stem().unwrap().to_string_lossy().to_string();
         let extension = path.extension().unwrap().to_string_lossy().to_string();
@@ -62,7 +62,7 @@ impl CdnFile {
 
         let path = format!("{}/{}{}.{}", date_str, name, suffix_str, ext);
 
-        Self::from_str(&path)
+        Self::from_path(&path)
     }
 
     pub fn add_suffix_to_file_name(&self, suffix: &str) -> Self {
@@ -118,13 +118,13 @@ impl BunnyCdnFileResponse {
 
 impl From<BunnyCdnFileResponse> for CdnFile {
     fn from(value: BunnyCdnFileResponse) -> Self {
-        Self::from_str(&value.path())
+        Self::from_path(&value.path())
     }
 }
 
 impl From<&BunnyCdnFileResponse> for CdnFile {
     fn from(value: &BunnyCdnFileResponse) -> Self {
-        Self::from_str(&value.path())
+        Self::from_path(&value.path())
     }
 }
 
