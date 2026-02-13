@@ -1,10 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    domain::models::{image::Image, page::Page, slug::Slug, tag::Tag},
-    utils::cover_photos_for_album::cover_photos_for_album,
-};
+use crate::domain::models::{image::Image, page::Page, slug::Slug, tag::Tag};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AlbumPhoto {

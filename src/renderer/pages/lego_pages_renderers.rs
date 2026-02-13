@@ -1,15 +1,10 @@
-use crate::domain::models::games::Game;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
-use crate::domain::models::timeline_event::TimelineEvent;
 use crate::renderer::RendererContext;
 
 use crate::prelude::*;
 use crate::renderer::formatters::format_number::FormatNumber;
-use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::partials::timline_events_list::render_timline_events_list;
-use crate::utils::paginator::paginate;
 use hypertext::prelude::*;
 
 pub fn render_lego_pages(context: &RendererContext) -> Result<()> {
@@ -76,11 +71,7 @@ fn render_lego_list_page(context: &RendererContext) -> Result<()> {
 
     let options = PageOptions::new().with_main_class("lego-list-page");
 
-    let page = Page::new(
-        Slug::new("/interests/lego"),
-        Some("Lego".to_string()),
-        None,
-    );
+    let page = Page::new(Slug::new("/interests/lego"), Some("Lego".to_string()), None);
 
     let slug = page.slug.clone();
 

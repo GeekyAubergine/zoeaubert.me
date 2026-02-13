@@ -1,21 +1,23 @@
-use dotenvy_macro::dotenv;
 use serde::Deserialize;
-use tracing::{field::debug, info};
+use tracing::info;
 use url::Url;
 
 use crate::{
-    config::CONFIG, domain::models::{
+    config::CONFIG,
+    domain::models::{
         albums::{Albums, album::Album, album_photo::AlbumPhoto},
-        image::Image,
-        media::{MediaDimensions, MediaOrientation},
         slug::Slug,
         tag::Tag,
-    }, error::AlbumError, prelude::*, processors::tasks::{Task, run_tasks}, services::{
+    },
+    prelude::*,
+    processors::tasks::{Task, run_tasks},
+    services::{
         ServiceContext,
         cdn_service::CdnFile,
         file_service::{ContentFile, FileService, ReadableFile},
         media_service::MediaService,
-    }, utils::date::parse_date
+    },
+    utils::date::parse_date,
 };
 
 const ALBUMS_POSTS_DIR: &str = "albums";
@@ -68,13 +70,10 @@ impl<'l> Task for ProcessAlbumPhoto<'l> {
             Some(self.album.date),
         )?;
 
-        let file_name = url.path_segments().unwrap().last().unwrap();
+        let file_name = url.path_segments().unwrap().next_back().unwrap();
         let file_name_without_extension = file_name.split('.').next().unwrap();
 
-        let photo_slug = self
-            .album
-            .slug
-            .append(&format!("{}", file_name_without_extension));
+        let photo_slug = self.album.slug.append(file_name_without_extension);
 
         let photo = AlbumPhoto::new(
             photo_slug,

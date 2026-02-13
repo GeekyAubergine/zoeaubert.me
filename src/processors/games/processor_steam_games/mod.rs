@@ -1,20 +1,15 @@
-use std::{collections::HashMap, path::Path, time::Duration};
+use std::time::Duration;
 
 use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, info, instrument, warn};
+use tracing::{info, instrument, warn};
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
+    config::CONFIG,
     domain::models::{
-        games::steam::{
-            SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
-            SteamGameAchievementUnlocked, SteamGameWithAchievements, SteamGames,
-        },
+        games::steam::{SteamGame, SteamGameWithAchievements, SteamGames},
         image::Image,
-        slug::Slug,
     },
     prelude::*,
     processors::games::processor_steam_games::process_steam_game_achievement::process_steam_game_achievements,
@@ -59,7 +54,6 @@ pub struct SteamOwnedGame {
 
 #[derive(Debug, Clone, Deserialize)]
 struct SteamGetOwnedGamesResponseInner {
-    game_count: u32,
     games: Vec<SteamOwnedGame>,
 }
 
@@ -90,7 +84,7 @@ fn get_game_header_image(
     if let Ok(image) = MediaService::image_from_url(
         ctx,
         &image_src_url,
-        &cdn_file,
+        cdn_file,
         &format!("{} steam header image", &game.name),
         None,
         None,
@@ -108,7 +102,7 @@ fn get_game_header_image(
     MediaService::image_from_url(
         ctx,
         &image_src_url,
-        &cdn_file,
+        cdn_file,
         &format!("{} steam header image", &game.name),
         None,
         None,
@@ -121,17 +115,17 @@ fn process_game(
     game: &SteamOwnedGame,
     stored_game: Option<&SteamGameWithAchievements>,
 ) -> Result<SteamGameWithAchievements> {
-    if let Some(stored_game) = stored_game {
-        if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.game.last_played {
-            return Ok(stored_game.clone());
-        }
+    if let Some(stored_game) = stored_game
+        && steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.game.last_played
+    {
+        return Ok(stored_game.clone());
     }
 
     info!("Processing game [{}]", game.name);
 
-    let game_header_cdn_file = CdnFile::from_str(&format!("games/{}-header.jpg", game.appid));
+    let game_header_cdn_file = CdnFile::from_path(&format!("games/{}-header.jpg", game.appid));
 
-    let image = get_game_header_image(ctx, &game, &game_header_cdn_file)?;
+    let image = get_game_header_image(ctx, game, &game_header_cdn_file)?;
 
     let game = SteamGame::new(
         game.appid,
@@ -182,7 +176,7 @@ pub fn load_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
                     file.write_json(&data)?;
                 }
             }
-            Err(e) => {
+            Err(_) => {
                 let appid = &game.appid;
                 let name = &game.name;
                 warn!("Unable to process game [{appid}] [{name}]");

@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use steam::SteamGameWithAchievements;
 
-use crate::{domain::models::slug::Slug, prelude::Result};
+use crate::domain::models::slug::Slug;
 
 use super::image::Image;
 
@@ -83,6 +83,12 @@ pub struct Games {
     pub games: HashMap<GameId, Game>,
 }
 
+impl Default for Games {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Games {
     pub fn new() -> Self {
         Self {
@@ -97,7 +103,7 @@ impl Games {
     pub fn find_by_most_recently_played(&self) -> Vec<&Game> {
         let mut games = self.games.values().collect::<Vec<&Game>>();
 
-        games.sort_by(|a, b| b.last_played().cmp(&a.last_played()));
+        games.sort_by(|a, b| b.last_played().cmp(a.last_played()));
 
         games
     }
@@ -105,7 +111,7 @@ impl Games {
     pub fn find_by_most_most_played(&self) -> Vec<&Game> {
         let mut games = self.games.values().collect::<Vec<&Game>>();
 
-        games.sort_by(|a, b| b.playtime().cmp(&a.playtime()));
+        games.sort_by(|a, b| b.playtime().cmp(a.playtime()));
 
         games
     }

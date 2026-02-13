@@ -2,14 +2,9 @@ use std::collections::HashMap;
 
 use chrono::Datelike;
 
-use crate::{
-    domain::{
-        models::{
-            albums::{album::Album, album_photo::AlbumPhoto},
-            slug::Slug,
-        },
-    },
-    prelude::Result,
+use crate::domain::models::{
+    albums::{album::Album, album_photo::AlbumPhoto},
+    slug::Slug,
 };
 
 pub mod album;
@@ -35,15 +30,12 @@ impl Albums {
 
     pub fn find_grouped_by_year(&self) -> Vec<(u16, Vec<&Album>)> {
         let years: HashMap<u16, Vec<&Album>> =
-            self.albums
-                .values()
-                .into_iter()
-                .fold(HashMap::new(), |mut acc, album| {
-                    acc.entry(album.date.year() as u16)
-                        .or_insert_with(Vec::new)
-                        .push(album);
-                    acc
-                });
+            self.albums.values().fold(HashMap::new(), |mut acc, album| {
+                acc.entry(album.date.year() as u16)
+                    .or_insert_with(Vec::new)
+                    .push(album);
+                acc
+            });
 
         let mut years = years.into_iter().collect::<Vec<(u16, Vec<&Album>)>>();
 

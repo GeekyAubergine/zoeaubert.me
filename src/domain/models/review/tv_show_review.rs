@@ -3,14 +3,13 @@ use regex::Regex;
 
 use crate::{error::TvShowsError, prelude::*};
 
-const LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\[(.*)\]").unwrap());
-const SEASON_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\((S.*)\)").unwrap());
-const REVIEW_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"- (.+)$").unwrap());
-const SCORE_AND_MAX_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d+)\/(\d+)").unwrap());
-const NON_LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*) \((.+)\)").unwrap());
+static LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\[(.*)\]").unwrap());
+static SEASON_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\((S.*)\)").unwrap());
+static REVIEW_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"- (.+)$").unwrap());
+static SCORE_AND_MAX_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d+)\/(\d+)").unwrap());
+static NON_LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*) \((.+)\)").unwrap());
 
-const SIMPLE_SEASON_NUMBER_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\(S(\d+)\)").unwrap());
-const NUMBERS_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d+").unwrap());
+static NUMBERS_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d+").unwrap());
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TvShowReview {
@@ -34,7 +33,7 @@ impl TvShowReview {
     }
 
     pub fn score_text(&self) -> String {
-        format!("{}/5", self.scores[0].to_string())
+        format!("{}/5", self.scores[0])
     }
 
     pub fn average_score_u8(&self) -> u8 {

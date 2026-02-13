@@ -1,30 +1,17 @@
-use std::collections::HashMap;
-
 use askama::Template;
-use chrono::Utc;
-use futures::try_join;
 
 use crate::{
     domain::models::{
         blog_post::BlogPost,
-        page::Page,
         site_config::SITE_CONFIG,
-        slug::Slug,
         timeline_event::{TimelineEvent, TimelineEventPost},
     },
-    error::TemplateError,
     prelude::*,
     renderer::RendererContext,
-    utils::paginator::{PaginatorPage, paginate},
 };
 
-use crate::domain::models::media::Media;
-
-use crate::domain::models::tag::Tag;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::formatters::format_relative_to_absolute_urls::FormatRelativeToAbsoluteUrls;
-
-const DEFAULT_PAGINATION_SIZE: usize = 25;
 
 pub fn render_feeds(context: &RendererContext) -> Result<()> {
     render_blog_post_feed_xml(context)
@@ -45,12 +32,10 @@ fn render_blog_post_feed_xml(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::BlogPost(post) => Some(post),
-                _ => None,
-            },
+            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => Some(post),
             _ => None,
         })
+        .map(|p| p.as_ref())
         .collect::<Vec<&BlogPost>>();
 
     let template = BlogPostXmlTemplate {

@@ -1,15 +1,12 @@
 use std::collections::HashMap;
-use std::path::Path;
 use std::sync::{Arc, RwLock};
 
-use htmlentity::entity::{decode, ICodedDataTrait};
-use serde::{Deserialize, Serialize};
-use tracing::{debug, error, info, instrument, warn};
+use htmlentity::entity::{ICodedDataTrait, decode};
+use serde::Deserialize;
+use tracing::{debug, info, instrument, warn};
 use url::Url;
 
 use crate::domain::models::book::{Book, BookID};
-use crate::domain::models::slug::Slug;
-use crate::error::BookError;
 use crate::prelude::*;
 
 use crate::services::cdn_service::CdnFile;
@@ -75,7 +72,7 @@ fn query_book_api(
 
     let docs = &response.docs;
 
-    if (tags.contains(&Tag::from_string(WARHAMMER_TAG))) {
+    if tags.contains(&Tag::from_string(WARHAMMER_TAG)) {
         let books = docs
             .clone()
             .into_iter()
@@ -147,36 +144,37 @@ impl BookService {
 
         let book = query_book_api(ctx, title, author, tags)?;
 
-        if let Some(book) = book {
-            if let Some(cover_id) = book.cover_i && let Some(key) = book.key {
-                debug!("Found cover [{cover_id}] for book [{title}]");
-                let image_url = &format!("https://covers.openlibrary.org/b/id/{:?}-L.jpg", cover_id)
-                    .parse()
-                    .unwrap();
+        if let Some(book) = book
+            && let Some(cover_id) = book.cover_i
+            && let Some(key) = book.key
+        {
+            debug!("Found cover [{cover_id}] for book [{title}]");
+            let image_url = &format!("https://covers.openlibrary.org/b/id/{:?}-L.jpg", cover_id)
+                .parse()
+                .unwrap();
 
-                let cdn_file = CdnFile::from_str(&format!("books/{}-cover-400.jpg", cover_id));
+            let cdn_file = CdnFile::from_path(&format!("books/{}-cover-400.jpg", cover_id));
 
-                let image = MediaService::image_from_url(
-                    ctx,
-                    image_url,
-                    &cdn_file,
-                    &format!("Cover for book {}", title),
-                    Some(&format!("https://openlibrary.org/{}", key)),
-                    None,
-                )?;
+            let image = MediaService::image_from_url(
+                ctx,
+                image_url,
+                &cdn_file,
+                &format!("Cover for book {}", title),
+                Some(&format!("https://openlibrary.org/{}", key)),
+                None,
+            )?;
 
-                let book = Book {
-                    title: title.to_string(),
-                    cover: image,
-                    id: BookID::OpenLibrary { id: cover_id },
-                };
+            let book = Book {
+                title: title.to_string(),
+                cover: image,
+                id: BookID::OpenLibrary { id: cover_id },
+            };
 
-                books.insert(title.to_string(), Some(book.clone()));
+            books.insert(title.to_string(), Some(book.clone()));
 
-                self.file.write_json(&books.clone())?;
+            self.file.write_json(&books.clone())?;
 
-                return Ok(Some(book));
-            }
+            return Ok(Some(book));
         }
 
         warn!("Did not find cover for book [{title}]");

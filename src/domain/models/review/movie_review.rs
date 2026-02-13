@@ -1,16 +1,14 @@
-use once_cell::unsync::Lazy;
+use once_cell::sync::Lazy;
 use regex::Regex;
-
-use crate::domain::models::{movie::Movie, review::review_source::ReviewSource};
 
 use crate::error::MovieError;
 use crate::prelude::*;
 
-const LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\[(.*)\]").unwrap());
-const MOVIE_YEAR_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\((\d+)(.*\))?").unwrap());
-const REVIEW_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"- (.+)$").unwrap());
-const SCORE_AND_MAX_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d+)\/(\d+)").unwrap());
-const NON_LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*) \((\d+)\)").unwrap());
+static LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\[(.*)\]").unwrap());
+static MOVIE_YEAR_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\((\d+)(.*\))?").unwrap());
+static REVIEW_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"- (.+)$").unwrap());
+static SCORE_AND_MAX_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d+)\/(\d+)").unwrap());
+static NON_LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*) \((\d+)\)").unwrap());
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct MovieReview {
@@ -22,7 +20,7 @@ pub struct MovieReview {
 
 impl MovieReview {
     pub fn from_content(content: &str) -> Result<MovieReview> {
-        parse_markdown_into_movie_review(&content)
+        parse_markdown_into_movie_review(content)
     }
 }
 
@@ -149,6 +147,8 @@ mod test {
         };
 
         let review = parse_markdown_into_movie_review(&post).unwrap();
+
+        assert_eq!(review, expected)
     }
 
     #[test]

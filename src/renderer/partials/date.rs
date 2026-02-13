@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
-use hypertext::prelude::*;
 use hypertext::Renderable;
+use hypertext::prelude::*;
 
 use crate::renderer::formatters::format_date::FormatDate;
 

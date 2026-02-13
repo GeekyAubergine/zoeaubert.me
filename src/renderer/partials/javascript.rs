@@ -1,6 +1,5 @@
-use hypertext::prelude::*;
 use hypertext::Raw;
-use maud::PreEscaped;
+use hypertext::prelude::*;
 
 use crate::domain::models::albums::album_photo::AlbumPhoto;
 
@@ -99,7 +98,10 @@ pub fn home_page_scripts(silly_names: &[String]) -> impl Renderable {
     }
 }
 
-pub fn album_photo_controls_scripts(photo: &AlbumPhoto, previous_photo: Option<&AlbumPhoto>, next_photo: Option<&AlbumPhoto>) -> impl Renderable {
+pub fn album_photo_controls_scripts(
+    previous_photo: Option<&AlbumPhoto>,
+    next_photo: Option<&AlbumPhoto>,
+) -> impl Renderable {
     let previous_photo_function = match previous_photo {
         Some(previous_photo) => {
             format!(
@@ -110,9 +112,11 @@ pub fn album_photo_controls_scripts(photo: &AlbumPhoto, previous_photo: Option<&
                         .replaceState(null, '', '{}')
                     location.reload()
                 }}
-                "#,  previous_photo.slug.relative_string() )
-        },
-        None => "".to_string()
+                "#,
+                previous_photo.slug.relative_string()
+            )
+        }
+        None => "".to_string(),
     };
 
     let next_photo_function = match next_photo {
@@ -125,9 +129,11 @@ pub fn album_photo_controls_scripts(photo: &AlbumPhoto, previous_photo: Option<&
                         .replaceState(null, '', '{}')
                     location.reload()
                 }}
-                "#,  next_photo.slug.relative_string() )
-        },
-        None => "".to_string()
+                "#,
+                next_photo.slug.relative_string()
+            )
+        }
+        None => "".to_string(),
     };
 
     let controls_script = format!(
@@ -153,8 +159,7 @@ pub fn album_photo_controls_scripts(photo: &AlbumPhoto, previous_photo: Option<&
             window.addEventListener('keyup', onKeyUp)
         </script>
         "#,
-        previous_photo_function,
-        next_photo_function
+        previous_photo_function, next_photo_function
     );
 
     maud! {

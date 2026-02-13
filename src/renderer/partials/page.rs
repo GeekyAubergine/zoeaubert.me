@@ -1,17 +1,10 @@
-use std::option;
-
 use crate::{
     build_data::BUILD_DATE,
     domain::models::{image::Image, page::PagePaginationData, site_config::SITE_CONFIG, tag::Tag},
-    prelude::*,
-    renderer::{
-        formatters::format_date::FormatDate,
-        partials::{date::render_date, tag::render_tags},
-    },
+    renderer::partials::{date::render_date, tag::render_tags},
 };
 use chrono::{DateTime, Utc};
-use hypertext::{prelude::*, Raw};
-use maud::DOCTYPE;
+use hypertext::{Raw, prelude::*};
 
 use crate::domain::models::page::Page;
 
@@ -125,13 +118,11 @@ pub fn render_footer<'l>(page: &'l Page) -> impl Renderable + 'l {
 }
 
 pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Renderable + 'l {
-    let show_first = pagination.current_index > 2;
     let show_previous = pagination.current_index > 1;
 
     let last_index = pagination.last.index;
 
     let show_next = pagination.current_index < last_index;
-    let show_last = pagination.current_index < last_index - 1;
 
     maud! {
         div
@@ -322,6 +313,12 @@ pub struct PageOptions<'l> {
     hide_footer: bool,
 }
 
+impl<'l> Default for PageOptions<'l> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'l> PageOptions<'l> {
     pub fn new() -> Self {
         Self {
@@ -391,7 +388,7 @@ impl<'l> HeaderData<'l> {
         if options.use_date_as_title {
             return match page.date() {
                 Some(date) => HeaderData::Date {
-                    date: date,
+                    date,
                     tags: &page.tags,
                     image: options.image,
                 },
@@ -410,24 +407,24 @@ impl<'l> HeaderData<'l> {
         }
     }
 
-    pub fn with_image(self, image: &'l Image) -> Self {
-        match self {
-            HeaderData::Title {
-                title, date, tags, ..
-            } => HeaderData::Title {
-                title: title,
-                date: date,
-                tags: tags,
-                image: Some(image),
-            },
-            HeaderData::Date { date, tags, .. } => HeaderData::Date {
-                date,
-                tags,
-                image: Some(image),
-            },
-            HeaderData::None => HeaderData::None,
-        }
-    }
+    // pub fn with_image(self, image: &'l Image) -> Self {
+    //     match self {
+    //         HeaderData::Title {
+    //             title, date, tags, ..
+    //         } => HeaderData::Title {
+    //             title: title,
+    //             date: date,
+    //             tags: tags,
+    //             image: Some(image),
+    //         },
+    //         HeaderData::Date { date, tags, .. } => HeaderData::Date {
+    //             date,
+    //             tags,
+    //             image: Some(image),
+    //         },
+    //         HeaderData::None => HeaderData::None,
+    //     }
+    // }
 }
 
 fn render_header<'l>(data: &'l HeaderData<'l>) -> impl Renderable + 'l {
@@ -465,22 +462,15 @@ pub fn render_page<'l>(
     content: impl Renderable + 'l,
     scripts: impl Renderable + 'l,
 ) -> impl Renderable + 'l {
-    let body_class = match options.body_class {
-        Some(class) => class,
-        None => "",
-    };
+    let body_class = options.body_class.unwrap_or_default();
 
-
-    let main_class = match options.main_class {
-        Some(class) => class,
-        None => "",
-    };
+    let main_class = options.main_class.unwrap_or_default();
 
     let header_data = HeaderData::from_page_and_options(page, options);
 
     let body = maud! {
         body class=(&body_class) {
-            (nav_bar(&page))
+            (nav_bar(page))
             main class=(main_class) {
                 @if !options.hide_header {
                     (render_header(&header_data))
@@ -491,13 +481,13 @@ pub fn render_page<'l>(
                 }
             }
             @if !options.hide_footer {
-                (render_footer(&page))
+                (render_footer(page))
             }
             (scripts)
         }
     };
 
     maud! {
-        (render_page_base(&page, &body))
+        (render_page_base(page, &body))
     }
 }

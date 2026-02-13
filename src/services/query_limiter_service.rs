@@ -1,14 +1,12 @@
-use std::path::{Path, PathBuf};
-use std::{collections::HashMap, sync::Arc, time::Duration};
+use std::path::PathBuf;
+use std::time::Duration;
 
 use chrono::{DateTime, Utc};
 use dashmap::DashMap;
 use serde::{Deserialize, Serialize};
-use tokio::sync::RwLock;
 
 use crate::prelude::*;
 
-use crate::domain::models::lego::{LegoMinifig, LegoSet};
 use crate::services::file_service::{ArchiveFile, FileService, ReadableFile, WritableFile};
 
 const FILE_NAME: &str = "query_limiting_service.json";
@@ -33,28 +31,19 @@ impl QueryLimitingService {
         let file = FileService::archive(PathBuf::from(FILE_NAME));
         let data = file.read_json_or_default()?;
 
-        Ok(Self {
-            file,
-            data,
-        })
+        Ok(Self { file, data })
     }
 
     pub fn can_query(&self, query: &str, no_query_duration: &Duration) -> Result<bool> {
         let can_query = match self.data.queries.get(query) {
-            Some(last_queried) => {
-                if *last_queried + *no_query_duration > Utc::now() {
-                    false
-                } else {
-                    true
-                }
-            }
+            Some(last_queried) => *last_queried + *no_query_duration <= Utc::now(),
             None => true,
         };
 
         if can_query {
             self.data.queries.insert(query.to_string(), Utc::now());
 
-            self.file.write_json(&self.data);
+            self.file.write_json(&self.data)?;
         }
 
         Ok(can_query)

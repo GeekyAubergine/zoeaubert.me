@@ -1,10 +1,7 @@
-use std::fmt;
-
 use super::page::Page;
 use super::tag::Tag;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 use super::media::Media;
 use super::slug::Slug;

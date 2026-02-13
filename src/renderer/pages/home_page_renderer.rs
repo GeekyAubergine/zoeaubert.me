@@ -1,26 +1,13 @@
-use std::slice::Iter;
-use std::str::FromStr;
-
-use askama::Template;
-use hypertext::Raw;
-use hypertext::prelude::*;
-use maud::PreEscaped;
-use tracing_subscriber::fmt::format;
-use url::Url;
-
-use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
-use crate::domain::models::slug::Link;
 use crate::domain::models::slug::Slug;
-use crate::domain::models::tag::Tag;
 use crate::domain::models::timeline_event::TimelineEvent;
 use crate::domain::models::timeline_event::TimelineEventPost;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
 use crate::prelude::*;
+use hypertext::prelude::*;
 
 use crate::domain::models::media::Media;
 use crate::renderer::RendererContext;
-use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::javascript::home_page_scripts;
@@ -28,8 +15,6 @@ use crate::renderer::partials::md::MarkdownMediaOption;
 use crate::renderer::partials::md::md;
 use crate::renderer::partials::page::PageOptions;
 use crate::renderer::partials::page::render_page;
-use crate::renderer::partials::tag::render_tags;
-use crate::services::file_service::ContentFile;
 
 const BLOG_POSTS_COUNT: usize = 3;
 const PHOTOS_COUNT: usize = 10;
@@ -56,23 +41,20 @@ fn blog_posts<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::BlogPost(post) => {
-                    if post
-                        .tags
-                        .iter()
-                        .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
-                    {
-                        return None;
-                    }
-                    return Some(post);
+            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => {
+                if post
+                    .tags
+                    .iter()
+                    .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
+                {
+                    return None;
                 }
-                _ => None,
-            },
+                Some(post)
+            }
             _ => None,
         })
         .take(BLOG_POSTS_COUNT)
-        .collect::<Vec<&BlogPost>>();
+        .collect::<Vec<&Box<BlogPost>>>();
 
     maud! {
         ul class="blog-post-list" {
@@ -117,9 +99,8 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
             _ => None,
         })
         .flatten()
-        .filter_map(|media| match media {
-            Media::Image(image) => Some(image),
-            _ => None,
+        .map(|media| match media {
+            Media::Image(image) => image,
         })
         .take(PHOTOS_COUNT)
         .collect::<Vec<&Image>>();

@@ -3,13 +3,20 @@ use tracing::{error, instrument};
 
 use crate::{
     domain::models::{
-        albums::Albums, blog_post::BlogPost, games::{Game, Games}, mastodon_post::{MastodonPost, MastodonPosts}, micro_post::MicroPost, review::{
+        albums::Albums,
+        blog_post::BlogPost,
+        games::{Game, Games},
+        mastodon_post::MastodonPosts,
+        micro_post::MicroPost,
+        review::{
             book_review::BookReview, movie_review::MovieReview, review_source::ReviewSource,
             tv_show_review::TvShowReview,
-        }, tag::Tag, timeline_event::{
+        },
+        tag::Tag,
+        timeline_event::{
             TimelineEvent, TimelineEventGameAchievementUnlock, TimelineEventPost,
             TimelineEventReview, TimelineEvents,
-        }
+        },
     },
     services::ServiceContext,
 };
@@ -20,91 +27,87 @@ const BOOK_REVIEW_POST_TAG: &str = "Books";
 
 #[instrument(skip_all, fields(source.slug=%source.slug()))]
 fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> TimelineEvent {
-    if (source
+    if source
         .tags()
-        .contains(&Tag::from_string(BOOK_REVIEW_POST_TAG)))
+        .contains(&Tag::from_string(BOOK_REVIEW_POST_TAG))
+        && let Ok(review) = BookReview::from_content(source.content())
     {
-        if let Ok(review) = BookReview::from_content(&source.content()) {
-            let book = ctx
-                .books
-                .find_book(ctx, &review.title, &review.author, source.tags());
+        let book = ctx
+            .books
+            .find_book(ctx, &review.title, &review.author, source.tags());
 
-            return match book {
-                Ok(Some(book)) => TimelineEvent::Review(TimelineEventReview::BookReview {
-                    review,
-                    book,
-                    source,
-                }),
-                Ok(None) => source.into(),
-                Err(e) => {
-                    let slug = source.slug();
-                    let title = review.title;
-                    error!("Unable to process book post [{slug}] [{title}]");
-                    source.into()
-                }
-            };
-        }
+        return match book {
+            Ok(Some(book)) => TimelineEvent::Review(TimelineEventReview::BookReview {
+                review,
+                book,
+                source,
+            }),
+            Ok(None) => source.into(),
+            Err(_) => {
+                let slug = source.slug();
+                let title = review.title;
+                error!("Unable to process book post [{slug}] [{title}]");
+                source.into()
+            }
+        };
     }
 
-    if (source
+    if source
         .tags()
-        .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG)))
+        .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG))
+        && let Ok(review) = MovieReview::from_content(source.content())
     {
-        if let Ok(review) = MovieReview::from_content(&source.content()) {
-            let movie = ctx.movies.find_movie(ctx, &review.title, review.year);
+        let movie = ctx.movies.find_movie(ctx, &review.title, review.year);
 
-            return match movie {
-                Ok(Some(movie)) => TimelineEvent::Review(TimelineEventReview::MovieReview {
-                    review,
-                    movie,
-                    source,
-                }),
-                Ok(None) => source.into(),
-                Err(e) => {
-                    let slug = source.slug();
-                    let title = review.title;
-                    let year = review.year;
-                    error!("Unable to process movie post [{slug}] [{title} - {year}]");
-                    source.into()
-                }
-            };
-        }
+        return match movie {
+            Ok(Some(movie)) => TimelineEvent::Review(TimelineEventReview::MovieReview {
+                review,
+                movie,
+                source,
+            }),
+            Ok(None) => source.into(),
+            Err(_) => {
+                let slug = source.slug();
+                let title = review.title;
+                let year = review.year;
+                error!("Unable to process movie post [{slug}] [{title} - {year}]");
+                source.into()
+            }
+        };
     }
 
-    if (source
+    if source
         .tags()
-        .contains(&Tag::from_string(TV_SHOW_REVIEW_POST_TAG)))
+        .contains(&Tag::from_string(TV_SHOW_REVIEW_POST_TAG))
+        && let Ok(review) = TvShowReview::from_content(source.content())
     {
-        if let Ok(review) = TvShowReview::from_content(&source.content()) {
-            let tv_show = ctx.tv_shows.find_tv_show(ctx, &review.title);
+        let tv_show = ctx.tv_shows.find_tv_show(ctx, &review.title);
 
-            return match tv_show {
-                Ok(Some(tv_show)) => TimelineEvent::Review(TimelineEventReview::TvShowReview {
-                    review,
-                    tv_show,
-                    source,
-                }),
-                Ok(None) => source.into(),
-                Err(e) => {
-                    let slug = source.slug();
-                    let title = review.title;
-                    error!("Unable to process movie post [{slug}] [{title}]");
-                    source.into()
-                }
-            };
-        }
+        return match tv_show {
+            Ok(Some(tv_show)) => TimelineEvent::Review(TimelineEventReview::TvShowReview {
+                review,
+                tv_show,
+                source,
+            }),
+            Ok(None) => source.into(),
+            Err(_) => {
+                let slug = source.slug();
+                let title = review.title;
+                error!("Unable to process movie post [{slug}] [{title}]");
+                source.into()
+            }
+        };
     }
 
     source.into()
 }
 
 fn extract_events_from_blog_posts(
-    ctx: &ServiceContext,
     blog_posts: Vec<BlogPost>,
 ) -> impl Iterator<Item = TimelineEvent> {
     blog_posts
         .into_iter()
-        .map(|post| TimelineEvent::Post(TimelineEventPost::BlogPost(post)))
+        .map(|post| TimelineEvent::Post(TimelineEventPost::BlogPost(Box::new(post))))
 }
 
 fn extract_events_from_micro_posts(
@@ -128,21 +131,24 @@ fn extract_events_from_mastodon(
         .collect()
 }
 
-fn extract_events_from_games<'l>(ctx: &ServiceContext, games: &Games) -> Vec<TimelineEvent> {
+fn extract_events_from_games(games: &Games) -> Vec<TimelineEvent> {
     let mut events = vec![];
 
     for game in games.find_all() {
         match game {
             Game::Steam(game) => {
-                let achievement_events: Vec<TimelineEvent> =
-                    game.unlocked_achievements.par_iter().map(|(_, achievement)| {
+                let achievement_events: Vec<TimelineEvent> = game
+                    .unlocked_achievements
+                    .par_iter()
+                    .map(|(_, achievement)| {
                         TimelineEvent::GameAchievementUnlock(
                             TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
                                 game: game.game.clone(),
                                 achievement: achievement.clone(),
                             },
                         )
-                    }).collect();
+                    })
+                    .collect();
 
                 events.extend(achievement_events);
             }
@@ -152,14 +158,17 @@ fn extract_events_from_games<'l>(ctx: &ServiceContext, games: &Games) -> Vec<Tim
     events
 }
 
-fn extract_events_from_albums<'l>(ctx: &ServiceContext, albums: &Albums) -> Vec<TimelineEvent> {
+fn extract_events_from_albums(albums: &Albums) -> Vec<TimelineEvent> {
     let mut events = vec![];
 
     for album in albums.find_all_by_date() {
         events.push(TimelineEvent::Album(album.clone()));
 
         for photo in &album.photos {
-            events.push(TimelineEvent::AlbumPhoto { album: album.clone(), photo: photo.clone() });
+            events.push(TimelineEvent::AlbumPhoto {
+                album: album.clone(),
+                photo: photo.clone(),
+            });
         }
     }
 
@@ -176,11 +185,11 @@ pub fn process_timeline_events(
 ) -> TimelineEvents {
     let mut events: Vec<TimelineEvent> = vec![];
 
-    events.extend(extract_events_from_blog_posts(ctx, blog_posts));
+    events.extend(extract_events_from_blog_posts(blog_posts));
     events.extend(extract_events_from_micro_posts(ctx, micro_posts));
     events.extend(extract_events_from_mastodon(ctx, mastodon_posts));
-    events.extend(extract_events_from_games(ctx, games));
-    events.extend(extract_events_from_albums(ctx, albums));
+    events.extend(extract_events_from_games(games));
+    events.extend(extract_events_from_albums(albums));
 
     TimelineEvents::from_events(events)
 }

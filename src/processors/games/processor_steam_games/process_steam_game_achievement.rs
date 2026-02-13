@@ -1,29 +1,17 @@
-use std::{collections::HashMap, path::Path, time::Duration};
-
-use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
+use chrono::DateTime;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, info, instrument, warn};
+use tracing::info;
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
-    domain::models::{
-        games::steam::{
-            SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
-            SteamGameAchievementUnlocked, SteamGameWithAchievements, SteamGames,
-        },
-        image::Image,
-        slug::Slug,
+    config::CONFIG,
+    domain::models::games::steam::{
+        SteamGame, SteamGameAchievementLocked, SteamGameAchievementUnlocked,
+        SteamGameWithAchievements,
     },
     prelude::*,
     processors::tasks::{Task, run_tasks},
-    services::{
-        ServiceContext,
-        cdn_service::CdnFile,
-        file_service::{FileService, ReadableFile, WritableFile},
-        media_service::MediaService,
-    },
+    services::{ServiceContext, cdn_service::CdnFile, media_service::MediaService},
 };
 
 const STEAM_PLAYER_ACHEIVEMENTS_URL: &str =
@@ -61,8 +49,6 @@ pub struct SteamGameDataAvaialableGameStats {
 #[serde(untagged)]
 enum SteamAvailableGameSchemaResponseWrapper {
     WithGame {
-        #[serde(rename = "gameName")]
-        game_name: String,
         #[serde(rename = "availableGameStats")]
         available_game_stats: SteamGameDataAvaialableGameStats,
     },
@@ -139,6 +125,12 @@ fn get_steam_player_achievements(
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum SteamGameAchievement {
+    Unlocked(Box<SteamGameAchievementUnlocked>),
+    Locked(SteamGameAchievementLocked),
+}
+
 pub fn process_steam_game_achievements(
     ctx: &ServiceContext,
     game: SteamGame,
@@ -172,7 +164,10 @@ pub fn process_steam_game_achievements(
     let achievments = run_tasks(achievement_jobs, ctx)?;
 
     for achievement in achievments {
-        game.add_achievment(achievement);
+        match achievement {
+            SteamGameAchievement::Unlocked(unlocked) => game.add_unlocked_achievement(*unlocked),
+            SteamGameAchievement::Locked(locked) => game.add_locked_achievement(locked),
+        }
     }
 
     Ok(game)
@@ -206,10 +201,10 @@ impl<'l> Task for TaskProcessSteamGameAchievement<'l> {
 
         match unlocked_date {
             Some(unlocked_date) => {
-                let cdn_file = CdnFile::from_str(&format!(
+                let cdn_file = CdnFile::from_path(&format!(
                     "/games/{}-{}-unlocked.jpg",
                     self.game.id,
-                    self.achievement.name.replace(' ', "").replace('%', "")
+                    self.achievement.name.replace([' ', '%'], "")
                 ));
 
                 let image = MediaService::image_from_url(
@@ -221,7 +216,7 @@ impl<'l> Task for TaskProcessSteamGameAchievement<'l> {
                     None,
                 )?;
 
-                Ok(SteamGameAchievement::Unlocked(
+                Ok(SteamGameAchievement::Unlocked(Box::new(
                     SteamGameAchievementUnlocked::new(
                         self.achievement.name,
                         self.game.id,
@@ -230,7 +225,7 @@ impl<'l> Task for TaskProcessSteamGameAchievement<'l> {
                         image,
                         unlocked_date,
                     ),
-                ))
+                )))
             }
             None => Ok(SteamGameAchievement::Locked(
                 SteamGameAchievementLocked::new(

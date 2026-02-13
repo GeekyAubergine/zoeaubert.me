@@ -1,20 +1,13 @@
 use hypertext::prelude::*;
 
-use crate::domain::models::blog_post::{self, BlogPost};
 use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::page::Page;
-use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
-use crate::renderer::formatters::format_date::FormatDate;
-use crate::renderer::formatters::format_markdown::FormatMarkdown;
-use crate::renderer::partials::date::render_date;
+use crate::renderer::RendererContext;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
-use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
-use crate::renderer::partials::tag::render_tags;
-use crate::renderer::RendererContext;
-use crate::utils::paginator::paginate;
+use crate::renderer::partials::page::{PageOptions, render_page};
 
 pub fn render_micro_post_pages(context: &RendererContext) -> Result<()> {
     let posts = context
@@ -23,13 +16,10 @@ pub fn render_micro_post_pages(context: &RendererContext) -> Result<()> {
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
-            TimelineEvent::Post(post) => match post {
-                TimelineEventPost::MicroPost(post) => Some(post),
-                _ => None,
-            },
+            TimelineEvent::Post(TimelineEventPost::MicroPost(post)) => Some(post),
             _ => None,
         })
-        .collect::<Vec<&MicroPost>>();
+        .collect::<Vec<&Box<MicroPost>>>();
 
     for post in posts {
         render_micro_post_page(context, post)?;

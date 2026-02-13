@@ -1,22 +1,13 @@
-use std::process::exit;
-
 use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use tracing::{debug, info};
+use tracing::info;
 use url::Url;
 
 use crate::{
     config::CONFIG,
-    domain::models::{
-        image::Image,
-        media::{Media, MediaDimensions},
-        micro_post::MicroPost,
-        slug::Slug,
-        tag::Tag,
-    },
+    domain::models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
     prelude::*,
     processors::tasks::{Task, run_tasks},
     services::{
@@ -29,10 +20,10 @@ use crate::{
 
 const MICRO_POSTS_DIR: &str = "micro-blog-archive/feed.json";
 
-pub const HTML_IMAGE_REGEX: Lazy<Regex> = Lazy::new(|| {
+pub static HTML_IMAGE_REGEX: Lazy<Regex> = Lazy::new(|| {
     Regex::new(r#"(?i)<img(((src="(?<src>([^"]+))")|(alt="(?<alt>([^"]+))")|(width="(?<width>([^"]+))")|(height="(?<height>([^"]+))"))|[^>])*>"#).unwrap()
 });
-pub const MARKDOWN_LINK_REGEX: Lazy<Regex> =
+pub static MARKDOWN_LINK_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"\(https?://[^\s]+\)"#).unwrap());
 
 const TAGS_TO_IGNORE: [&str; 2] = ["status", "photography"];
@@ -46,12 +37,6 @@ struct ArchiveFileItem {
     date_published: DateTime<Utc>,
     // url: String,
     tags: Option<Vec<String>>,
-}
-
-impl ArchiveFileItem {
-    fn tags_mut(&mut self) -> &mut Option<Vec<String>> {
-        &mut self.tags
-    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -70,21 +55,21 @@ fn extract_description(markup: &str) -> Option<String> {
         .filter(|line| !line.is_empty())
         .collect::<Vec<&str>>();
 
-    let first_line = lines.iter().next()?;
+    let first_line = lines.first()?;
 
     let first_line = first_line.replace("[", "").replace("]", "");
 
     let first_line = MARKDOWN_LINK_REGEX.replace_all(&first_line, "");
 
     if first_line.contains("<") {
-        let first_line = first_line.split('<').collect::<Vec<&str>>().join("");
+        first_line.split('<').collect::<Vec<&str>>().join("");
     }
 
     let sentences = first_line.split('.').collect::<Vec<&str>>();
 
-    let first_sentence = sentences.iter().next()?;
+    let first_sentence = sentences.first()?;
 
-    return Some(first_sentence.to_string());
+    Some(first_sentence.to_string())
 }
 
 fn extract_images_from_html(
@@ -98,25 +83,20 @@ fn extract_images_from_html(
     for cap in HTML_IMAGE_REGEX.captures_iter(markup) {
         let src = cap.name("src").map_or("", |m| m.as_str());
         let alt = cap.name("alt").map_or("", |m| m.as_str());
-        let width = cap.name("width").map_or("", |m| m.as_str());
-        let height = cap.name("height").map_or("", |m| m.as_str());
-
-        let width = width.parse::<u32>().unwrap_or(0);
-        let height = height.parse::<u32>().unwrap_or(0);
 
         let path = src.replace("uploads/", &format!("{}/", CONFIG.cdn_url));
 
         let url: Url = path.parse().unwrap();
 
-        let cdn_file = &CdnFile::from_str(url.path());
+        let cdn_file = &CdnFile::from_path(url.path());
 
         images.push(MediaService::image_from_url(
             ctx,
             &path.parse().unwrap(),
             cdn_file,
             alt,
-            Some(&&parent_slug.relative_string()),
-            Some(date.clone()),
+            Some(&parent_slug.relative_string()),
+            Some(*date),
         )?);
     }
 
@@ -149,10 +129,7 @@ impl Task for ProcessItem {
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
         let slug = slug_for_item(&self.item);
 
-        let tags: Vec<String> = match self.item.tags {
-            Some(tags) => tags,
-            None => vec![],
-        };
+        let tags: Vec<String> = self.item.tags.unwrap_or_default();
 
         if tags
             .iter()
@@ -176,7 +153,7 @@ impl Task for ProcessItem {
 
         let media = extract_images_from_html(ctx, &content, &self.item.date_published, &slug)?
             .iter()
-            .map(|i| Media::from(i))
+            .map(Media::from)
             .collect();
 
         Ok(Some(MicroPost::new(
@@ -203,7 +180,7 @@ pub fn load_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
 
     let results = run_tasks(tasks, ctx)?;
 
-    Ok(results.into_iter().filter_map(|p| p).collect())
+    Ok(results.into_iter().flatten().collect())
 }
 
 // #[cfg(test)]

@@ -87,12 +87,6 @@ impl SteamGameAchievementLocked {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum SteamGameAchievement {
-    Unlocked(SteamGameAchievementUnlocked),
-    Locked(SteamGameAchievementLocked),
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SteamGameWithAchievements {
     pub game: SteamGame,
     pub locked_achievements: HashMap<String, SteamGameAchievementLocked>,
@@ -116,15 +110,6 @@ impl SteamGameWithAchievements {
     pub fn add_unlocked_achievement(&mut self, achievement: SteamGameAchievementUnlocked) {
         self.unlocked_achievements
             .insert(achievement.id.clone(), achievement);
-    }
-
-    pub fn add_achievment(&mut self, achievement: SteamGameAchievement) {
-        match achievement {
-            SteamGameAchievement::Locked(achievement) => self.add_locked_achievement(achievement),
-            SteamGameAchievement::Unlocked(achievement) => {
-                self.add_unlocked_achievement(achievement)
-            }
-        }
     }
 
     pub fn total_achievements(&self) -> u32 {

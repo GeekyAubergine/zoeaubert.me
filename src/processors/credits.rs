@@ -1,25 +1,14 @@
-use chrono::DateTime;
-use serde::Deserialize;
 use tracing::info;
-use url::Url;
 
 use crate::{
-    domain::models::{
-        credits::Credits,
-        projects::{Project, Projects},
-    },
+    domain::models::credits::Credits,
     prelude::*,
-    services::{
-        ServiceContext,
-        cdn_service::CdnFile,
-        file_service::{FileService, ReadableFile},
-        media_service::MediaService,
-    },
+    services::file_service::{FileService, ReadableFile},
 };
 
 pub const CREDITS_FILE: &str = "credits.yml";
 
-pub fn load_credits(ctx: &ServiceContext) -> Result<Credits> {
+pub fn load_credits() -> Result<Credits> {
     info!("Processing Credits");
     let mut credits: Credits = FileService::content(CREDITS_FILE.into()).read_yaml()?;
 

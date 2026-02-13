@@ -28,7 +28,6 @@ impl TagSlug {
             return Tag::from_string("TV");
         }
 
-
         if tag == "Warhammer40" {
             return Tag::from_string("Warhammer40k");
         }

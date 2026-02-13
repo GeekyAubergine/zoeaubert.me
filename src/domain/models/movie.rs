@@ -28,8 +28,7 @@ impl Movie {
     pub fn slug(&self) -> Slug {
         let title = self
             .title
-            .replace('&', "")
-            .replace(':', "")
+            .replace(['&', ':'], "")
             .replace(' ', "-")
             .to_lowercase();
         Slug::new(&format!("/interests/movies/{}-{}", title, self.year))

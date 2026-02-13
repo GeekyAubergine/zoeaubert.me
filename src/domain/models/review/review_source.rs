@@ -1,10 +1,10 @@
-use std::collections::HashMap;
-
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
-use crate::domain::models::{albums::{album::Album, album_photo::AlbumPhoto}, blog_post::BlogPost, mastodon_post::MastodonPost, media::Media, micro_post::MicroPost, page::Page, slug::Slug, tag::Tag};
+use crate::domain::models::{
+    mastodon_post::MastodonPost, media::Media, micro_post::MicroPost, page::Page, slug::Slug,
+    tag::Tag,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ReviewSource {
@@ -44,7 +44,7 @@ impl ReviewSource {
     pub fn tags(&self) -> &Vec<Tag> {
         match self {
             Self::MicroPost(micro_post) => &micro_post.tags,
-            Self::MastodonPost(mastodon_post) => &mastodon_post.tags(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.tags(),
         }
     }
 

@@ -1,27 +1,22 @@
 use std::collections::HashMap;
-use std::path::Path;
 use std::sync::{Arc, RwLock};
 
 use chrono::Datelike;
-use htmlentity::entity::{decode, ICodedDataTrait};
-use serde::{Deserialize, Serialize};
-use tracing::{debug, error, info, instrument, warn};
+use htmlentity::entity::{ICodedDataTrait, decode};
+use serde::Deserialize;
+use tracing::{instrument, warn};
 use url::Url;
 
-use dotenvy_macro::dotenv;
-
 use crate::config::CONFIG;
-use crate::domain::models::book::{Book, BookID};
 use crate::domain::models::movie::{Movie, MovieId};
-use crate::domain::models::slug::Slug;
-use crate::error::{BookError, MovieError};
+use crate::error::MovieError;
 use crate::prelude::*;
 
+use crate::services::ServiceContext;
 use crate::services::cdn_service::CdnFile;
 use crate::services::file_service::{ArchiveFile, FileService, ReadableFile, WritableFile};
 use crate::services::media_service::MediaService;
 use crate::utils::date::parse_date;
-use crate::{domain::models::tag::Tag, services::ServiceContext};
 
 const FILE_NAME: &str = "movie_cache.json";
 
@@ -39,9 +34,7 @@ fn make_search_url(title: &str, year: u16) -> Url {
 
     format!(
         "https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}",
-        CONFIG.tmdb.key,
-        title,
-        year
+        CONFIG.tmdb.key, title, year
     )
     .parse()
     .unwrap()
@@ -57,10 +50,7 @@ struct TmdbSearchResponseSingle {
 
 #[derive(Debug, Clone, Deserialize)]
 struct TmdbSearchResponse {
-    page: u32,
     results: Vec<TmdbSearchResponseSingle>,
-    total_pages: u32,
-    total_results: u32,
 }
 
 #[derive(Debug)]
@@ -121,7 +111,7 @@ impl MovieService {
 
                 let image_url = &format!("{}{}", TMDB_IMAGE_URL, poster).parse().unwrap();
 
-                let cdn_file = CdnFile::from_str(&format!("movies/{}-poster-200.jpg", movie.id));
+                let cdn_file = CdnFile::from_path(&format!("movies/{}-poster-200.jpg", movie.id));
 
                 let image = MediaService::image_from_url(
                     ctx,
@@ -155,6 +145,7 @@ impl MovieService {
                 self.file.write_json(&movies.clone())?;
 
                 Ok(None)
-            }        }
+            }
+        }
     }
 }

@@ -1,7 +1,4 @@
-use std::process::exit;
-
 use chrono::Utc;
-use tokio::try_join;
 use tracing::{info, instrument};
 
 use crate::{
@@ -14,7 +11,7 @@ use crate::{
         referrals::load_referrals, silly_names::load_silly_names,
         timeline_events::process_timeline_events,
     },
-    services::{ServiceContext, file_service::FileService, network_service::NetworkService},
+    services::ServiceContext,
 };
 
 use crate::prelude::*;
@@ -37,10 +34,6 @@ pub mod timeline_events;
 
 pub mod tasks;
 
-const MOVIE_REVIEW_POST_TAG: &str = "Movies";
-const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
-const BOOK_REVIEW_POST_TAG: &str = "Books";
-
 #[instrument(skip_all)]
 pub fn process_data(ctx: &ServiceContext) -> Result<Data> {
     info!("Processing data | Start");
@@ -51,18 +44,18 @@ pub fn process_data(ctx: &ServiceContext) -> Result<Data> {
 
     let games = load_games(ctx)?;
 
-    let now_text = load_now_text(ctx)?;
-    let about_text = load_about_text(ctx)?;
-    let faq = load_faq(ctx)?;
+    let now_text = load_now_text()?;
+    let about_text = load_about_text()?;
+    let faq = load_faq()?;
     let projects = load_projects(ctx)?;
-    let referrals = load_referrals(ctx)?;
-    let silly_names = load_silly_names(ctx)?;
+    let referrals = load_referrals()?;
+    let silly_names = load_silly_names()?;
     let blog_posts = load_blog_posts(ctx)?;
     let micro_posts = load_micro_posts(ctx)?;
     let micro_blog_archive = load_micro_blog_archive(ctx)?;
     let lego = load_lego(ctx)?;
     let albums = load_albums(ctx)?;
-    let credits = load_credits(ctx)?;
+    let credits = load_credits()?;
 
     let mut micro_posts = micro_posts;
     micro_posts.extend(micro_blog_archive);

@@ -1,11 +1,8 @@
-use std::path::Path;
-use std::sync::Arc;
-
 use askama::Template;
 
 use crate::domain::models::data::Data;
 use crate::prelude::*;
-use crate::renderer::feeds::{render_feeds};
+use crate::renderer::feeds::render_feeds;
 use crate::renderer::pages::albums_pages_renderer::render_alubms_pages;
 use crate::renderer::pages::blog_pages_renderers::render_blog_pages;
 use crate::renderer::pages::book_review_pages_renderers::render_book_review_pages;
@@ -30,10 +27,8 @@ use crate::renderer::pages::tag_pages_renderers::render_tags_pages;
 use crate::renderer::pages::timeline_pages_renderers::render_timeline_pages;
 use crate::renderer::pages::tv_review_pages_renderers::render_tv_review_pages;
 use crate::services::page_renderer::PageRenderer;
-use tracing::debug;
 
-use crate::domain::models::page::Page;
-use crate::error::{FileSystemError, TemplateError};
+use crate::error::TemplateError;
 
 pub mod formatters;
 

@@ -1,22 +1,15 @@
 use std::{
-    borrow::Cow,
-    f64::consts::PI,
-    ffi::OsStr,
     fs::read_dir,
     path::{Path, PathBuf},
 };
 
-use chrono::{DateTime, Utc};
 use dircpy::copy_dir;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
-use tokio::task::JoinSet;
 use tracing::debug;
-use url::Url;
 
 use crate::{
     error::{CsvError, FileSystemError, JsonError, YamlError},
     prelude::*,
-    services::ServiceContext,
 };
 
 const CACHE_DIR: &str = ".cache";
@@ -151,10 +144,10 @@ where
 }
 
 fn file_exists(path: &Path) -> Result<bool> {
-    if let Ok(_) = std::fs::metadata(path) {
+    if std::fs::metadata(path).is_ok() {
         return Ok(true);
     }
-    return Ok(false);
+    Ok(false)
 }
 
 fn find_files_recursive(path: &Path, extension: &str) -> Result<Vec<String>> {
@@ -172,10 +165,10 @@ fn find_files_recursive(path: &Path, extension: &str) -> Result<Vec<String>> {
             for child in children {
                 files.push(child);
             }
-        } else if let Some(ext) = path.extension() {
-            if ext == extension {
-                files.push(path.to_str().unwrap().to_string());
-            }
+        } else if let Some(ext) = path.extension()
+            && ext == extension
+        {
+            files.push(path.to_str().unwrap().to_string());
         }
     }
 
@@ -399,7 +392,7 @@ fn write_file(path: &Path, data: &[u8]) -> Result<()> {
 
     let parent_dir = path.parent().unwrap();
 
-    make_dir(&parent_dir)?;
+    make_dir(parent_dir)?;
 
     std::fs::write(path, data).map_err(FileSystemError::write_error)
 }
@@ -544,7 +537,7 @@ impl FileService {
     pub fn copy(source: &Path, destination: &Path) -> Result<()> {
         debug!("Copying [{:?}] to [{:?}]", source, destination);
 
-        make_dir(&destination.parent().unwrap())?;
+        make_dir(destination.parent().unwrap())?;
 
         std::fs::copy(source, destination).map_err(FileSystemError::copy_file_error)?;
 

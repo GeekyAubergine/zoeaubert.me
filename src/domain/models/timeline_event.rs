@@ -20,9 +20,9 @@ use chrono::{DateTime, Utc};
 
 #[derive(Debug, Clone)]
 pub enum TimelineEventPost {
-    BlogPost(BlogPost),
-    MicroPost(MicroPost),
-    MastodonPost(MastodonPost),
+    BlogPost(Box<BlogPost>),
+    MicroPost(Box<MicroPost>),
+    MastodonPost(Box<MastodonPost>),
 }
 
 #[derive(Debug, Clone)]
@@ -75,13 +75,12 @@ impl TimelineEvent {
                 TimelineEventReview::TvShowReview { source, .. } => source.slug().to_string(),
             },
             TimelineEvent::GameAchievementUnlock(achievement) => match achievement {
-                TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
-                    game,
-                    achievement,
-                } => game.slug().to_string(),
+                TimelineEventGameAchievementUnlock::SteamAchievementUnlocked { game, .. } => {
+                    game.slug().to_string()
+                }
             },
             TimelineEvent::Album(alumb) => alumb.slug.to_string(),
-            TimelineEvent::AlbumPhoto { album, photo } => photo.slug.to_string(),
+            TimelineEvent::AlbumPhoto { photo, .. } => photo.slug.to_string(),
         }
     }
 
@@ -90,7 +89,7 @@ impl TimelineEvent {
             TimelineEvent::Post(post) => match post {
                 TimelineEventPost::BlogPost(post) => &post.date,
                 TimelineEventPost::MicroPost(post) => &post.date,
-                TimelineEventPost::MastodonPost(post) => &post.created_at(),
+                TimelineEventPost::MastodonPost(post) => post.created_at(),
             },
             TimelineEvent::Review(review) => match review {
                 TimelineEventReview::BookReview { source, .. } => source.date(),
@@ -99,12 +98,12 @@ impl TimelineEvent {
             },
             TimelineEvent::GameAchievementUnlock(achievement) => match achievement {
                 TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
-                    game,
                     achievement,
+                    ..
                 } => &achievement.unlocked_date,
             },
             TimelineEvent::Album(album) => &album.date,
-            TimelineEvent::AlbumPhoto { album, photo } => &photo.date,
+            TimelineEvent::AlbumPhoto { photo, .. } => &photo.date,
         }
     }
 
@@ -122,7 +121,7 @@ impl TimelineEvent {
             },
             TimelineEvent::GameAchievementUnlock(_) => None,
             TimelineEvent::Album(_) => None,
-            TimelineEvent::AlbumPhoto { album, photo } => Some(&photo.tags),
+            TimelineEvent::AlbumPhoto { photo, .. } => Some(&photo.tags),
         }
     }
 }
@@ -139,9 +138,9 @@ pub struct TimelineEvents {
 }
 
 impl TimelineEvents {
-    pub fn from_events(mut events: Vec<TimelineEvent>) -> Self {
+    pub fn from_events(events: Vec<TimelineEvent>) -> Self {
         // Seems redundant, but prevents weird duplicates
-        let mut events_map = events
+        let events_map = events
             .into_iter()
             .map(|event| {
                 (
@@ -156,7 +155,7 @@ impl TimelineEvents {
 
         let mut events = events_map.into_values().collect::<Vec<TimelineEvent>>();
 
-        events.sort_by(|a, b| b.date().cmp(&a.date()));
+        events.sort_by(|a, b| b.date().cmp(a.date()));
 
         Self {
             events_by_date: events,
@@ -172,10 +171,10 @@ impl From<ReviewSource> for TimelineEvent {
     fn from(value: ReviewSource) -> Self {
         match value {
             ReviewSource::MicroPost(post) => {
-                TimelineEvent::Post(TimelineEventPost::MicroPost(post))
+                TimelineEvent::Post(TimelineEventPost::MicroPost(Box::new(post)))
             }
             ReviewSource::MastodonPost(post) => {
-                TimelineEvent::Post(TimelineEventPost::MastodonPost(post))
+                TimelineEvent::Post(TimelineEventPost::MastodonPost(Box::new(post)))
             }
         }
     }

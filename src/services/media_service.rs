@@ -10,8 +10,7 @@ use url::Url;
 use crate::{
     domain::models::{
         image::{Image, SizedImage},
-        media::{MediaDimensions, MediaOrientation},
-        slug::Slug,
+        media::MediaDimensions,
     },
     error::ImageError,
     prelude::*,
@@ -22,7 +21,7 @@ use crate::{
     },
     utils::resize_image::{ImageSize, resize_image},
 };
-pub const MARKDOWN_IMAGE_REGEX: Lazy<Regex> =
+pub static MARKDOWN_IMAGE_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"(?i)!\[([^\]]+)\]\(([^)]+)\)"#).unwrap());
 
 pub struct MediaService;
@@ -51,7 +50,7 @@ impl MediaService {
         url: &Url,
         cdn_file: &CdnFile,
     ) -> Result<DynamicImage> {
-        let original_bytes = Self::read_or_download_file(ctx, url, &cdn_file)?;
+        let original_bytes = Self::read_or_download_file(ctx, url, cdn_file)?;
 
         let original_image = ImageReader::new(Cursor::new(&original_bytes))
             .with_guessed_format()
@@ -62,7 +61,7 @@ impl MediaService {
         Ok(original_image)
     }
 
-    fn read_image_size(ctx: &ServiceContext, file: &CacheFile) -> Result<MediaDimensions> {
+    fn read_image_size(file: &CacheFile) -> Result<MediaDimensions> {
         let byes = file.read()?;
 
         match imagesize::blob_size(&byes) {
@@ -76,7 +75,6 @@ impl MediaService {
 
     fn resize_image(
         ctx: &ServiceContext,
-        url: &Url,
         cdn_file: &CdnFile,
         original_image: &DynamicImage,
         size: &ImageSize,
@@ -85,7 +83,7 @@ impl MediaService {
 
         // If we already have it, don't bother processing
         if file.exists()? {
-            let dimensions = Self::read_image_size(ctx, &file)?;
+            let dimensions = Self::read_image_size(&file)?;
 
             return Ok(SizedImage {
                 file: cdn_file.clone(),
@@ -93,9 +91,9 @@ impl MediaService {
             });
         }
 
-        let resized_image = resize_image(&original_image, size);
+        let resized_image = resize_image(original_image, size);
 
-        let format = ImageFormat::from_path(&file.as_path_buff()).unwrap();
+        let format = ImageFormat::from_path(file.as_path_buff()).unwrap();
 
         let mut resized_image_data = vec![];
         resized_image
@@ -104,7 +102,7 @@ impl MediaService {
 
         file.write(&resized_image_data)?;
 
-        ctx.cdn.upload_file(ctx, &file, &cdn_file)?;
+        ctx.cdn.upload_file(&file, cdn_file)?;
 
         Ok(SizedImage {
             file: cdn_file.clone(),
@@ -135,9 +133,9 @@ impl MediaService {
         // If all exist, then don't process
         if original_file.exists()? && large_file.exists()? && small_file.exists()? {
             debug!("Image already processed [{:?}]", &url.to_string());
-            let original_size = Self::read_image_size(ctx, &original_file)?;
-            let large_size = Self::read_image_size(ctx, &large_file)?;
-            let small_size = Self::read_image_size(ctx, &small_file)?;
+            let original_size = Self::read_image_size(&original_file)?;
+            let large_size = Self::read_image_size(&large_file)?;
+            let small_size = Self::read_image_size(&small_file)?;
 
             return Ok(Image {
                 original: SizedImage {
@@ -162,21 +160,11 @@ impl MediaService {
 
         let original_image = Self::read_or_download_image(ctx, url, cdn_file)?;
 
-        let large_image = Self::resize_image(
-            ctx,
-            url,
-            &large_cdn_file,
-            &original_image,
-            &ImageSize::Large,
-        )?;
+        let large_image =
+            Self::resize_image(ctx, &large_cdn_file, &original_image, &ImageSize::Large)?;
 
-        let small_image = Self::resize_image(
-            ctx,
-            url,
-            &small_cdn_file,
-            &original_image,
-            &ImageSize::Small,
-        )?;
+        let small_image =
+            Self::resize_image(ctx, &small_cdn_file, &original_image, &ImageSize::Small)?;
 
         Ok(Image {
             original: SizedImage {
@@ -199,12 +187,14 @@ impl MediaService {
     ) -> Result<Vec<Image>> {
         let mut media = vec![];
 
-        for cap in MARKDOWN_IMAGE_REGEX.captures_iter(markdown) {
+        let regex = MARKDOWN_IMAGE_REGEX.clone();
+
+        for cap in regex.captures_iter(markdown) {
             let alt = cap.get(1).map_or("", |m| m.as_str());
             let url = cap.get(2).map_or("", |m| m.as_str());
 
             let url: Url = url.parse().unwrap();
-            let cdn_file = CdnFile::from_str(url.path());
+            let cdn_file = CdnFile::from_path(url.path());
 
             let image = Self::image_from_url(ctx, &url, &cdn_file, alt, link_on_click, date)?;
 

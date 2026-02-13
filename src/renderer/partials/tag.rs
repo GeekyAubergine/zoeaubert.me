@@ -1,11 +1,11 @@
-use crate::{domain::models::tag::Tag, prelude::*};
+use crate::domain::models::tag::Tag;
 use hypertext::prelude::*;
 
-pub fn render_tags<'l>(tags: &'l Vec<Tag>, limit: Option<usize>) -> impl Renderable + 'l {
+pub fn render_tags<'l>(tags: &'l [Tag], limit: Option<usize>) -> impl Renderable + 'l {
     let limit = limit.unwrap_or(tags.len());
 
     maud! {
-        @if tags.len() > 0 {
+        @if !tags.is_empty() {
             ul class="tags-list" data-nosnippet {
                 @for tag in tags.iter().take(limit) {
                     li {

@@ -1,10 +1,9 @@
-use dotenvy_macro::dotenv;
 use serde::Deserialize;
 use tracing::info;
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
+    config::CONFIG,
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
     processors::tasks::{Task, run_tasks},
@@ -33,8 +32,6 @@ pub struct BricksetLoginResponse {
 pub struct BricksetSetImages {
     #[serde(rename = "imageURL")]
     image_url: Url,
-    #[serde(rename = "thumbnailURL")]
-    thumbnail_url: Url,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -172,7 +169,7 @@ impl Task for ProcessSet {
     type Output = LegoSet;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
-        let cdn_file = CdnFile::from_str(&format!("lego/{}.png", self.set.set_id));
+        let cdn_file = CdnFile::from_path(&format!("lego/{}.png", self.set.set_id));
 
         let image = MediaService::image_from_url(
             ctx,
@@ -183,16 +180,16 @@ impl Task for ProcessSet {
             None,
         )?;
 
-        Ok(LegoSet::new(
-            self.set.set_id,
-            self.set.name,
-            self.set.number,
-            self.set.category,
-            self.set.pieces.unwrap_or(1),
+        Ok(LegoSet {
+            id: self.set.set_id,
+            name: self.set.name,
+            number: self.set.number,
+            category: self.set.category,
+            pieces: self.set.pieces.unwrap_or(1),
             image,
-            self.set.brickset_url,
-            self.set.collection.qty_owned,
-        ))
+            link: self.set.brickset_url,
+            quantity: self.set.collection.qty_owned,
+        })
     }
 }
 
@@ -211,7 +208,7 @@ impl Task for ProcessMinifig {
         .parse()
         .unwrap();
 
-        let cdn_file = CdnFile::from_str(&format!("lego/{}.png", self.minifig.minifig_number));
+        let cdn_file = CdnFile::from_path(&format!("lego/{}.png", self.minifig.minifig_number));
 
         let image = MediaService::image_from_url(
             ctx,
@@ -222,14 +219,14 @@ impl Task for ProcessMinifig {
             None,
         )?;
 
-        Ok(LegoMinifig::new(
-            self.minifig.minifig_number,
-            self.minifig.name,
-            self.minifig.category,
-            self.minifig.owned_in_sets,
-            self.minifig.owned_loose,
-            self.minifig.owned_in_sets + self.minifig.owned_loose,
+        Ok(LegoMinifig {
+            id: self.minifig.minifig_number,
+            name: self.minifig.name,
+            category: self.minifig.category,
+            owned_in_sets: self.minifig.owned_in_sets,
+            owned_loose: self.minifig.owned_loose,
+            total_owned: self.minifig.owned_in_sets + self.minifig.owned_loose,
             image,
-        ))
+        })
     }
 }

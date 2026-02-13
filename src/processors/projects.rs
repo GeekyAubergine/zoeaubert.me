@@ -1,4 +1,3 @@
-use chrono::DateTime;
 use serde::Deserialize;
 use tracing::info;
 use url::Url;
@@ -7,10 +6,10 @@ use crate::{
     domain::models::projects::{Project, Projects},
     prelude::*,
     services::{
+        ServiceContext,
         cdn_service::CdnFile,
         file_service::{FileService, ReadableFile},
         media_service::MediaService,
-        ServiceContext,
     },
 };
 
@@ -40,7 +39,7 @@ pub fn load_projects(ctx: &ServiceContext) -> Result<Projects> {
     for file_project in yaml.projects {
         let path = file_project.image.path();
 
-        let cdn_file = CdnFile::from_str(path);
+        let cdn_file = CdnFile::from_path(path);
 
         let image = MediaService::image_from_url(
             ctx,

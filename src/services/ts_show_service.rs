@@ -1,29 +1,18 @@
-use std::collections::HashMap;
-use std::path::Path;
-use std::sync::{Arc, RwLock};
-
-use chrono::Datelike;
 use dashmap::DashMap;
 use htmlentity::entity::{ICodedDataTrait, decode};
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error, info, instrument, warn};
+use tracing::{instrument, warn};
 use url::Url;
 
-use dotenvy_macro::dotenv;
-
 use crate::config::CONFIG;
-use crate::domain::models::book::{Book, BookID};
-use crate::domain::models::movie::{Movie, MovieId};
-use crate::domain::models::slug::Slug;
 use crate::domain::models::tv_show::{TvShow, TvShowId};
-use crate::error::{BookError, MovieError, TvShowsError};
+use crate::error::TvShowsError;
 use crate::prelude::*;
 
+use crate::services::ServiceContext;
 use crate::services::cdn_service::CdnFile;
 use crate::services::file_service::{ArchiveFile, FileService, ReadableFile, WritableFile};
 use crate::services::media_service::MediaService;
-use crate::utils::date::parse_date;
-use crate::{domain::models::tag::Tag, services::ServiceContext};
 
 const FILE_NAME: &str = "tv_shows_cache.json";
 const TMDB_LINK_URL: &str = "https://www.themoviedb.org/tv/";
@@ -36,8 +25,7 @@ fn make_search_url(title: &str) -> Url {
 
     format!(
         "https://api.themoviedb.org/3/search/tv?api_key={}&query={}",
-        CONFIG.tmdb.key,
-        title,
+        CONFIG.tmdb.key, title,
     )
     .parse()
     .unwrap()
@@ -52,10 +40,7 @@ struct TmdbSearchResponseSingle {
 
 #[derive(Debug, Clone, Deserialize)]
 struct TmdbSearchResponse {
-    page: u32,
     results: Vec<TmdbSearchResponseSingle>,
-    total_pages: u32,
-    total_results: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
@@ -109,7 +94,7 @@ impl TvShowService {
 
                 let image_url = &format!("{}{}", TMDB_IMAGE_URL, poster).parse().unwrap();
 
-                let cdn_file = CdnFile::from_str(&format!("tv/{}-poster-400.jpg", tv_show.id));
+                let cdn_file = CdnFile::from_path(&format!("tv/{}-poster-400.jpg", tv_show.id));
 
                 let image = MediaService::image_from_url(
                     ctx,
@@ -127,7 +112,9 @@ impl TvShowService {
                     link: format!("{}{}", TMDB_LINK_URL, tv_show.id).parse().unwrap(),
                 };
 
-                self.data.tv_shows.insert(tv_show.title.clone(), Some(tv_show.clone()));
+                self.data
+                    .tv_shows
+                    .insert(tv_show.title.clone(), Some(tv_show.clone()));
 
                 self.file.write_json(&self.data.tv_shows.clone())?;
 

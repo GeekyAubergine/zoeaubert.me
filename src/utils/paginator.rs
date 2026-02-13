@@ -1,5 +1,3 @@
-use std::slice::Chunks;
-
 #[derive(Debug)]
 pub struct PaginatorPage<'d, D> {
     pub data: &'d [D],
@@ -27,7 +25,7 @@ impl<'d, D> PaginatorPage<'d, D> {
     }
 }
 
-pub fn paginate<'d, D>(data: &'d[D], per_page: usize) -> Vec<PaginatorPage<'d, D>> {
+pub fn paginate<'d, D>(data: &'d [D], per_page: usize) -> Vec<PaginatorPage<'d, D>> {
     let mut pages = Vec::new();
 
     let chunks = data.chunks(per_page);

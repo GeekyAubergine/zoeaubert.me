@@ -2,10 +2,8 @@ use std::fs;
 
 use once_cell::sync::Lazy;
 use serde::Deserialize;
-use url::Url;
-use dotenvy_macro::dotenv;
 
-use crate::{config::CONFIG, domain::models::image::Image};
+use crate::domain::models::image::Image;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct HeaderLink {

@@ -1,24 +1,10 @@
-use std::collections::HashMap;
-
-use chrono::{DateTime, Utc};
-use once_cell::unsync::Lazy;
+use once_cell::sync::Lazy;
 use regex::Regex;
-use serde::{Deserialize, Serialize};
-use url::Url;
 
-use crate::domain::models::mastodon_post::MastodonPost;
 use crate::error::BookError;
 use crate::prelude::*;
 
-use crate::domain::models::{
-    image::Image, media::Media, micro_post::MicroPost, review::review_source::ReviewSource,
-    slug::Slug,
-};
-
-const REGEX_MICRO: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"^(.+) by (.+)+\s*(\d)/\d+ - (.+)$").unwrap());
-
-const REGEX_LEGACY_STYLE_AUTHOR_TITLE: Lazy<Regex> =
+static REGEX_LEGACY_STYLE_AUTHOR_TITLE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\[(.*)\].*by (.*) 📚").unwrap());
 
 #[derive(Debug, Clone)]
@@ -31,16 +17,16 @@ pub struct BookReview {
 
 impl BookReview {
     pub fn from_content(content: &str) -> Result<BookReview> {
-        parse_markdown_into_book_review(&content)
+        parse_markdown_into_book_review(content)
     }
 }
 
 fn parse_markdown_into_book_review(content: &str) -> Result<BookReview> {
-    if (content.starts_with("Finished") || content.starts_with("I finished")) {
+    if content.starts_with("Finished") || content.starts_with("I finished") {
         return parse_legacy_post(content);
     }
 
-    if (content.starts_with("<p>")) {
+    if content.starts_with("<p>") {
         return parse_mastodon_modern_post(content);
     }
 
@@ -58,7 +44,7 @@ fn parse_legacy_post(content: &str) -> Result<BookReview> {
         .filter(|line| !line.is_empty())
         .collect::<Vec<&str>>();
 
-    if let (Some(first_line), Some(second_line)) = (lines.get(0), lines.get(1)) {
+    if let Some(second_line) = lines.get(1) {
         let captures = REGEX_LEGACY_STYLE_AUTHOR_TITLE
             .captures(&content)
             .ok_or(BookError::unable_to_parse_book(content.to_string()))?;
@@ -68,7 +54,7 @@ fn parse_legacy_post(content: &str) -> Result<BookReview> {
         if let (Some(title), Some(author), Some(score), Some(review)) = (
             captures.get(1),
             captures.get(2),
-            second_line_split.get(0),
+            second_line_split.first(),
             second_line_split.get(1),
         ) {
             let score = score.trim().parse().unwrap();
@@ -104,7 +90,7 @@ fn parse_new_style(content: &str) -> Result<BookReview> {
         .filter(|line| !line.is_empty())
         .collect::<Vec<&str>>();
 
-    if let (Some(first_line), Some(second_line)) = (lines.get(0), lines.get(1)) {
+    if let (Some(first_line), Some(second_line)) = (lines.first(), lines.get(1)) {
         let first_line_split = first_line.split(" by ").collect::<Vec<&str>>();
 
         let has_review = second_line.contains("/5 - ");
@@ -117,9 +103,9 @@ fn parse_new_style(content: &str) -> Result<BookReview> {
         let second_line_split = second_line.split(split).collect::<Vec<&str>>();
 
         if let (Some(title), Some(author), Some(score), Some(review)) = (
-            first_line_split.get(0),
+            first_line_split.first(),
             first_line_split.get(1),
-            second_line_split.get(0),
+            second_line_split.first(),
             second_line_split.get(1),
         ) {
             let score = score.trim().parse().unwrap();

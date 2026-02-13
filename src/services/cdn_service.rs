@@ -1,26 +1,20 @@
 use std::{
     collections::HashSet,
-    path::{Path, PathBuf},
-    process::exit,
+    path::PathBuf,
     sync::{Arc, RwLock},
 };
 
 use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
-use reqwest::{blocking::Body, blocking::ClientBuilder, header::ACCEPT};
+use reqwest::{blocking::ClientBuilder, header::ACCEPT};
 use serde::{Deserialize, Serialize};
-use tokio_util::codec::{BytesCodec, FramedRead};
-use tracing::{debug, info};
+use tracing::debug;
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
-    error::{CdnError, Error, FileSystemError, NetworkError},
+    config::CONFIG,
+    error::{CdnError, NetworkError},
     prelude::*,
-    services::{
-        ServiceContext,
-        file_service::{CacheFile, FileService, ReadableFile},
-    },
+    services::file_service::{CacheFile, FileService, ReadableFile},
 };
 
 fn make_cdn_api_url(path: &str) -> Url {
@@ -35,8 +29,8 @@ pub struct CdnFile {
 }
 
 impl CdnFile {
-    pub fn from_str(string: &str) -> Self {
-        let path = PathBuf::from(string);
+    pub fn from_path(path: &str) -> Self {
+        let path = PathBuf::from(path);
 
         let file_name = path.file_stem().unwrap().to_string_lossy().to_string();
         let extension = path.extension().unwrap().to_string_lossy().to_string();
@@ -56,10 +50,10 @@ impl CdnFile {
     ) -> Self {
         let date_str = date.format("%Y/%m/%d").to_string();
 
-        let file_name = file_name.split('/').last().unwrap();
+        let file_name = file_name.split('/').next_back().unwrap();
 
         let name = file_name.split('.').next().unwrap();
-        let ext = file_name.split('.').last().unwrap();
+        let ext = file_name.split('.').next_back().unwrap();
 
         let suffix_str = match suffix {
             Some(suffix) => format!("-{}", suffix),
@@ -68,7 +62,7 @@ impl CdnFile {
 
         let path = format!("{}/{}{}.{}", date_str, name, suffix_str, ext);
 
-        Self::from_str(&path)
+        Self::from_path(&path)
     }
 
     pub fn add_suffix_to_file_name(&self, suffix: &str) -> Self {
@@ -124,13 +118,13 @@ impl BunnyCdnFileResponse {
 
 impl From<BunnyCdnFileResponse> for CdnFile {
     fn from(value: BunnyCdnFileResponse) -> Self {
-        Self::from_str(&value.path())
+        Self::from_path(&value.path())
     }
 }
 
 impl From<&BunnyCdnFileResponse> for CdnFile {
     fn from(value: &BunnyCdnFileResponse) -> Self {
-        Self::from_str(&value.path())
+        Self::from_path(&value.path())
     }
 }
 
@@ -140,13 +134,16 @@ pub struct CdnService {
     existing_folders_cache: Arc<RwLock<HashSet<CdnFile>>>,
 }
 
+impl Default for CdnService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CdnService {
     pub fn new() -> Self {
         let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert(
-            "AccessKey",
-            CONFIG.bunny_cdn.access_key.parse().unwrap(),
-        );
+        headers.insert("AccessKey", CONFIG.bunny_cdn.access_key.parse().unwrap());
         headers.insert(ACCEPT, "application/json".parse().unwrap());
 
         Self {
@@ -177,33 +174,10 @@ impl CdnService {
         }
     }
 
-    fn files_names_in_folder(&self, path: &CdnFile) -> Result<Vec<String>> {
-        debug!(
-            "CdnService | Querying files in folder: [{}]",
-            path.as_string(),
-        );
-
-        match self.query_file_directory(&path) {
-            Ok(Some(files)) => {
-                let mut cache = self.existing_folders_cache.write().unwrap();
-
-                for file in files.iter() {
-                    cache.insert(file.into());
-                }
-
-                dbg!(cache);
-
-                Ok(files.iter().map(|f| f.object_name.clone()).collect())
-            }
-            Ok(None) => Ok(vec![]),
-            Err(e) => Err(e),
-        }
-    }
-
     fn file_exists(&self, file: &CdnFile) -> Result<bool> {
         debug!("CdnService | Does file exist");
 
-        if let Some(file) = self.existing_folders_cache.read().unwrap().get(&file) {
+        if let Some(file) = self.existing_folders_cache.read().unwrap().get(file) {
             debug!("CdnService | File exists in cache: {:?}", file);
             return Ok(true);
         }
@@ -213,18 +187,16 @@ impl CdnService {
             file.as_string(),
         );
 
-        match self.query_file_directory(&file) {
+        match self.query_file_directory(file) {
             Ok(Some(files)) => {
                 let mut cache = self.existing_folders_cache.write().unwrap();
 
                 for file in files.iter() {
                     cache.insert(file.into());
                 }
-
-                dbg!(cache);
             }
             Ok(None) => {}
-            Err(e) => {
+            Err(_) => {
                 // TODO log
             }
         };
@@ -233,16 +205,11 @@ impl CdnService {
             .existing_folders_cache
             .read()
             .unwrap()
-            .get(&file)
+            .get(file)
             .is_some())
     }
 
-    pub fn upload_file(
-        &self,
-        ctx: &ServiceContext,
-        file: &CacheFile,
-        cdn_file: &CdnFile,
-    ) -> Result<()> {
+    pub fn upload_file(&self, file: &CacheFile, cdn_file: &CdnFile) -> Result<()> {
         if self.file_exists(cdn_file)? {
             return Ok(());
         }

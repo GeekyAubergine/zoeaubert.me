@@ -3,7 +3,7 @@ use regex::Regex;
 
 use crate::domain::models::slug::Slug;
 
-pub const MARKDOWN_LINK_REGEX: Lazy<Regex> =
+pub static MARKDOWN_LINK_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"(?i)\[([^\]]+)\]\(([^)]+)\)"#).unwrap());
 
 fn replace_relative_links_wtih_absolute_links(markdown: &str) -> String {
@@ -17,7 +17,10 @@ fn replace_relative_links_wtih_absolute_links(markdown: &str) -> String {
         if !url.starts_with("http") {
             let slug = Slug::new(url);
 
-            out = out.replace(full_match, &format!("[{}]({})", alt_text, slug.permalink_string()));
+            out = out.replace(
+                full_match,
+                &format!("[{}]({})", alt_text, slug.permalink_string()),
+            );
         }
     }
 
