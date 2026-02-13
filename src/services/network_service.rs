@@ -1,8 +1,8 @@
-use std::{num::NonZeroU32, sync::Arc, time::Duration};
+use std::{num::NonZeroU32, sync::Arc, thread::sleep, time::Duration};
 
 use dashmap::DashMap;
 use governor::{
-    Jitter, Quota, RateLimiter,
+    Quota, RateLimiter,
     clock::DefaultClock,
     state::{InMemoryState, NotKeyed},
 };
@@ -11,7 +11,7 @@ use serde::de::DeserializeOwned;
 use tracing::instrument;
 use url::Url;
 
-use crate::{ config::CONFIG, error::NetworkError, prelude::*};
+use crate::{config::CONFIG, error::NetworkError, prelude::*};
 
 const ALLOW_LIST: [&str; 1] = [CONFIG.cdn_url];
 
@@ -61,7 +61,9 @@ impl DomainRateLimiter {
 
         let limiter = self.limiter_for_domain(domain);
 
-        limiter.until_ready_with_jitter(Jitter::up_to(Duration::from_millis(100)));
+        while limiter.check().is_err() {
+            sleep(Duration::from_millis(1000));
+        }
     }
 }
 

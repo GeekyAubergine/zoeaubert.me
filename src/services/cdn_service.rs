@@ -188,8 +188,6 @@ impl CdnService {
                 for file in files.iter() {
                     cache.insert(file.into());
                 }
-
-                dbg!(cache);
             }
             Ok(None) => {}
             Err(_) => {

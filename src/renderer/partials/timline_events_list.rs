@@ -259,13 +259,7 @@ pub fn render_album<'l>(album: &'l Album) -> impl Renderable + 'l {
         album.slug.clone(),
         &album.date,
         content,
-        Some(
-            album
-                .cover_images()
-                .iter()
-                .map(|i| i.clone().into())
-                .collect(),
-        ),
+        Some(album.cover_images().iter().map(|i| (*i).into()).collect()),
         None,
         None,
     )

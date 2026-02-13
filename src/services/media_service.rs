@@ -75,7 +75,6 @@ impl MediaService {
 
     fn resize_image(
         ctx: &ServiceContext,
-        url: &Url,
         cdn_file: &CdnFile,
         original_image: &DynamicImage,
         size: &ImageSize,
@@ -161,21 +160,11 @@ impl MediaService {
 
         let original_image = Self::read_or_download_image(ctx, url, cdn_file)?;
 
-        let large_image = Self::resize_image(
-            ctx,
-            url,
-            &large_cdn_file,
-            &original_image,
-            &ImageSize::Large,
-        )?;
+        let large_image =
+            Self::resize_image(ctx, &large_cdn_file, &original_image, &ImageSize::Large)?;
 
-        let small_image = Self::resize_image(
-            ctx,
-            url,
-            &small_cdn_file,
-            &original_image,
-            &ImageSize::Small,
-        )?;
+        let small_image =
+            Self::resize_image(ctx, &small_cdn_file, &original_image, &ImageSize::Small)?;
 
         Ok(Image {
             original: SizedImage {

@@ -1,4 +1,3 @@
-
 use dashmap::DashMap;
 use htmlentity::entity::{ICodedDataTrait, decode};
 use serde::{Deserialize, Serialize};
@@ -10,10 +9,10 @@ use crate::domain::models::tv_show::{TvShow, TvShowId};
 use crate::error::TvShowsError;
 use crate::prelude::*;
 
+use crate::services::ServiceContext;
 use crate::services::cdn_service::CdnFile;
 use crate::services::file_service::{ArchiveFile, FileService, ReadableFile, WritableFile};
 use crate::services::media_service::MediaService;
-use crate::{services::ServiceContext};
 
 const FILE_NAME: &str = "tv_shows_cache.json";
 const TMDB_LINK_URL: &str = "https://www.themoviedb.org/tv/";
@@ -41,10 +40,7 @@ struct TmdbSearchResponseSingle {
 
 #[derive(Debug, Clone, Deserialize)]
 struct TmdbSearchResponse {
-    page: u32,
     results: Vec<TmdbSearchResponseSingle>,
-    total_pages: u32,
-    total_results: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]

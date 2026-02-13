@@ -34,10 +34,6 @@ pub mod timeline_events;
 
 pub mod tasks;
 
-const MOVIE_REVIEW_POST_TAG: &str = "Movies";
-const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
-const BOOK_REVIEW_POST_TAG: &str = "Books";
-
 #[instrument(skip_all)]
 pub fn process_data(ctx: &ServiceContext) -> Result<Data> {
     info!("Processing data | Start");

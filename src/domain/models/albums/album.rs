@@ -59,7 +59,7 @@ impl Album {
         let cover_images = self.cover_images();
 
         if let Some(cover_image) = cover_images.first() {
-            page = page.with_image(cover_image.clone().into());
+            page = page.with_image((*cover_image).into());
         }
 
         page

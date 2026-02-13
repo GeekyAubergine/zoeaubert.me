@@ -52,7 +52,7 @@ impl QueryLimitingService {
         if can_query {
             self.data.queries.insert(query.to_string(), Utc::now());
 
-            self.file.write_json(&self.data);
+            self.file.write_json(&self.data)?;
         }
 
         Ok(can_query)
