@@ -50,10 +50,10 @@ impl CdnFile {
     ) -> Self {
         let date_str = date.format("%Y/%m/%d").to_string();
 
-        let file_name = file_name.split('/').last().unwrap();
+        let file_name = file_name.split('/').next_back().unwrap();
 
         let name = file_name.split('.').next().unwrap();
-        let ext = file_name.split('.').last().unwrap();
+        let ext = file_name.split('.').next_back().unwrap();
 
         let suffix_str = match suffix {
             Some(suffix) => format!("-{}", suffix),
@@ -134,6 +134,12 @@ pub struct CdnService {
     existing_folders_cache: Arc<RwLock<HashSet<CdnFile>>>,
 }
 
+impl Default for CdnService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CdnService {
     pub fn new() -> Self {
         let mut headers = reqwest::header::HeaderMap::new();
@@ -171,7 +177,7 @@ impl CdnService {
     fn file_exists(&self, file: &CdnFile) -> Result<bool> {
         debug!("CdnService | Does file exist");
 
-        if let Some(file) = self.existing_folders_cache.read().unwrap().get(&file) {
+        if let Some(file) = self.existing_folders_cache.read().unwrap().get(file) {
             debug!("CdnService | File exists in cache: {:?}", file);
             return Ok(true);
         }
@@ -181,7 +187,7 @@ impl CdnService {
             file.as_string(),
         );
 
-        match self.query_file_directory(&file) {
+        match self.query_file_directory(file) {
             Ok(Some(files)) => {
                 let mut cache = self.existing_folders_cache.write().unwrap();
 
@@ -199,7 +205,7 @@ impl CdnService {
             .existing_folders_cache
             .read()
             .unwrap()
-            .get(&file)
+            .get(file)
             .is_some())
     }
 

@@ -35,6 +35,12 @@ pub struct PageRenderer {
     site_map_pages: Arc<RwLock<Vec<SiteMapPage>>>,
 }
 
+impl Default for PageRenderer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PageRenderer {
     pub fn new() -> Self {
         Self {
@@ -54,7 +60,7 @@ impl PageRenderer {
 
         let rendered = rendered.render();
 
-        self.save_file(&path, &rendered.as_inner())?;
+        self.save_file(&path, rendered.as_inner())?;
 
         self.site_map_pages
             .write()
@@ -70,7 +76,7 @@ impl PageRenderer {
     pub fn render_file<'t, T>(&self, path: PathBuf, rendered: Rendered<String>) -> Result<()> {
         let path = path.to_string_lossy().to_string();
 
-        self.save_file(&path, &rendered.as_inner())?;
+        self.save_file(&path, rendered.as_inner())?;
 
         Ok(())
     }
@@ -78,7 +84,7 @@ impl PageRenderer {
     pub fn render_string(&self, path: PathBuf, rendered: &str) -> Result<()> {
         let path = path.to_string_lossy().to_string();
 
-        self.save_file(&path, &rendered)?;
+        self.save_file(&path, rendered)?;
 
         Ok(())
     }
@@ -112,6 +118,6 @@ impl PageRenderer {
     }
 
     fn save_file(&self, path: &str, rendered: &str) -> Result<()> {
-        FileService::output(PathBuf::from(path)).write_text(&rendered)
+        FileService::output(PathBuf::from(path)).write_text(rendered)
     }
 }

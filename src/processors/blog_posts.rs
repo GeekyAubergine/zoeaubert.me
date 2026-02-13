@@ -80,14 +80,14 @@ impl Task for ProcessBlogPost {
 
                 if let (Some(url), Some(alt)) = (front_matter.hero, front_matter.hero_alt) {
                     let url: Url = url.parse().unwrap();
-                    let cdn_file = CdnFile::from_str(&url.path());
+                    let cdn_file = CdnFile::from_str(url.path());
 
                     let image = MediaService::image_from_url(
                         ctx,
                         &url,
                         &cdn_file,
                         &alt,
-                        Some(&&slug.relative_string()),
+                        Some(&slug.relative_string()),
                         Some(date),
                     )?;
 

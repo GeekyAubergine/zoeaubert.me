@@ -32,7 +32,6 @@ impl Albums {
         let years: HashMap<u16, Vec<&Album>> =
             self.albums
                 .values()
-                .into_iter()
                 .fold(HashMap::new(), |mut acc, album| {
                     acc.entry(album.date.year() as u16)
                         .or_insert_with(Vec::new)

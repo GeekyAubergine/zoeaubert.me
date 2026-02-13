@@ -144,8 +144,8 @@ impl BookService {
 
         let book = query_book_api(ctx, title, author, tags)?;
 
-        if let Some(book) = book {
-            if let Some(cover_id) = book.cover_i
+        if let Some(book) = book
+            && let Some(cover_id) = book.cover_i
                 && let Some(key) = book.key
             {
                 debug!("Found cover [{cover_id}] for book [{title}]");
@@ -177,7 +177,6 @@ impl BookService {
 
                 return Ok(Some(book));
             }
-        }
 
         warn!("Did not find cover for book [{title}]");
         books.insert(title.to_string(), None);

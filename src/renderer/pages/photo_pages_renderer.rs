@@ -57,7 +57,7 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
 }
 
 pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> Result<()> {
-    let paginated = paginate(&photos, PAGINATION_SIZE);
+    let paginated = paginate(photos, PAGINATION_SIZE);
 
     let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);
     for paginator_page in paginated {

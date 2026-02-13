@@ -195,7 +195,7 @@ impl<'l> Task for TaskProcessSteamGameAchievement<'l> {
                 let cdn_file = CdnFile::from_str(&format!(
                     "/games/{}-{}-unlocked.jpg",
                     self.game.id,
-                    self.achievement.name.replace(' ', "").replace('%', "")
+                    self.achievement.name.replace([' ', '%'], "")
                 ));
 
                 let image = MediaService::image_from_url(

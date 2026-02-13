@@ -5,7 +5,7 @@ pub fn render_tags<'l>(tags: &'l Vec<Tag>, limit: Option<usize>) -> impl Rendera
     let limit = limit.unwrap_or(tags.len());
 
     maud! {
-        @if tags.len() > 0 {
+        @if !tags.is_empty() {
             ul class="tags-list" data-nosnippet {
                 @for tag in tags.iter().take(limit) {
                     li {

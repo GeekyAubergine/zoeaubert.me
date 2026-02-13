@@ -70,13 +70,13 @@ impl<'l> Task for ProcessAlbumPhoto<'l> {
             Some(self.album.date),
         )?;
 
-        let file_name = url.path_segments().unwrap().last().unwrap();
+        let file_name = url.path_segments().unwrap().next_back().unwrap();
         let file_name_without_extension = file_name.split('.').next().unwrap();
 
         let photo_slug = self
             .album
             .slug
-            .append(&format!("{}", file_name_without_extension));
+            .append(&file_name_without_extension.to_string());
 
         let photo = AlbumPhoto::new(
             photo_slug,

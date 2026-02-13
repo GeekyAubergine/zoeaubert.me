@@ -44,7 +44,7 @@ impl ReviewSource {
     pub fn tags(&self) -> &Vec<Tag> {
         match self {
             Self::MicroPost(micro_post) => &micro_post.tags,
-            Self::MastodonPost(mastodon_post) => &mastodon_post.tags(),
+            Self::MastodonPost(mastodon_post) => mastodon_post.tags(),
         }
     }
 

@@ -32,7 +32,7 @@ fn description_from_string(s: &str) -> Option<String> {
         .filter(|line| !line.is_empty())
         .collect::<Vec<&str>>();
 
-    let first_line = lines.iter().next()?;
+    let first_line = lines.first()?;
 
     let first_line = first_line.replace("[", "").replace("]", "");
 
@@ -44,9 +44,9 @@ fn description_from_string(s: &str) -> Option<String> {
 
     let sentences = first_line.split('.').collect::<Vec<&str>>();
 
-    let first_sentence = sentences.iter().next()?;
+    let first_sentence = sentences.first()?;
 
-    return Some(first_sentence.to_string());
+    Some(first_sentence.to_string())
 }
 
 fn front_matter_from_string(s: &str) -> Result<MicroPostFrontMatter> {
@@ -95,11 +95,11 @@ impl Task for ProcessFile {
         let media = MediaService::find_images_in_markdown(
             ctx,
             &content,
-            Some(date.clone()),
+            Some(date),
             Some(&slug.permalink_string()),
         )?
         .iter()
-        .map(|i| Media::from(i))
+        .map(Media::from)
         .collect::<Vec<Media>>();
 
         let tags = front_matter

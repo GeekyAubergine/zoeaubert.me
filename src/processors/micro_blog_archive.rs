@@ -55,7 +55,7 @@ fn extract_description(markup: &str) -> Option<String> {
         .filter(|line| !line.is_empty())
         .collect::<Vec<&str>>();
 
-    let first_line = lines.iter().next()?;
+    let first_line = lines.first()?;
 
     let first_line = first_line.replace("[", "").replace("]", "");
 
@@ -67,9 +67,9 @@ fn extract_description(markup: &str) -> Option<String> {
 
     let sentences = first_line.split('.').collect::<Vec<&str>>();
 
-    let first_sentence = sentences.iter().next()?;
+    let first_sentence = sentences.first()?;
 
-    return Some(first_sentence.to_string());
+    Some(first_sentence.to_string())
 }
 
 fn extract_images_from_html(
@@ -95,8 +95,8 @@ fn extract_images_from_html(
             &path.parse().unwrap(),
             cdn_file,
             alt,
-            Some(&&parent_slug.relative_string()),
-            Some(date.clone()),
+            Some(&parent_slug.relative_string()),
+            Some(*date),
         )?);
     }
 
@@ -129,10 +129,7 @@ impl Task for ProcessItem {
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
         let slug = slug_for_item(&self.item);
 
-        let tags: Vec<String> = match self.item.tags {
-            Some(tags) => tags,
-            None => vec![],
-        };
+        let tags: Vec<String> = self.item.tags.unwrap_or_default();
 
         if tags
             .iter()
@@ -156,7 +153,7 @@ impl Task for ProcessItem {
 
         let media = extract_images_from_html(ctx, &content, &self.item.date_published, &slug)?
             .iter()
-            .map(|i| Media::from(i))
+            .map(Media::from)
             .collect();
 
         Ok(Some(MicroPost::new(
@@ -183,7 +180,7 @@ pub fn load_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
 
     let results = run_tasks(tasks, ctx)?;
 
-    Ok(results.into_iter().filter_map(|p| p).collect())
+    Ok(results.into_iter().flatten().collect())
 }
 
 // #[cfg(test)]

@@ -136,11 +136,10 @@ impl Task for ProcessStatus {
     type Output = Option<MastodonPost>;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
-        if let Some(application) = &self.status.application {
-            if APPLICATIONS_TO_IGNORE.contains(&application.name.as_str()) {
+        if let Some(application) = &self.status.application
+            && APPLICATIONS_TO_IGNORE.contains(&application.name.as_str()) {
                 return Ok(None);
             }
-        }
 
         if self.status.content.contains(SELF_URL) {
             return Ok(None);
@@ -185,16 +184,16 @@ impl Task for ProcessStatus {
 
                         let cdn_file = CdnFile::from_date_and_file_name(
                             &self.status.created_at,
-                            &file_name,
+                            file_name,
                             None,
                         );
 
                         let image = MediaService::image_from_url(
                             ctx,
-                            &url,
+                            url,
                             &cdn_file,
-                            &description,
-                            Some(&&post.slug().relative_string()),
+                            description,
+                            Some(&post.slug().relative_string()),
                             Some(self.status.created_at),
                         )?;
 
@@ -231,10 +230,8 @@ pub fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> {
 
     let results = run_tasks(tasks, ctx)?;
 
-    for result in results {
-        if let Some(post) = result {
-            posts.add(post);
-        }
+    for post in results.into_iter().flatten() {
+        posts.add(post);
     }
 
     file.write_json(&posts)?;

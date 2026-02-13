@@ -89,7 +89,7 @@ impl TimelineEvent {
             TimelineEvent::Post(post) => match post {
                 TimelineEventPost::BlogPost(post) => &post.date,
                 TimelineEventPost::MicroPost(post) => &post.date,
-                TimelineEventPost::MastodonPost(post) => &post.created_at(),
+                TimelineEventPost::MastodonPost(post) => post.created_at(),
             },
             TimelineEvent::Review(review) => match review {
                 TimelineEventReview::BookReview { source, .. } => source.date(),
@@ -155,7 +155,7 @@ impl TimelineEvents {
 
         let mut events = events_map.into_values().collect::<Vec<TimelineEvent>>();
 
-        events.sort_by(|a, b| b.date().cmp(&a.date()));
+        events.sort_by(|a, b| b.date().cmp(a.date()));
 
         Self {
             events_by_date: events,

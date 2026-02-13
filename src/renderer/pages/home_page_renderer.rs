@@ -50,7 +50,7 @@ fn blog_posts<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
                     {
                         return None;
                     }
-                    return Some(post);
+                    Some(post)
                 }
                 _ => None,
             },

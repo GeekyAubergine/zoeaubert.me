@@ -50,7 +50,7 @@ impl MediaService {
         url: &Url,
         cdn_file: &CdnFile,
     ) -> Result<DynamicImage> {
-        let original_bytes = Self::read_or_download_file(ctx, url, &cdn_file)?;
+        let original_bytes = Self::read_or_download_file(ctx, url, cdn_file)?;
 
         let original_image = ImageReader::new(Cursor::new(&original_bytes))
             .with_guessed_format()
@@ -91,9 +91,9 @@ impl MediaService {
             });
         }
 
-        let resized_image = resize_image(&original_image, size);
+        let resized_image = resize_image(original_image, size);
 
-        let format = ImageFormat::from_path(&file.as_path_buff()).unwrap();
+        let format = ImageFormat::from_path(file.as_path_buff()).unwrap();
 
         let mut resized_image_data = vec![];
         resized_image
@@ -102,7 +102,7 @@ impl MediaService {
 
         file.write(&resized_image_data)?;
 
-        ctx.cdn.upload_file(&file, &cdn_file)?;
+        ctx.cdn.upload_file(&file, cdn_file)?;
 
         Ok(SizedImage {
             file: cdn_file.clone(),

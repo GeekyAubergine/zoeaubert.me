@@ -45,7 +45,7 @@ impl MediaOrientation {
             return Self::Portrait;
         }
 
-        return Self::Square;
+        Self::Square
     }
 
     pub fn to_string(&self) -> &str {

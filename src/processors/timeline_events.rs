@@ -30,8 +30,7 @@ fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Timeline
     if source
         .tags()
         .contains(&Tag::from_string(BOOK_REVIEW_POST_TAG))
-    {
-        if let Ok(review) = BookReview::from_content(&source.content()) {
+        && let Ok(review) = BookReview::from_content(source.content()) {
             let book = ctx
                 .books
                 .find_book(ctx, &review.title, &review.author, source.tags());
@@ -51,13 +50,11 @@ fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Timeline
                 }
             };
         }
-    }
 
     if source
         .tags()
         .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG))
-    {
-        if let Ok(review) = MovieReview::from_content(&source.content()) {
+        && let Ok(review) = MovieReview::from_content(source.content()) {
             let movie = ctx.movies.find_movie(ctx, &review.title, review.year);
 
             return match movie {
@@ -76,13 +73,11 @@ fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Timeline
                 }
             };
         }
-    }
 
     if source
         .tags()
         .contains(&Tag::from_string(TV_SHOW_REVIEW_POST_TAG))
-    {
-        if let Ok(review) = TvShowReview::from_content(&source.content()) {
+        && let Ok(review) = TvShowReview::from_content(source.content()) {
             let tv_show = ctx.tv_shows.find_tv_show(ctx, &review.title);
 
             return match tv_show {
@@ -100,7 +95,6 @@ fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Timeline
                 }
             };
         }
-    }
 
     source.into()
 }

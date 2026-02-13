@@ -313,6 +313,12 @@ pub struct PageOptions<'l> {
     hide_footer: bool,
 }
 
+impl<'l> Default for PageOptions<'l> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'l> PageOptions<'l> {
     pub fn new() -> Self {
         Self {
@@ -382,7 +388,7 @@ impl<'l> HeaderData<'l> {
         if options.use_date_as_title {
             return match page.date() {
                 Some(date) => HeaderData::Date {
-                    date: date,
+                    date,
                     tags: &page.tags,
                     image: options.image,
                 },
@@ -456,21 +462,15 @@ pub fn render_page<'l>(
     content: impl Renderable + 'l,
     scripts: impl Renderable + 'l,
 ) -> impl Renderable + 'l {
-    let body_class = match options.body_class {
-        Some(class) => class,
-        None => "",
-    };
+    let body_class = options.body_class.unwrap_or_default();
 
-    let main_class = match options.main_class {
-        Some(class) => class,
-        None => "",
-    };
+    let main_class = options.main_class.unwrap_or_default();
 
     let header_data = HeaderData::from_page_and_options(page, options);
 
     let body = maud! {
         body class=(&body_class) {
-            (nav_bar(&page))
+            (nav_bar(page))
             main class=(main_class) {
                 @if !options.hide_header {
                     (render_header(&header_data))
@@ -481,13 +481,13 @@ pub fn render_page<'l>(
                 }
             }
             @if !options.hide_footer {
-                (render_footer(&page))
+                (render_footer(page))
             }
             (scripts)
         }
     };
 
     maud! {
-        (render_page_base(&page, &body))
+        (render_page_base(page, &body))
     }
 }

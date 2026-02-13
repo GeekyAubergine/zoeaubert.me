@@ -24,7 +24,7 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
             for tag in tags {
                 events_by_tags
                     .entry(tag)
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(event);
             }
         }
@@ -32,7 +32,6 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
 
     let mut tag_groups = events_by_tags
         .into_iter()
-        .map(|(tag, posts)| (tag, posts))
         .collect::<Vec<(&Tag, Vec<&TimelineEvent>)>>();
 
     tag_groups.sort_by(|a, b| a.0.tag.cmp(&b.0.tag));
@@ -43,7 +42,7 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
             Some(format!("{} Posts", tag.title())),
             Some(format!("#{} posts", tag.title())),
         );
-        let paginated = paginate(&events, PAGINATION_SIZE);
+        let paginated = paginate(events, PAGINATION_SIZE);
 
         for paginator_page in paginated {
             let page = Page::from_page_and_pagination_page(&page, &paginator_page);

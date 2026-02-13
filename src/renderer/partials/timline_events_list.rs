@@ -81,7 +81,7 @@ fn render_post<'l>(
                         }
                     }
                     @if let Some(tags) = &tags {
-                        (render_tags(&tags, Some(5)))
+                        (render_tags(tags, Some(5)))
                     }
                 }
             },
@@ -101,7 +101,7 @@ fn render_post<'l>(
                                 (render_media_grid(media, &MediaGripOptions::for_list()))
                             }
                             @if let Some(tags) = &tags {
-                                (render_tags(&tags, Some(5)))
+                                (render_tags(tags, Some(5)))
                             }
                         }
                         div class="right" {

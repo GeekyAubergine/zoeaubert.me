@@ -35,7 +35,7 @@ pub fn render_mastodon_post_page(context: &RendererContext, post: &MastodonPost)
     let content = maud! {
         article {
             (md(&post.content(), md::MarkdownMediaOption::NoMedia))
-            (render_media_grid(&post.media(), &MediaGripOptions::for_post()))
+            (render_media_grid(post.media(), &MediaGripOptions::for_post()))
             p class="original-link" {
                 ("See Original: ")
                 a href=(post.original_uri().as_str()) class="link" target="_blank" rel="me" {
@@ -50,12 +50,12 @@ pub fn render_mastodon_post_page(context: &RendererContext, post: &MastodonPost)
         .use_date_as_title();
 
     let page = Page::new(post.slug().clone(), None, None)
-        .with_date(post.created_at().clone())
+        .with_date(*post.created_at())
         .with_tags(post.tags().clone());
 
     let rendered = render_page(&page, &options, &content, maud! {});
 
     context
         .renderer
-        .render_page(&post.slug(), &rendered, Some(post.created_at().clone()))
+        .render_page(&post.slug(), &rendered, Some(*post.created_at()))
 }

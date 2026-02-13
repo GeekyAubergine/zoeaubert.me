@@ -20,7 +20,7 @@ pub struct MovieReview {
 
 impl MovieReview {
     pub fn from_content(content: &str) -> Result<MovieReview> {
-        parse_markdown_into_movie_review(&content)
+        parse_markdown_into_movie_review(content)
     }
 }
 

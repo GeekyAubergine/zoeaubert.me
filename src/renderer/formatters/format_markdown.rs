@@ -46,7 +46,7 @@ static OPTIONS: Lazy<Options> = Lazy::new(|| {
     options
 });
 
-static SYNTAX_SET: Lazy<SyntaxSet> = Lazy::new(|| SyntaxSet::load_defaults_newlines());
+static SYNTAX_SET: Lazy<SyntaxSet> = Lazy::new(SyntaxSet::load_defaults_newlines);
 
 // static ref SYNTAX_HIGHLIGHTER: Highlighter = {
 //     let mut highlighter = Highlighter::new();

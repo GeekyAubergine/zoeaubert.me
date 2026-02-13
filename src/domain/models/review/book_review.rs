@@ -17,7 +17,7 @@ pub struct BookReview {
 
 impl BookReview {
     pub fn from_content(content: &str) -> Result<BookReview> {
-        parse_markdown_into_book_review(&content)
+        parse_markdown_into_book_review(content)
     }
 }
 
@@ -54,7 +54,7 @@ fn parse_legacy_post(content: &str) -> Result<BookReview> {
         if let (Some(title), Some(author), Some(score), Some(review)) = (
             captures.get(1),
             captures.get(2),
-            second_line_split.get(0),
+            second_line_split.first(),
             second_line_split.get(1),
         ) {
             let score = score.trim().parse().unwrap();
@@ -90,7 +90,7 @@ fn parse_new_style(content: &str) -> Result<BookReview> {
         .filter(|line| !line.is_empty())
         .collect::<Vec<&str>>();
 
-    if let (Some(first_line), Some(second_line)) = (lines.get(0), lines.get(1)) {
+    if let (Some(first_line), Some(second_line)) = (lines.first(), lines.get(1)) {
         let first_line_split = first_line.split(" by ").collect::<Vec<&str>>();
 
         let has_review = second_line.contains("/5 - ");
@@ -103,9 +103,9 @@ fn parse_new_style(content: &str) -> Result<BookReview> {
         let second_line_split = second_line.split(split).collect::<Vec<&str>>();
 
         if let (Some(title), Some(author), Some(score), Some(review)) = (
-            first_line_split.get(0),
+            first_line_split.first(),
             first_line_split.get(1),
-            second_line_split.get(0),
+            second_line_split.first(),
             second_line_split.get(1),
         ) {
             let score = score.trim().parse().unwrap();

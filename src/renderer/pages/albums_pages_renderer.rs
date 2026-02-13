@@ -14,7 +14,7 @@ use crate::{
     },
 };
 
-pub fn render_alubms_pages<'l>(context: &'l RendererContext) -> Result<()> {
+pub fn render_alubms_pages(context: &RendererContext) -> Result<()> {
     render_alubms_list_page(context)?;
 
     let albums = context.data.albums.find_all_by_date();
@@ -26,7 +26,7 @@ pub fn render_alubms_pages<'l>(context: &'l RendererContext) -> Result<()> {
     render_all_albums_page(context)
 }
 
-pub fn render_alubms_list_page<'l>(context: &'l RendererContext) -> Result<()> {
+pub fn render_alubms_list_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(Slug::new("/albums"), Some("Albums".to_string()), None);
 
     let slug = page.slug.clone();
@@ -67,7 +67,7 @@ pub fn render_alubms_list_page<'l>(context: &'l RendererContext) -> Result<()> {
     context.renderer.render_page(&slug, &renderer, None)
 }
 
-pub fn render_album_page<'l>(context: &'l RendererContext, album: &Album) -> Result<()> {
+pub fn render_album_page(context: &RendererContext, album: &Album) -> Result<()> {
     let page = album.page();
 
     let slug = page.slug.clone();
@@ -88,14 +88,14 @@ pub fn render_album_page<'l>(context: &'l RendererContext, album: &Album) -> Res
     context.renderer.render_page(&slug, &renderer, None)?;
 
     for photo in &album.photos {
-        render_album_photo(context, &album, &photo)?;
+        render_album_photo(context, album, photo)?;
     }
 
     Ok(())
 }
 
-pub fn render_album_photo<'l>(
-    context: &'l RendererContext,
+pub fn render_album_photo(
+    context: &RendererContext,
     album: &Album,
     photo: &AlbumPhoto,
 ) -> Result<()> {
@@ -171,7 +171,7 @@ pub fn render_album_photo<'l>(
         .render_page(&slug, &renderer, Some(photo.date))
 }
 
-pub fn render_all_albums_page<'l>(context: &'l RendererContext) -> Result<()> {
+pub fn render_all_albums_page(context: &RendererContext) -> Result<()> {
     let page = Page::new(
         Slug::new("/albums/all"),
         Some("All Album Photos".to_string()),

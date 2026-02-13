@@ -40,11 +40,7 @@ impl QueryLimitingService {
     pub fn can_query(&self, query: &str, no_query_duration: &Duration) -> Result<bool> {
         let can_query = match self.data.queries.get(query) {
             Some(last_queried) => {
-                if *last_queried + *no_query_duration > Utc::now() {
-                    false
-                } else {
-                    true
-                }
+                *last_queried + *no_query_duration <= Utc::now()
             }
             None => true,
         };

@@ -18,7 +18,7 @@ pub fn render_games_pages(context: &RendererContext) -> Result<()> {
     render_activity_pages(context)?;
 
     for game in context.data.games.find_by_most_recently_played() {
-        render_game_page(context, &game)?;
+        render_game_page(context, game)?;
     }
 
     Ok(())

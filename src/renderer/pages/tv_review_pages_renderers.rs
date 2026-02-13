@@ -55,12 +55,12 @@ pub fn render_tv_review_page(
         .with_image(&tv_show.poster);
 
     let page = Page::new(source.slug().clone(), None, None)
-        .with_date(source.date().clone())
+        .with_date(*source.date())
         .with_tags(source.tags().clone());
 
     let rendered = render_page(&page, &options, &content, maud! {});
 
     context
         .renderer
-        .render_page(&source.slug(), &rendered, Some(source.date().clone()))
+        .render_page(&source.slug(), &rendered, Some(*source.date()))
 }

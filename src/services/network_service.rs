@@ -87,6 +87,12 @@ pub struct NetworkService {
     limiter: DomainRateLimiter,
 }
 
+impl Default for NetworkService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl NetworkService {
     pub fn new() -> Self {
         Self {

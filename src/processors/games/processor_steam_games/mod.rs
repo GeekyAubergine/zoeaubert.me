@@ -84,7 +84,7 @@ fn get_game_header_image(
     if let Ok(image) = MediaService::image_from_url(
         ctx,
         &image_src_url,
-        &cdn_file,
+        cdn_file,
         &format!("{} steam header image", &game.name),
         None,
         None,
@@ -102,7 +102,7 @@ fn get_game_header_image(
     MediaService::image_from_url(
         ctx,
         &image_src_url,
-        &cdn_file,
+        cdn_file,
         &format!("{} steam header image", &game.name),
         None,
         None,
@@ -115,17 +115,16 @@ fn process_game(
     game: &SteamOwnedGame,
     stored_game: Option<&SteamGameWithAchievements>,
 ) -> Result<SteamGameWithAchievements> {
-    if let Some(stored_game) = stored_game {
-        if steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.game.last_played {
+    if let Some(stored_game) = stored_game
+        && steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.game.last_played {
             return Ok(stored_game.clone());
         }
-    }
 
     info!("Processing game [{}]", game.name);
 
     let game_header_cdn_file = CdnFile::from_str(&format!("games/{}-header.jpg", game.appid));
 
-    let image = get_game_header_image(ctx, &game, &game_header_cdn_file)?;
+    let image = get_game_header_image(ctx, game, &game_header_cdn_file)?;
 
     let game = SteamGame::new(
         game.appid,

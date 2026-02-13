@@ -33,7 +33,7 @@ impl TvShowReview {
     }
 
     pub fn score_text(&self) -> String {
-        format!("{}/5", self.scores[0].to_string())
+        format!("{}/5", self.scores[0])
     }
 
     pub fn average_score_u8(&self) -> u8 {
