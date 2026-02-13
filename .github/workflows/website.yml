@@ -44,7 +44,7 @@ jobs:
                   TMDB_KEY: ''
 
             - name: Clippy
-              run: cargo clippy -- -D warnings
+              run: cargo clippy --features env-variables -- -D warnings
               env:
                   MASTODON_ACCOUNT_ID: 'not-a-real-id'
                   BUNNY_CDN_URL: ''
