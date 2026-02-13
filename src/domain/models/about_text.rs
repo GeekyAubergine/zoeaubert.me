@@ -1,5 +1,3 @@
-use crate::prelude::Result;
-
 #[derive(Clone, Debug, Default)]
 pub struct AboutText {
     pub short: String,

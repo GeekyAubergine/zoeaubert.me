@@ -75,13 +75,12 @@ impl TimelineEvent {
                 TimelineEventReview::TvShowReview { source, .. } => source.slug().to_string(),
             },
             TimelineEvent::GameAchievementUnlock(achievement) => match achievement {
-                TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
-                    game,
-                    achievement,
-                } => game.slug().to_string(),
+                TimelineEventGameAchievementUnlock::SteamAchievementUnlocked { game, .. } => {
+                    game.slug().to_string()
+                }
             },
             TimelineEvent::Album(alumb) => alumb.slug.to_string(),
-            TimelineEvent::AlbumPhoto { album, photo } => photo.slug.to_string(),
+            TimelineEvent::AlbumPhoto { photo, .. } => photo.slug.to_string(),
         }
     }
 
@@ -99,12 +98,12 @@ impl TimelineEvent {
             },
             TimelineEvent::GameAchievementUnlock(achievement) => match achievement {
                 TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
-                    game,
                     achievement,
+                    ..
                 } => &achievement.unlocked_date,
             },
             TimelineEvent::Album(album) => &album.date,
-            TimelineEvent::AlbumPhoto { album, photo } => &photo.date,
+            TimelineEvent::AlbumPhoto { photo, .. } => &photo.date,
         }
     }
 
@@ -122,7 +121,7 @@ impl TimelineEvent {
             },
             TimelineEvent::GameAchievementUnlock(_) => None,
             TimelineEvent::Album(_) => None,
-            TimelineEvent::AlbumPhoto { album, photo } => Some(&photo.tags),
+            TimelineEvent::AlbumPhoto { photo, .. } => Some(&photo.tags),
         }
     }
 }
@@ -139,9 +138,9 @@ pub struct TimelineEvents {
 }
 
 impl TimelineEvents {
-    pub fn from_events(mut events: Vec<TimelineEvent>) -> Self {
+    pub fn from_events(events: Vec<TimelineEvent>) -> Self {
         // Seems redundant, but prevents weird duplicates
-        let mut events_map = events
+        let events_map = events
             .into_iter()
             .map(|event| {
                 (

@@ -1,17 +1,10 @@
-use std::option;
-
 use crate::{
     build_data::BUILD_DATE,
     domain::models::{image::Image, page::PagePaginationData, site_config::SITE_CONFIG, tag::Tag},
-    prelude::*,
-    renderer::{
-        formatters::format_date::FormatDate,
-        partials::{date::render_date, tag::render_tags},
-    },
+    renderer::partials::{date::render_date, tag::render_tags},
 };
 use chrono::{DateTime, Utc};
-use hypertext::{prelude::*, Raw};
-use maud::DOCTYPE;
+use hypertext::{Raw, prelude::*};
 
 use crate::domain::models::page::Page;
 
@@ -125,13 +118,11 @@ pub fn render_footer<'l>(page: &'l Page) -> impl Renderable + 'l {
 }
 
 pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Renderable + 'l {
-    let show_first = pagination.current_index > 2;
     let show_previous = pagination.current_index > 1;
 
     let last_index = pagination.last.index;
 
     let show_next = pagination.current_index < last_index;
-    let show_last = pagination.current_index < last_index - 1;
 
     maud! {
         div
@@ -410,24 +401,24 @@ impl<'l> HeaderData<'l> {
         }
     }
 
-    pub fn with_image(self, image: &'l Image) -> Self {
-        match self {
-            HeaderData::Title {
-                title, date, tags, ..
-            } => HeaderData::Title {
-                title: title,
-                date: date,
-                tags: tags,
-                image: Some(image),
-            },
-            HeaderData::Date { date, tags, .. } => HeaderData::Date {
-                date,
-                tags,
-                image: Some(image),
-            },
-            HeaderData::None => HeaderData::None,
-        }
-    }
+    // pub fn with_image(self, image: &'l Image) -> Self {
+    //     match self {
+    //         HeaderData::Title {
+    //             title, date, tags, ..
+    //         } => HeaderData::Title {
+    //             title: title,
+    //             date: date,
+    //             tags: tags,
+    //             image: Some(image),
+    //         },
+    //         HeaderData::Date { date, tags, .. } => HeaderData::Date {
+    //             date,
+    //             tags,
+    //             image: Some(image),
+    //         },
+    //         HeaderData::None => HeaderData::None,
+    //     }
+    // }
 }
 
 fn render_header<'l>(data: &'l HeaderData<'l>) -> impl Renderable + 'l {
@@ -469,7 +460,6 @@ pub fn render_page<'l>(
         Some(class) => class,
         None => "",
     };
-
 
     let main_class = match options.main_class {
         Some(class) => class,

@@ -1,20 +1,15 @@
-use std::{collections::HashMap, path::Path, time::Duration};
+use std::time::Duration;
 
 use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, info, instrument, warn};
+use tracing::{info, instrument, warn};
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
+    config::CONFIG,
     domain::models::{
-        games::steam::{
-            SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
-            SteamGameAchievementUnlocked, SteamGameWithAchievements, SteamGames,
-        },
+        games::steam::{SteamGame, SteamGameWithAchievements, SteamGames},
         image::Image,
-        slug::Slug,
     },
     prelude::*,
     processors::games::processor_steam_games::process_steam_game_achievement::process_steam_game_achievements,
@@ -59,7 +54,6 @@ pub struct SteamOwnedGame {
 
 #[derive(Debug, Clone, Deserialize)]
 struct SteamGetOwnedGamesResponseInner {
-    game_count: u32,
     games: Vec<SteamOwnedGame>,
 }
 
@@ -182,7 +176,7 @@ pub fn load_steam_games(ctx: &ServiceContext) -> Result<SteamGames> {
                     file.write_json(&data)?;
                 }
             }
-            Err(e) => {
+            Err(_) => {
                 let appid = &game.appid;
                 let name = &game.name;
                 warn!("Unable to process game [{appid}] [{name}]");

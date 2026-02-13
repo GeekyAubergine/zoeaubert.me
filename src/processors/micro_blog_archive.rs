@@ -1,22 +1,13 @@
-use std::process::exit;
-
 use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use tracing::{debug, info};
+use tracing::info;
 use url::Url;
 
 use crate::{
     config::CONFIG,
-    domain::models::{
-        image::Image,
-        media::{Media, MediaDimensions},
-        micro_post::MicroPost,
-        slug::Slug,
-        tag::Tag,
-    },
+    domain::models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
     prelude::*,
     processors::tasks::{Task, run_tasks},
     services::{
@@ -48,12 +39,6 @@ struct ArchiveFileItem {
     tags: Option<Vec<String>>,
 }
 
-impl ArchiveFileItem {
-    fn tags_mut(&mut self) -> &mut Option<Vec<String>> {
-        &mut self.tags
-    }
-}
-
 #[derive(Debug, Clone, Deserialize)]
 struct ArchiveFile {
     // version: String,
@@ -77,7 +62,7 @@ fn extract_description(markup: &str) -> Option<String> {
     let first_line = MARKDOWN_LINK_REGEX.replace_all(&first_line, "");
 
     if first_line.contains("<") {
-        let first_line = first_line.split('<').collect::<Vec<&str>>().join("");
+        first_line.split('<').collect::<Vec<&str>>().join("");
     }
 
     let sentences = first_line.split('.').collect::<Vec<&str>>();
@@ -98,11 +83,6 @@ fn extract_images_from_html(
     for cap in HTML_IMAGE_REGEX.captures_iter(markup) {
         let src = cap.name("src").map_or("", |m| m.as_str());
         let alt = cap.name("alt").map_or("", |m| m.as_str());
-        let width = cap.name("width").map_or("", |m| m.as_str());
-        let height = cap.name("height").map_or("", |m| m.as_str());
-
-        let width = width.parse::<u32>().unwrap_or(0);
-        let height = height.parse::<u32>().unwrap_or(0);
 
         let path = src.replace("uploads/", &format!("{}/", CONFIG.cdn_url));
 

@@ -1,12 +1,10 @@
 use crate::domain::models::albums::album::Album;
 use crate::domain::models::albums::album_photo::AlbumPhoto;
-use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
-use crate::domain::models::{image::Image, review::book_review::BookReview};
 use crate::prelude::*;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::javascript::album_photo_controls_scripts;
 use crate::renderer::partials::tag::render_tags;
-use hypertext::{Raw, prelude::*};
+use hypertext::prelude::*;
 
 use crate::{
     domain::models::{page::Page, slug::Slug},
@@ -165,7 +163,7 @@ pub fn render_album_photo<'l>(
         &page,
         &options,
         &content,
-        album_photo_controls_scripts(photo, previous, next),
+        album_photo_controls_scripts(previous, next),
     );
 
     context

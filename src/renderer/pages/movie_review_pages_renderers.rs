@@ -1,27 +1,14 @@
 use hypertext::prelude::*;
 
-use crate::domain::models::blog_post::{self, BlogPost};
-use crate::domain::models::book::Book;
-use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::movie::Movie;
 use crate::domain::models::page::Page;
-use crate::domain::models::review::book_review::BookReview;
 use crate::domain::models::review::movie_review::MovieReview;
 use crate::domain::models::review::review_source::ReviewSource;
-use crate::domain::models::slug::Slug;
-use crate::domain::models::timeline_event::{
-    TimelineEvent, TimelineEventPost, TimelineEventReview,
-};
+use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
 use crate::prelude::*;
 use crate::renderer::RendererContext;
-use crate::renderer::formatters::format_date::FormatDate;
-use crate::renderer::formatters::format_markdown::FormatMarkdown;
-use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
-use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
-use crate::renderer::partials::page::{PageOptions, PageWidth, render_page};
-use crate::renderer::partials::tag::render_tags;
-use crate::utils::paginator::paginate;
+use crate::renderer::partials::page::{PageOptions, render_page};
 
 // TODO Clicking on cover image should link you to tmdb page
 
@@ -44,8 +31,8 @@ pub fn render_move_review_pages(context: &RendererContext) -> Result<()> {
         })
         .collect::<Vec<(&MovieReview, &Movie, &ReviewSource)>>();
 
-    for (review, movie, source) in posts {
-        render_movie_review_page(context, review, movie, source)?;
+    for (_, movie, source) in posts {
+        render_movie_review_page(context, movie, source)?;
     }
 
     Ok(())
@@ -53,7 +40,6 @@ pub fn render_move_review_pages(context: &RendererContext) -> Result<()> {
 
 pub fn render_movie_review_page(
     context: &RendererContext,
-    review: &MovieReview,
     movie: &Movie,
     source: &ReviewSource,
 ) -> Result<()> {

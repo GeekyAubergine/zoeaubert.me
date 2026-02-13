@@ -1,8 +1,6 @@
 use once_cell::unsync::Lazy;
 use regex::Regex;
 
-use crate::domain::models::{movie::Movie, review::review_source::ReviewSource};
-
 use crate::error::MovieError;
 use crate::prelude::*;
 
@@ -149,6 +147,8 @@ mod test {
         };
 
         let review = parse_markdown_into_movie_review(&post).unwrap();
+
+        assert_eq!(review, expected)
     }
 
     #[test]

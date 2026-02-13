@@ -1,20 +1,10 @@
 use hypertext::prelude::*;
 
-use crate::domain::models::blog_post::{self, BlogPost};
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::prelude::*;
-use crate::renderer::formatters::format_date::FormatDate;
-use crate::renderer::formatters::format_markdown::FormatMarkdown;
-use crate::renderer::partials::date::render_date;
-use crate::renderer::partials::md::{self, md};
-use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
-use crate::renderer::partials::timline_events_list::render_timline_events_list;
-use crate::renderer::partials::tag::render_tags;
 use crate::renderer::RendererContext;
-use crate::utils::paginator::paginate;
-
-const PAGINATION_SIZE: usize = 25;
+use crate::renderer::partials::page::{PageOptions, render_page};
 
 pub fn render_project_pages(context: &RendererContext) -> Result<()> {
     let projects = context.data.projects.find_all_by_rank_and_name();

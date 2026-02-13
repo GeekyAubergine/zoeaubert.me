@@ -9,7 +9,6 @@ const REVIEW_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"- (.+)$").unwrap());
 const SCORE_AND_MAX_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d+)\/(\d+)").unwrap());
 const NON_LINK_TITLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*) \((.+)\)").unwrap());
 
-const SIMPLE_SEASON_NUMBER_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\(S(\d+)\)").unwrap());
 const NUMBERS_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d+").unwrap());
 
 #[derive(Debug, Clone, PartialEq, Eq)]

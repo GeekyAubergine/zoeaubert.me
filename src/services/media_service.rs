@@ -10,8 +10,7 @@ use url::Url;
 use crate::{
     domain::models::{
         image::{Image, SizedImage},
-        media::{MediaDimensions, MediaOrientation},
-        slug::Slug,
+        media::MediaDimensions,
     },
     error::ImageError,
     prelude::*,
@@ -62,7 +61,7 @@ impl MediaService {
         Ok(original_image)
     }
 
-    fn read_image_size(ctx: &ServiceContext, file: &CacheFile) -> Result<MediaDimensions> {
+    fn read_image_size(file: &CacheFile) -> Result<MediaDimensions> {
         let byes = file.read()?;
 
         match imagesize::blob_size(&byes) {
@@ -85,7 +84,7 @@ impl MediaService {
 
         // If we already have it, don't bother processing
         if file.exists()? {
-            let dimensions = Self::read_image_size(ctx, &file)?;
+            let dimensions = Self::read_image_size(&file)?;
 
             return Ok(SizedImage {
                 file: cdn_file.clone(),
@@ -104,7 +103,7 @@ impl MediaService {
 
         file.write(&resized_image_data)?;
 
-        ctx.cdn.upload_file(ctx, &file, &cdn_file)?;
+        ctx.cdn.upload_file(&file, &cdn_file)?;
 
         Ok(SizedImage {
             file: cdn_file.clone(),
@@ -135,9 +134,9 @@ impl MediaService {
         // If all exist, then don't process
         if original_file.exists()? && large_file.exists()? && small_file.exists()? {
             debug!("Image already processed [{:?}]", &url.to_string());
-            let original_size = Self::read_image_size(ctx, &original_file)?;
-            let large_size = Self::read_image_size(ctx, &large_file)?;
-            let small_size = Self::read_image_size(ctx, &small_file)?;
+            let original_size = Self::read_image_size(&original_file)?;
+            let large_size = Self::read_image_size(&large_file)?;
+            let small_size = Self::read_image_size(&small_file)?;
 
             return Ok(Image {
                 original: SizedImage {

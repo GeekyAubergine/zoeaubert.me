@@ -1,10 +1,9 @@
-use dotenvy_macro::dotenv;
 use serde::Deserialize;
 use tracing::info;
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
+    config::CONFIG,
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
     processors::tasks::{Task, run_tasks},
@@ -33,8 +32,6 @@ pub struct BricksetLoginResponse {
 pub struct BricksetSetImages {
     #[serde(rename = "imageURL")]
     image_url: Url,
-    #[serde(rename = "thumbnailURL")]
-    thumbnail_url: Url,
 }
 
 #[derive(Debug, Clone, Deserialize)]

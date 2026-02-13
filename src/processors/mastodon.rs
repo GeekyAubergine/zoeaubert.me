@@ -1,24 +1,26 @@
-use std::{collections::HashMap, path::Path, thread::sleep, time::Duration};
+use std::{path::Path, thread::sleep, time::Duration};
 
 use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use tracing::info;
 use url::Url;
 
 use crate::{
-    config::CONFIG, domain::models::{
+    config::CONFIG,
+    domain::models::{
         mastodon_post::{MastodonPost, MastodonPostNonSpoiler, MastodonPostSpoiler, MastodonPosts},
-        media::Media,
         tag::Tag,
-    }, prelude::*, processors::tasks::{Task, run_tasks}, services::{
+    },
+    prelude::*,
+    processors::tasks::{Task, run_tasks},
+    services::{
         ServiceContext,
         cdn_service::CdnFile,
         file_service::{FileService, ReadableFile, WritableFile},
         media_service::MediaService,
-    }
+    },
 };
 
 const FILE_NAME: &str = "mastodon_posts.json";
@@ -32,40 +34,18 @@ static TAGS_REGEX: Lazy<Regex> =
 static EMPTY_P_TAGS: Lazy<Regex> = Lazy::new(|| Regex::new(r#"<p>\s*</p>"#).unwrap());
 
 #[derive(Debug, Deserialize)]
-struct MastodonStatusMediaImageSizes {
-    width: u32,
-    height: u32,
-}
-
-#[derive(Debug, Deserialize)]
-struct MastodonStatusMediaImageMeta {
-    original: MastodonStatusMediaImageSizes,
-    small: MastodonStatusMediaImageSizes,
-}
-
-#[derive(Debug, Deserialize)]
 #[serde(tag = "type")]
 enum MastodonStatusMedia {
     #[serde(rename = "image")]
     Image {
         url: Url,
-        preview_url: Option<Url>,
         description: Option<String>,
-        meta: MastodonStatusMediaImageMeta,
-        blurhash: Option<String>,
     },
 }
 
 #[derive(Debug, Deserialize)]
 struct MastodonStatusApplication {
     name: String,
-    website: Option<Url>,
-}
-
-#[derive(Debug, Deserialize)]
-struct MastodonStatusTag {
-    name: String,
-    url: Url,
 }
 
 #[derive(Debug, Deserialize)]
@@ -75,13 +55,16 @@ struct MastodonStatus {
     created_at: DateTime<Utc>,
     content: String,
     media_attachments: Vec<MastodonStatusMedia>,
+    #[allow(unused)]
     reblogs_count: u32,
+    #[allow(unused)]
     favourites_count: u32,
+    #[allow(unused)]
     replies_count: u32,
     application: Option<MastodonStatusApplication>,
+    #[allow(unused)]
     visibility: Option<String>,
     spoiler_text: Option<String>,
-    tags: Vec<MastodonStatusTag>,
     edited_at: Option<DateTime<Utc>>,
 }
 
@@ -90,8 +73,7 @@ const MASTODON_PAGINATION_LIMIT: u32 = 40;
 static API_BASE_URL: Lazy<String> = Lazy::new(|| {
     format!(
         "https://social.lol/api/v1/accounts/{}/statuses?exclude_reblogs=true&exclude_replies=true&limit={}",
-        CONFIG.mastodon.account_id,
-        MASTODON_PAGINATION_LIMIT,
+        CONFIG.mastodon.account_id, MASTODON_PAGINATION_LIMIT,
     )
 });
 
@@ -171,7 +153,7 @@ impl Task for ProcessStatus {
             .map(|t| Tag::from_string(t))
             .collect();
 
-        let mut content = strip_tags(&self.status.content);
+        let content = strip_tags(&self.status.content);
 
         let mut post = match self.status.spoiler_text {
             None => MastodonPost::NonSpoiler(MastodonPostNonSpoiler::new(
@@ -195,13 +177,7 @@ impl Task for ProcessStatus {
 
         for attachment in self.status.media_attachments.iter() {
             match attachment {
-                MastodonStatusMedia::Image {
-                    url,
-                    preview_url,
-                    description,
-                    meta,
-                    blurhash,
-                } => {
+                MastodonStatusMedia::Image { url, description } => {
                     if let Some(description) = description {
                         let url_path = Path::new(url.path());
 
@@ -237,10 +213,7 @@ pub fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> {
 
     let mut posts: MastodonPosts = file.read_json_or_default()?;
 
-    if !ctx
-        .query_limiter
-        .can_query_within_hour(QUERY)?
-    {
+    if !ctx.query_limiter.can_query_within_hour(QUERY)? {
         return Ok(posts);
     }
 

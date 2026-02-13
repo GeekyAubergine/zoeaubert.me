@@ -1,37 +1,16 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use askama::Template;
-use chrono::{DateTime, Utc};
-use dircpy::copy_dir;
-use tokio::fs::copy;
-use tokio::try_join;
+use chrono::Utc;
 
 use crate::build_data::BUILD_DATE;
 use crate::domain::models::data::Data;
-use crate::domain::models::page::Page;
-use crate::domain::models::slug::Slug;
 
-// use crate::renderers::basic_pages::render_basic_pages;
-// use crate::renderers::formatters::format_date::FormatDate;
-
-use crate::error::FileSystemError;
 use crate::prelude::*;
-use crate::renderer::{new_rendering_context_from_data, render_pages, RendererContext};
-// use crate::renderers::{new_rendering_context_from_data, render_pages, RendererContext};
+use crate::renderer::{RendererContext, new_rendering_context_from_data, render_pages};
 use crate::services::file_service::{FileService, ReadableFile};
-use crate::services::ServiceContext;
-use crate::utils::paginator::paginate;
 
-use tracing::{error, info, instrument};
-
-use crate::{error::SiteBuildError, prelude::*};
-
-const COMPILED_ASSETS_DIR: &str = "./_assets";
-const ASSETS_DIR: &str = "./output/assets";
-
-const ROBOTS_INPUT_FILE: &str = "./assets/robots.txt";
-const ROBOTS_OUTPUT_FILE: &str = "./output/robots.txt";
+use tracing::{info, instrument};
 
 fn prepare_folders() -> Result<()> {
     Command::new("rm")
@@ -47,8 +26,8 @@ fn copy_assets() -> Result<()> {
     FileService::copy_dir(
         Path::new("./assets/fonts"),
         Path::new("./output/assets/fonts"),
-    );
-    FileService::copy_dir(Path::new("./assets/img"), Path::new("./output/assets/img"));
+    )?;
+    FileService::copy_dir(Path::new("./assets/img"), Path::new("./output/assets/img"))?;
 
     FileService::copy(
         Path::new("./assets/css/codestyle.css"),
@@ -84,7 +63,7 @@ fn read_disallowed_routes_from_robot_file() -> Result<Vec<String>> {
 }
 
 #[instrument(skip_all)]
-pub fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
+pub fn render_site(data: Data) -> Result<()> {
     info!("Rendering site");
 
     let start = Utc::now();
@@ -100,7 +79,11 @@ pub fn render_site(ctx: &ServiceContext, data: Data) -> Result<()> {
 
     let page_count = context.renderer.build_sitemap(&disallowed_routes)?;
 
-    info!("Rendering site | Pages {} [{}ms]", page_count, (Utc::now() - start).num_milliseconds());
+    info!(
+        "Rendering site | Pages {} [{}ms]",
+        page_count,
+        (Utc::now() - start).num_milliseconds()
+    );
 
     Ok(())
 }

@@ -2,14 +2,9 @@ use std::collections::HashMap;
 
 use chrono::Datelike;
 
-use crate::{
-    domain::{
-        models::{
-            albums::{album::Album, album_photo::AlbumPhoto},
-            slug::Slug,
-        },
-    },
-    prelude::Result,
+use crate::domain::models::{
+    albums::{album::Album, album_photo::AlbumPhoto},
+    slug::Slug,
 };
 
 pub mod album;

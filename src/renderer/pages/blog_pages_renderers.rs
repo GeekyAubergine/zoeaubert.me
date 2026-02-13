@@ -1,17 +1,15 @@
 use hypertext::prelude::*;
 
-use crate::domain::models::blog_post::{self, BlogPost};
+use crate::domain::models::blog_post::BlogPost;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
-use crate::renderer::formatters::format_date::FormatDate;
-use crate::renderer::formatters::format_markdown::FormatMarkdown;
+use crate::renderer::RendererContext;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
-use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
+use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::RendererContext;
 use crate::utils::paginator::paginate;
 
 const PAGINATION_SIZE: usize = 25;
@@ -42,10 +40,6 @@ pub fn render_blog_pages(context: &RendererContext) -> Result<()> {
 }
 
 pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
-    let title = maud! {
-        h2 class="title" { (&post.title) }
-    };
-
     maud! {
         li class="blog-post-list-item" {
             div class="title-and-date" {
@@ -60,11 +54,15 @@ pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     }
 }
 
-pub fn render_blog_posts_list_page(context: &RendererContext, posts: &Vec<&BlogPost>) -> Result<()> {
+pub fn render_blog_posts_list_page(
+    context: &RendererContext,
+    posts: &Vec<&BlogPost>,
+) -> Result<()> {
     let posts = posts
         .iter()
         .filter(|post| {
-            !post.tags
+            !post
+                .tags
                 .iter()
                 .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
         })
@@ -74,7 +72,7 @@ pub fn render_blog_posts_list_page(context: &RendererContext, posts: &Vec<&BlogP
 
     let page = Page::new(Slug::new("/blog"), Some("Blog".to_string()), None);
     for paginator_page in paginated {
-        let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
+        let page = Page::from_page_and_pagination_page(&page, &paginator_page);
 
         let slug = page.slug.clone();
 

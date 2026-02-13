@@ -1,16 +1,10 @@
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
-use url::Url;
 
-use crate::{
-    build_data::BUILD_DATE, renderer::formatters::format_date::FormatDate,
-    utils::paginator::PaginatorPage,
-};
+use crate::{build_data::BUILD_DATE, utils::paginator::PaginatorPage};
 
 use super::{
-    mastodon_post::MastodonPost,
-    media::Media,
-    site_config::{HeaderLink, PageImage, PageLinkGroup, SocialNetworkLink, SITE_CONFIG},
+    site_config::{HeaderLink, PageImage, PageLinkGroup, SITE_CONFIG, SocialNetworkLink},
     slug::Slug,
     tag::Tag,
 };
@@ -56,19 +50,7 @@ impl PagePaginationData {
         }
     }
 
-    pub fn from_slug_and_pagniator_page<'d, D>(
-        slug: &Slug,
-        page: &PaginatorPage<'d, D>,
-        entity_name: &str,
-    ) -> Self {
-        // let next = match page.has_next() {
-        //     true => Some(PagePaginationDataLink::new(
-        //         page.page_number + 1,
-        //         slug.append(&format!("page-{}", page.page_number + 1)),
-        //     )),
-        //     false => None,
-        // };
-
+    pub fn from_slug_and_pagniator_page<'d, D>(slug: &Slug, page: &PaginatorPage<'d, D>) -> Self {
         let prev = match page.page_number {
             2 => PagePaginationDataLink::new(page.page_number - 1, slug.clone()),
             _ => PagePaginationDataLink::new(
@@ -151,15 +133,11 @@ impl Page {
     pub fn from_page_and_pagination_page<'d, D>(
         page: &Self,
         paginator_page: &PaginatorPage<'d, D>,
-        entity_name: &str,
     ) -> Self {
         let mut page = page.clone();
 
-        let pagination = PagePaginationData::from_slug_and_pagniator_page(
-            &page.slug,
-            paginator_page,
-            entity_name,
-        );
+        let pagination =
+            PagePaginationData::from_slug_and_pagniator_page(&page.slug, paginator_page);
 
         page.page_pagination = Some(pagination);
 

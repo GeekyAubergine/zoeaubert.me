@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use tracing::{debug, info};
+use tracing::info;
 use url::Url;
 
 use crate::{
@@ -78,12 +78,7 @@ impl Task for ProcessBlogPost {
                     content.to_owned().to_owned(),
                 );
 
-                if let (Some(url), Some(alt), Some(width), Some(height)) = (
-                    front_matter.hero,
-                    front_matter.hero_alt,
-                    front_matter.hero_width,
-                    front_matter.hero_height,
-                ) {
+                if let (Some(url), Some(alt)) = (front_matter.hero, front_matter.hero_alt) {
                     let url: Url = url.parse().unwrap();
                     let cdn_file = CdnFile::from_str(&url.path());
 

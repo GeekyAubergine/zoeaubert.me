@@ -1,7 +1,5 @@
 use std::{fmt::Display, path::{Path, PathBuf}};
 
-use dotenvy_macro::dotenv;
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct CachePath {
     parent: String,

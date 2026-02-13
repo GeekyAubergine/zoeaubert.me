@@ -1,5 +1,3 @@
-use std::{collections::VecDeque, ops::Deref};
-
 use serde::{Deserialize, Serialize};
 use url::Url;
 
@@ -43,10 +41,6 @@ impl Slug {
     pub fn append(&self, suffix: &str) -> Self {
         let slug = format!("{}{}", self.0, suffix).replace("//", "/");
         Self::new(&slug)
-    }
-
-    pub fn as_link(&self) -> Link {
-        Link::Internal(&self.0)
     }
 }
 

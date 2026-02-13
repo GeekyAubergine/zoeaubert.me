@@ -1,14 +1,7 @@
-use crate::domain::models::media::{Media, MediaDimensions};
-use crate::prelude::*;
+use crate::domain::models::media::Media;
 use hypertext::prelude::*;
 
 use crate::domain::models::image::{Image, SizedImage};
-use crate::renderer::{TemplateRenderResult, render_template};
-
-pub struct RenderableImage<'l> {
-    image: &'l SizedImage,
-    description: &'l str,
-}
 
 fn render_image<'l>(image: &'l SizedImage, description: &'l str) -> impl Renderable + 'l {
     maud! {

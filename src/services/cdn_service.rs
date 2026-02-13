@@ -1,26 +1,20 @@
 use std::{
     collections::HashSet,
-    path::{Path, PathBuf},
-    process::exit,
+    path::PathBuf,
     sync::{Arc, RwLock},
 };
 
 use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
-use reqwest::{blocking::Body, blocking::ClientBuilder, header::ACCEPT};
+use reqwest::{blocking::ClientBuilder, header::ACCEPT};
 use serde::{Deserialize, Serialize};
-use tokio_util::codec::{BytesCodec, FramedRead};
-use tracing::{debug, info};
+use tracing::debug;
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
-    error::{CdnError, Error, FileSystemError, NetworkError},
+    config::CONFIG,
+    error::{CdnError, NetworkError},
     prelude::*,
-    services::{
-        ServiceContext,
-        file_service::{CacheFile, FileService, ReadableFile},
-    },
+    services::file_service::{CacheFile, FileService, ReadableFile},
 };
 
 fn make_cdn_api_url(path: &str) -> Url {
@@ -143,10 +137,7 @@ pub struct CdnService {
 impl CdnService {
     pub fn new() -> Self {
         let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert(
-            "AccessKey",
-            CONFIG.bunny_cdn.access_key.parse().unwrap(),
-        );
+        headers.insert("AccessKey", CONFIG.bunny_cdn.access_key.parse().unwrap());
         headers.insert(ACCEPT, "application/json".parse().unwrap());
 
         Self {
@@ -224,7 +215,7 @@ impl CdnService {
                 dbg!(cache);
             }
             Ok(None) => {}
-            Err(e) => {
+            Err(_) => {
                 // TODO log
             }
         };
@@ -237,12 +228,7 @@ impl CdnService {
             .is_some())
     }
 
-    pub fn upload_file(
-        &self,
-        ctx: &ServiceContext,
-        file: &CacheFile,
-        cdn_file: &CdnFile,
-    ) -> Result<()> {
+    pub fn upload_file(&self, file: &CacheFile, cdn_file: &CdnFile) -> Result<()> {
         if self.file_exists(cdn_file)? {
             return Ok(());
         }

@@ -1,22 +1,8 @@
-use std::collections::HashMap;
-
-use chrono::{DateTime, Utc};
 use once_cell::unsync::Lazy;
 use regex::Regex;
-use serde::{Deserialize, Serialize};
-use url::Url;
 
-use crate::domain::models::mastodon_post::MastodonPost;
 use crate::error::BookError;
 use crate::prelude::*;
-
-use crate::domain::models::{
-    image::Image, media::Media, micro_post::MicroPost, review::review_source::ReviewSource,
-    slug::Slug,
-};
-
-const REGEX_MICRO: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"^(.+) by (.+)+\s*(\d)/\d+ - (.+)$").unwrap());
 
 const REGEX_LEGACY_STYLE_AUTHOR_TITLE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\[(.*)\].*by (.*) 📚").unwrap());
@@ -36,11 +22,11 @@ impl BookReview {
 }
 
 fn parse_markdown_into_book_review(content: &str) -> Result<BookReview> {
-    if (content.starts_with("Finished") || content.starts_with("I finished")) {
+    if content.starts_with("Finished") || content.starts_with("I finished") {
         return parse_legacy_post(content);
     }
 
-    if (content.starts_with("<p>")) {
+    if content.starts_with("<p>") {
         return parse_mastodon_modern_post(content);
     }
 
@@ -58,7 +44,7 @@ fn parse_legacy_post(content: &str) -> Result<BookReview> {
         .filter(|line| !line.is_empty())
         .collect::<Vec<&str>>();
 
-    if let (Some(first_line), Some(second_line)) = (lines.get(0), lines.get(1)) {
+    if let Some(second_line) = lines.get(1) {
         let captures = REGEX_LEGACY_STYLE_AUTHOR_TITLE
             .captures(&content)
             .ok_or(BookError::unable_to_parse_book(content.to_string()))?;

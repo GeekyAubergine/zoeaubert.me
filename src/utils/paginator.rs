@@ -1,5 +1,3 @@
-use std::slice::Chunks;
-
 #[derive(Debug)]
 pub struct PaginatorPage<'d, D> {
     pub data: &'d [D],

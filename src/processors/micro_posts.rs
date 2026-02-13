@@ -1,12 +1,19 @@
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use tracing::{debug, info};
+use tracing::info;
 
 use crate::{
-    domain::models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag}, error::MicroPostError, prelude::*, processors::tasks::{Task, run_tasks}, services::{
-        ServiceContext, file_service::{ContentFile, FileService, ReadableFile}, media_service::MediaService
-    }, utils::date::parse_date
+    domain::models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
+    error::MicroPostError,
+    prelude::*,
+    processors::tasks::{Task, run_tasks},
+    services::{
+        ServiceContext,
+        file_service::{ContentFile, FileService, ReadableFile},
+        media_service::MediaService,
+    },
+    utils::date::parse_date,
 };
 const MICRO_POSTS_DIR: &str = "micros";
 
@@ -32,7 +39,7 @@ fn description_from_string(s: &str) -> Option<String> {
     let first_line = MARKDOWN_LINK_REGEX.replace_all(&first_line, "");
 
     if first_line.contains("<") {
-        let first_line = first_line.split('<').collect::<Vec<&str>>().join("");
+        first_line.split('<').collect::<Vec<&str>>().join("");
     }
 
     let sentences = first_line.split('.').collect::<Vec<&str>>();
@@ -75,7 +82,8 @@ impl Task for ProcessFile {
 
         let slug_date = date.format("%Y-%m-%d").to_string();
 
-        let file_name = self.file
+        let file_name = self
+            .file
             .as_path_buff()
             .file_name()
             .unwrap()
@@ -84,10 +92,15 @@ impl Task for ProcessFile {
 
         let slug = Slug::new(&format!("micros/{}/{}", slug_date, file_name));
 
-        let media = MediaService::find_images_in_markdown(ctx, &content, Some(date.clone()), Some(&slug.permalink_string()))?
-            .iter()
-            .map(|i| Media::from(i))
-            .collect::<Vec<Media>>();
+        let media = MediaService::find_images_in_markdown(
+            ctx,
+            &content,
+            Some(date.clone()),
+            Some(&slug.permalink_string()),
+        )?
+        .iter()
+        .map(|i| Media::from(i))
+        .collect::<Vec<Media>>();
 
         let tags = front_matter
             .tags
@@ -103,13 +116,17 @@ impl Task for ProcessFile {
     }
 }
 
-
 pub fn load_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
     info!("Processing Micro Posts");
 
     let files = FileService::content(MICRO_POSTS_DIR.into()).find_files_recursive("md")?;
 
-    let tasks = files.iter().map(|file| ProcessFile { file: FileService::content(file.into()) }).collect();
+    let tasks = files
+        .iter()
+        .map(|file| ProcessFile {
+            file: FileService::content(file.into()),
+        })
+        .collect();
 
     run_tasks(tasks, ctx)
 }

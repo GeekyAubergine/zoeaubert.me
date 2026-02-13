@@ -1,5 +1,3 @@
-use crate::prelude::Result;
-
 #[derive(Clone, Debug, Default)]
 pub struct SillyNames {
     pub silly_names: Vec<String>,

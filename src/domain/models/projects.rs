@@ -1,11 +1,8 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-use url::Url;
 
-use crate::prelude::Result;
-
-use super::{image::Image, slug::Slug};
+use super::image::Image;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Project {

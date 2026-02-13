@@ -1,19 +1,13 @@
 use hypertext::prelude::*;
 
-use crate::domain::models::blog_post::{self, BlogPost};
 use crate::domain::models::image::Image;
 use crate::domain::models::media::Media;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
-use crate::renderer::formatters::format_date::FormatDate;
-use crate::renderer::formatters::format_markdown::FormatMarkdown;
-use crate::renderer::partials::date::render_date;
-use crate::renderer::partials::md::{self, md};
-use crate::renderer::partials::page::{render_page, PageOptions, PageWidth};
-use crate::renderer::partials::tag::render_tags;
 use crate::renderer::RendererContext;
+use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::utils::paginator::paginate;
 
 const PAGINATION_SIZE: usize = 40;
@@ -33,12 +27,11 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
             TimelineEvent::Review(_) => None,
             TimelineEvent::GameAchievementUnlock(_) => None,
             TimelineEvent::Album(_) => None,
-            TimelineEvent::AlbumPhoto { album, photo } => Some(vec![photo.image.clone().into()]),
+            TimelineEvent::AlbumPhoto { photo, .. } => Some(vec![photo.image.clone().into()]),
         })
         .flatten()
         .filter_map(|media| match media {
             Media::Image(image) => Some(image),
-            _ => None,
         })
         .collect::<Vec<Image>>();
 
@@ -68,7 +61,7 @@ pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> R
 
     let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);
     for paginator_page in paginated {
-        let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Photos");
+        let page = Page::from_page_and_pagination_page(&page, &paginator_page);
 
         let slug = page.slug.clone();
 

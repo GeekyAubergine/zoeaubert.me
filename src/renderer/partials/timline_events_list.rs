@@ -4,31 +4,24 @@ use crate::domain::models::blog_post::BlogPost;
 use crate::domain::models::book::Book;
 use crate::domain::models::games::steam::{SteamGame, SteamGameAchievementUnlocked};
 use crate::domain::models::mastodon_post::MastodonPost;
-use crate::domain::models::media::{Media, MediaDimensions};
+use crate::domain::models::media::Media;
 use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::movie::Movie;
-use crate::domain::models::review::book_review::BookReview;
-use crate::domain::models::review::movie_review::MovieReview;
 use crate::domain::models::review::review_source::ReviewSource;
-use crate::domain::models::review::tv_show_review::TvShowReview;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
 use crate::domain::models::timeline_event::{
     TimelineEvent, TimelineEventGameAchievementUnlock, TimelineEventPost, TimelineEventReview,
 };
 use crate::domain::models::tv_show::TvShow;
-use crate::prelude::*;
 use crate::renderer::formatters::format_date::FormatDate;
-use crate::renderer::formatters::format_markdown::FormatMarkdown;
-use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{MarkdownMediaOption, md};
 use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
 use crate::renderer::partials::tag::render_tags;
 use chrono::{DateTime, Utc};
 use hypertext::prelude::*;
 
-use crate::domain::models::image::{Image, SizedImage};
-use crate::renderer::{TemplateRenderResult, render_template};
+use crate::domain::models::image::Image;
 
 pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Renderable + 'l {
     maud! {
@@ -41,9 +34,9 @@ pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Rend
                         TimelineEventPost::MastodonPost(post) => (render_mastodon_post(post)),
                     },
                     TimelineEvent::Review(review) => @match review {
-                        TimelineEventReview::BookReview { review, book, source } => (render_book_review(review, book, source)),
-                        TimelineEventReview::MovieReview { review, movie, source } => (render_movie_review(review, movie, source)),
-                        TimelineEventReview::TvShowReview { review, tv_show, source } => (render_tv_show_review(review, tv_show, source)),
+                        TimelineEventReview::BookReview { book, source, .. } => (render_book_review(book, source)),
+                        TimelineEventReview::MovieReview { movie, source, .. } => (render_movie_review(movie, source)),
+                        TimelineEventReview::TvShowReview { tv_show, source, .. } => (render_tv_show_review(tv_show, source)),
                     },
                     TimelineEvent::GameAchievementUnlock(achievement) => @match achievement {
                         TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
@@ -177,11 +170,7 @@ pub fn render_mastodon_post<'l>(post: &'l MastodonPost) -> impl Renderable + 'l 
     )
 }
 
-pub fn render_book_review<'l>(
-    review: &'l BookReview,
-    book: &'l Book,
-    source: &'l ReviewSource,
-) -> impl Renderable + 'l {
+pub fn render_book_review<'l>(book: &'l Book, source: &'l ReviewSource) -> impl Renderable + 'l {
     let content = maud! {
         div class="prose" {
             (md(&source.content(), MarkdownMediaOption::NoMedia))
@@ -198,11 +187,7 @@ pub fn render_book_review<'l>(
     )
 }
 
-pub fn render_movie_review<'l>(
-    review: &'l MovieReview,
-    movie: &'l Movie,
-    source: &'l ReviewSource,
-) -> impl Renderable + 'l {
+pub fn render_movie_review<'l>(movie: &'l Movie, source: &'l ReviewSource) -> impl Renderable + 'l {
     let content = maud! {
         div class="prose" {
             (md(&source.content(), MarkdownMediaOption::NoMedia))
@@ -220,7 +205,6 @@ pub fn render_movie_review<'l>(
 }
 
 pub fn render_tv_show_review<'l>(
-    review: &'l TvShowReview,
     tv_show: &'l TvShow,
     source: &'l ReviewSource,
 ) -> impl Renderable + 'l {
@@ -275,7 +259,13 @@ pub fn render_album<'l>(album: &'l Album) -> impl Renderable + 'l {
         album.slug.clone(),
         &album.date,
         content,
-        Some(album.cover_images().iter().map(|i| i.clone().into()).collect()),
+        Some(
+            album
+                .cover_images()
+                .iter()
+                .map(|i| i.clone().into())
+                .collect(),
+        ),
         None,
         None,
     )

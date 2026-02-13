@@ -1,21 +1,23 @@
-use dotenvy_macro::dotenv;
 use serde::Deserialize;
-use tracing::{field::debug, info};
+use tracing::info;
 use url::Url;
 
 use crate::{
-    config::CONFIG, domain::models::{
+    config::CONFIG,
+    domain::models::{
         albums::{Albums, album::Album, album_photo::AlbumPhoto},
-        image::Image,
-        media::{MediaDimensions, MediaOrientation},
         slug::Slug,
         tag::Tag,
-    }, error::AlbumError, prelude::*, processors::tasks::{Task, run_tasks}, services::{
+    },
+    prelude::*,
+    processors::tasks::{Task, run_tasks},
+    services::{
         ServiceContext,
         cdn_service::CdnFile,
         file_service::{ContentFile, FileService, ReadableFile},
         media_service::MediaService,
-    }, utils::date::parse_date
+    },
+    utils::date::parse_date,
 };
 
 const ALBUMS_POSTS_DIR: &str = "albums";

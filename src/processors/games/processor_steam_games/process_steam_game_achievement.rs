@@ -1,29 +1,17 @@
-use std::{collections::HashMap, path::Path, time::Duration};
-
-use chrono::{DateTime, Utc};
-use dotenvy_macro::dotenv;
+use chrono::DateTime;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, info, instrument, warn};
+use tracing::info;
 use url::Url;
 
 use crate::{
-    config::{CONFIG, Config},
-    domain::models::{
-        games::steam::{
-            SteamGame, SteamGameAchievement, SteamGameAchievementLocked,
-            SteamGameAchievementUnlocked, SteamGameWithAchievements, SteamGames,
-        },
-        image::Image,
-        slug::Slug,
+    config::CONFIG,
+    domain::models::games::steam::{
+        SteamGame, SteamGameAchievement, SteamGameAchievementLocked, SteamGameAchievementUnlocked,
+        SteamGameWithAchievements,
     },
     prelude::*,
     processors::tasks::{Task, run_tasks},
-    services::{
-        ServiceContext,
-        cdn_service::CdnFile,
-        file_service::{FileService, ReadableFile, WritableFile},
-        media_service::MediaService,
-    },
+    services::{ServiceContext, cdn_service::CdnFile, media_service::MediaService},
 };
 
 const STEAM_PLAYER_ACHEIVEMENTS_URL: &str =
@@ -61,8 +49,6 @@ pub struct SteamGameDataAvaialableGameStats {
 #[serde(untagged)]
 enum SteamAvailableGameSchemaResponseWrapper {
     WithGame {
-        #[serde(rename = "gameName")]
-        game_name: String,
         #[serde(rename = "availableGameStats")]
         available_game_stats: SteamGameDataAvaialableGameStats,
     },

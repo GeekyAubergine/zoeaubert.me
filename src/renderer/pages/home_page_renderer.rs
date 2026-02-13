@@ -1,26 +1,13 @@
-use std::slice::Iter;
-use std::str::FromStr;
-
-use askama::Template;
-use hypertext::Raw;
-use hypertext::prelude::*;
-use maud::PreEscaped;
-use tracing_subscriber::fmt::format;
-use url::Url;
-
-use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
-use crate::domain::models::slug::Link;
 use crate::domain::models::slug::Slug;
-use crate::domain::models::tag::Tag;
 use crate::domain::models::timeline_event::TimelineEvent;
 use crate::domain::models::timeline_event::TimelineEventPost;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
 use crate::prelude::*;
+use hypertext::prelude::*;
 
 use crate::domain::models::media::Media;
 use crate::renderer::RendererContext;
-use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::javascript::home_page_scripts;
@@ -28,8 +15,6 @@ use crate::renderer::partials::md::MarkdownMediaOption;
 use crate::renderer::partials::md::md;
 use crate::renderer::partials::page::PageOptions;
 use crate::renderer::partials::page::render_page;
-use crate::renderer::partials::tag::render_tags;
-use crate::services::file_service::ContentFile;
 
 const BLOG_POSTS_COUNT: usize = 3;
 const PHOTOS_COUNT: usize = 10;
@@ -119,7 +104,6 @@ fn photos<'l>(context: &'l RendererContext) -> impl Renderable + 'l {
         .flatten()
         .filter_map(|media| match media {
             Media::Image(image) => Some(image),
-            _ => None,
         })
         .take(PHOTOS_COUNT)
         .collect::<Vec<&Image>>();

@@ -18,7 +18,7 @@ pub fn render_games_pages(context: &RendererContext) -> Result<()> {
     render_activity_pages(context)?;
 
     for game in context.data.games.find_by_most_recently_played() {
-        render_game_page(context, &game);
+        render_game_page(context, &game)?;
     }
 
     Ok(())
@@ -118,9 +118,11 @@ fn render_games_list_page(context: &RendererContext) -> Result<()> {
     context.renderer.render_page(&slug, &renderer, None)
 }
 
-
 fn render_games_most_achieved_list_page(context: &RendererContext) -> Result<()> {
-    let games = context.data.games.find_by_most_highest_achievement_unlocked_percentage();
+    let games = context
+        .data
+        .games
+        .find_by_most_highest_achievement_unlocked_percentage();
 
     let content = maud! {
         section {
@@ -230,9 +232,13 @@ pub fn render_activity_pages(context: &RendererContext) -> Result<()> {
 
     let paginated = paginate(&posts, PAGINATION_SIZE);
 
-    let page = Page::new(Slug::new("/interests/games/activity/"), Some("Gaming Activity".to_string()), None);
+    let page = Page::new(
+        Slug::new("/interests/games/activity/"),
+        Some("Gaming Activity".to_string()),
+        None,
+    );
     for paginator_page in paginated {
-        let page = Page::from_page_and_pagination_page(&page, &paginator_page, "Posts");
+        let page = Page::from_page_and_pagination_page(&page, &paginator_page);
 
         let slug = page.slug.clone();
 

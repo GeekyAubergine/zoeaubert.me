@@ -1,32 +1,20 @@
-#![allow(unused)]
-
+pub mod commands;
+pub mod config;
 pub mod domain;
 pub mod error;
 pub mod prelude;
 pub mod processors;
 pub mod renderer;
-pub mod commands;
 pub mod utils;
-pub mod config;
 
 pub mod services;
 
-use std::{
-    hash::{DefaultHasher, Hash, Hasher},
-    path::Path,
-    process::Command,
-    time::Duration,
-};
-
 use build_data::BUILD_DATE;
 use clap::{Parser, Subcommand};
-use dircpy::copy_dir;
-use dotenvy_macro::dotenv;
-use error::FileSystemError;
 use commands::render_site::render_site;
-use tracing::{info, Level};
+use tracing::info;
 use tracing_appender::rolling;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::{prelude::*, processors::process_data, services::ServiceContext};
 
@@ -83,7 +71,7 @@ fn main() -> Result<()> {
         Commands::Build => {
             info!("Build date: {}", BUILD_DATE);
             let data = process_data(&ctx)?;
-            render_site(&ctx, data)?;
+            render_site(data)?;
         }
     }
 

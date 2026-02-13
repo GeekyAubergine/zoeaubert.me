@@ -1,18 +1,17 @@
 use crate::{
-    domain::models::{page::Page, slug::Slug},
-    error::{Error, FileSystemError, TemplateError},
+    domain::models::slug::Slug,
+    error::{Error, TemplateError},
     prelude::*,
-    services::{file_service::WritableFile, ServiceContext},
+    services::file_service::WritableFile,
 };
 
 use askama::Template;
 use chrono::{DateTime, Utc};
 use hypertext::{Renderable, Rendered};
-use rayon::iter::ParallelBridge;
 use tracing::debug;
 
 use std::{
-    path::{Path, PathBuf},
+    path::PathBuf,
     sync::{Arc, RwLock},
 };
 

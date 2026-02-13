@@ -1,5 +1,5 @@
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
-use crate::domain::models::{image::Image, review::book_review::BookReview};
+use crate::domain::models::{image::Image};
 use crate::prelude::*;
 use hypertext::prelude::*;
 
@@ -20,8 +20,6 @@ struct InterestElement<'l> {
 }
 
 pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
-    let projects = context.data.projects.find_all_by_rank_and_name();
-
     let page = Page::new(Slug::new("/interests"), Some("Interests".to_string()), None);
 
     let slug = page.slug.clone();

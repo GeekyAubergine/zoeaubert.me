@@ -1,4 +1,4 @@
-use crate::{domain::models::tag::Tag, prelude::*};
+use crate::{domain::models::tag::Tag};
 use hypertext::prelude::*;
 
 pub fn render_tags<'l>(tags: &'l Vec<Tag>, limit: Option<usize>) -> impl Renderable + 'l {
