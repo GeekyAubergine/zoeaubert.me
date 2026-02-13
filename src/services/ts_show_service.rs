@@ -1,4 +1,3 @@
-use std::sync::{Arc, RwLock};
 
 use dashmap::DashMap;
 use htmlentity::entity::{ICodedDataTrait, decode};

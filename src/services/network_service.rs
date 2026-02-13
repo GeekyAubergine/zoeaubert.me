@@ -1,28 +1,17 @@
-use std::{
-    num::{NonZeroU16, NonZeroU32},
-    sync::Arc,
-    time::Duration,
-};
+use std::{num::NonZeroU32, sync::Arc, time::Duration};
 
 use dashmap::DashMap;
 use governor::{
     Jitter, Quota, RateLimiter,
     clock::DefaultClock,
-    state::{InMemoryState, NotKeyed, keyed::DashMapStateStore},
+    state::{InMemoryState, NotKeyed},
 };
-use reqwest::{
-    Method,
-    blocking::{Client, Response},
-};
+use reqwest::blocking::{Client, Response};
 use serde::de::DeserializeOwned;
-use tracing::{debug, instrument};
+use tracing::instrument;
 use url::Url;
 
-use crate::{
-    config::CONFIG, domain::models::network_response::{
-        NetworkResponse, NetworkResponseBody, NetworkResponseBodyJson, NetworkResponseBytes,
-    }, error::NetworkError, prelude::*
-};
+use crate::{ config::CONFIG, error::NetworkError, prelude::*};
 
 const ALLOW_LIST: [&str; 1] = [CONFIG.cdn_url];
 

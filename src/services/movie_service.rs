@@ -50,10 +50,7 @@ struct TmdbSearchResponseSingle {
 
 #[derive(Debug, Clone, Deserialize)]
 struct TmdbSearchResponse {
-    page: u32,
     results: Vec<TmdbSearchResponseSingle>,
-    total_pages: u32,
-    total_results: u32,
 }
 
 #[derive(Debug)]

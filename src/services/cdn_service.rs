@@ -168,29 +168,6 @@ impl CdnService {
         }
     }
 
-    fn files_names_in_folder(&self, path: &CdnFile) -> Result<Vec<String>> {
-        debug!(
-            "CdnService | Querying files in folder: [{}]",
-            path.as_string(),
-        );
-
-        match self.query_file_directory(&path) {
-            Ok(Some(files)) => {
-                let mut cache = self.existing_folders_cache.write().unwrap();
-
-                for file in files.iter() {
-                    cache.insert(file.into());
-                }
-
-                dbg!(cache);
-
-                Ok(files.iter().map(|f| f.object_name.clone()).collect())
-            }
-            Ok(None) => Ok(vec![]),
-            Err(e) => Err(e),
-        }
-    }
-
     fn file_exists(&self, file: &CdnFile) -> Result<bool> {
         debug!("CdnService | Does file exist");
 
