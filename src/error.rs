@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::{services::file_service::ContentFile};
+use crate::services::file_service::ContentFile;
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

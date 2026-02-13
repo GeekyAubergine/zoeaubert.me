@@ -1,5 +1,6 @@
 use std::{
-    fs::read_dir, path::{Path, PathBuf}
+    fs::read_dir,
+    path::{Path, PathBuf},
 };
 
 use dircpy::copy_dir;
@@ -165,9 +166,10 @@ fn find_files_recursive(path: &Path, extension: &str) -> Result<Vec<String>> {
                 files.push(child);
             }
         } else if let Some(ext) = path.extension()
-            && ext == extension {
-                files.push(path.to_str().unwrap().to_string());
-            }
+            && ext == extension
+        {
+            files.push(path.to_str().unwrap().to_string());
+        }
     }
 
     Ok(files)

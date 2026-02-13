@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use steam::SteamGameWithAchievements;
 
-use crate::{domain::models::slug::Slug};
+use crate::domain::models::slug::Slug;
 
 use super::image::Image;
 

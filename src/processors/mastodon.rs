@@ -137,9 +137,10 @@ impl Task for ProcessStatus {
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
         if let Some(application) = &self.status.application
-            && APPLICATIONS_TO_IGNORE.contains(&application.name.as_str()) {
-                return Ok(None);
-            }
+            && APPLICATIONS_TO_IGNORE.contains(&application.name.as_str())
+        {
+            return Ok(None);
+        }
 
         if self.status.content.contains(SELF_URL) {
             return Ok(None);

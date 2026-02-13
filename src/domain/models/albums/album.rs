@@ -38,8 +38,6 @@ impl Album {
     pub fn cover_images(&self) -> Vec<&Image> {
         let cover_photos = cover_photos_for_album(self);
 
-        
-
         cover_photos
             .into_iter()
             .map(|photo| &photo.image)
@@ -75,18 +73,20 @@ impl Album {
 
     pub fn previous_photo(&self, photo: &AlbumPhoto) -> Option<&AlbumPhoto> {
         if let Some(index) = self.index_of_photo(photo)
-            && index > 0 {
-                return Some(&self.photos[index - 1]);
-            }
+            && index > 0
+        {
+            return Some(&self.photos[index - 1]);
+        }
 
         None
     }
 
     pub fn next_photo(&self, photo: &AlbumPhoto) -> Option<&AlbumPhoto> {
         if let Some(index) = self.index_of_photo(photo)
-            && index < self.photos.len() - 1 {
-                return Some(&self.photos[index + 1]);
-            }
+            && index < self.photos.len() - 1
+        {
+            return Some(&self.photos[index + 1]);
+        }
 
         None
     }

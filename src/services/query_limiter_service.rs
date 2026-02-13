@@ -31,17 +31,12 @@ impl QueryLimitingService {
         let file = FileService::archive(PathBuf::from(FILE_NAME));
         let data = file.read_json_or_default()?;
 
-        Ok(Self {
-            file,
-            data,
-        })
+        Ok(Self { file, data })
     }
 
     pub fn can_query(&self, query: &str, no_query_duration: &Duration) -> Result<bool> {
         let can_query = match self.data.queries.get(query) {
-            Some(last_queried) => {
-                *last_queried + *no_query_duration <= Utc::now()
-            }
+            Some(last_queried) => *last_queried + *no_query_duration <= Utc::now(),
             None => true,
         };
 

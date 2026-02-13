@@ -53,7 +53,10 @@ fn compile_css(build_date: &str) {
         }
     }
 
-    compile_tailwind(TAILWIND_INPUT_FILE, &format!("./_assets/css/styles-{}.css", build_date));
+    compile_tailwind(
+        TAILWIND_INPUT_FILE,
+        &format!("./_assets/css/styles-{}.css", build_date),
+    );
 }
 
 fn compile_tailwind(input: &str, output: &str) {

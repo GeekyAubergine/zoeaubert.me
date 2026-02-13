@@ -22,10 +22,7 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
     for event in events {
         if let Some(tags) = event.tags() {
             for tag in tags {
-                events_by_tags
-                    .entry(tag)
-                    .or_default()
-                    .push(event);
+                events_by_tags.entry(tag).or_default().push(event);
             }
         }
     }

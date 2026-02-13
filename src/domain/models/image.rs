@@ -4,9 +4,7 @@ use url::Url;
 
 use crate::services::cdn_service::CdnFile;
 
-use super::{
-    media::{ MediaDimensions, MediaOrientation},
-};
+use super::media::{MediaDimensions, MediaOrientation};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct SizedImage {
@@ -23,7 +21,7 @@ pub struct RenderableImage<'l> {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum ImageLinkOnClick {
-    InternalSlug
+    InternalSlug,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]

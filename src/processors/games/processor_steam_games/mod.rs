@@ -116,9 +116,10 @@ fn process_game(
     stored_game: Option<&SteamGameWithAchievements>,
 ) -> Result<SteamGameWithAchievements> {
     if let Some(stored_game) = stored_game
-        && steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.game.last_played {
-            return Ok(stored_game.clone());
-        }
+        && steam_last_played_to_datetime(game.rtime_last_played) <= stored_game.game.last_played
+    {
+        return Ok(stored_game.clone());
+    }
 
     info!("Processing game [{}]", game.name);
 
