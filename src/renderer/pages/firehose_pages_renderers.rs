@@ -6,7 +6,7 @@ use crate::domain::models::timeline_event::TimelineEvent;
 use crate::prelude::*;
 use crate::renderer::RendererContext;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::partials::timline_events_list::render_timline_events_list;
+use crate::renderer::partials::timeline_events_list::render_timeline_events_list;
 use crate::utils::paginator::paginate;
 
 const PAGINATION_SIZE: usize = 25;
@@ -34,7 +34,7 @@ pub fn render_firehose_pages(context: &RendererContext) -> Result<()> {
 
         let slug = page.slug.clone();
 
-        let content = render_timline_events_list(paginator_page.data);
+        let content = render_timeline_events_list(paginator_page.data);
 
         let options = PageOptions::new().with_main_class("firehose-page");
 

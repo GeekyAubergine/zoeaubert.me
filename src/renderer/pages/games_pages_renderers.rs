@@ -8,7 +8,7 @@ use crate::prelude::*;
 use crate::renderer::formatters::format_number::FormatNumber;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::partials::timline_events_list::render_timline_events_list;
+use crate::renderer::partials::timeline_events_list::render_timeline_events_list;
 use crate::utils::paginator::paginate;
 use hypertext::prelude::*;
 
@@ -239,7 +239,7 @@ pub fn render_activity_pages(context: &RendererContext) -> Result<()> {
 
         let slug = page.slug.clone();
 
-        let content = render_timline_events_list(paginator_page.data);
+        let content = render_timeline_events_list(paginator_page.data);
 
         let options = PageOptions::new().with_main_class("gaming-activity-page");
 

@@ -3,7 +3,7 @@ use askama::Template;
 use crate::domain::models::data::Data;
 use crate::prelude::*;
 use crate::renderer::feeds::render_feeds;
-use crate::renderer::pages::albums_pages_renderer::render_alubms_pages;
+use crate::renderer::pages::albums_pages_renderer::render_albums_pages;
 use crate::renderer::pages::blog_pages_renderers::render_blog_pages;
 use crate::renderer::pages::book_review_pages_renderers::render_book_review_pages;
 use crate::renderer::pages::credits_renderer::render_credits_pages;
@@ -69,7 +69,7 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_support_page(context)?;
     render_referrals_page(context)?;
     render_feeds_page(context)?;
-    render_alubms_pages(context)?;
+    render_albums_pages(context)?;
     render_feeds(context)?;
     render_404_page(context)?;
     render_credits_pages(context)?;

@@ -14,7 +14,7 @@ use crate::{
     },
 };
 
-pub fn render_alubms_pages(context: &RendererContext) -> Result<()> {
+pub fn render_albums_pages(context: &RendererContext) -> Result<()> {
     render_alubms_list_page(context)?;
 
     let albums = context.data.albums.find_all_by_date();

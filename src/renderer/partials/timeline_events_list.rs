@@ -23,7 +23,7 @@ use hypertext::prelude::*;
 
 use crate::domain::models::image::Image;
 
-pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Renderable + 'l {
+pub fn render_timeline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Renderable + 'l {
     maud! {
         ul class="timeline-events-list" {
             @for event in events {
