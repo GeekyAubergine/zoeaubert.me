@@ -8,6 +8,9 @@ pub trait Task: Send {
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output>;
 }
 
+// Some tasks are IO blocking, mostly through networking
+// I considered splitting them out the but most of the tasks IO bound tasks are limited by query limiters anyway
+// so in practice so few occur it's not work splitting out at this time
 pub fn run_tasks<T: Task>(tasks: Vec<T>, ctx: &ServiceContext) -> Result<Vec<T::Output>> {
     tasks
         .into_iter()
