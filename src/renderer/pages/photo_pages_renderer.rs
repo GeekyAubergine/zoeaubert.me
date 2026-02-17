@@ -67,8 +67,8 @@ pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> R
 
         let content = maud! {
             ul class="photos-list" {
-                @for post in paginator_page.data {
-                    (photo(post))
+                @for post in &paginator_page.data {
+                    (photo(&post))
                 }
             }
         };

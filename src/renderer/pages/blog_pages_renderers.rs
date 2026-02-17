@@ -1,23 +1,24 @@
 use hypertext::prelude::*;
 
 use crate::domain::models::blog_post::BlogPost;
+use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
-use crate::renderer::RendererContext;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::renderer::partials::tag::render_tags;
-use crate::utils::paginator::paginate;
+use crate::renderer::{RenderQueue, RenderTask};
+use crate::services::page_renderer::PageRenderer;
+use crate::utils::paginator::{PaginatorPage, paginate};
 
 const PAGINATION_SIZE: usize = 25;
 const NOTES_BLOG_POST_TO_IGNORE: &str = "MonthlyNotes";
 
-pub fn render_blog_pages(context: &RendererContext) -> Result<()> {
-    let posts = context
-        .data
+pub fn render_blog_pages<'d>(data: &'d Data, render_queue: &mut RenderQueue<'d>) {
+    let posts = data
         .timeline_events
         .all_by_date()
         .iter()
@@ -29,12 +30,20 @@ pub fn render_blog_pages(context: &RendererContext) -> Result<()> {
         .collect::<Vec<&BlogPost>>();
 
     for post in &posts {
-        render_blog_post_page(context, post)?;
+        render_queue.add(RenderBlogPostPageTask { post });
     }
 
-    render_blog_posts_list_page(context, posts)?;
+    let posts = posts
+        .into_iter()
+        .filter(|post| {
+            !post
+                .tags
+                .iter()
+                .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
+        })
+        .collect::<Vec<&BlogPost>>();
 
-    Ok(())
+    render_blog_posts_list_pages(posts, render_queue);
 }
 
 pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
@@ -52,28 +61,32 @@ pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
     }
 }
 
-pub fn render_blog_posts_list_page(context: &RendererContext, posts: Vec<&BlogPost>) -> Result<()> {
-    let posts = posts
-        .into_iter()
-        .filter(|post| {
-            !post
-                .tags
-                .iter()
-                .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
-        })
-        .collect::<Vec<&BlogPost>>();
-
+pub fn render_blog_posts_list_pages<'b>(
+    posts: Vec<&'b BlogPost>,
+    render_queue: &mut RenderQueue<'b>,
+) {
     let paginated = paginate(&posts, PAGINATION_SIZE);
 
-    let page = Page::new(Slug::new("/blog"), Some("Blog".to_string()), None);
     for paginator_page in paginated {
-        let page = Page::from_page_and_pagination_page(&page, &paginator_page);
+        render_queue.add(RenderBlogPostListPaginatedPageTask { paginator_page });
+    }
+}
+
+struct RenderBlogPostListPaginatedPageTask<'p> {
+    paginator_page: PaginatorPage<&'p BlogPost>,
+}
+
+impl<'p> RenderTask for RenderBlogPostListPaginatedPageTask<'p> {
+    fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()> {
+        let page = Page::new(Slug::new("/blog"), Some("Blog".to_string()), None);
+
+        let page = Page::from_page_and_pagination_page(&page, &self.paginator_page);
 
         let slug = page.slug.clone();
 
         let content = maud! {
             ul class="blog-post-list" {
-                @for post in paginator_page.data {
+                @for post in &self.paginator_page.data {
                     (blog_post_list_item(post))
                 }
             }
@@ -81,35 +94,38 @@ pub fn render_blog_posts_list_page(context: &RendererContext, posts: Vec<&BlogPo
 
         let options = PageOptions::new().with_main_class("blog-list-page");
 
-        let renderer = render_page(&page, &options, &content, maud! {});
+        let rendered = render_page(&page, &options, &content, maud! {});
 
-        context.renderer.render_page(&slug, &renderer, None)?;
+        renderer.render_page(&slug, &rendered, None)
     }
-
-    Ok(())
 }
 
-pub fn render_blog_post_page(context: &RendererContext, post: &BlogPost) -> Result<()> {
-    let content = maud! {
-        article {
-            (md(&post.content, md::MarkdownMediaOption::WithMedia))
-        }
-    };
+struct RenderBlogPostPageTask<'p> {
+    post: &'p BlogPost,
+}
 
-    let options = PageOptions::new().with_main_class("blog-post-page");
+impl<'p> RenderTask for RenderBlogPostPageTask<'p> {
+    fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()> {
+        let post = self.post;
+        let content = maud! {
+            article {
+                (md(&post.content, md::MarkdownMediaOption::WithMedia))
+            }
+        };
 
-    let page = Page::new(
-        post.slug.clone(),
-        Some(post.title.clone()),
-        Some(post.description.clone()),
-    )
-    .with_date(post.date)
-    .with_tags(post.tags.clone());
-    // .with_image(post.hero_image); TODO
+        let options = PageOptions::new().with_main_class("blog-post-page");
 
-    let rendered = render_page(&page, &options, &content, maud! {});
+        let page = Page::new(
+            post.slug.clone(),
+            Some(post.title.clone()),
+            Some(post.description.clone()),
+        )
+        .with_date(post.date)
+        .with_tags(post.tags.clone());
+        // .with_image(post.hero_image); TODO
 
-    context
-        .renderer
-        .render_page(&post.slug, &rendered, Some(post.date))
+        let rendered = render_page(&page, &options, &content, maud! {});
+
+        renderer.render_page(&post.slug, &rendered, Some(post.date))
+    }
 }

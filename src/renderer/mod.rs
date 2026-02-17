@@ -1,4 +1,7 @@
+use std::sync::Arc;
+
 use askama::Template;
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use crate::domain::models::data::Data;
 use crate::prelude::*;
@@ -49,8 +52,6 @@ pub fn new_rendering_context_from_data(data: Data) -> Result<RendererContext> {
 }
 
 pub fn render_pages(context: &RendererContext) -> Result<()> {
-    render_home_page(context)?;
-    render_blog_pages(context)?;
     render_micro_post_pages(context)?;
     render_mastodon_pages(context)?;
     render_photo_pages(context)?;
@@ -74,6 +75,17 @@ pub fn render_pages(context: &RendererContext) -> Result<()> {
     render_404_page(context)?;
     render_credits_pages(context)?;
 
+    let mut queue = RenderQueue::new();
+
+    render_home_page(&context.data, &mut queue);
+    render_blog_pages(&context.data, &mut queue);
+
+    queue
+        .tasks
+        .into_iter()
+        .par_bridge()
+        .try_for_each(|task| task.render(&context.renderer))?;
+
     Ok(())
 }
 
@@ -81,4 +93,22 @@ pub type TemplateRenderResult = Result<String>;
 
 pub fn render_template<T: Template>(template: T) -> TemplateRenderResult {
     template.render().map_err(TemplateError::render_error)
+}
+
+pub trait RenderTask: Send {
+    fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()>;
+}
+
+pub struct RenderQueue<'l> {
+    tasks: Vec<Box<dyn RenderTask + 'l>>,
+}
+
+impl<'l> RenderQueue<'l> {
+    fn new() -> Self {
+        Self { tasks: vec![] }
+    }
+
+    pub fn add(&mut self, task: impl RenderTask + 'l) {
+        self.tasks.push(Box::new(task));
+    }
 }

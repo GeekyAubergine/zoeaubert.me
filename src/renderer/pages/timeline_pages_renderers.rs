@@ -34,7 +34,7 @@ pub fn render_timeline_pages(context: &RendererContext) -> Result<()> {
 
         let slug = page.slug.clone();
 
-        let content = render_timeline_events_list(paginator_page.data);
+        let content = render_timeline_events_list(&paginator_page.data);
 
         let options = PageOptions::new().with_main_class("timeline-page");
 
