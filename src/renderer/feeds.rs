@@ -3,18 +3,28 @@ use askama::Template;
 use crate::{
     domain::models::{
         blog_post::BlogPost,
+        data::Data,
         site_config::SITE_CONFIG,
         timeline_event::{TimelineEvent, TimelineEventPost},
     },
     prelude::*,
-    renderer::RendererContext,
+    renderer::{RenderTasks, RenderTask},
 };
 
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
 use crate::renderer::formatters::format_relative_to_absolute_urls::FormatRelativeToAbsoluteUrls;
 
-pub fn render_feeds(context: &RendererContext) -> Result<()> {
-    render_blog_post_feed_xml(context)
+pub fn render_feeds<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    let blog_posts = data
+        .timeline_events
+        .blog_posts_by_date()
+        .collect::<Vec<&BlogPost>>();
+
+    tasks.add(RenderBlogPostXmlPageTask { blog_posts });
+}
+
+struct RenderBlogPostXmlPageTask<'l> {
+    blog_posts: Vec<&'l BlogPost>,
 }
 
 #[derive(Template)]
@@ -25,39 +35,30 @@ struct BlogPostXmlTemplate<'t> {
     blog_posts: &'t Vec<&'t BlogPost>,
 }
 
-fn render_blog_post_feed_xml(context: &RendererContext) -> Result<()> {
-    let blog_posts = context
-        .data
-        .timeline_events
-        .all_by_date()
-        .iter()
-        .filter_map(|event| match event {
-            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => Some(post),
-            _ => None,
-        })
-        .map(|p| p.as_ref())
-        .collect::<Vec<&BlogPost>>();
+impl<'l> RenderTask for RenderBlogPostXmlPageTask<'l> {
+    fn render(
+        self: Box<Self>,
+        renderer: &crate::services::page_renderer::PageRenderer,
+    ) -> Result<()> {
+        let template = BlogPostXmlTemplate {
+            site_description: SITE_CONFIG.description.clone(),
+            feed_permalnk: format!("{}/feeds/blog-rss.xml", SITE_CONFIG.url),
+            blog_posts: &self.blog_posts,
+        };
 
-    let template = BlogPostXmlTemplate {
-        site_description: SITE_CONFIG.description.clone(),
-        feed_permalnk: format!("{}/feeds/blog-rss.xml", SITE_CONFIG.url),
-        blog_posts: &blog_posts,
-    };
+        let rendered = template.render().unwrap();
 
-    let rendered = template.render().unwrap();
+        renderer.render_string("/feeds/blog-rss.xml".into(), &rendered)?;
 
-    context
-        .renderer
-        .render_string("/feeds/blog-rss.xml".into(), &rendered)?;
+        // Legacy location I don't want to break with possible redir
+        let template = BlogPostXmlTemplate {
+            site_description: SITE_CONFIG.description.clone(),
+            feed_permalnk: format!("{}/rss.xml", SITE_CONFIG.url),
+            blog_posts: &self.blog_posts,
+        };
 
-    // Legacy location I don't want to break with possible redir
-    let template = BlogPostXmlTemplate {
-        site_description: SITE_CONFIG.description.clone(),
-        feed_permalnk: format!("{}/rss.xml", SITE_CONFIG.url),
-        blog_posts: &blog_posts,
-    };
+        let rendered = template.render().unwrap();
 
-    let rendered = template.render().unwrap();
-
-    context.renderer.render_string("/rss.xml".into(), &rendered)
+        renderer.render_string("/rss.xml".into(), &rendered)
+    }
 }

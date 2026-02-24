@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use askama::Template;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
@@ -20,7 +18,7 @@ use crate::renderer::pages::interests_page_renderer::render_interests_page;
 use crate::renderer::pages::lego_pages_renderers::render_lego_pages;
 use crate::renderer::pages::mastodon_post_pages_renderers::render_mastodon_pages;
 use crate::renderer::pages::micro_post_pages_renderers::render_micro_post_pages;
-use crate::renderer::pages::movie_review_pages_renderers::render_move_review_pages;
+use crate::renderer::pages::movie_review_pages_renderers::render_movie_review_pages;
 use crate::renderer::pages::now_page_renderer::render_now_page;
 use crate::renderer::pages::photo_pages_renderer::render_photo_pages;
 use crate::renderer::pages::project_pages_renderers::render_project_pages;
@@ -52,33 +50,32 @@ pub fn new_rendering_context_from_data(data: Data) -> Result<RendererContext> {
 }
 
 pub fn render_pages(context: &RendererContext) -> Result<()> {
-    render_micro_post_pages(context)?;
-    render_mastodon_pages(context)?;
-    render_photo_pages(context)?;
-    render_timeline_pages(context)?;
-    render_tags_pages(context)?;
-    render_firehose_pages(context)?;
-    render_project_pages(context)?;
-    render_interests_page(context)?;
-    render_book_review_pages(context)?;
-    render_move_review_pages(context)?;
-    render_tv_review_pages(context)?;
-    render_games_pages(context)?;
-    render_lego_pages(context)?;
-    render_now_page(context)?;
-    render_faq_page(context)?;
-    render_support_page(context)?;
-    render_referrals_page(context)?;
-    render_feeds_page(context)?;
-    render_albums_pages(context)?;
-    render_feeds(context)?;
-    render_404_page(context)?;
-    render_credits_pages(context)?;
-
-    let mut queue = RenderQueue::new();
+    let mut queue = RenderTasks::new();
 
     render_home_page(&context.data, &mut queue);
     render_blog_pages(&context.data, &mut queue);
+    render_micro_post_pages(&context.data, &mut queue);
+    render_mastodon_pages(&context.data, &mut queue);
+    render_photo_pages(&context.data, &mut queue);
+    render_timeline_pages(&context.data, &mut queue);
+    render_tags_pages(&context.data, &mut queue);
+    render_firehose_pages(&context.data, &mut queue);
+    render_project_pages(&context.data, &mut queue);
+    render_interests_page(&context.data, &mut queue);
+    render_book_review_pages(&context.data, &mut queue);
+    render_movie_review_pages(&context.data, &mut queue);
+    render_tv_review_pages(&context.data, &mut queue);
+    render_games_pages(&context.data, &mut queue);
+    render_lego_pages(&context.data, &mut queue);
+    render_now_page(&context.data, &mut queue);
+    render_faq_page(&context.data, &mut queue);
+    render_support_page(&mut queue);
+    render_referrals_page(&context.data, &mut queue);
+    render_albums_pages(&context.data, &mut queue);
+    render_feeds_page(&mut queue);
+    render_credits_pages(&context.data, &mut queue);
+    render_404_page(&mut queue);
+    render_feeds(&context.data, &mut queue);
 
     queue
         .tasks
@@ -99,11 +96,11 @@ pub trait RenderTask: Send {
     fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()>;
 }
 
-pub struct RenderQueue<'l> {
+pub struct RenderTasks<'l> {
     tasks: Vec<Box<dyn RenderTask + 'l>>,
 }
 
-impl<'l> RenderQueue<'l> {
+impl<'l> RenderTasks<'l> {
     fn new() -> Self {
         Self { tasks: vec![] }
     }

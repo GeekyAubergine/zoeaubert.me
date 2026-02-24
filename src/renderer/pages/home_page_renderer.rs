@@ -7,7 +7,7 @@ use crate::domain::models::timeline_event::TimelineEvent;
 use crate::domain::models::timeline_event::TimelineEventPost;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
 use crate::prelude::*;
-use crate::renderer::RenderQueue;
+use crate::renderer::RenderTasks;
 use crate::renderer::RenderTask;
 use crate::services::page_renderer::PageRenderer;
 use hypertext::prelude::*;
@@ -81,7 +81,7 @@ fn photos(photos: &Vec<&Image>) -> impl Renderable {
     }
 }
 
-pub fn render_home_page<'d>(data: &'d Data, render_queue: &mut RenderQueue<'d>) {
+pub fn render_home_page<'d>(data: &'d Data, render_tasks: &mut RenderTasks<'d>) {
     let posts = data
         .timeline_events
         .all_by_date()
@@ -121,7 +121,7 @@ pub fn render_home_page<'d>(data: &'d Data, render_queue: &mut RenderQueue<'d>) 
         .take(PHOTOS_COUNT)
         .collect::<Vec<&Image>>();
 
-    render_queue.add(RenderHomePageTask {
+    render_tasks.add(RenderHomePageTask {
         about_text: &data.about_text,
         posts,
         photos,

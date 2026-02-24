@@ -1,21 +1,20 @@
 use hypertext::prelude::*;
 
+use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
 use crate::domain::models::media::Media;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
-use crate::renderer::RendererContext;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::utils::paginator::paginate;
+use crate::renderer::{RenderTasks, RenderTask, RendererContext};
+use crate::utils::paginator::{Paginator, PaginatorPage, paginate};
 
 const PAGINATION_SIZE: usize = 40;
 
-pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
-    let photos = context
-        .data
-        .timeline_events
+pub fn render_photo_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    data.timeline_events
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
@@ -33,11 +32,8 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
         .map(|media| match media {
             Media::Image(image) => image,
         })
-        .collect::<Vec<Image>>();
-
-    render_photos_list_page(context, &photos)?;
-
-    Ok(())
+        .paginate(PAGINATION_SIZE)
+        .for_each(|page| tasks.add(RenderPhotosListPageTask { page }));
 }
 
 fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
@@ -53,6 +49,37 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
                 (photo.render_small())
             }
         }
+    }
+}
+
+struct RenderPhotosListPageTask {
+    page: PaginatorPage<Image>,
+}
+
+impl RenderTask for RenderPhotosListPageTask {
+    fn render(
+        self: Box<Self>,
+        renderer: &crate::services::page_renderer::PageRenderer,
+    ) -> Result<()> {
+        let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);
+
+        let page = Page::from_page_and_pagination_page(&page, &self.page);
+
+        let slug = page.slug.clone();
+
+        let content = maud! {
+            ul class="photos-list" {
+                @for post in &self.page.data {
+                    (photo(post))
+                }
+            }
+        };
+
+        let options = PageOptions::new().with_main_class("photos-page");
+
+        let rendered = render_page(&page, &options, &content, maud! {});
+
+        renderer.render_page(&slug, &rendered, None)
     }
 }
 

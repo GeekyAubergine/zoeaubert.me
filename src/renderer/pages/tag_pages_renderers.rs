@@ -2,20 +2,22 @@ use std::collections::HashMap;
 
 use hypertext::prelude::*;
 
+use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
 use crate::domain::models::timeline_event::TimelineEvent;
 use crate::prelude::*;
-use crate::renderer::RendererContext;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::partials::timeline_events_list::render_timeline_events_list;
-use crate::utils::paginator::paginate;
+use crate::renderer::partials::timeline_events_list::RenderTimelineEventsListTask;
+use crate::renderer::{RenderTasks, RenderTask};
+use crate::services::page_renderer::PageRenderer;
+use crate::utils::paginator::Paginator;
 
 const PAGINATION_SIZE: usize = 25;
 
-pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
-    let events = context.data.timeline_events.all_by_date();
+pub fn render_tags_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    let events = data.timeline_events.all_by_date();
 
     let mut events_by_tags: HashMap<&Tag, Vec<&TimelineEvent>> = HashMap::new();
 
@@ -31,52 +33,61 @@ pub fn render_tags_pages(context: &RendererContext) -> Result<()> {
         .into_iter()
         .collect::<Vec<(&Tag, Vec<&TimelineEvent>)>>();
 
-    tag_groups.sort_by(|a, b| a.0.tag.cmp(&b.0.tag));
+    tag_groups.sort_by_key(|(tag, _)| &tag.tag);
 
-    for (tag, events) in tag_groups.iter() {
+    tasks.add(RenderTagsListPageTask {
+        tag_groups: tag_groups.clone(),
+    });
+
+    // Tag speicifc pages
+    for (tag, events) in tag_groups.into_iter() {
         let page = Page::new(
             Slug::new(&format!("/tags/{}", tag.slug())),
             Some(format!("{} Posts", tag.title())),
             Some(format!("#{} posts", tag.title())),
         );
-        let paginated = paginate(events, PAGINATION_SIZE);
 
-        for paginator_page in paginated {
-            let page = Page::from_page_and_pagination_page(&page, &paginator_page);
+        let page_options = PageOptions::new().with_main_class("tag-posts-page");
 
-            let slug = page.slug.clone();
-
-            let content = render_timeline_events_list(&paginator_page.data);
-
-            let options = PageOptions::new().with_main_class("tag-posts-page");
-
-            let renderer = render_page(&page, &options, &content, maud! {});
-
-            context.renderer.render_page(&slug, &renderer, None)?;
-        }
+        events
+            .into_iter()
+            .paginate(PAGINATION_SIZE)
+            .for_each(|paginator_page| {
+                tasks.add(RenderTimelineEventsListTask::new(
+                    paginator_page,
+                    page.clone(),
+                    page_options.clone(),
+                ))
+            });
     }
+}
 
-    let page = Page::new(Slug::new("/tags"), Some("Tags".to_string()), None);
-    let slug = page.slug.clone();
+struct RenderTagsListPageTask<'l> {
+    tag_groups: Vec<(&'l Tag, Vec<&'l TimelineEvent>)>,
+}
 
-    let content = maud! {
-        ul class="tags-grid" {
-            @for (tag, posts) in &tag_groups {
-                li {
-                    a href=(format!("/tags/{}", &tag.slug())) {
-                        p class="tag" { "#" (&tag.tag) }
-                        p class="count" { (posts.len()) }
+impl<'l> RenderTask for RenderTagsListPageTask<'l> {
+    fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()> {
+        let page = Page::new(Slug::new("/tags"), Some("Tags".to_string()), None);
+        let slug = page.slug.clone();
+
+        let content = maud! {
+            ul class="tags-grid" {
+                @for (tag, posts) in &self.tag_groups {
+                    li {
+                        a href=(format!("/tags/{}", &tag.slug())) {
+                            p class="tag" { "#" (&tag.tag) }
+                            p class="count" { (posts.len()) }
+                        }
                     }
                 }
             }
-        }
-    };
+        };
 
-    let options = PageOptions::new().with_main_class("tags-page");
+        let options = PageOptions::new().with_main_class("tags-page");
 
-    let renderer = render_page(&page, &options, &content, maud! {});
+        let rendered = render_page(&page, &options, &content, maud! {});
 
-    context.renderer.render_page(&slug, &renderer, None)?;
-
-    Ok(())
+        renderer.render_page(&slug, &rendered, None)
+    }
 }

@@ -25,8 +25,8 @@ impl Projects {
         }
     }
 
-    pub fn find_all_by_rank_and_name(&self) -> Vec<Project> {
-        let mut projects = self.projects.values().cloned().collect::<Vec<Project>>();
+    pub fn find_all_by_rank_and_name(&self) -> Vec<&Project> {
+        let mut projects = self.projects.values().collect::<Vec<&Project>>();
 
         projects.sort_by(|a, b| a.rank.cmp(&b.rank).then_with(|| a.name.cmp(&b.name)));
 

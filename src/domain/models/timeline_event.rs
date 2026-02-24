@@ -165,6 +165,34 @@ impl TimelineEvents {
     pub fn all_by_date(&self) -> &Vec<TimelineEvent> {
         &self.events_by_date
     }
+
+    pub fn blog_posts_by_date(&self) -> impl Iterator<Item = &BlogPost> {
+        self.all_by_date().iter().filter_map(|event| match event {
+            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => Some(post.as_ref()),
+            _ => None,
+        })
+    }
+
+    pub fn micro_posts_by_date(&self) -> impl Iterator<Item = &MicroPost> {
+        self.all_by_date().iter().filter_map(|event| match event {
+            TimelineEvent::Post(TimelineEventPost::MicroPost(post)) => Some(post.as_ref()),
+            _ => None,
+        })
+    }
+
+    pub fn mastodon_posts_by_date(&self) -> impl Iterator<Item = &MastodonPost> {
+        self.all_by_date().iter().filter_map(|event| match event {
+            TimelineEvent::Post(TimelineEventPost::MastodonPost(post)) => Some(post.as_ref()),
+            _ => None,
+        })
+    }
+
+    pub fn game_achievment_unlocks_by_date(&self) -> impl Iterator<Item = &TimelineEventGameAchievementUnlock> {
+        self.all_by_date().iter().filter_map(|event| match event {
+            TimelineEvent::GameAchievementUnlock(unlock) => Some(unlock),
+            _ => None,
+        })
+    }
 }
 
 impl From<ReviewSource> for TimelineEvent {

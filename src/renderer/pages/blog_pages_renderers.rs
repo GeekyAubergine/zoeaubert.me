@@ -4,46 +4,36 @@ use crate::domain::models::blog_post::BlogPost;
 use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
-use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
 use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::{RenderQueue, RenderTask};
+use crate::renderer::{RenderTasks, RenderTask};
 use crate::services::page_renderer::PageRenderer;
-use crate::utils::paginator::{PaginatorPage, paginate};
+use crate::utils::paginator::{Paginator, PaginatorPage};
 
 const PAGINATION_SIZE: usize = 25;
 const NOTES_BLOG_POST_TO_IGNORE: &str = "MonthlyNotes";
 
-pub fn render_blog_pages<'d>(data: &'d Data, render_queue: &mut RenderQueue<'d>) {
-    let posts = data
-        .timeline_events
-        .all_by_date()
-        .iter()
-        .filter_map(|event| match event {
-            TimelineEvent::Post(TimelineEventPost::BlogPost(post)) => Some(post),
-            _ => None,
-        })
-        .map(|p| p.as_ref())
-        .collect::<Vec<&BlogPost>>();
+pub fn render_blog_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    data.timeline_events
+        .blog_posts_by_date()
+        .for_each(|post| tasks.add(RenderBlogPostPageTask { post }));
 
-    for post in &posts {
-        render_queue.add(RenderBlogPostPageTask { post });
-    }
-
-    let posts = posts
-        .into_iter()
+    // List pages do additional filtering
+    data.timeline_events
+        .blog_posts_by_date()
         .filter(|post| {
             !post
                 .tags
                 .iter()
                 .any(|t| t.tag().eq(NOTES_BLOG_POST_TO_IGNORE))
         })
-        .collect::<Vec<&BlogPost>>();
-
-    render_blog_posts_list_pages(posts, render_queue);
+        .paginate(PAGINATION_SIZE)
+        .for_each(|paginator_page| {
+            tasks.add(RenderBlogPostListPaginatedPageTask { paginator_page })
+        });
 }
 
 pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
@@ -58,17 +48,6 @@ pub fn blog_post_list_item<'l>(post: &'l BlogPost) -> impl Renderable + 'l {
             p class="description prose" { (post.description )}
             (render_tags(&post.tags, Some(3)))
         }
-    }
-}
-
-pub fn render_blog_posts_list_pages<'b>(
-    posts: Vec<&'b BlogPost>,
-    render_queue: &mut RenderQueue<'b>,
-) {
-    let paginated = paginate(&posts, PAGINATION_SIZE);
-
-    for paginator_page in paginated {
-        render_queue.add(RenderBlogPostListPaginatedPageTask { paginator_page });
     }
 }
 

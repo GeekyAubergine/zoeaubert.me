@@ -1,52 +1,46 @@
 use hypertext::prelude::*;
 
+use crate::domain::models::data::Data;
 use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::page::Page;
-use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
-use crate::renderer::RendererContext;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
 use crate::renderer::partials::page::{PageOptions, render_page};
+use crate::renderer::{RenderTasks, RenderTask};
+use crate::services::page_renderer::PageRenderer;
 
-pub fn render_micro_post_pages(context: &RendererContext) -> Result<()> {
-    let posts = context
-        .data
-        .timeline_events
-        .all_by_date()
-        .iter()
-        .filter_map(|event| match event {
-            TimelineEvent::Post(TimelineEventPost::MicroPost(post)) => Some(post),
-            _ => None,
-        })
-        .collect::<Vec<&Box<MicroPost>>>();
-
-    for post in posts {
-        render_micro_post_page(context, post)?;
-    }
-
-    Ok(())
+pub fn render_micro_post_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    data.timeline_events.micro_posts_by_date().for_each(|post| {
+        tasks.add(RenderMicroPostTask { post });
+    })
 }
 
-pub fn render_micro_post_page(context: &RendererContext, post: &MicroPost) -> Result<()> {
-    let content = maud! {
-        article {
-            (md(&post.content, md::MarkdownMediaOption::NoMedia))
-            (render_media_grid(post.media(), &MediaGripOptions::for_post()))
-        }
-    };
+struct RenderMicroPostTask<'p> {
+    post: &'p MicroPost,
+}
 
-    let options = PageOptions::new()
-        .with_main_class("micro-post-page")
-        .use_date_as_title();
+impl<'p> RenderTask for RenderMicroPostTask<'p> {
+    fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()> {
+        let post = self.post;
 
-    let page = Page::new(post.slug.clone(), None, None)
-        .with_date(post.date)
-        .with_tags(post.tags.clone());
+        let content = maud! {
+            article {
+                (md(&post.content, md::MarkdownMediaOption::NoMedia))
+                (render_media_grid(post.media(), &MediaGripOptions::for_post()))
+            }
+        };
 
-    let rendered = render_page(&page, &options, &content, maud! {});
+        let options = PageOptions::new()
+            .with_main_class("micro-post-page")
+            .use_date_as_title();
 
-    context
-        .renderer
-        .render_page(&post.slug, &rendered, Some(post.date))
+        let page = Page::new(post.slug.clone(), None, None)
+            .with_date(post.date)
+            .with_tags(post.tags.clone());
+
+        let rendered = render_page(&page, &options, &content, maud! {});
+
+        renderer.render_page(&post.slug, &rendered, Some(post.date))
+    }
 }
