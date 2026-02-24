@@ -2,7 +2,7 @@ use crate::domain::models::data::Data;
 use crate::domain::models::lego::{LegoMinifig, LegoSet};
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 
 use crate::prelude::*;
 use crate::renderer::formatters::format_number::FormatNumber;

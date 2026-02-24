@@ -6,7 +6,7 @@ use crate::domain::models::projects::Project;
 use crate::domain::models::slug::Slug;
 use crate::prelude::*;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 
 pub fn render_project_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
     tasks.add(RenderProjectsPageTask {

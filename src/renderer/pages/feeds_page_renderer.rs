@@ -1,8 +1,8 @@
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::prelude::*;
-use crate::renderer::RenderTasks;
 use crate::renderer::RenderTask;
+use crate::renderer::RenderTasks;
 use crate::services::page_renderer::PageRenderer;
 use hypertext::prelude::*;
 

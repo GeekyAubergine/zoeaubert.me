@@ -8,7 +8,7 @@ use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
 use crate::prelude::*;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 use crate::services::page_renderer::PageRenderer;
 
 // TODO Clicking on cover image should link you to tmdb page

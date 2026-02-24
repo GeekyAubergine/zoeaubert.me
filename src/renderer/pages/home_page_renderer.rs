@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::domain::models::about_text::AboutText;
 use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
@@ -7,8 +9,8 @@ use crate::domain::models::timeline_event::TimelineEvent;
 use crate::domain::models::timeline_event::TimelineEventPost;
 use crate::domain::models::{blog_post::BlogPost, page::Page};
 use crate::prelude::*;
-use crate::renderer::RenderTasks;
 use crate::renderer::RenderTask;
+use crate::renderer::RenderTasks;
 use crate::services::page_renderer::PageRenderer;
 use hypertext::prelude::*;
 
@@ -39,7 +41,7 @@ fn blog_post(post: &BlogPost) -> impl Renderable {
     }
 }
 
-fn blog_posts(posts: &Vec<&Box<BlogPost>>) -> impl Renderable {
+fn blog_posts(posts: &Vec<&BlogPost>) -> impl Renderable {
     maud! {
         ul class="blog-post-list" {
             @for post in posts {
@@ -100,7 +102,8 @@ pub fn render_home_page<'d>(data: &'d Data, render_tasks: &mut RenderTasks<'d>) 
             _ => None,
         })
         .take(BLOG_POSTS_COUNT)
-        .collect::<Vec<&Box<BlogPost>>>();
+        .map(|p| p.deref())
+        .collect::<Vec<&BlogPost>>();
 
     let photos = data
         .timeline_events
@@ -131,7 +134,7 @@ pub fn render_home_page<'d>(data: &'d Data, render_tasks: &mut RenderTasks<'d>) 
 
 struct RenderHomePageTask<'l> {
     about_text: &'l AboutText,
-    posts: Vec<&'l Box<BlogPost>>,
+    posts: Vec<&'l BlogPost>,
     photos: Vec<&'l Image>,
     silly_names: &'l SillyNames,
 }

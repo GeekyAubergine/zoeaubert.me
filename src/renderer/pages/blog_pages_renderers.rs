@@ -9,7 +9,7 @@ use crate::renderer::partials::date::render_date;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::renderer::partials::tag::render_tags;
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 use crate::services::page_renderer::PageRenderer;
 use crate::utils::paginator::{Paginator, PaginatorPage};
 

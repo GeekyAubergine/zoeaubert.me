@@ -2,7 +2,7 @@ use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
 use crate::prelude::*;
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 use hypertext::prelude::*;
 
 use crate::{

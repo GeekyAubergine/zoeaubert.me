@@ -187,7 +187,9 @@ impl TimelineEvents {
         })
     }
 
-    pub fn game_achievment_unlocks_by_date(&self) -> impl Iterator<Item = &TimelineEventGameAchievementUnlock> {
+    pub fn game_achievment_unlocks_by_date(
+        &self,
+    ) -> impl Iterator<Item = &TimelineEventGameAchievementUnlock> {
         self.all_by_date().iter().filter_map(|event| match event {
             TimelineEvent::GameAchievementUnlock(unlock) => Some(unlock),
             _ => None,

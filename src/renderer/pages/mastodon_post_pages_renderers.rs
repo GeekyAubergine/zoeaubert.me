@@ -7,7 +7,7 @@ use crate::prelude::*;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 
 pub fn render_mastodon_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
     data.timeline_events

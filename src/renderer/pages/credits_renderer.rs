@@ -3,8 +3,8 @@ use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::prelude::*;
-use crate::renderer::RenderTasks;
 use crate::renderer::RenderTask;
+use crate::renderer::RenderTasks;
 use hypertext::prelude::*;
 
 use crate::renderer::partials::page::PageOptions;

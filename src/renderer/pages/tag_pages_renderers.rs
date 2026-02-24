@@ -10,7 +10,7 @@ use crate::domain::models::timeline_event::TimelineEvent;
 use crate::prelude::*;
 use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::renderer::partials::timeline_events_list::RenderTimelineEventsListTask;
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 use crate::services::page_renderer::PageRenderer;
 use crate::utils::paginator::Paginator;
 

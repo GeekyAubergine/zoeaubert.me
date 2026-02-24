@@ -3,7 +3,7 @@ use crate::domain::models::games::Game;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::TimelineEvent;
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 
 use crate::prelude::*;
 use crate::renderer::formatters::format_number::FormatNumber;
@@ -36,7 +36,7 @@ pub fn render_games_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
         .iter()
         .for_each(|game| tasks.add(RenderGamePageTask { game }));
 
-    render_activity_pages(&data, tasks);
+    render_activity_pages(data, tasks);
 }
 
 struct RenderGamesListPageTask<'g> {

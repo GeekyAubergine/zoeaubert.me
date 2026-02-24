@@ -8,7 +8,7 @@ use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::{RenderTasks, RenderTask, RendererContext};
+use crate::renderer::{RenderTask, RenderTasks, RendererContext};
 use crate::utils::paginator::{Paginator, PaginatorPage, paginate};
 
 const PAGINATION_SIZE: usize = 40;
@@ -95,7 +95,7 @@ pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> R
         let content = maud! {
             ul class="photos-list" {
                 @for post in &paginator_page.data {
-                    (photo(&post))
+                    (photo(post))
                 }
             }
         };
