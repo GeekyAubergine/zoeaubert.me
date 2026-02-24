@@ -9,7 +9,7 @@ use crate::{
     config::CONFIG,
     domain::models::{image::Image, media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
     prelude::*,
-    processors::tasks::{Task, run_tasks},
+    processors::tasks::{ProcessorTask, run_processor_tasks},
     services::{
         ServiceContext,
         cdn_service::CdnFile,
@@ -123,7 +123,7 @@ struct ProcessItem {
     item: ArchiveFileItem,
 }
 
-impl Task for ProcessItem {
+impl ProcessorTask for ProcessItem {
     type Output = Option<MicroPost>;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
@@ -178,7 +178,7 @@ pub fn load_micro_blog_archive(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
         .map(|item| ProcessItem { item })
         .collect();
 
-    let results = run_tasks(tasks, ctx)?;
+    let results = run_processor_tasks(tasks, ctx)?;
 
     Ok(results.into_iter().flatten().collect())
 }

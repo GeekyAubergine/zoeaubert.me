@@ -14,7 +14,7 @@ use crate::{
         tag::Tag,
     },
     prelude::*,
-    processors::tasks::{Task, run_tasks},
+    processors::tasks::{ProcessorTask, run_processor_tasks},
     services::{
         ServiceContext,
         cdn_service::CdnFile,
@@ -132,7 +132,7 @@ struct ProcessStatus {
     status: MastodonStatus,
 }
 
-impl Task for ProcessStatus {
+impl ProcessorTask for ProcessStatus {
     type Output = Option<MastodonPost>;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
@@ -229,7 +229,7 @@ pub fn load_mastodon_posts(ctx: &ServiceContext) -> Result<MastodonPosts> {
         .map(|status| ProcessStatus { status })
         .collect();
 
-    let results = run_tasks(tasks, ctx)?;
+    let results = run_processor_tasks(tasks, ctx)?;
 
     for post in results.into_iter().flatten() {
         posts.add(post);

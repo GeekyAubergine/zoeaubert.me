@@ -6,7 +6,7 @@ use crate::{
     domain::models::{blog_post::BlogPost, slug::Slug, tag::Tag},
     error::BlogPostError,
     prelude::*,
-    processors::tasks::{Task, run_tasks},
+    processors::tasks::{ProcessorTask, run_processor_tasks},
     services::{
         ServiceContext,
         cdn_service::CdnFile,
@@ -42,7 +42,7 @@ struct ProcessBlogPost {
     file_path: ContentFile,
 }
 
-impl Task for ProcessBlogPost {
+impl ProcessorTask for ProcessBlogPost {
     type Output = BlogPost;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
@@ -121,5 +121,5 @@ pub fn load_blog_posts(ctx: &ServiceContext) -> Result<Vec<BlogPost>> {
         })
         .collect();
 
-    run_tasks(tasks, ctx)
+    run_processor_tasks(tasks, ctx)
 }

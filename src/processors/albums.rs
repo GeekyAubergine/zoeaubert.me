@@ -10,7 +10,7 @@ use crate::{
         tag::Tag,
     },
     prelude::*,
-    processors::tasks::{Task, run_tasks},
+    processors::tasks::{ProcessorTask, run_processor_tasks},
     services::{
         ServiceContext,
         cdn_service::CdnFile,
@@ -44,7 +44,7 @@ struct ProcessAlbumPhoto<'l> {
     album: &'l Album,
 }
 
-impl<'l> Task for ProcessAlbumPhoto<'l> {
+impl<'l> ProcessorTask for ProcessAlbumPhoto<'l> {
     type Output = AlbumPhoto;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
@@ -115,7 +115,7 @@ pub fn process_album(ctx: &ServiceContext, file: ContentFile) -> Result<Album> {
         })
         .collect();
 
-    let photos = run_tasks(tasks, ctx)?;
+    let photos = run_processor_tasks(tasks, ctx)?;
 
     for photo in photos {
         album.photos.push(photo);

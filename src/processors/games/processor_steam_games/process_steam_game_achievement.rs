@@ -10,7 +10,7 @@ use crate::{
         SteamGameWithAchievements,
     },
     prelude::*,
-    processors::tasks::{Task, run_tasks},
+    processors::tasks::{ProcessorTask, run_processor_tasks},
     services::{ServiceContext, cdn_service::CdnFile, media_service::MediaService},
 };
 
@@ -161,7 +161,7 @@ pub fn process_steam_game_achievements(
         })
         .collect();
 
-    let achievments = run_tasks(achievement_jobs, ctx)?;
+    let achievments = run_processor_tasks(achievement_jobs, ctx)?;
 
     for achievement in achievments {
         match achievement {
@@ -179,7 +179,7 @@ struct TaskProcessSteamGameAchievement<'l> {
     player_achievements: &'l Vec<SteamGamePlayerAchievement>,
 }
 
-impl<'l> Task for TaskProcessSteamGameAchievement<'l> {
+impl<'l> ProcessorTask for TaskProcessSteamGameAchievement<'l> {
     type Output = SteamGameAchievement;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
