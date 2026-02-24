@@ -1,21 +1,20 @@
 use hypertext::prelude::*;
 
+use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
 use crate::domain::models::media::Media;
 use crate::domain::models::page::Page;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
-use crate::renderer::RendererContext;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::utils::paginator::paginate;
+use crate::renderer::{RenderTask, RenderTasks};
+use crate::utils::paginator::{Paginator, PaginatorPage};
 
 const PAGINATION_SIZE: usize = 40;
 
-pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
-    let photos = context
-        .data
-        .timeline_events
+pub fn render_photo_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    data.timeline_events
         .all_by_date()
         .iter()
         .filter_map(|event| match event {
@@ -33,11 +32,8 @@ pub fn render_photo_pages(context: &RendererContext) -> Result<()> {
         .map(|media| match media {
             Media::Image(image) => image,
         })
-        .collect::<Vec<Image>>();
-
-    render_photos_list_page(context, &photos)?;
-
-    Ok(())
+        .paginate(PAGINATION_SIZE)
+        .for_each(|page| tasks.add(RenderPhotosListPageTask { page }));
 }
 
 fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
@@ -56,18 +52,24 @@ fn photo<'l>(photo: &'l Image) -> impl Renderable + 'l {
     }
 }
 
-pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> Result<()> {
-    let paginated = paginate(photos, PAGINATION_SIZE);
+struct RenderPhotosListPageTask {
+    page: PaginatorPage<Image>,
+}
 
-    let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);
-    for paginator_page in paginated {
-        let page = Page::from_page_and_pagination_page(&page, &paginator_page);
+impl RenderTask for RenderPhotosListPageTask {
+    fn render(
+        self: Box<Self>,
+        renderer: &crate::services::page_renderer::PageRenderer,
+    ) -> Result<()> {
+        let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);
+
+        let page = Page::from_page_and_pagination_page(&page, &self.page);
 
         let slug = page.slug.clone();
 
         let content = maud! {
             ul class="photos-list" {
-                @for post in paginator_page.data {
+                @for post in &self.page.data {
                     (photo(post))
                 }
             }
@@ -75,10 +77,8 @@ pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> R
 
         let options = PageOptions::new().with_main_class("photos-page");
 
-        let renderer = render_page(&page, &options, &content, maud! {});
+        let rendered = render_page(&page, &options, &content, maud! {});
 
-        context.renderer.render_page(&slug, &renderer, None)?;
+        renderer.render_page(&slug, &rendered, None)
     }
-
-    Ok(())
 }

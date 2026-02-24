@@ -7,8 +7,9 @@ use crate::build_data::BUILD_DATE;
 use crate::domain::models::data::Data;
 
 use crate::prelude::*;
-use crate::renderer::{RendererContext, new_rendering_context_from_data, render_pages};
+use crate::renderer::render_pages;
 use crate::services::file_service::{FileService, ReadableFile};
+use crate::services::page_renderer::PageRenderer;
 
 use tracing::{info, instrument};
 
@@ -71,13 +72,12 @@ pub fn render_site(data: Data) -> Result<()> {
     prepare_folders()?;
     copy_assets()?;
 
-    let context: RendererContext = new_rendering_context_from_data(data)?;
-
-    render_pages(&context)?;
+    let renderer = PageRenderer::new();
+    render_pages(&data, &renderer)?;
 
     let disallowed_routes = read_disallowed_routes_from_robot_file()?;
 
-    let page_count = context.renderer.build_sitemap(&disallowed_routes)?;
+    let page_count = renderer.build_sitemap(&disallowed_routes)?;
 
     info!(
         "Rendering site | Pages {} [{}ms]",

@@ -283,28 +283,8 @@ fn render_page_base<'l>(page: &'l Page, body: &'l impl Renderable) -> impl Rende
     }
 }
 
-pub enum PageWidth {
-    Wide,
-    Mid,
-    Narrow,
-}
-
-impl PageWidth {
-    pub fn wide() -> Self {
-        PageWidth::Wide
-    }
-
-    pub fn mid() -> Self {
-        PageWidth::Mid
-    }
-
-    pub fn narrow() -> Self {
-        PageWidth::Narrow
-    }
-}
-
+#[derive(Debug, Clone)]
 pub struct PageOptions<'l> {
-    width: PageWidth,
     body_class: Option<&'l str>,
     main_class: Option<&'l str>,
     use_date_as_title: bool,
@@ -322,7 +302,6 @@ impl<'l> Default for PageOptions<'l> {
 impl<'l> PageOptions<'l> {
     pub fn new() -> Self {
         Self {
-            width: PageWidth::Narrow,
             body_class: None,
             main_class: None,
             use_date_as_title: false,
@@ -330,11 +309,6 @@ impl<'l> PageOptions<'l> {
             hide_header: false,
             hide_footer: false,
         }
-    }
-
-    pub fn with_width(mut self, width: PageWidth) -> Self {
-        self.width = width;
-        self
     }
 
     pub fn with_body_class(mut self, body_class: &'l str) -> Self {

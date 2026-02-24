@@ -1,14 +1,13 @@
+use crate::domain::models::data::Data;
 use crate::domain::models::image::Image;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
 use crate::prelude::*;
+use crate::renderer::{RenderTask, RenderTasks};
 use hypertext::prelude::*;
 
 use crate::{
     domain::models::{page::Page, slug::Slug},
-    renderer::{
-        RendererContext,
-        partials::page::{PageOptions, render_page},
-    },
+    renderer::partials::page::{PageOptions, render_page},
 };
 
 const ITEM_COUNT: usize = 5;
@@ -19,13 +18,8 @@ struct InterestElement<'l> {
     link: Slug,
 }
 
-pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
-    let page = Page::new(Slug::new("/interests"), Some("Interests".to_string()), None);
-
-    let slug = page.slug.clone();
-
-    let games = context
-        .data
+pub fn render_interests_page<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    let games = data
         .games
         .find_by_most_recently_played()
         .iter()
@@ -35,10 +29,9 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
             link: game.slug(),
         })
         .take(6)
-        .collect::<Vec<InterestElement<'l>>>();
+        .collect::<Vec<InterestElement<'d>>>();
 
-    let lego = context
-        .data
+    let lego = data
         .lego
         .find_all_sets()
         .iter()
@@ -48,10 +41,9 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
             link: Slug::new("/interests/lego/"),
         })
         .take(ITEM_COUNT)
-        .collect::<Vec<InterestElement<'l>>>();
+        .collect::<Vec<InterestElement<'d>>>();
 
-    let books = context
-        .data
+    let books = data
         .timeline_events
         .all_by_date()
         .iter()
@@ -68,10 +60,9 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
             _ => None,
         })
         .take(ITEM_COUNT)
-        .collect::<Vec<InterestElement<'l>>>();
+        .collect::<Vec<InterestElement<'d>>>();
 
-    let movies = context
-        .data
+    let movies = data
         .timeline_events
         .all_by_date()
         .iter()
@@ -88,10 +79,9 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
             _ => None,
         })
         .take(ITEM_COUNT)
-        .collect::<Vec<InterestElement<'l>>>();
+        .collect::<Vec<InterestElement<'d>>>();
 
-    let tv_shows = context
-        .data
+    let tv_shows = data
         .timeline_events
         .all_by_date()
         .iter()
@@ -108,21 +98,15 @@ pub fn render_interests_page<'l>(context: &'l RendererContext) -> Result<()> {
             _ => None,
         })
         .take(ITEM_COUNT)
-        .collect::<Vec<InterestElement<'l>>>();
+        .collect::<Vec<InterestElement<'d>>>();
 
-    let content = maud! {
-        (render_interest_strip("Games", "Games →", "/interests/games/",  &games, "games"))
-        (render_interest_strip("Lego", "Lego Sets →", "/interests/lego/",  &lego, "lego"))
-        (render_interest_strip("Books", "Book Reviews →", "/tags/books/",  &books, "books"))
-        (render_interest_strip("Movies", "Movie Reviews →", "/tags/movies/",  &movies, "movies"))
-        (render_interest_strip("TV", "TV Reviews →", "/tags/tv/",  &tv_shows, "tv_shows"))
-    };
-
-    let options = PageOptions::new().with_main_class("interests-page");
-
-    let renderer = render_page(&page, &options, &content, maud! {});
-
-    context.renderer.render_page(&slug, &renderer, None)
+    tasks.add(RenderInterestsPageTask {
+        games,
+        lego,
+        books,
+        movies,
+        tv_shows,
+    });
 }
 
 fn render_interest_strip<'l>(
@@ -151,5 +135,38 @@ fn render_interest_strip<'l>(
                 (more_text)
             }
         }
+    }
+}
+
+struct RenderInterestsPageTask<'l> {
+    games: Vec<InterestElement<'l>>,
+    lego: Vec<InterestElement<'l>>,
+    books: Vec<InterestElement<'l>>,
+    movies: Vec<InterestElement<'l>>,
+    tv_shows: Vec<InterestElement<'l>>,
+}
+
+impl<'l> RenderTask for RenderInterestsPageTask<'l> {
+    fn render(
+        self: Box<Self>,
+        renderer: &crate::services::page_renderer::PageRenderer,
+    ) -> Result<()> {
+        let page = Page::new(Slug::new("/interests"), Some("Interests".to_string()), None);
+
+        let slug = page.slug.clone();
+
+        let content = maud! {
+            (render_interest_strip("Games", "Games →", "/interests/games/",  &self.games, "games"))
+            (render_interest_strip("Lego", "Lego Sets →", "/interests/lego/",  &self.lego, "lego"))
+            (render_interest_strip("Books", "Book Reviews →", "/tags/books/",  &self.books, "books"))
+            (render_interest_strip("Movies", "Movie Reviews →", "/tags/movies/",  &self.movies, "movies"))
+            (render_interest_strip("TV", "TV Reviews →", "/tags/tv/",  &self.tv_shows, "tv_shows"))
+        };
+
+        let options = PageOptions::new().with_main_class("interests-page");
+
+        let rendered = render_page(&page, &options, &content, maud! {});
+
+        renderer.render_page(&slug, &rendered, None)
     }
 }

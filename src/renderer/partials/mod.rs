@@ -4,4 +4,4 @@ pub mod md;
 pub mod media;
 pub mod page;
 pub mod tag;
-pub mod timline_events_list;
+pub mod timeline_events_list;

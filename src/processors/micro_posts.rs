@@ -7,7 +7,7 @@ use crate::{
     domain::models::{media::Media, micro_post::MicroPost, slug::Slug, tag::Tag},
     error::MicroPostError,
     prelude::*,
-    processors::tasks::{Task, run_tasks},
+    processors::tasks::{ProcessorTask, run_processor_tasks},
     services::{
         ServiceContext,
         file_service::{ContentFile, FileService, ReadableFile},
@@ -57,7 +57,7 @@ struct ProcessFile {
     file: ContentFile,
 }
 
-impl Task for ProcessFile {
+impl ProcessorTask for ProcessFile {
     type Output = MicroPost;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
@@ -128,5 +128,5 @@ pub fn load_micro_posts(ctx: &ServiceContext) -> Result<Vec<MicroPost>> {
         })
         .collect();
 
-    run_tasks(tasks, ctx)
+    run_processor_tasks(tasks, ctx)
 }

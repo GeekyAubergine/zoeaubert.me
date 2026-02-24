@@ -1,5 +1,6 @@
-use rayon::iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
-use tracing::{error, instrument};
+use once_cell::sync::Lazy;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use tracing::{error, info, instrument};
 
 use crate::{
     domain::models::{
@@ -21,15 +22,13 @@ use crate::{
     services::ServiceContext,
 };
 
-const MOVIE_REVIEW_POST_TAG: &str = "Movies";
-const TV_SHOW_REVIEW_POST_TAG: &str = "TV";
-const BOOK_REVIEW_POST_TAG: &str = "Books";
+static MOVIE_REVIEW_POST_TAG: Lazy<Tag> = Lazy::new(|| Tag::from_string("Movies"));
+static TV_SHOW_REVIEW_POST_TAG: Lazy<Tag> = Lazy::new(|| Tag::from_string("TV"));
+static BOOK_REVIEW_POST_TAG: Lazy<Tag> = Lazy::new(|| Tag::from_string("Books"));
 
 #[instrument(skip_all, fields(source.slug=%source.slug()))]
 fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> TimelineEvent {
-    if source
-        .tags()
-        .contains(&Tag::from_string(BOOK_REVIEW_POST_TAG))
+    if source.tags().contains(&BOOK_REVIEW_POST_TAG)
         && let Ok(review) = BookReview::from_content(source.content())
     {
         let book = ctx
@@ -52,9 +51,7 @@ fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Timeline
         };
     }
 
-    if source
-        .tags()
-        .contains(&Tag::from_string(MOVIE_REVIEW_POST_TAG))
+    if source.tags().contains(&MOVIE_REVIEW_POST_TAG)
         && let Ok(review) = MovieReview::from_content(source.content())
     {
         let movie = ctx.movies.find_movie(ctx, &review.title, review.year);
@@ -76,9 +73,7 @@ fn process_review_source(ctx: &ServiceContext, source: ReviewSource) -> Timeline
         };
     }
 
-    if source
-        .tags()
-        .contains(&Tag::from_string(TV_SHOW_REVIEW_POST_TAG))
+    if source.tags().contains(&TV_SHOW_REVIEW_POST_TAG)
         && let Ok(review) = TvShowReview::from_content(source.content())
     {
         let tv_show = ctx.tv_shows.find_tv_show(ctx, &review.title);
@@ -124,6 +119,8 @@ fn extract_events_from_mastodon(
     ctx: &ServiceContext,
     mastodon_posts: MastodonPosts,
 ) -> Vec<TimelineEvent> {
+    info!("Mastodon posts {}", mastodon_posts.count());
+
     mastodon_posts
         .posts()
         .into_par_iter()
@@ -139,8 +136,8 @@ fn extract_events_from_games(games: &Games) -> Vec<TimelineEvent> {
             Game::Steam(game) => {
                 let achievement_events: Vec<TimelineEvent> = game
                     .unlocked_achievements
-                    .par_iter()
-                    .map(|(_, achievement)| {
+                    .values()
+                    .map(|achievement| {
                         TimelineEvent::GameAchievementUnlock(
                             TimelineEventGameAchievementUnlock::SteamAchievementUnlocked {
                                 game: game.game.clone(),

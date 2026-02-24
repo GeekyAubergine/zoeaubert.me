@@ -6,7 +6,7 @@ use crate::{
     config::CONFIG,
     domain::models::lego::{Lego, LegoMinifig, LegoSet},
     prelude::*,
-    processors::tasks::{Task, run_tasks},
+    processors::tasks::{ProcessorTask, run_processor_tasks},
     services::{
         ServiceContext,
         cdn_service::CdnFile,
@@ -135,7 +135,7 @@ pub fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
             .map(|set| ProcessSet { set })
             .collect();
 
-        let sets = run_tasks(set_tasks, ctx)?;
+        let sets = run_processor_tasks(set_tasks, ctx)?;
 
         for set in sets {
             lego.add_set(set);
@@ -149,7 +149,7 @@ pub fn load_lego(ctx: &ServiceContext) -> Result<Lego> {
             .map(|minifig| ProcessMinifig { minifig })
             .collect();
 
-        let minifigs = run_tasks(minifig_tasks, ctx)?;
+        let minifigs = run_processor_tasks(minifig_tasks, ctx)?;
 
         for minifig in minifigs {
             lego.add_minifig(minifig);
@@ -165,7 +165,7 @@ struct ProcessSet {
     set: BricksetSet,
 }
 
-impl Task for ProcessSet {
+impl ProcessorTask for ProcessSet {
     type Output = LegoSet;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {
@@ -197,7 +197,7 @@ struct ProcessMinifig {
     minifig: BricksetMinifig,
 }
 
-impl Task for ProcessMinifig {
+impl ProcessorTask for ProcessMinifig {
     type Output = LegoMinifig;
 
     fn run(self, ctx: &ServiceContext) -> Result<Self::Output> {

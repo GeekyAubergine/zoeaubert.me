@@ -50,7 +50,7 @@ impl PagePaginationData {
         }
     }
 
-    pub fn from_slug_and_pagniator_page<'d, D>(slug: &Slug, page: &PaginatorPage<'d, D>) -> Self {
+    pub fn from_slug_and_pagniator_page<D>(slug: &Slug, page: &PaginatorPage<D>) -> Self {
         let prev = match page.page_number {
             2 => PagePaginationDataLink::new(page.page_number - 1, slug.clone()),
             _ => PagePaginationDataLink::new(
@@ -130,9 +130,9 @@ impl Page {
         }
     }
 
-    pub fn from_page_and_pagination_page<'d, D>(
+    pub fn from_page_and_pagination_page<D>(
         page: &Self,
-        paginator_page: &PaginatorPage<'d, D>,
+        paginator_page: &PaginatorPage<D>,
     ) -> Self {
         let mut page = page.clone();
 

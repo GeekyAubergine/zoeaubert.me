@@ -160,6 +160,8 @@ impl MediaService {
 
         let original_image = Self::read_or_download_image(ctx, url, cdn_file)?;
 
+        ctx.cdn.upload_file(&cdn_file.as_cache_file(), cdn_file)?;
+
         let large_image =
             Self::resize_image(ctx, &large_cdn_file, &original_image, &ImageSize::Large)?;
 

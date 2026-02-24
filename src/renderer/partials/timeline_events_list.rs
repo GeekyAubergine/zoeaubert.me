@@ -7,6 +7,7 @@ use crate::domain::models::mastodon_post::MastodonPost;
 use crate::domain::models::media::Media;
 use crate::domain::models::micro_post::MicroPost;
 use crate::domain::models::movie::Movie;
+use crate::domain::models::page::Page;
 use crate::domain::models::review::review_source::ReviewSource;
 use crate::domain::models::slug::Slug;
 use crate::domain::models::tag::Tag;
@@ -14,16 +15,21 @@ use crate::domain::models::timeline_event::{
     TimelineEvent, TimelineEventGameAchievementUnlock, TimelineEventPost, TimelineEventReview,
 };
 use crate::domain::models::tv_show::TvShow;
+use crate::prelude::*;
+use crate::renderer::RenderTask;
 use crate::renderer::formatters::format_date::FormatDate;
 use crate::renderer::partials::md::{MarkdownMediaOption, md};
 use crate::renderer::partials::media::{MediaGripOptions, render_media_grid};
+use crate::renderer::partials::page::{PageOptions, render_page};
 use crate::renderer::partials::tag::render_tags;
+use crate::services::page_renderer::PageRenderer;
+use crate::utils::paginator::PaginatorPage;
 use chrono::{DateTime, Utc};
 use hypertext::prelude::*;
 
 use crate::domain::models::image::Image;
 
-pub fn render_timline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Renderable + 'l {
+pub fn render_timeline_events_list<'l>(events: &'l [&TimelineEvent]) -> impl Renderable + 'l {
     maud! {
         ul class="timeline-events-list" {
             @for event in events {
@@ -282,4 +288,38 @@ pub fn render_album_photo<'l>(photo: &'l AlbumPhoto) -> impl Renderable + 'l {
         None,
         None,
     )
+}
+
+pub struct RenderTimelineEventsListTask<'l> {
+    paginator_page: PaginatorPage<&'l TimelineEvent>,
+    page: Page,
+    page_options: PageOptions<'l>,
+}
+
+impl<'l> RenderTimelineEventsListTask<'l> {
+    pub fn new(
+        paginator_page: PaginatorPage<&'l TimelineEvent>,
+        page: Page,
+        page_options: PageOptions<'l>,
+    ) -> Self {
+        Self {
+            paginator_page,
+            page,
+            page_options,
+        }
+    }
+}
+
+impl<'p> RenderTask for RenderTimelineEventsListTask<'p> {
+    fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()> {
+        let page = Page::from_page_and_pagination_page(&self.page, &self.paginator_page);
+
+        let slug = page.slug.clone();
+
+        let content = render_timeline_events_list(&self.paginator_page.data);
+
+        let rendered = render_page(&page, &self.page_options, &content, maud! {});
+
+        renderer.render_page(&slug, &rendered, None)
+    }
 }

@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
-
 use chrono::Datelike;
+use dashmap::DashMap;
 use htmlentity::entity::{ICodedDataTrait, decode};
 use serde::Deserialize;
 use tracing::{instrument, warn};
@@ -56,7 +54,7 @@ struct TmdbSearchResponse {
 #[derive(Debug)]
 pub struct MovieService {
     file: ArchiveFile,
-    movies: Arc<RwLock<HashMap<String, Option<Movie>>>>,
+    movies: DashMap<String, Option<Movie>>,
 }
 
 impl MovieService {
@@ -65,10 +63,7 @@ impl MovieService {
 
         let data = file.read_json_or_default()?;
 
-        Ok(Self {
-            file,
-            movies: Arc::new(RwLock::new(data)),
-        })
+        Ok(Self { file, movies: data })
     }
 
     #[instrument(err, skip_all, fields(movie.title=%title, movie.year=&year))]
@@ -80,10 +75,8 @@ impl MovieService {
     ) -> Result<Option<Movie>> {
         let key = name_and_year_to_key(title, year);
 
-        let mut movies = self.movies.write().unwrap();
-
-        if let Some(movie) = movies.get(&key) {
-            match movie {
+        if let Some(movie) = self.movies.get(&key) {
+            match movie.clone() {
                 Some(movie) => return Ok(Some(movie.clone())),
                 None => {
                     warn!("Did not find cover for movie [{title} - {year}]");
@@ -132,17 +125,17 @@ impl MovieService {
                     link: format!("{}{}", TMDB_LINK_URL, movie.id).parse().unwrap(),
                 };
 
-                movies.insert(key, Some(movie.clone()));
+                self.movies.insert(key, Some(movie.clone()));
 
-                self.file.write_json(&movies.clone())?;
+                self.file.write_json(&self.movies.clone())?;
 
                 Ok(Some(movie))
             }
             None => {
                 warn!("Did not find cover for movie [{title}]");
-                movies.insert(title.to_string(), None);
+                self.movies.insert(title.to_string(), None);
 
-                self.file.write_json(&movies.clone())?;
+                self.file.write_json(&self.movies.clone())?;
 
                 Ok(None)
             }

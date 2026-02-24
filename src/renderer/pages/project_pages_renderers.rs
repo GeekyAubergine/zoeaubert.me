@@ -1,37 +1,52 @@
 use hypertext::prelude::*;
 
+use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
+use crate::domain::models::projects::Project;
 use crate::domain::models::slug::Slug;
 use crate::prelude::*;
-use crate::renderer::RendererContext;
 use crate::renderer::partials::page::{PageOptions, render_page};
+use crate::renderer::{RenderTask, RenderTasks};
 
-pub fn render_project_pages(context: &RendererContext) -> Result<()> {
-    let projects = context.data.projects.find_all_by_rank_and_name();
+pub fn render_project_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
+    tasks.add(RenderProjectsPageTask {
+        projects: data.projects.find_all_by_rank_and_name(),
+    })
+}
 
-    let page = Page::new(Slug::new("/projects"), Some("Projects".to_string()), None);
+struct RenderProjectsPageTask<'p> {
+    projects: Vec<&'p Project>,
+}
 
-    let slug = page.slug.clone();
+impl<'p> RenderTask for RenderProjectsPageTask<'p> {
+    fn render(
+        self: Box<Self>,
+        renderer: &crate::services::page_renderer::PageRenderer,
+    ) -> Result<()> {
+        let page = Page::new(Slug::new("/projects"), Some("Projects".to_string()), None);
 
-    let content = maud! {
-        ul {
-            @for project in &projects {
-                li {
-                    a class="name" href=(project.link) {
-                        (project.name)
+        let slug = page.slug.clone();
+
+        let content = maud! {
+            ul {
+                @for project in &self.projects {
+                    li {
+                        a class="name" href=(project.link) {
+                            (project.name)
+                        }
+                        div class="image" {
+                            (project.image.render_large())
+                        }
+                        p { (project.description) }
                     }
-                    div class="image" {
-                        (project.image.render_large())
-                    }
-                    p { (project.description) }
                 }
             }
-        }
-    };
+        };
 
-    let options = PageOptions::new().with_main_class("projects-page");
+        let options = PageOptions::new().with_main_class("projects-page");
 
-    let renderer = render_page(&page, &options, &content, maud! {});
+        let rendered = render_page(&page, &options, &content, maud! {});
 
-    context.renderer.render_page(&slug, &renderer, None)
+        renderer.render_page(&slug, &rendered, None)
+    }
 }

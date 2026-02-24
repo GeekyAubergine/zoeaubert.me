@@ -1,6 +1,6 @@
 use dashmap::DashMap;
 use htmlentity::entity::{ICodedDataTrait, decode};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use tracing::{instrument, warn};
 use url::Url;
 
@@ -43,30 +43,28 @@ struct TmdbSearchResponse {
     results: Vec<TmdbSearchResponseSingle>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Default)]
-pub struct Data {
-    tv_shows: DashMap<String, Option<TvShow>>,
-}
-
 #[derive(Debug)]
 pub struct TvShowService {
     file: ArchiveFile,
-    data: Data,
+    tv_shows: DashMap<String, Option<TvShow>>,
 }
 
 impl TvShowService {
     pub fn new() -> Result<Self> {
         let file = FileService::archive(FILE_NAME.into());
 
-        let data: Data = file.read_json_or_default()?;
+        let data = file.read_json_or_default()?;
 
-        Ok(Self { file, data })
+        Ok(Self {
+            file,
+            tv_shows: data,
+        })
     }
 
     #[instrument(err, skip_all, fields(tv_show.title=%title))]
     pub fn find_tv_show(&self, ctx: &ServiceContext, title: &str) -> Result<Option<TvShow>> {
-        if let Some(movie) = self.data.tv_shows.get(title) {
-            match movie.value() {
+        if let Some(tv_show) = self.tv_shows.get(title) {
+            match tv_show.value() {
                 Some(movie) => return Ok(Some(movie.clone())),
                 None => {
                     warn!("Did not find cover for tv show [{title}]");
@@ -112,19 +110,18 @@ impl TvShowService {
                     link: format!("{}{}", TMDB_LINK_URL, tv_show.id).parse().unwrap(),
                 };
 
-                self.data
-                    .tv_shows
+                self.tv_shows
                     .insert(tv_show.title.clone(), Some(tv_show.clone()));
 
-                self.file.write_json(&self.data.tv_shows.clone())?;
+                self.file.write_json(&self.tv_shows.clone())?;
 
                 Ok(Some(tv_show))
             }
             None => {
                 warn!("Did not find cover for tv show [{title}]");
-                self.data.tv_shows.insert(title.to_string(), None);
+                self.tv_shows.insert(title.to_string(), None);
 
-                self.file.write_json(&self.data.tv_shows.clone())?;
+                self.file.write_json(&self.tv_shows.clone())?;
 
                 Ok(None)
             }
