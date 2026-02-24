@@ -3,13 +3,12 @@ use hypertext::prelude::*;
 use crate::domain::models::data::Data;
 use crate::domain::models::page::Page;
 use crate::domain::models::review::review_source::ReviewSource;
-use crate::domain::models::review::tv_show_review::TvShowReview;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventReview};
 use crate::domain::models::tv_show::TvShow;
 use crate::prelude::*;
 use crate::renderer::partials::md::{self, md};
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::{RenderTasks, RenderTask};
+use crate::renderer::{RenderTask, RenderTasks};
 
 // TODO Clicking on cover image should link you to tmdb page
 

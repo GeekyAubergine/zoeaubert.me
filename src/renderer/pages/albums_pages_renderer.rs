@@ -24,6 +24,7 @@ pub fn render_albums_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
     let albums = data.albums.find_all_by_date();
 
     for album in &albums {
+        tasks.add(RenderAlbumPageTask { album });
         for photo in &album.photos {
             tasks.add(RenderAlbumPhotoPageTask { album, photo });
         }

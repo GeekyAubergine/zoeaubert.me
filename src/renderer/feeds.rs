@@ -1,14 +1,9 @@
 use askama::Template;
 
 use crate::{
-    domain::models::{
-        blog_post::BlogPost,
-        data::Data,
-        site_config::SITE_CONFIG,
-        timeline_event::{TimelineEvent, TimelineEventPost},
-    },
+    domain::models::{blog_post::BlogPost, data::Data, site_config::SITE_CONFIG},
     prelude::*,
-    renderer::{RenderTasks, RenderTask},
+    renderer::{RenderTask, RenderTasks},
 };
 
 use crate::renderer::formatters::format_markdown::FormatMarkdown;
