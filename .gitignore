@@ -97,3 +97,6 @@ test.jpg
 
 
 output
+flamegraph.svg
+perf.data
+perf.data.old

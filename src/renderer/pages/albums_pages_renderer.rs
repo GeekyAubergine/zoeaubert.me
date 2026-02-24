@@ -10,10 +10,7 @@ use hypertext::prelude::*;
 
 use crate::{
     domain::models::{page::Page, slug::Slug},
-    renderer::{
-        RendererContext,
-        partials::page::{PageOptions, render_page},
-    },
+    renderer::partials::page::{PageOptions, render_page},
 };
 
 pub fn render_albums_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
@@ -31,47 +28,6 @@ pub fn render_albums_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
     }
 
     tasks.add(RenderAllAlbumsPageTask { albums });
-}
-
-pub fn render_alubms_list_page(context: &RendererContext) -> Result<()> {
-    let page = Page::new(Slug::new("/albums"), Some("Albums".to_string()), None);
-
-    let slug = page.slug.clone();
-
-    let years = context.data.albums.find_grouped_by_year();
-
-    let content = maud! {
-        @for (year, albums) in &years {
-            section {
-                h2 { (year) }
-                ol {
-                    @for album in albums {
-                        li {
-                            a href=(album.slug.relative_string()) {
-                                div class=(if album.cover_images().len() > 1 { "preview-multi" } else { "preview-single" }) {
-                                    @for photo in album.cover_images() {
-                                        (photo.render_small())
-                                    }
-                                }
-                                div class="title-and-date" {
-                                    h3 {
-                                        (album.title)
-                                    }
-                                    (render_date(&album.date))
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    let options = PageOptions::new().with_main_class("albums-list-page");
-
-    let renderer = render_page(&page, &options, &content, maud! {});
-
-    context.renderer.render_page(&slug, &renderer, None)
 }
 
 struct RenderAlbumsListPageTask<'l> {

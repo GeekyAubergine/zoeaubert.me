@@ -10,6 +10,7 @@ pub mod utils;
 pub mod services;
 
 use build_data::BUILD_DATE;
+use chrono::Utc;
 use clap::{Parser, Subcommand};
 use commands::render_site::render_site;
 use tracing::info;
@@ -70,8 +71,13 @@ fn main() -> Result<()> {
         }
         Commands::Build => {
             info!("Build date: {}", BUILD_DATE);
+
+            let start = Utc::now();
+
             let data = process_data(&ctx)?;
             render_site(data)?;
+
+            info!("Site Build {}ms", (Utc::now() - start).num_milliseconds());
         }
     }
 

@@ -8,8 +8,8 @@ use crate::domain::models::slug::Slug;
 use crate::domain::models::timeline_event::{TimelineEvent, TimelineEventPost};
 use crate::prelude::*;
 use crate::renderer::partials::page::{PageOptions, render_page};
-use crate::renderer::{RenderTask, RenderTasks, RendererContext};
-use crate::utils::paginator::{Paginator, PaginatorPage, paginate};
+use crate::renderer::{RenderTask, RenderTasks};
+use crate::utils::paginator::{Paginator, PaginatorPage};
 
 const PAGINATION_SIZE: usize = 40;
 
@@ -81,31 +81,4 @@ impl RenderTask for RenderPhotosListPageTask {
 
         renderer.render_page(&slug, &rendered, None)
     }
-}
-
-pub fn render_photos_list_page(context: &RendererContext, photos: &[Image]) -> Result<()> {
-    let paginated = paginate(photos, PAGINATION_SIZE);
-
-    let page = Page::new(Slug::new("/photos"), Some("Photos".to_string()), None);
-    for paginator_page in paginated {
-        let page = Page::from_page_and_pagination_page(&page, &paginator_page);
-
-        let slug = page.slug.clone();
-
-        let content = maud! {
-            ul class="photos-list" {
-                @for post in &paginator_page.data {
-                    (photo(post))
-                }
-            }
-        };
-
-        let options = PageOptions::new().with_main_class("photos-page");
-
-        let renderer = render_page(&page, &options, &content, maud! {});
-
-        context.renderer.render_page(&slug, &renderer, None)?;
-    }
-
-    Ok(())
 }

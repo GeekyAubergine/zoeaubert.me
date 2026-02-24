@@ -11,6 +11,9 @@ env-variables = []
 [profile.dev.package.askama_derive]
 opt-level = 3
 
+[profile.release]
+debug = true
+
 [dependencies]
 askama = { version = "0.15.4" }
 chrono = { version = "0.4.43", features = ["serde", "std"] }

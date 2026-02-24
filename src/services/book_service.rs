@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
-
+use dashmap::DashMap;
 use htmlentity::entity::{ICodedDataTrait, decode};
 use serde::Deserialize;
 use tracing::{debug, info, instrument, warn};
@@ -25,7 +23,7 @@ const WARHAMMER_TAG: &str = "Warhammer";
 #[derive(Debug)]
 pub struct BookService {
     file: ArchiveFile,
-    books: Arc<RwLock<HashMap<String, Option<Book>>>>,
+    books: DashMap<String, Option<Book>>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -116,10 +114,7 @@ impl BookService {
 
         let data = file.read_json_or_default()?;
 
-        Ok(Self {
-            file,
-            books: Arc::new(RwLock::new(data)),
-        })
+        Ok(Self { file, books: data })
     }
 
     #[instrument(err, skip_all, fields(book.title=%title, book.author=&author))]
@@ -130,10 +125,8 @@ impl BookService {
         author: &str,
         tags: &[Tag],
     ) -> Result<Option<Book>> {
-        let mut books = self.books.write().unwrap();
-
-        if let Some(book) = books.get(title) {
-            match book {
+        if let Some(book) = self.books.get(title) {
+            match book.clone() {
                 Some(book) => return Ok(Some(book.clone())),
                 None => {
                     warn!("Did not find cover for book [{title}]");
@@ -170,17 +163,17 @@ impl BookService {
                 id: BookID::OpenLibrary { id: cover_id },
             };
 
-            books.insert(title.to_string(), Some(book.clone()));
+            self.books.insert(title.to_string(), Some(book.clone()));
 
-            self.file.write_json(&books.clone())?;
+            self.file.write_json(&self.books.clone())?;
 
             return Ok(Some(book));
         }
 
         warn!("Did not find cover for book [{title}]");
-        books.insert(title.to_string(), None);
+        self.books.insert(title.to_string(), None);
 
-        self.file.write_json(&books.clone())?;
+        self.file.write_json(&self.books.clone())?;
 
         Ok(None)
     }

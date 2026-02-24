@@ -37,51 +37,39 @@ pub mod feeds;
 pub mod pages;
 pub mod partials;
 
-pub struct RendererContext {
-    pub data: Data,
-    pub renderer: PageRenderer,
-}
-
-pub fn new_rendering_context_from_data(data: Data) -> Result<RendererContext> {
-    Ok(RendererContext {
-        data,
-        renderer: PageRenderer::new(),
-    })
-}
-
-pub fn render_pages(context: &RendererContext) -> Result<()> {
+pub fn render_pages(data: &Data, renderer: &PageRenderer) -> Result<()> {
     let mut queue = RenderTasks::new();
 
-    render_home_page(&context.data, &mut queue);
-    render_blog_pages(&context.data, &mut queue);
-    render_micro_post_pages(&context.data, &mut queue);
-    render_mastodon_pages(&context.data, &mut queue);
-    render_photo_pages(&context.data, &mut queue);
-    render_timeline_pages(&context.data, &mut queue);
-    render_tags_pages(&context.data, &mut queue);
-    render_firehose_pages(&context.data, &mut queue);
-    render_project_pages(&context.data, &mut queue);
-    render_interests_page(&context.data, &mut queue);
-    render_book_review_pages(&context.data, &mut queue);
-    render_movie_review_pages(&context.data, &mut queue);
-    render_tv_review_pages(&context.data, &mut queue);
-    render_games_pages(&context.data, &mut queue);
-    render_lego_pages(&context.data, &mut queue);
-    render_now_page(&context.data, &mut queue);
-    render_faq_page(&context.data, &mut queue);
+    render_home_page(data, &mut queue);
+    render_blog_pages(data, &mut queue);
+    render_micro_post_pages(data, &mut queue);
+    render_mastodon_pages(data, &mut queue);
+    render_photo_pages(data, &mut queue);
+    render_timeline_pages(data, &mut queue);
+    render_tags_pages(data, &mut queue);
+    render_firehose_pages(data, &mut queue);
+    render_project_pages(data, &mut queue);
+    render_interests_page(data, &mut queue);
+    render_book_review_pages(data, &mut queue);
+    render_movie_review_pages(data, &mut queue);
+    render_tv_review_pages(data, &mut queue);
+    render_games_pages(data, &mut queue);
+    render_lego_pages(data, &mut queue);
+    render_now_page(data, &mut queue);
+    render_faq_page(data, &mut queue);
     render_support_page(&mut queue);
-    render_referrals_page(&context.data, &mut queue);
-    render_albums_pages(&context.data, &mut queue);
+    render_referrals_page(data, &mut queue);
+    render_albums_pages(data, &mut queue);
     render_feeds_page(&mut queue);
-    render_credits_pages(&context.data, &mut queue);
+    render_credits_pages(data, &mut queue);
     render_404_page(&mut queue);
-    render_feeds(&context.data, &mut queue);
+    render_feeds(data, &mut queue);
 
     queue
         .tasks
         .into_iter()
         .par_bridge()
-        .try_for_each(|task| task.render(&context.renderer))?;
+        .try_for_each(|task| task.render(renderer))?;
 
     Ok(())
 }
