@@ -160,7 +160,7 @@
 }
 
 @utility width-narrow {
-  @apply centered-to-width max-w-[78ch];
+  @apply centered-to-width max-w-[80ch];
 }
 
 @utility article-spacing {
@@ -178,7 +178,13 @@
   p,
   li,
   th,
-  td {
+  td,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-[18px] md:text-[20px];
     font-family: "Atkinson Hyperlegible", system-ui, -apple-system,
       BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
@@ -325,6 +331,10 @@ article {
 
 a {
   @apply link;
+
+  &:hover {
+      @apply accent;
+  }
 }
 
 h1,
@@ -379,7 +389,7 @@ nav {
       }
 
       a {
-        @apply text py-0 rounded-sm text-center secondary no-underline header-font font-normal;
+        @apply text py-0 rounded-sm text-center secondary no-underline header-font;
         letter-spacing: 0.05ch;
 
         &.active {
@@ -405,7 +415,7 @@ footer {
     @apply width-middle my-8 grid grid-cols-2 md:grid-cols-4 gap-y-8;
 
     p {
-      @apply text mt-0 font-bold text-2xl mb-2;
+      @apply text mt-0 font-bold text-2xl md:text-4xl mb-2 header-font;
     }
 
     ul {
@@ -415,7 +425,8 @@ footer {
         @apply my-2 first-of-type:mt-0 last-of-type:mb-0;
 
         a {
-          @apply no-underline;
+          @apply no-underline header-font text-lg;
+          letter-spacing: 0.05ch;
         }
       }
     }
@@ -630,7 +641,7 @@ time {
     @apply w-full py-8 md:py-16;
 
     h2 {
-      @apply mt-0 mb-2 text-4xl md:text-5xl full-stop accent;
+      @apply mt-0 mb-2 text-5xl md:text-6xl full-stop accent;
     }
 
     .more-link {
@@ -641,10 +652,10 @@ time {
       @apply items-center md:pt-24;
 
       .name-and-cursor {
-        @apply w-full flex-row justify-center items-baseline h-[8rem];
+        @apply w-full flex-row justify-center items-center h-[10rem];
 
         h1 {
-          @apply text-[3rem] md:text-[6rem] m-0 text-center w-auto;
+          @apply text-[4rem] md:text-[8rem] m-0 text-center w-auto;
 
           &::after {
             content: "";
@@ -652,7 +663,7 @@ time {
         }
 
         .typing-cursor {
-          @apply ml-[.25rem] h-[2.2rem] md:h-[4rem] mt-4 md:mt-10 border-r-2 border-text min-w-[1px];
+          @apply ml-[.2rem] md:ml-[.3rem] border-r-2 border-text w-[2px] md:w-[4px] h-[3.0rem] md:h-[7rem] mb-[0.2rem] md:mb-[0.4rem];
 
           animation: blink 1200ms linear infinite;
         }
@@ -669,19 +680,17 @@ time {
 
         .blog-post-list-item {
           .title-and-date {
-            @apply md:flex-col-reverse;
-
             a {
-              @apply no-underline;
+              @apply no-underline md:text-[18px];
             }
           }
 
           .title {
-            @apply mt-0 text-2xl md:text-2xl font-bold tracking-tight md:tracking-normal md:h-16 md:overflow-hidden;
+            @apply mt-0 text-2xl md:text-3xl font-bold tracking-tight md:tracking-normal md:h-10 md:overflow-hidden  line-clamp-1 overflow-hidden overflow-ellipsis;
           }
 
           .description {
-            @apply mt-2;
+            @apply prose mt-2 md:text-[20px];
           }
         }
       }
