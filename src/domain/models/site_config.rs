@@ -92,7 +92,6 @@ pub struct PageConfig {
     pub language: String,
     pub header_links: Vec<HeaderLink>,
     pub page_links: Vec<PageLinkGroup>,
-    pub social_links: Vec<SocialNetworkLink>,
 }
 
 pub static SITE_CONFIG: Lazy<PageConfig> = Lazy::new(|| {

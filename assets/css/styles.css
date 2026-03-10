@@ -327,7 +327,7 @@ h3,
 h4,
 h5,
 h6 {
-  @apply text-xl font-bold header-font;
+  @apply text-xl font-bold header-font accent;
 }
 
 hr {
@@ -423,7 +423,6 @@ footer {
 
 time {
   @apply italic secondary;
-  /*@apply text-sm mt-[.125rem] leading-6 italic font-thin;*/
 }
 
 /* Components*/
@@ -436,7 +435,6 @@ time {
   }
 
   & .tag {
-    /*@apply secondary no-underline;*/
     @apply italic no-underline;
   }
 }
@@ -445,7 +443,7 @@ time {
   @apply w-full mt-8 mb-8 px-4 md:my-16 mx-auto items-center;
 
   h1 {
-    @apply mb-2 text-5xl md:text-8xl text-center;
+    @apply mb-2 text-5xl md:text-8xl text-center text-text;
 
     & > time {
       @apply font-bold text-text mb-2 text-4xl md:text-6xl text-center;
@@ -593,7 +591,7 @@ time {
   }
 
   .desc {
-    @apply secondary;
+    @apply secondary header-font text-2xl;
   }
 }
 
@@ -641,8 +639,12 @@ time {
       @apply mt-0 mb-2 text-5xl md:text-6xl full-stop accent;
     }
 
+    .width-middle > a {
+      @apply no-underline;
+    }
+
     .more-link {
-      @apply mt-8 ml-auto italic no-underline;
+      @apply mt-4 ml-auto italic no-underline header-font;
     }
 
     &.header {
@@ -708,10 +710,6 @@ time {
             @apply min-w-full aspect-square object-cover;
           }
         }
-      }
-
-      .more-link {
-        @apply mt-4 md:mt-8;
       }
     }
 
@@ -850,15 +848,19 @@ time {
       @apply flex flex-col;
 
       .name {
-        @apply text-2xl font-bold no-underline;
+        @apply text-3xl md:text-4xl font-bold no-underline header-font;
       }
 
       .image {
-        @apply items-center my-4 h-[11rem];
+        @apply items-center my-2 h-[11rem];
 
         img {
-          @apply max-h-[12rem] object-contain;
+          @apply max-h-[11rem] object-cover;
         }
+      }
+
+      p {
+        @apply mt-2;
       }
     }
   }
@@ -875,31 +877,25 @@ time {
     @apply w-full py-8 md:py-8;
 
     h2 {
-      @apply mt-0 mb-4 text-3xl md:text-4xl full-stop;
+      @apply mt-0 mb-2 text-4xl md:text-5xl full-stop accent;
+    }
+
+    & > a {
+      @apply no-underline;
     }
 
     .more-link {
-      @apply mt-2 ml-auto italic no-underline;
+      @apply mt-2 ml-auto italic no-underline header-font;
     }
 
-    ul {
-      @apply grid grid-cols-3 gap-y-12 gap-x-4 md:grid-cols-5;
+    .sub-text {
+      @apply !mb-0;
+    }
 
-      li {
-        @apply flex flex-col justify-between;
-
-        a {
-          @apply flex flex-col no-underline relative w-full h-full;
-
-          img {
-            @apply w-full h-full object-cover;
-          }
-
-          .sub-text {
-            @apply m-2 text-center;
-          }
-        }
-      }
+    .books > .more-link,
+    .movies > .more-link,
+    .tv-shows > .more-link {
+      @apply !mt-0;
     }
 
     &.games {
@@ -916,13 +912,34 @@ time {
       }
     }
 
+    &.lego > ul,
+    &.books > ul,
+    &.movies > ul,
+    &.tv-shows > ul {
+      @apply grid grid-cols-2 gap-4 md:grid-cols-5;
+
+      li {
+        @apply nth-[5]:hidden md:nth-[5]:block;
+
+        a {
+          @apply flex flex-col no-underline relative w-full h-full;
+
+          img {
+            @apply w-full h-full object-cover;
+          }
+
+          .sub-text {
+            @apply m-2 text-center;
+          }
+        }
+      }
+    }
+
     &.lego {
       ul {
-        @apply grid grid-cols-3 gap-4 md:grid-cols-5;
-
         li {
           a {
-            @apply bg-white;
+            @apply bg-white rounded-sm;
 
             img {
               @apply px-2 py-4 object-contain max-h-[18rem];
@@ -945,7 +962,7 @@ time {
     @apply w-full pt-8 pb-16;
 
     h2 {
-      @apply mt-0 mb-4 text-3xl md:text-4xl full-stop;
+      @apply mt-0 mb-4 text-4xl md:text-5xl full-stop;
     }
 
     ul {
@@ -954,13 +971,14 @@ time {
       li {
         a {
           @apply flex flex-col no-underline relative w-full h-full;
+          text-decoration-color: var(--color-text-secondary);
 
           img {
             @apply object-contain max-h-[18rem]  rounded-sm;
           }
 
           p {
-            @apply text-center secondary first-of-type:mt-1 !font-normal;
+            @apply text-center secondary first-of-type:mt-2 !font-normal leading-6;
 
             time {
               @apply !font-normal;
@@ -1048,6 +1066,7 @@ time {
       li {
         a {
           @apply flex flex-col no-underline relative w-full h-full;
+          text-decoration-color: var(--color-text-secondary);
 
           img {
             @apply w-full aspect-square object-contain bg-white object-center p-2  rounded-sm;

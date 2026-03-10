@@ -118,7 +118,9 @@ fn render_interest_strip<'l>(
 ) -> impl Renderable + 'l {
     maud! {
         section class=(section_class) {
-            h2 { (title) }
+            a href=(more_link) {
+                h2 { (title) }
+            }
             ul {
                 @for item in items {
                     li {
@@ -156,11 +158,11 @@ impl<'l> RenderTask for RenderInterestsPageTask<'l> {
         let slug = page.slug.clone();
 
         let content = maud! {
-            (render_interest_strip("Games", "Games →", "/interests/games/",  &self.games, "games"))
-            (render_interest_strip("Lego", "Lego Sets →", "/interests/lego/",  &self.lego, "lego"))
-            (render_interest_strip("Books", "Book Reviews →", "/tags/books/",  &self.books, "books"))
-            (render_interest_strip("Movies", "Movie Reviews →", "/tags/movies/",  &self.movies, "movies"))
-            (render_interest_strip("TV", "TV Reviews →", "/tags/tv/",  &self.tv_shows, "tv_shows"))
+            (render_interest_strip("Games", "All Games", "/interests/games/",  &self.games, "games"))
+            (render_interest_strip("Lego", "All Lego", "/interests/lego/",  &self.lego, "lego"))
+            (render_interest_strip("Books", "All Book Reviews", "/tags/books/",  &self.books, "books"))
+            (render_interest_strip("Movies", "All Movie Reviews", "/tags/movies/",  &self.movies, "movies"))
+            (render_interest_strip("TV", "All TV Reviews", "/tags/tv/",  &self.tv_shows, "tv-shows"))
         };
 
         let options = PageOptions::new().with_main_class("interests-page");
