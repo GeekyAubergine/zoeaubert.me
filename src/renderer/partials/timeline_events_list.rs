@@ -75,7 +75,7 @@ fn render_post<'l>(
                 li {
                     a class="date" href=(slug.relative_string()) {
                         time class="date" datetime=(date.datetime()) {
-                            (format!("{}", date.month_as_word()))
+                            (date.month_as_word().to_string())
                         }
                     }
                     div class="content" {
