@@ -552,7 +552,7 @@ time {
       @apply no-underline;
 
       time {
-        @apply text-lg font-bold not-italic accent;
+        @apply text-xl font-bold not-italic accent header-font;
       }
     }
 
