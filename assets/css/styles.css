@@ -397,7 +397,33 @@ nav {
 }
 
 footer {
-  @apply border-accent border-t-4 mt-16 md:mt-32;
+  @apply border-accent border-t-4 mt-16 md:mt-32 mb-4;
+
+  .notes {
+    @apply w-full justify-center mt-8;
+
+    & > div {
+      @apply mb-2;
+    }
+
+    .crafted {
+      @apply flex-row items-center justify-center;
+
+      p {
+        @apply header-font text-xl md:text-2xl;
+      }
+
+      svg {
+        @apply w-6 md:w-8 h-6 md:h-8 mr-1 md:mr-2;
+      }
+    }
+
+    .disclaimer {
+      p {
+          @apply text-center text-xl md:text-2xl header-font;
+      }
+    }
+  }
 
   ul.groups {
     @apply width-middle my-8 grid grid-cols-2 md:grid-cols-4 gap-y-8;
@@ -687,7 +713,11 @@ time {
           }
 
           .title {
-            @apply mt-0 text-2xl md:text-3xl font-bold md:h-20 md:overflow-hidden line-clamp-2 overflow-hidden overflow-ellipsis;
+            @apply mt-0 text-2xl md:text-3xl font-bold md:h-20 md:overflow-hidden line-clamp-2 overflow-hidden overflow-ellipsis text-text;
+
+            &:hover {
+              @apply text-accent;
+            }
           }
 
           .description {
@@ -1100,7 +1130,7 @@ time {
     @apply mb-8 last-of-type:mb-0;
 
     h2 {
-      @apply text-2xl font-bold;
+      @apply text-3xl md:text-4xl;
     }
 
     ol {
@@ -1108,7 +1138,7 @@ time {
 
       li {
         a {
-          @apply no-underline flex flex-col h-full justify-between cursor-pointer my-2;
+          @apply !no-underline flex flex-col h-full justify-between cursor-pointer my-2;
 
           .preview-multi {
             @apply h-full grid gap-x-1 grid-cols-2 overflow-hidden;

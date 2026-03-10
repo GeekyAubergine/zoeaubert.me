@@ -113,6 +113,20 @@ pub fn render_footer<'l>(page: &'l Page) -> impl Renderable + 'l {
                     }
                 }
             }
+            div class="notes" {
+                div class="disclaimer" {
+                    p { "My opinions are my own"}
+                }
+                div class="crafted" {
+                    (Raw::dangerously_create(
+                    r#"
+                    <svg>
+                    <use href="/assets/img/no-ai.svg" />
+                    </svg>
+                    "#))
+                    p { "100% Human Crafted"}
+                }
+            }
         }
     }
 }
@@ -149,86 +163,6 @@ pub fn render_pagination<'l>(pagination: &'l PagePaginationData) -> impl Rendera
             }
         }
     }
-
-    // maud! {
-    //     div
-    //         class="pagination"
-    //         data-pagefind-ignore
-    //     {
-    //         div class="left" {
-    //             @if show_previous {
-    //                 a
-    //                     href=(pagination.previous.slug.relative_string())
-    //                     class="previous" {
-    //                         ("〈")
-    //                     }
-    //             } @else {
-    //                 div
-    //                     class="spacer previous disabled"
-    //                     aria_disabled {
-    //                         p { ("〈") }
-    //                     }
-    //             }
-    //             @if show_first {
-    //                 a
-    //                     href=(pagination.first.slug.relative_string())
-    //                     class="first" {
-    //                         (pagination.first.index)
-    //                     }
-    //             } @else {
-    //                 div class="spacer first" aria_hidden {}
-    //             }
-    //             @if show_previous {
-    //                 a
-    //                     href=(pagination.previous.slug.relative_string())
-    //                     class="previous" {
-    //                         (pagination.previous.index)
-    //                     }
-    //             } @else {
-    //                 div class="spacer previous" aria_hidden {}
-    //             }
-    //         }
-    //         a
-    //             href="#"
-    //             class="active"
-    //             aria_current="page" {
-    //             (pagination.current_index)
-    //         }
-    //         div class="right" {
-    //             @if show_next {
-    //                 a
-    //                     href=(pagination.next.slug.relative_string())
-    //                     class="next" {
-    //                         (pagination.next.index)
-    //                 }
-    //             } @else {
-    //                 div class="spacer next" aria_hidden {}
-    //             }
-    //             @if show_last {
-    //                 a
-    //                     href=(pagination.last.slug.relative_string())
-    //                     class="last" {
-    //                         (pagination.last.index)
-    //                     }
-    //             } @else {
-    //                 div class="spacer last" aria_hidden {}
-    //             }
-    //             @if show_next {
-    //                 a
-    //                     href=(pagination.next.slug.relative_string())
-    //                     class="next" {
-    //                         ("〉")
-    //                 }
-    //             } @else {
-    //                 div
-    //                     class="spacer next disabled"
-    //                     aria_disabled {
-    //                         p { ("〉") }
-    //                     }
-    //             }
-    //         }
-    //     }
-    // }
 }
 
 fn render_page_base<'l>(page: &'l Page, body: &'l impl Renderable) -> impl Renderable + 'l {
@@ -380,25 +314,6 @@ impl<'l> HeaderData<'l> {
             None => HeaderData::None,
         }
     }
-
-    // pub fn with_image(self, image: &'l Image) -> Self {
-    //     match self {
-    //         HeaderData::Title {
-    //             title, date, tags, ..
-    //         } => HeaderData::Title {
-    //             title: title,
-    //             date: date,
-    //             tags: tags,
-    //             image: Some(image),
-    //         },
-    //         HeaderData::Date { date, tags, .. } => HeaderData::Date {
-    //             date,
-    //             tags,
-    //             image: Some(image),
-    //         },
-    //         HeaderData::None => HeaderData::None,
-    //     }
-    // }
 }
 
 fn render_header<'l>(data: &'l HeaderData<'l>) -> impl Renderable + 'l {
