@@ -49,7 +49,7 @@ fn blog_posts(posts: &Vec<&BlogPost>) -> impl Renderable {
             }
         }
         a class="more-link" href="/blog" {
-            ("More blog posts →")
+            ("All Posts")
         }
     }
 }
@@ -78,7 +78,7 @@ fn photos(photos: &Vec<&Image>) -> impl Renderable {
             }
         }
         a class="more-link" href="/photos" {
-            ("More photos →")
+            ("All Photos")
         }
     }
 }
@@ -159,13 +159,17 @@ impl<'l> RenderTask for RenderHomePageTask<'l> {
             }
             section class="blog" {
                 div class="width-middle" {
-                    h2 { ("Blog") }
+                    a href="/blog" {
+                        h2 { ("Blog") }
+                    }
                     (blog_posts(&self.posts))
                 }
             }
             section class="photos" {
                 div class="width-middle" {
-                    h2 { ("Photos") }
+                    a href="/photos" {
+                        h2 { ("Photos") }
+                    }
                     (photos(&self.photos))
                 }
             }

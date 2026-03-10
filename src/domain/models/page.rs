@@ -98,7 +98,6 @@ pub struct Page {
     pub build_date: String,
     pub header_links: Vec<HeaderLink>,
     pub page_links: Vec<PageLinkGroup>,
-    pub social_links: Vec<SocialNetworkLink>,
     pub date: Option<DateTime<Utc>>,
     pub read_time: Option<String>,
     pub tags: Vec<Tag>,
@@ -122,7 +121,6 @@ impl Page {
             build_date: BUILD_DATE.to_string(),
             header_links: SITE_CONFIG.header_links.clone(),
             page_links: SITE_CONFIG.page_links.clone(),
-            social_links: SITE_CONFIG.social_links.clone(),
             date: None,
             read_time: None,
             tags: vec![],
@@ -228,10 +226,6 @@ impl Page {
 
     pub fn header_links(&self) -> &[HeaderLink] {
         &self.header_links
-    }
-
-    pub fn social_links(&self) -> &[SocialNetworkLink] {
-        &self.social_links
     }
 
     pub fn date(&self) -> Option<&DateTime<Utc>> {

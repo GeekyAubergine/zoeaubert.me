@@ -14,7 +14,7 @@ projects:
       rank: 10
 
     - name: AccelOS
-      description: Hackathon project were I made a game about balancing the input to an operating system
+      description: Hackathon project were I made a game about balancing your phone as the controls for a operating system
       image: https://cdn.geekyaubergine.com/2023/11/19/2023-11-19T22.55.24.png
       image_alt: 'Screen shot of a basic operating system interface listing Main, Files and Email on the left and side. On the right hand side a maze with various coloured circles and walls'
       link: /blog/hackathon-accelos

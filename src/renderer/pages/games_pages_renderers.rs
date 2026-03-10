@@ -21,14 +21,19 @@ pub fn render_games_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
             .find_by_most_recently_played()
             .into_iter()
             .take(6)
-            .collect::<Vec<&Game>>(),
-        most_played: data.games.find_by_most_most_played(),
-    });
-
-    tasks.add(RenderMostAchievedGamesListPageTask {
-        games: data
+            .collect(),
+        most_played: data
             .games
-            .find_by_most_highest_achievement_unlocked_percentage(),
+            .find_by_most_most_played()
+            .into_iter()
+            .filter(|g| g.playtime_hours() >= 0.1)
+            .collect(),
+        most_acheived: data
+            .games
+            .find_by_most_highest_achievement_unlocked_percentage()
+            .into_iter()
+            .filter(|g| g.unlocked_achievement_count() > 0)
+            .collect(),
     });
 
     data.games
@@ -42,12 +47,14 @@ pub fn render_games_pages<'d>(data: &'d Data, tasks: &mut RenderTasks<'d>) {
 struct RenderGamesListPageTask<'g> {
     recently_played: Vec<&'g Game>,
     most_played: Vec<&'g Game>,
+    most_acheived: Vec<&'g Game>,
 }
 
 impl<'g> RenderTask for RenderGamesListPageTask<'g> {
     fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()> {
         let recently_played = self.recently_played;
         let most_played = self.most_played;
+        let most_achieved = self.most_acheived;
 
         let total_play = most_played.iter().map(|g| g.playtime_hours()).sum::<f32>();
 
@@ -113,45 +120,14 @@ impl<'g> RenderTask for RenderGamesListPageTask<'g> {
                 }
             }
             section {
-                a href="/interests/games/by-achievements" { ("Sort by Achievments") }
-            }
-        };
-
-        let options = PageOptions::new().with_main_class("games-list-page");
-
-        let page = Page::new(
-            Slug::new("/interests/games"),
-            Some("Games".to_string()),
-            None,
-        );
-
-        let slug = page.slug.clone();
-
-        let rendered = render_page(&page, &options, &content, maud! {});
-
-        renderer.render_page(&slug, &rendered, None)
-    }
-}
-
-struct RenderMostAchievedGamesListPageTask<'g> {
-    games: Vec<&'g Game>,
-}
-
-impl<'g> RenderTask for RenderMostAchievedGamesListPageTask<'g> {
-    fn render(self: Box<Self>, renderer: &PageRenderer) -> Result<()> {
-        let games = self.games;
-
-        let content = maud! {
-            section {
                 h2 { "Highest Achievments"}
                 ul {
-                    @for game in &games {
+                    @for game in &most_achieved {
                         li {
                             a href=(game.slug().relative_string()) {
                                 (game.image().render_small())
                                 p { (game.name()) }
                                 p { (format!("{} / {}", game.unlocked_achievement_count(), game.achievments_count())) }
-                                p { (format!("{:.1}h", game.playtime_hours())) }
                             }
                         }
                     }
@@ -162,8 +138,8 @@ impl<'g> RenderTask for RenderMostAchievedGamesListPageTask<'g> {
         let options = PageOptions::new().with_main_class("games-list-page");
 
         let page = Page::new(
-            Slug::new("/interests/games/by-achievements"),
-            Some("Games by Achievments".to_string()),
+            Slug::new("/interests/games"),
+            Some("Games".to_string()),
             None,
         );
 
